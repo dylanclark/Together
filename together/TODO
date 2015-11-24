@@ -1,0 +1,53 @@
+
+------------
+ UNFINISHED
+------------
+
+- Dynamic camera. (Fraser)
+
+-----------
+ MECHANICS
+-----------
+
+- Music tracks.
+- Alterable environment (see objects).
+- Menu screen.
+- Pause screen.
+- "Cutscenes"
+
+---------
+ OBJECTS
+---------
+
+- Level end.
+- Pushable crates (three sizes: 4x2, 4x1, 2x2)
+- Buttons (two types: permanent, temporary)
+- Waterfall / holes.
+- Springboards.
+- Cross-layer springs (one character stands on a spring and is launched when the other character lands on that spring from the other side).
+- Fountain / holes. (reverse waterfall?)
+- Keys and doors.
+- Add more!
+
+------------------------
+ OPTIONAL OPTIMIZATIONS
+------------------------
+
+- Dual music tracks (changes based on which character is being controlled).
+- Save files.
+- Options (music volume, controls, etc.)
+- Gamepad / Controller support.
+- Rounded corner collision detection!
+- Add more!
+
+----------
+ FINISHED
+----------
+
+- Collision detection.
+- Tile drawing.
+- Simple animation.
+- Keyboard input.
+- Gravity / jumping.
+- Different world interaction between characters.
+- Basic camera.
