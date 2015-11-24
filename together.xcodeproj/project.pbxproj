@@ -10,7 +10,7 @@
 		EF0CE3B11BEFCDC20080692E /* close.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EF0CE3AF1BEFCDC20080692E /* close.cpp */; };
 		EF0CE3B41BEFD8C50080692E /* textures.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EF0CE3B21BEFD8C50080692E /* textures.cpp */; };
 		EF68FE7E1C03FD1600E2030D /* start.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EF68FE7C1C03FD1600E2030D /* start.cpp */; settings = {ASSET_TAGS = (); }; };
-		EF68FE811C04003200E2030D /* scenes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EF68FE7F1C04003200E2030D /* scenes.cpp */; settings = {ASSET_TAGS = (); }; };
+		EF68FE811C04003200E2030D /* gamestate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EF68FE7F1C04003200E2030D /* gamestate.cpp */; settings = {ASSET_TAGS = (); }; };
 		EF8252831BF1098A0003EF9E /* SDL2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EF8252821BF1098A0003EF9E /* SDL2.framework */; };
 		EF8252851BF109940003EF9E /* SDL2_image.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EF8252841BF109940003EF9E /* SDL2_image.framework */; };
 		EF8252881BF11C7E0003EF9E /* level_load.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EF8252861BF11C7E0003EF9E /* level_load.cpp */; };
@@ -48,8 +48,8 @@
 		EF0CE3B31BEFD8C50080692E /* textures.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = textures.hpp; sourceTree = "<group>"; };
 		EF68FE7C1C03FD1600E2030D /* start.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = start.cpp; sourceTree = "<group>"; };
 		EF68FE7D1C03FD1600E2030D /* start.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = start.hpp; sourceTree = "<group>"; };
-		EF68FE7F1C04003200E2030D /* scenes.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = scenes.cpp; sourceTree = "<group>"; };
-		EF68FE801C04003200E2030D /* scenes.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = scenes.hpp; sourceTree = "<group>"; };
+		EF68FE7F1C04003200E2030D /* gamestate.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = gamestate.cpp; sourceTree = "<group>"; };
+		EF68FE801C04003200E2030D /* gamestate.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = gamestate.hpp; sourceTree = "<group>"; };
 		EF69B9121BFA83D400F5DAC2 /* TODO */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = TODO; sourceTree = "<group>"; };
 		EF8252821BF1098A0003EF9E /* SDL2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL2.framework; path = ../../../../../../Library/Frameworks/SDL2.framework; sourceTree = "<group>"; };
 		EF8252841BF109940003EF9E /* SDL2_image.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL2_image.framework; path = ../../../../../../Library/Frameworks/SDL2_image.framework; sourceTree = "<group>"; };
@@ -87,12 +87,37 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		EF27A6991C04CC9D00459C32 /* states */ = {
+			isa = PBXGroup;
+			children = (
+				EF68FE801C04003200E2030D /* gamestate.hpp */,
+				EF68FE7F1C04003200E2030D /* gamestate.cpp */,
+				EF27A69A1C04CCB400459C32 /* headers */,
+				EF27A69B1C04CCC200459C32 /* states */,
+			);
+			name = states;
+			sourceTree = "<group>";
+		};
+		EF27A69A1C04CCB400459C32 /* headers */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = headers;
+			sourceTree = "<group>";
+		};
+		EF27A69B1C04CCC200459C32 /* states */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = states;
+			sourceTree = "<group>";
+		};
 		EFBCA0B11BED17FB005D56CA = {
 			isa = PBXGroup;
 			children = (
 				EF8252841BF109940003EF9E /* SDL2_image.framework */,
 				EF8252821BF1098A0003EF9E /* SDL2.framework */,
-				EFBCA0BC1BED17FB005D56CA /* together */,
+				EFBCA0BC1BED17FB005D56CA /* project */,
 				EFBCA0BB1BED17FB005D56CA /* Products */,
 				EF0808611BF0504300338AB0 /* levels */,
 				EFBCA0CC1BED21BF005D56CA /* textures */,
@@ -107,15 +132,15 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		EFBCA0BC1BED17FB005D56CA /* together */ = {
+		EFBCA0BC1BED17FB005D56CA /* project */ = {
 			isa = PBXGroup;
 			children = (
 				EFBCA0CE1BED4F75005D56CA /* headers */,
 				EFBCA0BD1BED17FB005D56CA /* main.cpp */,
 				EFBCA0F81BEE8CD2005D56CA /* characters.cpp */,
+				EF27A6991C04CC9D00459C32 /* states */,
 				EF0CE3AF1BEFCDC20080692E /* close.cpp */,
 				EF69B9121BFA83D400F5DAC2 /* TODO */,
-				EF68FE7F1C04003200E2030D /* scenes.cpp */,
 				EF8252921BF3201C0003EF9E /* camera.cpp */,
 				EF68FE7C1C03FD1600E2030D /* start.cpp */,
 				EFBCA0F51BEE8C89005D56CA /* tiles.cpp */,
@@ -126,6 +151,7 @@
 				EFBCA0D91BED5DE8005D56CA /* collisions.cpp */,
 				EFBCA0D01BED5031005D56CA /* level_draw.cpp */,
 			);
+			name = project;
 			path = together;
 			sourceTree = "<group>";
 		};
@@ -140,7 +166,6 @@
 				EF8252871BF11C7E0003EF9E /* level_load.hpp */,
 				EF0CE3B01BEFCDC20080692E /* close.hpp */,
 				EFBCA0DA1BED5DE8005D56CA /* collisions.hpp */,
-				EF68FE801C04003200E2030D /* scenes.hpp */,
 				EFBCA0F91BEE8CD2005D56CA /* characters.hpp */,
 				EF68FE7D1C03FD1600E2030D /* start.hpp */,
 				EFBCA0D11BED5031005D56CA /* level_draw.hpp */,
@@ -214,7 +239,7 @@
 				EFBCA0FD1BEE8EF1005D56CA /* initialization.cpp in Sources */,
 				EF8252881BF11C7E0003EF9E /* level_load.cpp in Sources */,
 				EFBCA0D81BED5DD1005D56CA /* environment.cpp in Sources */,
-				EF68FE811C04003200E2030D /* scenes.cpp in Sources */,
+				EF68FE811C04003200E2030D /* gamestate.cpp in Sources */,
 				EFBCA0FA1BEE8CD2005D56CA /* characters.cpp in Sources */,
 				EFBCA0BE1BED17FB005D56CA /* main.cpp in Sources */,
 			);
