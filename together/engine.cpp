@@ -3,24 +3,13 @@
 #include <stdio.h>
 #include <SDL2/SDL.h>
 #include <SDL2_image/SDL_image.h>
+#include <vector>
 
-// include header file
-#include "initialization.hpp"
-#include "textures.hpp"
-#include "level_draw.hpp"
+// include headers
+#include "engine.hpp"
+#include "gamestate.hpp"
 
-// window initialization
-SDL_Window* win;
-
-// renderer initialization
-SDL_Renderer* rend;
-
-// initialize all textures
-texture tile_tex;
-texture b_char_tex;
-texture w_char_tex;
-
-/*bool init()
+bool engine::init(int width, int height)
 {
     bool success = true;
     
@@ -34,9 +23,9 @@ texture w_char_tex;
     
     // creates a window that we can (eventually) draw into
     win = SDL_CreateWindow("together.",
-                                       SDL_WINDOWPOS_CENTERED,
-                                       SDL_WINDOWPOS_CENTERED,
-                                       SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_RESIZABLE);
+                           SDL_WINDOWPOS_CENTERED,
+                           SDL_WINDOWPOS_CENTERED,
+                           width, height, SDL_WINDOW_RESIZABLE);
     if (!win)
     {
         printf("error creating window: %s\n", SDL_GetError());
@@ -72,32 +61,54 @@ texture w_char_tex;
     return success;
 }
 
-bool load_media(tile* tiles[], int level_w, int level_h)
+void engine::cleanup()
 {
-    // success flag
-    bool success = true;
-    
-    // black square texture
-    if (!b_char_tex.load_tile_sheet("textures/black/b_char.png"))
+    // clean up!
+    SDL_DestroyRenderer(rend);
+    SDL_DestroyWindow(win);
+    SDL_Quit();
+}
+
+void engine::change_state(gamestate* state)
+{
+    if (!states.empty())
     {
-        printf("Failed to load black dot texture!\n");
-        success = false;
-    }
-    if (!w_char_tex.load_tile_sheet("textures/white/w_char.png"))
-    {
-        printf("Failed to load white dot texture!\n");
-        success = false;
-    }
-    if (!tile_tex.load_tile_sheet("textures/tile_sheet.png"))
-    {
-        printf("Failed to load tile sheet texture!\n");
-        success = false;
-    }
-    if (!set_tiles(tiles, "levels/level_001.map", level_w, level_h))
-    {
-        printf("Failed to load tile texture!\n");
-        success = false;
+        states.back()->cleanup();
+        states.pop_back();
     }
     
-    return success;
-}*/
+    states.push_back(state);
+    states.back()->init(this);
+}
+
+void engine::push_state(gamestate* state)
+{
+    if (!states.empty())
+    {
+        states.back()->pause();
+    }
+    
+    states.push_back(state);
+    states.back()->init(this);
+}
+
+void engine::pop_state()
+{
+    states.back()->cleanup();
+    states.pop_back();
+}
+
+void engine::handle_events()
+{
+    states.back()->handle_events(this);
+}
+
+void engine::update()
+{
+    states.back()->update(this);
+}
+
+void engine::draw()
+{
+    states.back()->draw(this);
+}

@@ -11,6 +11,8 @@
 #include "characters.hpp"
 #include "level_draw.hpp"
 
+class levelstate;
+
 // camera edge buffer
 const float BUFFER = 400;
 
@@ -40,7 +42,7 @@ public:
     void track(SDL_Rect* b_char, SDL_Rect* w_char);
     
     // move the camera location
-    void move(level* level);
+    void move(int level_w, int level_h);
     
     // update camera display
     void update(void);

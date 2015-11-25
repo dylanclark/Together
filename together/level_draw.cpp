@@ -55,6 +55,7 @@ bool set_tiles(tile* tiles[], std::string map_path, int level_w, int level_h)
                 break;
             }
             
+            // iterate horizontally
             x += TILE_WIDTH;
             
             if (x >= level_w * TILE_WIDTH)

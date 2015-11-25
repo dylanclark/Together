@@ -58,7 +58,7 @@ public:
     void move(tile* tiles[], int level_w, int level_h);
     
     // render the square on the screen
-    void render(SDL_Rect* camera);
+    void render(SDL_Rect* camera, SDL_Renderer* rend);
     
     // collision rectangle
     SDL_Rect col_rect;

@@ -23,36 +23,40 @@
 #include "close.hpp"
 #include "textures.hpp"
 #include "camera.hpp"
-
-// window re-initialization
-extern SDL_Window* win;
-
-// renderer re-initialization
-extern SDL_Renderer* rend;
-
-// reinitialize textures
-extern texture b_char_tex;
-extern texture w_char_tex;
+#include "engine.hpp"
+#include "gamestate.hpp"
+#include "level1_state.hpp"
 
 // Let's do this.
 int main(void)
 {
+    // create engine
+    engine game;
+    
+    // initialize screen
+    game.init(SCREEN_WIDTH, SCREEN_HEIGHT);
+    
+    // initialize game state (to level 1, but eventually to main menu)
+    game.change_state(new level1_state);
+    
+    // run game
+    while (game.running())
+    {
+        game.handle_events();
+        game.update();
+        game.draw();
+    }
+    
+    // shutdown
+    game.cleanup();
+}
+/*
     // start up the window
     if (!init())
     {
         printf("Initialization unsuccessful!\n");
         return 1;
     }
-    
-    enum gamestate
-    {
-        main_menu,
-        pause_menu,
-        settings,
-        new_game,
-        load_game,
-        running,
-    };
     
     // clear render for initialization
     SDL_RenderClear(rend);
@@ -156,3 +160,4 @@ int main(void)
     // close the window
     close(rend, win, tile_set, cur_level->width, cur_level->height);
 }
+*/

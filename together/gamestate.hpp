@@ -1,31 +1,42 @@
 
-#ifndef scenes_hpp
-#define scenes_hpp
+#ifndef gamestate_hpp
+#define gamestate_hpp
 
 // using SDL and standard IO
 #include <stdio.h>
 #include <SDL2/SDL.h>
 #include <SDL2_image/SDL_image.h>
 
-const int MAIN_MENU = 0;
-const int SETTINGS = 1;
-const int PAUSE_MENU = 2;
-const int COLLECTION = 3;
-const int QUIT = 4;
-const int NEW_GAME = 5;
-const int LOAD_GAME = 6;
+class engine;
 
-class scene
+// include engine header
+#include "engine.hpp"
+#include "levelstate.hpp"
+
+class gamestate
 {
 public:
-    // init
-    scene();
+    // init and cleanup
+    virtual void init(engine* game) = 0;
+    virtual void cleanup() = 0;
     
-    // dealloc
-    ~scene();
+    // pause and resume
+    virtual void pause() = 0;
+    virtual void resume() = 0;
     
-    // render function
-    int render(int id);
+    // handling control of screen
+    virtual void handle_events(engine* game) = 0;
+    virtual void update(engine* game) = 0;
+    virtual void draw(engine* game) = 0;
+    
+    // changing states
+    void change_state(engine* game, gamestate* state)
+    {
+        game->change_state(state);
+    }
+    
+    // create class
+    gamestate() { };
 };
 
-#endif /* scenes_hpp */
+#endif /* gamestate_hpp */

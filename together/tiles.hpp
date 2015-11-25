@@ -7,6 +7,9 @@
 #include <SDL2/SDL.h>
 #include <SDL2_image/SDL_image.h>
 
+// include headers
+#include "textures.hpp"
+
 // tile dimensions!
 const int TILE_WIDTH = 60;
 const int TILE_WIDTH_TEX = 16;
@@ -63,7 +66,7 @@ public:
     tile(int x, int y, int tile_type);
     
     // render the tile on the screen
-    void render(int b_status, SDL_Rect* camera);
+    void render(int b_status, SDL_Rect* camera, SDL_Renderer* rend, texture* tile_tex);
     
     // get the tile type
     int get_type();
