@@ -9,6 +9,8 @@
 #include "characters.hpp"
 #include "initialization.hpp"
 #include "level_draw.hpp"
+#include "gamestate.hpp"
+#include "levelstate.hpp"
 
 camera::camera()
 {
@@ -22,7 +24,7 @@ camera::camera()
     display = {0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
 };
 
-void camera::move(level* level)
+void camera::move(int level_w, int level_h)
 {
     // update positions
     location.x += x_vel;
@@ -50,17 +52,17 @@ void camera::move(level* level)
     }
     
     // don't get too big (level dimensions)
-    if (location.w > level->width * TILE_WIDTH)
+    if (location.w > level_w * TILE_WIDTH)
     {
-        location.w = level->width * TILE_WIDTH;
+        location.w = level_w * TILE_WIDTH;
         location.x = location.w / 2;
         w_vel = 0;
         h_vel = 0;
         x_vel = 0;
     }
-    if (location.h > level->height * TILE_WIDTH)
+    if (location.h > level_h * TILE_WIDTH)
     {
-        location.h = level->height * TILE_WIDTH;
+        location.h = level_h * TILE_WIDTH;
         location.y = location.h / 2;
         h_vel = 0;
         w_vel = 0;
@@ -83,9 +85,9 @@ void camera::move(level* level)
         location.x = location.w / 2;
         x_vel = 0;
     }
-    if (location.x + location.w / 2 > level->width * TILE_WIDTH)
+    if (location.x + location.w / 2 > level_w * TILE_WIDTH)
     {
-        location.x = level->width * TILE_WIDTH - location.w / 2;
+        location.x = level_w * TILE_WIDTH - location.w / 2;
         x_vel = 0;
     }
     if (location.y - location.h / 2 < 0)
@@ -93,9 +95,9 @@ void camera::move(level* level)
         location.y = location.h / 2;
         y_vel = 0;
     }
-    if (location.y + location.h / 2 > level->height * TILE_WIDTH)
+    if (location.y + location.h / 2 > level_h * TILE_WIDTH)
     {
-        location.y = level->height * TILE_WIDTH - location.h / 2;
+        location.y = level_h * TILE_WIDTH - location.h / 2;
         y_vel = 0;
     }
     

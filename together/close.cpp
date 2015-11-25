@@ -16,15 +16,7 @@ extern texture tile_tex;
 // close the window
 bool close(SDL_Renderer* rend, SDL_Window* win, tile* tiles[], int level_w, int level_h)
 {
-    // iterate over all tiles and delete them all
-    for (int i = 0; i < level_h * level_w; i++)
-    {
-        if (tiles[i] == NULL)
-        {
-            delete tiles[i];
-            tiles[i] = NULL;
-        }
-    }
+    
     
     // free textures
     b_char_tex.free();

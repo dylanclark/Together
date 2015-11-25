@@ -14,6 +14,9 @@
 extern bool b_active;
 extern bool w_active;
 
+// max level size
+const int MAX_SIZE = 50 * 50;
+
 // level class
 class level
 {

@@ -334,7 +334,7 @@ void dot::move(tile* tiles[], int level_w, int level_h)
     }
 }
 
-void dot::render(SDL_Rect* camera)
+void dot::render(SDL_Rect* camera, SDL_Renderer* rend)
 {
     SDL_Rect active_clip = {0, 0, 16, 16};
     SDL_Rect inactive_clip = {16 * 9, 0, 16, 16};
@@ -342,10 +342,10 @@ void dot::render(SDL_Rect* camera)
     switch (status)
     {
         case CHAR_ACTIVE:
-            tex.render(col_rect.x, col_rect.y, &active_clip, camera);
+            tex.render(col_rect.x, col_rect.y, &active_clip, camera, rend);
             break;
         case CHAR_INACTIVE:
-            tex.render(col_rect.x, col_rect.y, &inactive_clip, camera);
+            tex.render(col_rect.x, col_rect.y, &inactive_clip, camera, rend);
             break;
         case CHAR_INACTIVATE:
         {
@@ -356,7 +356,7 @@ void dot::render(SDL_Rect* camera)
             SDL_Rect inactivate_clip = {16 * frame, 0, 16, 16};
             
             // render that mofo
-            tex.render(col_rect.x, col_rect.y, &inactivate_clip, camera);
+            tex.render(col_rect.x, col_rect.y, &inactivate_clip, camera, rend);
             
             // change the status if animation is over!
             if (frame == ANIMATION_LENGTH - 1)
@@ -375,7 +375,7 @@ void dot::render(SDL_Rect* camera)
             SDL_Rect activate_clip = {16 * (frame + 8), 0, 16, 16};
             
             // render that mofo
-            tex.render(col_rect.x, col_rect.y, &activate_clip, camera);
+            tex.render(col_rect.x, col_rect.y, &activate_clip, camera, rend);
             
             // change the status if animation is over!
             if (frame == ANIMATION_LENGTH - 1)

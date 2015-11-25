@@ -95,7 +95,7 @@ SDL_Rect tile::get_col_rect()
     return col_rect;
 }
 
-void tile::render(int b_status, SDL_Rect* camera)
+void tile::render(int b_status, SDL_Rect* camera, SDL_Renderer* rend, texture* tile_tex)
 {
     if (type >= B_BACK && type <= B_CORNER_TR)
         status = b_status;
@@ -109,11 +109,11 @@ void tile::render(int b_status, SDL_Rect* camera)
     switch (status)
     {
         case TILE_ACTIVE:
-            tile_tex.render_tile(col_rect.x, col_rect.y, &tile_clips[type], &active_clip, camera);
+            tile_tex->render_tile(col_rect.x, col_rect.y, &tile_clips[type], &active_clip, camera, rend);
             frame = 0;
             break;
         case TILE_INACTIVE:
-            tile_tex.render_tile(col_rect.x, col_rect.y, &tile_clips[type], &inactive_clip, camera);
+            tile_tex->render_tile(col_rect.x, col_rect.y, &tile_clips[type], &inactive_clip, camera, rend);
             frame = TILE_FRAMES - 1;
             break;
         case TILE_INACTIVATE:
@@ -132,7 +132,7 @@ void tile::render(int b_status, SDL_Rect* camera)
             SDL_Rect inactivate_clip = {TILE_WIDTH_TEX * frame, 0, TILE_WIDTH_TEX, TILE_WIDTH_TEX};
             
             // render that mofo
-            tile_tex.render_tile(col_rect.x, col_rect.y, &tile_clips[type], &inactivate_clip, camera);
+            tile_tex->render_tile(col_rect.x, col_rect.y, &tile_clips[type], &inactivate_clip, camera, rend);
             
             // change the status if animation is over!
             if (frame == TILE_FRAMES - 1)
@@ -157,7 +157,7 @@ void tile::render(int b_status, SDL_Rect* camera)
             SDL_Rect activate_clip = {TILE_WIDTH_TEX * frame, 0, TILE_WIDTH_TEX, TILE_WIDTH_TEX};
             
             // render that mofo
-            tile_tex.render_tile(col_rect.x, col_rect.y, &tile_clips[type], &activate_clip, camera);
+            tile_tex->render_tile(col_rect.x, col_rect.y, &tile_clips[type], &activate_clip, camera, rend);
             
             // change the status if animation is over!
             if (frame == 1)

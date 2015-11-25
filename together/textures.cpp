@@ -11,9 +11,6 @@
 #include "tiles.hpp"
 #include "initialization.hpp"
 
-// renderer re-initialization
-extern SDL_Renderer* rend;
-
 // initialize
 texture::texture()
 {
@@ -28,7 +25,7 @@ texture::~texture()
     free();
 };
 
-bool texture::load_from_file(std::string path)
+bool texture::load_from_file(std::string path, SDL_Renderer* rend)
 {
     // ditch the last texture
     free();
@@ -63,7 +60,7 @@ bool texture::load_from_file(std::string path)
     return true;
 };
 
-bool texture::load_tile_sheet(std::string path)
+bool texture::load_tile_sheet(std::string path, SDL_Renderer* rend)
 {
     // ditch the last texture
     free();
@@ -110,7 +107,7 @@ void texture::free()
     }
 }
 
-void texture::render(int x, int y, SDL_Rect* clip, SDL_Rect* camera)
+void texture::render(int x, int y, SDL_Rect* clip, SDL_Rect* camera, SDL_Renderer* rend)
 {
     int render_x = (x - camera->x) / ( (float) camera->w / (float) SCREEN_WIDTH);
     int render_y = (y - camera->y) / ((float) camera->h / (float) SCREEN_HEIGHT);
@@ -124,7 +121,7 @@ void texture::render(int x, int y, SDL_Rect* clip, SDL_Rect* camera)
     SDL_RenderCopy(rend, tex, clip, &render_rect);
 };
 
-void texture::render_tile(int x, int y, SDL_Rect* type_clip, SDL_Rect* active_clip, SDL_Rect* camera)
+void texture::render_tile(int x, int y, SDL_Rect* type_clip, SDL_Rect* active_clip, SDL_Rect* camera, SDL_Renderer* rend)
 {
     int render_x = (x - camera->x) / ((float) camera->w / (float) SCREEN_WIDTH);
     int render_y = (y - camera->y) / ((float) camera->h / (float) SCREEN_HEIGHT);
