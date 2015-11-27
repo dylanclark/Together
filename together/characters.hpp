@@ -10,6 +10,7 @@
 // include header files
 #include "textures.hpp"
 #include "tiles.hpp"
+#include "level_end.hpp"
 #include "camera.hpp"
 
 // dot status constants
@@ -71,6 +72,9 @@ public:
     
     // jumps
     int jump;
+    
+    // end of level animation
+    void completed(int width, int height, SDL_Rect* end_rect);
     
 private:
     

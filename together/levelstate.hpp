@@ -13,6 +13,7 @@
 #include "tiles.hpp"
 #include "characters.hpp"
 #include "camera.hpp"
+#include "level_end.hpp"
 
 class levelstate
 {
@@ -31,10 +32,16 @@ public:
     dot b_char;
     dot w_char;
     
+    // objects
+    level_end b_level_end;
+    level_end w_level_end;
+    
     // textures
     texture b_char_tex;
     texture w_char_tex;
     texture tile_tex;
+    texture b_end_tex;
+    texture w_end_tex;
     
     // tile
     tile* tileset[MAX_SIZE];

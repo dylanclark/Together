@@ -15,17 +15,17 @@
 
 // include all headers
 #include "tiles.hpp"
-#include "environment.hpp"
+#include "level_end.hpp"
 #include "initialization.hpp"
 #include "characters.hpp"
 #include "collisions.hpp"
 #include "level_draw.hpp"
-#include "close.hpp"
 #include "textures.hpp"
 #include "camera.hpp"
 #include "engine.hpp"
 #include "gamestate.hpp"
 #include "level1_state.hpp"
+#include "level2_state.hpp"
 
 // Let's do this.
 int main(void)

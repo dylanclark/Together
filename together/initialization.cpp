@@ -19,6 +19,8 @@ SDL_Renderer* rend;
 texture tile_tex;
 texture b_char_tex;
 texture w_char_tex;
+texture b_level_end;
+texture w_level_end;
 
 /*bool init()
 {

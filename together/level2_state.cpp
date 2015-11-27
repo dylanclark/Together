@@ -5,7 +5,6 @@
 #include <SDL2_image/SDL_image.h>
 
 // include headers
-#include "level1_state.hpp"
 #include "level2_state.hpp"
 #include "characters.hpp"
 #include "tiles.hpp"
@@ -13,9 +12,9 @@
 #include "gamestate.hpp"
 #include "engine.hpp"
 
-level1_state level1_state::level1_state_inst;
+level2_state level2_state::level2_state_inst;
 
-void level1_state::init(engine* game)
+void level2_state::init(engine* game)
 {
     // LOAD ALL TEXTURES
     if (!b_char_tex.load_tile_sheet("textures/black/b_char.png", game->rend))
@@ -48,11 +47,11 @@ void level1_state::init(engine* game)
     width = 44;
     height = 18;
     
-    path = "levels/level_001.map";
+    path = "levels/level_002.map";
     
     if (!set_tiles(tileset, path, width, height))
     {
-        printf("Failed to load level 1 map!\n");
+        printf("Failed to load level 2 map!\n");
         return;
     }
     
@@ -81,7 +80,7 @@ void level1_state::init(engine* game)
     w_level_end.col_rect.y = 420;
 }
 
-void level1_state::handle_events(engine *game)
+void level2_state::handle_events(engine *game)
 {
     // event handler
     SDL_Event event;
@@ -106,7 +105,7 @@ void level1_state::handle_events(engine *game)
     }
 }
 
-void level1_state::update(engine* game)
+void level2_state::update(engine* game)
 {
     // clear the window
     SDL_RenderClear(game->rend);
@@ -125,17 +124,19 @@ void level1_state::update(engine* game)
     // if both are on level end object
     if(b_level_end.check(b_char.col_rect) && w_level_end.check(w_char.col_rect))
     {
+        
         // do end animation
         b_char.completed(width, height, &b_level_end.col_rect);
         w_char.completed(width, height, &w_level_end.col_rect);
         
-        // change state to level 2
-        change_state(game, new level2_state);
+        // change state to level 3!
+        return;
+        
     }
     
 }
 
-void level1_state::draw(engine* game)
+void level2_state::draw(engine* game)
 {
     // draw stuff to the screen!
     for (int i = 0; i < (width * height); i++)
@@ -150,7 +151,7 @@ void level1_state::draw(engine* game)
     SDL_RenderPresent(game->rend);
 }
 
-void level1_state::cleanup()
+void level2_state::cleanup()
 {
     // iterate over all tiles and delete them all
     for (int i = 0; i < width * height; i++)
@@ -163,12 +164,12 @@ void level1_state::cleanup()
     }
 }
 
-void level1_state::pause()
+void level2_state::pause()
 {
     return;
 }
 
-void level1_state::resume()
+void level2_state::resume()
 {
     return;
 }
