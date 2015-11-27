@@ -7,25 +7,24 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		EF0CE3B11BEFCDC20080692E /* close.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EF0CE3AF1BEFCDC20080692E /* close.cpp */; };
 		EF0CE3B41BEFD8C50080692E /* textures.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EF0CE3B21BEFD8C50080692E /* textures.cpp */; };
-		EF27A69E1C04F48F00459C32 /* engine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EF27A69C1C04F48F00459C32 /* engine.cpp */; settings = {ASSET_TAGS = (); }; };
-		EF27A6A11C0506E800459C32 /* level1_state.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EF27A69F1C0506E800459C32 /* level1_state.cpp */; settings = {ASSET_TAGS = (); }; };
-		EF27A6AC1C052EC200459C32 /* levelstate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EF27A6AA1C052EC200459C32 /* levelstate.cpp */; settings = {ASSET_TAGS = (); }; };
-		EF68FE7E1C03FD1600E2030D /* start.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EF68FE7C1C03FD1600E2030D /* start.cpp */; settings = {ASSET_TAGS = (); }; };
+		EF27A69E1C04F48F00459C32 /* engine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EF27A69C1C04F48F00459C32 /* engine.cpp */; };
+		EF27A6A11C0506E800459C32 /* level1_state.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EF27A69F1C0506E800459C32 /* level1_state.cpp */; };
+		EF27A6AC1C052EC200459C32 /* levelstate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EF27A6AA1C052EC200459C32 /* levelstate.cpp */; };
 		EF8252831BF1098A0003EF9E /* SDL2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EF8252821BF1098A0003EF9E /* SDL2.framework */; };
 		EF8252851BF109940003EF9E /* SDL2_image.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EF8252841BF109940003EF9E /* SDL2_image.framework */; };
-		EF8252881BF11C7E0003EF9E /* level_load.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EF8252861BF11C7E0003EF9E /* level_load.cpp */; };
 		EF8252901BF121490003EF9E /* levels in CopyFiles */ = {isa = PBXBuildFile; fileRef = EF0808611BF0504300338AB0 /* levels */; };
 		EF8252911BF1214D0003EF9E /* textures in CopyFiles */ = {isa = PBXBuildFile; fileRef = EFBCA0CC1BED21BF005D56CA /* textures */; };
-		EF8252941BF3201C0003EF9E /* camera.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EF8252921BF3201C0003EF9E /* camera.cpp */; settings = {ASSET_TAGS = (); }; };
+		EF8252941BF3201C0003EF9E /* camera.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EF8252921BF3201C0003EF9E /* camera.cpp */; };
 		EFBCA0BE1BED17FB005D56CA /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EFBCA0BD1BED17FB005D56CA /* main.cpp */; };
 		EFBCA0D21BED5031005D56CA /* level_draw.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EFBCA0D01BED5031005D56CA /* level_draw.cpp */; };
-		EFBCA0D81BED5DD1005D56CA /* environment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EFBCA0D61BED5DD1005D56CA /* environment.cpp */; };
 		EFBCA0DB1BED5DE8005D56CA /* collisions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EFBCA0D91BED5DE8005D56CA /* collisions.cpp */; };
 		EFBCA0F71BEE8C89005D56CA /* tiles.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EFBCA0F51BEE8C89005D56CA /* tiles.cpp */; };
 		EFBCA0FA1BEE8CD2005D56CA /* characters.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EFBCA0F81BEE8CD2005D56CA /* characters.cpp */; };
 		EFBCA0FD1BEE8EF1005D56CA /* initialization.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EFBCA0FB1BEE8EF1005D56CA /* initialization.cpp */; };
+		FC4DA5C41C07C0A50089ABEF /* FreeType.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FC4DA5C31C07C0A50089ABEF /* FreeType.framework */; };
+		FC8D8AE71C081B9700A1C6F7 /* level2_state.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FC8D8AE61C081B9700A1C6F7 /* level2_state.cpp */; };
+		FC8D8AEC1C0825B900A1C6F7 /* level_end.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FC8D8AEA1C0825B900A1C6F7 /* level_end.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -44,8 +43,6 @@
 
 /* Begin PBXFileReference section */
 		EF0808611BF0504300338AB0 /* levels */ = {isa = PBXFileReference; lastKnownFileType = folder; path = levels; sourceTree = "<group>"; };
-		EF0CE3AF1BEFCDC20080692E /* close.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = close.cpp; sourceTree = "<group>"; };
-		EF0CE3B01BEFCDC20080692E /* close.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = close.hpp; sourceTree = "<group>"; };
 		EF0CE3B21BEFD8C50080692E /* textures.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = textures.cpp; sourceTree = "<group>"; };
 		EF0CE3B31BEFD8C50080692E /* textures.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = textures.hpp; sourceTree = "<group>"; };
 		EF27A69C1C04F48F00459C32 /* engine.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = engine.cpp; sourceTree = "<group>"; };
@@ -54,14 +51,10 @@
 		EF27A6A01C0506E800459C32 /* level1_state.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = level1_state.hpp; sourceTree = "<group>"; };
 		EF27A6AA1C052EC200459C32 /* levelstate.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = levelstate.cpp; sourceTree = "<group>"; };
 		EF27A6AB1C052EC200459C32 /* levelstate.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = levelstate.hpp; sourceTree = "<group>"; };
-		EF68FE7C1C03FD1600E2030D /* start.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = start.cpp; sourceTree = "<group>"; };
-		EF68FE7D1C03FD1600E2030D /* start.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = start.hpp; sourceTree = "<group>"; };
 		EF68FE801C04003200E2030D /* gamestate.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = gamestate.hpp; sourceTree = "<group>"; };
 		EF69B9121BFA83D400F5DAC2 /* TODO */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = TODO; sourceTree = "<group>"; };
 		EF8252821BF1098A0003EF9E /* SDL2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL2.framework; path = ../../../../../../Library/Frameworks/SDL2.framework; sourceTree = "<group>"; };
 		EF8252841BF109940003EF9E /* SDL2_image.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL2_image.framework; path = ../../../../../../Library/Frameworks/SDL2_image.framework; sourceTree = "<group>"; };
-		EF8252861BF11C7E0003EF9E /* level_load.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = level_load.cpp; sourceTree = "<group>"; };
-		EF8252871BF11C7E0003EF9E /* level_load.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = level_load.hpp; sourceTree = "<group>"; };
 		EF8252921BF3201C0003EF9E /* camera.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = camera.cpp; sourceTree = "<group>"; };
 		EF8252931BF3201C0003EF9E /* camera.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = camera.hpp; sourceTree = "<group>"; };
 		EFBCA0BA1BED17FB005D56CA /* together */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = together; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -69,8 +62,6 @@
 		EFBCA0CC1BED21BF005D56CA /* textures */ = {isa = PBXFileReference; lastKnownFileType = folder; path = textures; sourceTree = "<group>"; };
 		EFBCA0D01BED5031005D56CA /* level_draw.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = level_draw.cpp; sourceTree = "<group>"; };
 		EFBCA0D11BED5031005D56CA /* level_draw.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = level_draw.hpp; sourceTree = "<group>"; };
-		EFBCA0D61BED5DD1005D56CA /* environment.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = environment.cpp; sourceTree = "<group>"; };
-		EFBCA0D71BED5DD1005D56CA /* environment.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = environment.hpp; sourceTree = "<group>"; };
 		EFBCA0D91BED5DE8005D56CA /* collisions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = collisions.cpp; sourceTree = "<group>"; };
 		EFBCA0DA1BED5DE8005D56CA /* collisions.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = collisions.hpp; sourceTree = "<group>"; };
 		EFBCA0F51BEE8C89005D56CA /* tiles.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = tiles.cpp; sourceTree = "<group>"; };
@@ -79,6 +70,11 @@
 		EFBCA0F91BEE8CD2005D56CA /* characters.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = characters.hpp; sourceTree = "<group>"; };
 		EFBCA0FB1BEE8EF1005D56CA /* initialization.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = initialization.cpp; sourceTree = "<group>"; };
 		EFBCA0FC1BEE8EF1005D56CA /* initialization.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = initialization.hpp; sourceTree = "<group>"; };
+		FC4DA5C31C07C0A50089ABEF /* FreeType.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FreeType.framework; path = ../../../../../Library/Frameworks/FreeType.framework; sourceTree = "<group>"; };
+		FC8D8AE61C081B9700A1C6F7 /* level2_state.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = level2_state.cpp; sourceTree = "<group>"; };
+		FC8D8AE91C081C6200A1C6F7 /* level2_state.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = level2_state.hpp; sourceTree = "<group>"; };
+		FC8D8AEA1C0825B900A1C6F7 /* level_end.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = level_end.cpp; sourceTree = "<group>"; };
+		FC8D8AEB1C0825B900A1C6F7 /* level_end.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = level_end.hpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -86,6 +82,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FC4DA5C41C07C0A50089ABEF /* FreeType.framework in Frameworks */,
 				EF8252851BF109940003EF9E /* SDL2_image.framework in Frameworks */,
 				EF8252831BF1098A0003EF9E /* SDL2.framework in Frameworks */,
 			);
@@ -133,6 +130,7 @@
 			children = (
 				EF27A6AB1C052EC200459C32 /* levelstate.hpp */,
 				EF27A6A01C0506E800459C32 /* level1_state.hpp */,
+				FC8D8AE91C081C6200A1C6F7 /* level2_state.hpp */,
 			);
 			name = head;
 			sourceTree = "<group>";
@@ -142,6 +140,7 @@
 			children = (
 				EF27A6AA1C052EC200459C32 /* levelstate.cpp */,
 				EF27A69F1C0506E800459C32 /* level1_state.cpp */,
+				FC8D8AE61C081B9700A1C6F7 /* level2_state.cpp */,
 			);
 			name = src;
 			sourceTree = "<group>";
@@ -151,16 +150,13 @@
 			children = (
 				EF27A69C1C04F48F00459C32 /* engine.cpp */,
 				EF8252921BF3201C0003EF9E /* camera.cpp */,
-				EF68FE7C1C03FD1600E2030D /* start.cpp */,
 				EFBCA0F51BEE8C89005D56CA /* tiles.cpp */,
 				EFBCA0F81BEE8CD2005D56CA /* characters.cpp */,
-				EF0CE3AF1BEFCDC20080692E /* close.cpp */,
-				EF8252861BF11C7E0003EF9E /* level_load.cpp */,
 				EF0CE3B21BEFD8C50080692E /* textures.cpp */,
 				EFBCA0FB1BEE8EF1005D56CA /* initialization.cpp */,
-				EFBCA0D61BED5DD1005D56CA /* environment.cpp */,
 				EFBCA0D91BED5DE8005D56CA /* collisions.cpp */,
 				EFBCA0D01BED5031005D56CA /* level_draw.cpp */,
+				FC8D8AEA1C0825B900A1C6F7 /* level_end.cpp */,
 			);
 			name = src;
 			sourceTree = "<group>";
@@ -176,6 +172,7 @@
 		EFBCA0B11BED17FB005D56CA = {
 			isa = PBXGroup;
 			children = (
+				FC4DA5C31C07C0A50089ABEF /* FreeType.framework */,
 				EF8252841BF109940003EF9E /* SDL2_image.framework */,
 				EF8252821BF1098A0003EF9E /* SDL2.framework */,
 				EFBCA0BC1BED17FB005D56CA /* project */,
@@ -210,15 +207,12 @@
 			isa = PBXGroup;
 			children = (
 				EFBCA0F61BEE8C89005D56CA /* tiles.hpp */,
-				EFBCA0D71BED5DD1005D56CA /* environment.hpp */,
+				FC8D8AEB1C0825B900A1C6F7 /* level_end.hpp */,
 				EFBCA0FC1BEE8EF1005D56CA /* initialization.hpp */,
 				EF0CE3B31BEFD8C50080692E /* textures.hpp */,
 				EF8252931BF3201C0003EF9E /* camera.hpp */,
-				EF8252871BF11C7E0003EF9E /* level_load.hpp */,
-				EF0CE3B01BEFCDC20080692E /* close.hpp */,
 				EFBCA0DA1BED5DE8005D56CA /* collisions.hpp */,
 				EFBCA0F91BEE8CD2005D56CA /* characters.hpp */,
-				EF68FE7D1C03FD1600E2030D /* start.hpp */,
 				EF27A69D1C04F48F00459C32 /* engine.hpp */,
 				EFBCA0D11BED5031005D56CA /* level_draw.hpp */,
 			);
@@ -281,18 +275,16 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				EF0CE3B11BEFCDC20080692E /* close.cpp in Sources */,
 				EFBCA0D21BED5031005D56CA /* level_draw.cpp in Sources */,
 				EF0CE3B41BEFD8C50080692E /* textures.cpp in Sources */,
 				EF8252941BF3201C0003EF9E /* camera.cpp in Sources */,
-				EF68FE7E1C03FD1600E2030D /* start.cpp in Sources */,
 				EFBCA0F71BEE8C89005D56CA /* tiles.cpp in Sources */,
 				EFBCA0DB1BED5DE8005D56CA /* collisions.cpp in Sources */,
 				EFBCA0FD1BEE8EF1005D56CA /* initialization.cpp in Sources */,
 				EF27A6AC1C052EC200459C32 /* levelstate.cpp in Sources */,
-				EF8252881BF11C7E0003EF9E /* level_load.cpp in Sources */,
+				FC8D8AEC1C0825B900A1C6F7 /* level_end.cpp in Sources */,
 				EF27A69E1C04F48F00459C32 /* engine.cpp in Sources */,
-				EFBCA0D81BED5DD1005D56CA /* environment.cpp in Sources */,
+				FC8D8AE71C081B9700A1C6F7 /* level2_state.cpp in Sources */,
 				EF27A6A11C0506E800459C32 /* level1_state.cpp in Sources */,
 				EFBCA0FA1BEE8CD2005D56CA /* characters.cpp in Sources */,
 				EFBCA0BE1BED17FB005D56CA /* main.cpp in Sources */,

@@ -7,11 +7,12 @@
 // include header file
 #include "characters.hpp"
 #include "initialization.hpp"
-#include "close.hpp"
 #include "textures.hpp"
 #include "collisions.hpp"
 #include "tiles.hpp"
 #include "camera.hpp"
+#include "level_end.hpp"
+
 
 // reinitialize character textures
 extern texture b_char_tex;
@@ -387,3 +388,22 @@ void dot::render(SDL_Rect* camera, SDL_Renderer* rend)
         }
     }
 };
+
+// code for post-level animation
+void dot::completed(int width,int height, SDL_Rect* end_rect)
+{
+    // make them both big
+    if(!TILE_ACTIVE)
+        status = TILE_ACTIVE;
+    
+    // center dot on level-end object
+    while (col_rect.x < end_rect->x )
+        col_rect.x++;
+    while (col_rect.x > end_rect->x )
+        col_rect.x--;
+    
+    // make it jump (input actual animation here)
+    black ? y_vel -= DOT_VEL : y_vel += DOT_VEL;
+    
+    return;
+}

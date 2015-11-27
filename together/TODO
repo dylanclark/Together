@@ -20,7 +20,7 @@
  OBJECTS
 ---------
 
-- Level end.
+- Level end. 
 - Pushable crates (three sizes: 4x2, 4x1, 2x2)
 - Buttons (two types: permanent, temporary)
 - Waterfall / holes.
