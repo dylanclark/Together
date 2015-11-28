@@ -27,9 +27,15 @@ tile::tile(int x, int y, int tile_type)
     
     // set activity
     if (type >= 0 && type <= 14)
+    {
         status = TILE_ACTIVE;
+        frame = 0;
+    }
     else if (type >= 15 && type <= 29)
+    {
         status = TILE_INACTIVE;
+        frame = TILE_FRAMES - 1;
+    }
     // animation DEBUG
     animating = false;
     
@@ -118,7 +124,6 @@ void tile::render(int b_status, SDL_Rect* camera, SDL_Renderer* rend, texture* t
             break;
         case TILE_INACTIVATE:
         {
-            
             // start animation (if necessary)
             if (!animating && frame == 0)
             {

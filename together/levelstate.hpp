@@ -14,6 +14,8 @@
 #include "characters.hpp"
 #include "camera.hpp"
 
+class crate;
+
 class levelstate
 {
 public:
@@ -31,13 +33,23 @@ public:
     dot b_char;
     dot w_char;
     
+    // shift bool
+    bool shiftable;
+    
     // textures
     texture b_char_tex;
     texture w_char_tex;
     texture tile_tex;
+    texture crate_tex_four_by_two;
+    texture crate_tex_four_by_one;
+    texture crate_tex_three_by_two;
+    texture crate_tex_two_by_two;
     
-    // tile
+    // tileset
     tile* tileset[MAX_SIZE];
+    
+    // crate array
+    std::vector<crate*> crates;
     
     // level file path
     std::string path;

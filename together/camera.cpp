@@ -127,24 +127,24 @@ void camera::track(SDL_Rect* b_char, SDL_Rect* w_char)
     // x bounds
     if (b_char->x >= w_char->x)
     {
-        max_x = b_char->x;
-        min_x = w_char->x;
+        max_x = b_char->x + b_char->w / 2;
+        min_x = w_char->x + w_char->w / 2;
     }
     else if (b_char->x < w_char->x)
     {
-        max_x = w_char->x;
-        min_x = b_char->x;
+        max_x = w_char->x + w_char->w / 2;
+        min_x = b_char->x + b_char->w / 2;
     }
     // y bounds
     if (b_char->y >= w_char->y)
     {
-        max_y = b_char->y + b_char->h;
-        min_y = w_char->y + w_char->h;
+        max_y = b_char->y + b_char->h / 2;
+        min_y = w_char->y + w_char->h / 2;
     }
     else if (b_char->y < w_char->y)
     {
-        max_y = w_char->y + w_char->h;
-        min_y = b_char->y + b_char->h;
+        max_y = w_char->y + w_char->h / 2;
+        min_y = b_char->y + b_char->h / 2;
     }
     
     // ideal camera position

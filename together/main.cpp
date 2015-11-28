@@ -1,11 +1,9 @@
 /*
- *
  *      "together" is a game by Fraser Weist and Dylan Clark.
  *
  *      They're both pretty lame.
  *      But rock socks. 
  *      Doubt it.
- *
  */
 
 // using SDL and standard IO
@@ -15,12 +13,10 @@
 
 // include all headers
 #include "tiles.hpp"
-#include "environment.hpp"
 #include "initialization.hpp"
 #include "characters.hpp"
 #include "collisions.hpp"
 #include "level_draw.hpp"
-#include "close.hpp"
 #include "textures.hpp"
 #include "camera.hpp"
 #include "engine.hpp"

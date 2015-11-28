@@ -230,8 +230,3 @@ void close_tiles(tile* tiles[])
 {
     
 }
-
-void draw_level(level* cur_level)
-{
-    
-}

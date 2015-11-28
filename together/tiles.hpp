@@ -79,6 +79,9 @@ public:
     bool wall_b, wall_w;
     bool ceiling_b, ceiling_w;
     
+    // tile status
+    int status;
+    
 private:
     // collision rectangle
     SDL_Rect col_rect;
@@ -88,9 +91,6 @@ private:
     
     // frame of animation
     int frame;
-    
-    // tile status
-    int status;
     
     // animation bool
     bool animating;

@@ -21,7 +21,7 @@ public:
     void free();
     
     // load the texture at the specified path
-    bool load_from_file(std::string path, SDL_Renderer* rend);
+    bool load_object(int w, int h, std::string path, SDL_Renderer* rend);
     
     // load a tile
     bool load_tile_sheet(std::string path, SDL_Renderer* rend);
