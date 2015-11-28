@@ -436,7 +436,7 @@ bool dot::crate_col(levelstate* level)
                         col_rect.y += repos.y;
                         y_vel = 0;
                         
-                        level->shiftable = false;
+                        level->shiftable = true;
                         
                         // jump! (if you want)
                         if (up && status == CHAR_ACTIVE)
@@ -488,7 +488,7 @@ bool dot::crate_col(levelstate* level)
                         col_rect.y += repos.y;
                         y_vel = 0;
                         
-                        level->shiftable = false;
+                        level->shiftable = true;
                         
                         // jump! (if you want)
                         if (up && status == CHAR_ACTIVE)
