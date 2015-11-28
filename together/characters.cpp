@@ -165,6 +165,28 @@ void dot::move(levelstate* level)
     {
         level->shiftable = false;
     }
+    
+    // check edges
+    if (col_rect.x < 0)
+    {
+        col_rect.x = 0;
+        x_vel = 0;
+    }
+    if (col_rect.y < 0)
+    {
+        col_rect.y = 0;
+        y_vel = 0;
+    }
+    if (col_rect.x + col_rect.w > level->width*TILE_WIDTH)
+    {
+        col_rect.x = level->width*TILE_WIDTH - col_rect.w;
+        x_vel = 0;
+    }
+    if (col_rect.y + col_rect.h > level->height*TILE_WIDTH)
+    {
+        col_rect.y = level->height*TILE_WIDTH - col_rect.h;
+        y_vel = 0;
+    }
 }
 
 bool dot::tile_col(tile* tileset[], int size)

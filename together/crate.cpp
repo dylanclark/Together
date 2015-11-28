@@ -466,16 +466,16 @@ int crate::tile_type_left(int type)
             new_type = black ? W_CEILINGEDGE_R : W_BACK;
             break;
         case W_CORNER_BL:
-            new_type = black ? W_BACK : W_BACK;
+            new_type = black ? W_WALL_R : W_BACK;
             break;
         case W_CORNER_BR:
-            new_type = black ? W_BACK : W_BACK;
+            new_type = black ? W_WALL_R : W_BACK;
             break;
         case W_CORNER_TL:
-            new_type = black ? W_BACK : W_BACK;
+            new_type = black ? W_WALL_R : W_BACK;
             break;
         case W_CORNER_TR:
-            new_type = black ? W_BACK : W_BACK;
+            new_type = black ? W_WALL_R : W_BACK;
             break;
         default:
             new_type = black ? W_BACK : B_BACK;
@@ -563,16 +563,16 @@ int crate::tile_type_right(int type)
             new_type = black ? W_FLOOREDGE_R : W_BACK;
             break;
         case W_CORNER_BL:
-            new_type = black ? W_BACK : W_BACK;
+            new_type = black ? W_WALL_L : W_BACK;
             break;
         case W_CORNER_BR:
-            new_type = black ? W_BACK : W_BACK;
+            new_type = black ? W_WALL_L : W_BACK;
             break;
         case W_CORNER_TL:
-            new_type = black ? W_BACK : W_BACK;
+            new_type = black ? W_WALL_L : W_BACK;
             break;
         case W_CORNER_TR:
-            new_type = black ? W_BACK : W_BACK;
+            new_type = black ? W_WALL_L : W_BACK;
             break;
         default:
             new_type = black ? W_BACK : B_BACK;
