@@ -19,10 +19,6 @@
 #include "crate.hpp"
 >>>>>>> 2e8ee63... Implemented movable crates!!!
 
-// reinitialize character textures
-extern texture b_char_tex;
-extern texture w_char_tex;
-
 dot::dot()
 {
     // initialize velocity
