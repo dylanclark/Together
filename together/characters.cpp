@@ -14,10 +14,6 @@
 #include "levelstate.hpp"
 #include "crate.hpp"
 
-// reinitialize character textures
-extern texture b_char_tex;
-extern texture w_char_tex;
-
 dot::dot()
 {
     // initialize velocity

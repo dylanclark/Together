@@ -13,8 +13,7 @@
 - Alterable environment (see objects).
 - Menu screen.
 - Pause screen.
-- "Cutscenes"
-- Restart button.
+- "Cutscenes".
 
 ---------
  OBJECTS
@@ -45,6 +44,7 @@
  FINISHED
 ----------
 
+- Restart button.
 - Pushable crates.
 - Engine / gamestate system.
 - Collision detection.
