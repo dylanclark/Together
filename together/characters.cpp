@@ -292,7 +292,7 @@ void dot::move(tile* tiles[], int level_w, int level_h)
                     y_vel = -1;
                 }
                 
-                // black ceiling edge
+                // white ceiling edge
                 else if (tiles[i]->ceiling_w && tiles[i]->wall_w)
                 {
                     // determine which is smaller, and use that one!
@@ -389,7 +389,7 @@ void dot::render(SDL_Rect* camera, SDL_Renderer* rend)
     }
 };
 
-// code for post-level animation
+// code for post-level animation (must be followed by level change or will mess shit up!)
 void dot::completed(int width,int height, SDL_Rect* end_rect)
 {
     // make them both big

@@ -25,6 +25,7 @@
 #include "engine.hpp"
 #include "gamestate.hpp"
 #include "level1_state.hpp"
+#include "button.hpp"
 #include "level2_state.hpp"
 
 // Let's do this.
