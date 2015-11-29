@@ -11,6 +11,7 @@
 #include "tiles.hpp"
 #include "level_end.hpp"
 #include "gamestate.hpp"
+#include "button.hpp"
 #include "engine.hpp"
 
 level1_state level1_state::level1_state_inst;
@@ -41,6 +42,16 @@ void level1_state::init(engine* game)
     if (!w_end_tex.load_tile_sheet("textures/white/level_end/white_end.png", game->rend))
     {
         printf("Failed to load  white level end texture!\n");
+        return;
+    }
+    if(!b_button_tex.load_tile_sheet("textures/black/button/b_button.png", game->rend))
+    {
+        printf("Failed to load black button texture!\n");
+        return;
+    }
+    if(!w_button_tex.load_tile_sheet("textures/white/button/w_button.png", game->rend))
+    {
+        printf("Failed to load white button texture!\n");
         return;
     }
     
@@ -79,6 +90,22 @@ void level1_state::init(engine* game)
     w_level_end.tex = w_end_tex;
     w_level_end.col_rect.x = 1000;
     w_level_end.col_rect.y = 420;
+    
+    // initialize black button
+    //b_button.tex = b_button_tex;
+    //b_button.col_rect.x = 1200;
+    //b_button.col_rect.y = 360;
+    //b_button.activated = false;
+    ///b_button.single = false;
+//b_button.black = true;
+
+    // initialize white button
+    //w_button.tex = w_button_tex;
+    //w_button.col_rect.x = 1300;
+    //w_button.col_rect.y = 420;
+    //b_button.activated = false;
+    //b_button.single = false;
+   // b_button.black = false;
 }
 
 void level1_state::handle_events(engine *game)
@@ -133,6 +160,21 @@ void level1_state::update(engine* game)
         change_state(game, new level2_state);
     }
     
+    // if black button is activated
+    //if(b_button.check(b_char.col_rect))
+    //{
+        // activate
+        //b_button.activated = true;
+        
+        //printf("Active");
+    //}
+    // if white button is actited
+    //if(w_button.check(w_char.col_rect))
+    //{
+        // activate
+       // w_button.activated = true;
+    //}
+    
 }
 
 void level1_state::draw(engine* game)
@@ -147,6 +189,8 @@ void level1_state::draw(engine* game)
     w_char.render(&camera.display, game->rend);
     b_level_end.render(&camera.display, game->rend);
     w_level_end.render(&camera.display, game->rend);
+    //b_button.render(&camera.display, game->rend);
+//w_button.render(&camera.display, game->rend);
     SDL_RenderPresent(game->rend);
 }
 

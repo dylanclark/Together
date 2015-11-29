@@ -226,12 +226,3 @@ bool set_tiles(tile* tiles[], std::string map_path, int level_w, int level_h)
     return success;
 }
 
-void close_tiles(tile* tiles[])
-{
-    
-}
-
-void draw_level(level* cur_level)
-{
-    
-}

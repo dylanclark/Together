@@ -14,6 +14,7 @@
 #include "characters.hpp"
 #include "camera.hpp"
 #include "level_end.hpp"
+#include "button.hpp"
 
 class levelstate
 {
@@ -35,6 +36,8 @@ public:
     // objects
     level_end b_level_end;
     level_end w_level_end;
+    button b_button;
+    button w_button;
     
     // textures
     texture b_char_tex;
@@ -42,6 +45,8 @@ public:
     texture tile_tex;
     texture b_end_tex;
     texture w_end_tex;
+    texture b_button_tex;
+    texture w_button_tex;
     
     // tile
     tile* tileset[MAX_SIZE];

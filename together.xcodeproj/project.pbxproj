@@ -23,6 +23,7 @@
 		EFBCA0FA1BEE8CD2005D56CA /* characters.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EFBCA0F81BEE8CD2005D56CA /* characters.cpp */; };
 		EFBCA0FD1BEE8EF1005D56CA /* initialization.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EFBCA0FB1BEE8EF1005D56CA /* initialization.cpp */; };
 		FC4DA5C41C07C0A50089ABEF /* FreeType.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FC4DA5C31C07C0A50089ABEF /* FreeType.framework */; };
+		FC8A5A3D1C098AC00023A58B /* button.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FC8A5A3B1C098AC00023A58B /* button.cpp */; };
 		FC8D8AE71C081B9700A1C6F7 /* level2_state.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FC8D8AE61C081B9700A1C6F7 /* level2_state.cpp */; };
 		FC8D8AEC1C0825B900A1C6F7 /* level_end.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FC8D8AEA1C0825B900A1C6F7 /* level_end.cpp */; };
 /* End PBXBuildFile section */
@@ -71,6 +72,8 @@
 		EFBCA0FB1BEE8EF1005D56CA /* initialization.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = initialization.cpp; sourceTree = "<group>"; };
 		EFBCA0FC1BEE8EF1005D56CA /* initialization.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = initialization.hpp; sourceTree = "<group>"; };
 		FC4DA5C31C07C0A50089ABEF /* FreeType.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FreeType.framework; path = ../../../../../Library/Frameworks/FreeType.framework; sourceTree = "<group>"; };
+		FC8A5A3B1C098AC00023A58B /* button.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = button.cpp; sourceTree = "<group>"; };
+		FC8A5A3C1C098AC00023A58B /* button.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = button.hpp; sourceTree = "<group>"; };
 		FC8D8AE61C081B9700A1C6F7 /* level2_state.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = level2_state.cpp; sourceTree = "<group>"; };
 		FC8D8AE91C081C6200A1C6F7 /* level2_state.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = level2_state.hpp; sourceTree = "<group>"; };
 		FC8D8AEA1C0825B900A1C6F7 /* level_end.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = level_end.cpp; sourceTree = "<group>"; };
@@ -156,6 +159,7 @@
 				EFBCA0FB1BEE8EF1005D56CA /* initialization.cpp */,
 				EFBCA0D91BED5DE8005D56CA /* collisions.cpp */,
 				EFBCA0D01BED5031005D56CA /* level_draw.cpp */,
+				FC8A5A3B1C098AC00023A58B /* button.cpp */,
 				FC8D8AEA1C0825B900A1C6F7 /* level_end.cpp */,
 			);
 			name = src;
@@ -208,6 +212,7 @@
 			children = (
 				EFBCA0F61BEE8C89005D56CA /* tiles.hpp */,
 				FC8D8AEB1C0825B900A1C6F7 /* level_end.hpp */,
+				FC8A5A3C1C098AC00023A58B /* button.hpp */,
 				EFBCA0FC1BEE8EF1005D56CA /* initialization.hpp */,
 				EF0CE3B31BEFD8C50080692E /* textures.hpp */,
 				EF8252931BF3201C0003EF9E /* camera.hpp */,
@@ -288,6 +293,7 @@
 				EF27A6A11C0506E800459C32 /* level1_state.cpp in Sources */,
 				EFBCA0FA1BEE8CD2005D56CA /* characters.cpp in Sources */,
 				EFBCA0BE1BED17FB005D56CA /* main.cpp in Sources */,
+				FC8A5A3D1C098AC00023A58B /* button.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
