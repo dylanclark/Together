@@ -98,6 +98,12 @@ void engine::pop_state()
     states.pop_back();
 }
 
+void engine::restart_state()
+{
+    states.back()->cleanup();
+    states.back()->init(this);
+}
+
 void engine::handle_events()
 {
     states.back()->handle_events(this);

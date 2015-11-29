@@ -1,11 +1,9 @@
 /*
- *
  *      "together" is a game by Fraser Weist and Dylan Clark.
  *
  *      They're both pretty lame.
  *      But rock socks. 
  *      Doubt it.
- *
  */
 
 // using SDL and standard IO
@@ -15,7 +13,10 @@
 
 // include all headers
 #include "tiles.hpp"
+<<<<<<< HEAD
 #include "level_end.hpp"
+=======
+>>>>>>> 2e8ee63... Implemented movable crates!!!
 #include "initialization.hpp"
 #include "characters.hpp"
 #include "collisions.hpp"

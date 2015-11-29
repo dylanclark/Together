@@ -12,6 +12,7 @@
 #include "tiles.hpp"
 #include "level_end.hpp"
 #include "camera.hpp"
+#include "engine.hpp"
 
 // dot status constants
 const int CHAR_ACTIVE = 0;
@@ -21,6 +22,8 @@ const int CHAR_ACTIVATE = 3;
 
 // animation length
 const int ANIMATION_LENGTH = 8;
+
+class levelstate;
 
 // dot class definition
 class dot
@@ -33,9 +36,10 @@ public:
 
     // velocity and acceleration constants
     const float DOT_VEL = 12;
-    const float JUMP_VEL = 18;
+    const float JUMP_VEL = 17;
     const float DOT_ACC = DOT_VEL / 12;
     const float GRAVITY = JUMP_VEL / 24;
+    const float PUSH_VEL = DOT_VEL / 4;
     
     // controller bools
     bool up, down, left, right;
@@ -53,10 +57,12 @@ public:
     dot();
     
     // handle input (bool for quit registration)
-    bool handle_event(SDL_Event &e);
+    bool handle_event(SDL_Event &e, levelstate* level, engine* game);
     
     // move the square
-    void move(tile* tiles[], int level_w, int level_h);
+    void move(levelstate* level);
+    bool crate_col(levelstate* level);
+    bool tile_col(tile* tileset[], int size);
     
     // render the square on the screen
     void render(SDL_Rect* camera, SDL_Renderer* rend);

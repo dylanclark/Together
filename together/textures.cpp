@@ -25,7 +25,7 @@ texture::~texture()
     free();
 };
 
-bool texture::load_from_file(std::string path, SDL_Renderer* rend)
+bool texture::load_object(int w, int h, std::string path, SDL_Renderer* rend)
 {
     // ditch the last texture
     free();
@@ -50,8 +50,8 @@ bool texture::load_from_file(std::string path, SDL_Renderer* rend)
         else
         {
             // get image dimensions
-            width = surface->w;
-            height = surface->h;
+            width = w;
+            height = h;
         }
         
         SDL_FreeSurface(surface);
