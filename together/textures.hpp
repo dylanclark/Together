@@ -32,6 +32,9 @@ public:
     // render a tile at the given point
     void render_tile(int x, int y, SDL_Rect* type_clip, SDL_Rect* active_clip, SDL_Rect* camera, SDL_Renderer* rend);
     
+    // render something at an angle
+    void angle_render(int x, int y, SDL_Rect* clip, SDL_Rect* camera, SDL_Renderer* rend, double angle, SDL_Point* center, SDL_RendererFlip flip);
+    
 private:
     
     // the texture itself

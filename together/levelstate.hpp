@@ -40,6 +40,7 @@ public:
     level_end w_level_end;
     button b_button;
     button w_button;
+    
     // shift bool
     bool shiftable;
     
