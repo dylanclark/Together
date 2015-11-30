@@ -23,6 +23,7 @@ public:
     void change_state(gamestate* state);
     void push_state(gamestate* state);
     void pop_state();
+    void restart_state();
     
     // game operations
     void handle_events();

@@ -12,6 +12,8 @@
 #include "tiles.hpp"
 #include "camera.hpp"
 #include "level_end.hpp"
+#include "levelstate.hpp"
+#include "crate.hpp"
 
 
 // reinitialize character textures
@@ -43,7 +45,7 @@ dot::dot()
     col_rect.y = (SCREEN_HEIGHT - col_rect.h) / 2;
 }
 
-bool dot::handle_event(SDL_Event &e)
+bool dot::handle_event(SDL_Event &e, levelstate* level, engine* game)
 {
     // handle those events, duder
     switch (e.type)
@@ -71,7 +73,11 @@ bool dot::handle_event(SDL_Event &e)
             case SDL_SCANCODE_Q:
             case SDL_SCANCODE_LSHIFT:
             case SDL_SCANCODE_RSHIFT:
-                status = (status + 1) % 4;
+                if (level->shiftable)
+                    status = (status + 1) % 4;
+                break;
+            case SDL_SCANCODE_R:
+                game->restart_state();
                 break;
             case SDL_SCANCODE_ESCAPE:
                 return false;
@@ -106,7 +112,7 @@ bool dot::handle_event(SDL_Event &e)
     return true;
 }
 
-void dot::move(tile* tiles[], int level_w, int level_h)
+void dot::move(levelstate* level)
 {
     
     // update y velocity with gravity
@@ -143,57 +149,296 @@ void dot::move(tile* tiles[], int level_w, int level_h)
     if (status != CHAR_ACTIVE)
     {
         x_vel = 0;
-        //y_vel = 0;
+        y_vel = 0;
     }
     
     // MOVE THAT FUCKER
     col_rect.x += x_vel;
     col_rect.y += y_vel;
     
-    // for collision detection
+    if (!crate_col(level))
+    {
+        if (tile_col(level->tileset, level->width * level->height) && level->shiftable == true)
+            level->shiftable = true;
+        else
+            level->shiftable = false;
+    }
+    else
+    {
+        level->shiftable = false;
+    }
+    
+    // check edges
+    if (col_rect.x < 0)
+    {
+        col_rect.x = 0;
+        x_vel = 0;
+    }
+    if (col_rect.y < 0)
+    {
+        col_rect.y = 0;
+        y_vel = 0;
+    }
+    if (col_rect.x + col_rect.w > level->width*TILE_WIDTH)
+    {
+        col_rect.x = level->width*TILE_WIDTH - col_rect.w;
+        x_vel = 0;
+    }
+    if (col_rect.y + col_rect.h > level->height*TILE_WIDTH)
+    {
+        col_rect.y = level->height*TILE_WIDTH - col_rect.h;
+        y_vel = 0;
+    }
+}
+
+bool dot::tile_col(tile* tileset[], int size)
+{
     vector repos;
     
-    // check collisions with black character
+    bool shiftable = false;
+    
     if (black)
     {
-        // iterate over all tiles
-        for (int i = 0, n = level_w * level_h; i < n; i++)
+        for (int i = 0, n = size; i < n; i++)
         {
             // store reposition vector
-            if (check_collision(col_rect, tiles[i]->get_col_rect(), &repos))
+            if (check_collision(col_rect, tileset[i]->get_col_rect(), &repos))
             {
                 // black wall
-                if (tiles[i]->wall_b && !tiles[i]->floor_b && !tiles[i]->ceiling_b)
+                if (tileset[i]->wall_b && !tileset[i]->floor_b && !tileset[i]->ceiling_b)
                 {
                     col_rect.x += repos.x;
                     x_vel = 0;
+                    
+                    shiftable = false;
                 }
                 // black floor
-                else if (tiles[i]->floor_b && !tiles[i]->wall_b)
+                else if (tileset[i]->floor_b && !tileset[i]->wall_b)
                 {
                     col_rect.y += repos.y;
                     y_vel = 0;
                     
+                    shiftable = true;
+                    
                     if (up && status == CHAR_ACTIVE)
                     {
                         y_vel -= JUMP_VEL;
+                        shiftable = false;
                     }
                 }
                 // black floor edge
-                else if (tiles[i]->floor_b && tiles[i]->wall_b)
+                else if (tileset[i]->floor_b && tileset[i]->wall_b)
                 {
                     // determine which is smaller, and use that one!
-                    if (abs(repos.x) < abs(repos.y))
+                    if (abs(repos.x) <= abs(repos.y))
                     {
                         //adjust x pos (lol expos)
                         col_rect.x += repos.x;
                         x_vel = 0;
+                        
+                        shiftable = false;
                     }
                     else if (y_vel > 0)
                     {
                         // adjust y pos
                         col_rect.y += repos.y;
                         y_vel = 0;
+                        
+                        shiftable = true;
+                        
+                        // jump! (if you want)
+                        if (up && status == CHAR_ACTIVE)
+                        {
+                            y_vel -= JUMP_VEL;
+                            shiftable = false;
+                        }
+                    }
+                }
+                
+                // black ceiling
+                else if (tileset[i]->ceiling_b && !tileset[i]->wall_b)
+                {
+                    // adjust y pos
+                    col_rect.y += repos.y;
+                    y_vel = 1;
+                    
+                    shiftable = false;
+                }
+                
+                // black ceiling edge
+                else if (tileset[i]->ceiling_b && tileset[i]->wall_b)
+                {
+                    // determine which is smaller, and use that one!
+                    if (abs(repos.x) <= abs(repos.y))
+                    {
+                        //adjust x pos (lol expos)
+                        col_rect.x += repos.x;
+                        x_vel = 0;
+                        
+                        shiftable = false;
+                    }
+                    else if (y_vel < 0)
+                    {
+                        // adjust y pos
+                        col_rect.y += repos.y;
+                        y_vel = 1;
+                        
+                        shiftable = false;
+                    }
+                }
+            }
+        }
+        return shiftable;
+    }
+    
+    // check collisions with white character
+    else if (!black)
+    {
+        // iterate over all tiles
+        for (int i = 0, n = size; i < n; i++)
+        {
+            // store reposition vector
+            if (check_collision(col_rect, tileset[i]->get_col_rect(), &repos))
+            {
+                // white wall
+                if (tileset[i]->wall_w && !tileset[i]->floor_w && !tileset[i]->ceiling_w)
+                {
+                    col_rect.x += repos.x;
+                    x_vel = 0;
+                    
+                    shiftable = false;
+                }
+                
+                // white floor
+                else if (tileset[i]->floor_w && !tileset[i]->wall_w)
+                {
+                    col_rect.y += repos.y;
+                    y_vel = 0;
+                    
+                    shiftable = true;
+                    
+                    if (up && status == CHAR_ACTIVE)
+                    {
+                        y_vel += JUMP_VEL;
+                        shiftable = false;
+                    }
+                }
+                
+                // white floor edge
+                else if (tileset[i]->floor_w && tileset[i]->wall_w)
+                {
+                    // determine which is smaller, and use that one!
+                    if (abs(repos.x) <= abs(repos.y))
+                    {
+                        //adjust x pos (lol expos)
+                        col_rect.x += repos.x;
+                        x_vel = 0;
+                        
+                        shiftable = false;
+                    }
+                    else if (y_vel < 0)
+                    {
+                        // adjust y pos
+                        col_rect.y += repos.y;
+                        y_vel = 0;
+                        
+                        shiftable = true;
+                        
+                        // jump! (if you want)
+                        if (up && status == CHAR_ACTIVE)
+                        {
+                            y_vel += JUMP_VEL;
+                            shiftable = false;
+                        }
+                    }
+                }
+                
+                // white ceiling
+                else if (tileset[i]->ceiling_w && !tileset[i]->wall_w)
+                {
+                    // adjust y pos
+                    col_rect.y += repos.y;
+                    y_vel = -1;
+                    
+                    shiftable = false;
+                }
+                
+                // black ceiling edge
+                else if (tileset[i]->ceiling_w && tileset[i]->wall_w)
+                {
+                    // determine which is smaller, and use that one!
+                    if (abs(repos.x) <= abs(repos.y))
+                    {
+                        //adjust x pos (lol expos)
+                        col_rect.x += repos.x;
+                        x_vel = 0;
+                        
+                        shiftable = false;
+                    }
+                    else if (y_vel > 0)
+                    {
+                        // adjust y pos
+                        col_rect.y += repos.y;
+                        y_vel = -1;
+                        
+                        shiftable = false;
+                    }
+                }
+            }
+        }
+    }
+    return shiftable;
+}
+
+bool dot::crate_col(levelstate* level)
+{
+    vector repos;
+
+    // check all crates
+    for (int i = 0; i < level->crates.size(); i++)
+    {
+        if (black)
+        {
+            level->crates[i]->pushed = false;
+            
+            if (check_collision(col_rect, level->crates[i]->get_col_rect(), &repos))
+            {
+                if (!level->crates[i]->black)
+                {
+                    tile_col(level->crates[i]->tileset, MAX_BORDER);
+                    
+                    level->shiftable = true;
+                }
+                else
+                {
+                    // push and move the crate
+                    if (abs(repos.x) <= abs(repos.y))
+                    {
+                        // adjust dot speed
+                        if (x_vel > PUSH_VEL || x_vel < -PUSH_VEL)
+                            x_vel = (x_vel > 0) ? PUSH_VEL : -PUSH_VEL;
+                        
+                        // move crate
+                        level->crates[i]->col_rect.x += x_vel;
+                        level->crates[i]->x_vel = 0;
+                        level->crates[i]->check_col(level->crates[i]->get_col_rect(), level, &repos);
+                        
+                        // correct dot position
+                        check_collision(col_rect, level->crates[i]->get_col_rect(), &repos);
+                        col_rect.x += repos.x;
+                        
+                        level->shiftable = false;
+                        
+                        // tell the crate its being pushed
+                        level->crates[i]->pushed = true;
+                    }
+                    // land on crate
+                    else if (y_vel > 0)
+                    {
+                        col_rect.y += repos.y;
+                        y_vel = 0;
+                        
+                        level->shiftable = true;
                         
                         // jump! (if you want)
                         if (up && status == CHAR_ACTIVE)
@@ -202,137 +447,63 @@ void dot::move(tile* tiles[], int level_w, int level_h)
                         }
                     }
                 }
-            
-                // black ceiling
-                else if (tiles[i]->ceiling_b && !tiles[i]->wall_b)
-                {
-                    // adjust y pos
-                    col_rect.y += repos.y;
-                    y_vel = 1;
-                }
-                
-                // black ceiling edge
-                else if (tiles[i]->ceiling_b && tiles[i]->wall_b)
-                {
-                    // determine which is smaller, and use that one!
-                    if (abs(repos.x) < abs(repos.y))
-                    {
-                        //adjust x pos (lol expos)
-                        col_rect.x += repos.x;
-                        x_vel = 0;
-                    }
-                    else if (y_vel < 0)
-                    {
-                        // adjust y pos
-                        col_rect.y += repos.y;
-                        y_vel = 1;
-                    }
-                }
             }
         }
-    }
-    
-    // check collisions with white character
-    else if (!black)
-    {
-        // iterate over all tiles
-        for (int i = 0, n = level_w * level_h; i < n; i++)
+        else if (!black)
         {
-            // store reposition vector
-            if (check_collision(col_rect, tiles[i]->get_col_rect(), &repos))
+            if (check_collision(col_rect, level->crates[i]->get_col_rect(), &repos))
             {
-                // white wall
-                if (tiles[i]->wall_w && !tiles[i]->floor_w && !tiles[i]->ceiling_w)
-                {
-                    col_rect.x += repos.x;
-                    x_vel = 0;
-                }
                 
-                // white floor
-                else if (tiles[i]->floor_w && !tiles[i]->wall_w)
+                
+                if (level->crates[i]->black)
                 {
-                    col_rect.y += repos.y;
-                    y_vel = 0;
+                    tile_col(level->crates[i]->tileset, MAX_BORDER);
                     
-                    if (up && status == CHAR_ACTIVE)
-                    {
-                        y_vel += JUMP_VEL;
-                    }
+                    return true;
                 }
-                
-                // white floor edge
-                else if (tiles[i]->floor_w && tiles[i]->wall_w)
+                else
                 {
-                    // determine which is smaller, and use that one!
-                    if (abs(repos.x) < abs(repos.y))
+                    // push and move the crate
+                    if (abs(repos.x) <= abs(repos.y))
                     {
-                        //adjust x pos (lol expos)
+                        // tell the crate its being pushed
+                        level->crates[i]->pushed = true;
+                        
+                        // adjust dot speed
+                        if (x_vel > PUSH_VEL || x_vel < -PUSH_VEL)
+                            x_vel = (x_vel > 0) ? PUSH_VEL : -PUSH_VEL;
+                        
+                        // move crate
+                        level->crates[i]->col_rect.x += x_vel;
+                        level->crates[i]->x_vel = 0;
+                        level->crates[i]->check_col(level->crates[i]->get_col_rect(), level, &repos);
+                        
+                        // correct dot position
+                        check_collision(col_rect, level->crates[i]->get_col_rect(), &repos);
                         col_rect.x += repos.x;
-                        x_vel = 0;
+                        
+                        level->shiftable = false;
                     }
-                    else if (y_vel < 0)
+                    // land on crate
+                    else if (y_vel > 0)
                     {
-                        // adjust y pos
                         col_rect.y += repos.y;
                         y_vel = 0;
+                        
+                        level->shiftable = true;
                         
                         // jump! (if you want)
                         if (up && status == CHAR_ACTIVE)
                         {
-                            y_vel += JUMP_VEL;
+                            y_vel -= JUMP_VEL;
                         }
-                    }
-                }
-                
-                // white ceiling
-                else if (tiles[i]->ceiling_w && !tiles[i]->wall_w)
-                {
-                    // adjust y pos
-                    col_rect.y += repos.y;
-                    y_vel = -1;
-                }
-                
-                // white ceiling edge
-                else if (tiles[i]->ceiling_w && tiles[i]->wall_w)
-                {
-                    // determine which is smaller, and use that one!
-                    if (abs(repos.x) < abs(repos.y))
-                    {
-                        //adjust x pos (lol expos)
-                        col_rect.x += repos.x;
-                        x_vel = 0;
-                    }
-                    else if (y_vel > 0)
-                    {
-                        // adjust y pos
-                        col_rect.y += repos.y;
-                        y_vel = -1;
                     }
                 }
             }
         }
     }
-    // check sides & ceiling
-    if (col_rect.x < 0)
-    {
-        x_vel = 0;
-        col_rect.x = 0;
-    }
-    if (col_rect.x + col_rect.w > level_w * TILE_WIDTH)
-    {
-        x_vel = 0;
-        col_rect.x = level_w * TILE_WIDTH - col_rect.w;
-    }
-    if (col_rect.y < 0)
-    {
-        y_vel = 0;
-        col_rect.y = 0;
-    }
-    if (col_rect.y + col_rect.h > level_h * TILE_WIDTH)
-    {
-        y_vel = 0;
-        col_rect.y = level_h * TILE_WIDTH - col_rect.h;
-    }
+    // if no collisions were detected, return false
+    return false;
 }
 
 void dot::render(SDL_Rect* camera, SDL_Renderer* rend)

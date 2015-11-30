@@ -4,7 +4,6 @@
 ------------
 
 - Dynamic camera. (Fraser)
-- Game engine. (Fraser)
 
 -----------
  MECHANICS
@@ -14,7 +13,7 @@
 - Alterable environment (see objects).
 - Menu screen.
 - Pause screen.
-- "Cutscenes"
+- "Cutscenes".
 
 ---------
  OBJECTS
@@ -45,6 +44,9 @@
  FINISHED
 ----------
 
+- Restart button.
+- Pushable crates.
+- Engine / gamestate system.
 - Collision detection.
 - Tile drawing.
 - Simple animation.

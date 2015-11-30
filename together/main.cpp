@@ -1,11 +1,9 @@
 /*
- *
  *      "together" is a game by Fraser Weist and Dylan Clark.
  *
  *      They're both pretty lame.
  *      But rock socks. 
  *      Doubt it.
- *
  */
 
 // using SDL and standard IO

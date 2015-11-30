@@ -29,15 +29,7 @@ public:
     void update(engine* game);
     void draw(engine* game);
     
-    static level1_state* instance()
-    {
-        return &level1_state_inst;
-    }
-    
     level1_state() { };
-    
-private:
-    static level1_state level1_state_inst;
 };
 
 #endif /* level1_state_hpp */

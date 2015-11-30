@@ -10,28 +10,9 @@
 // include header files
 #include "tiles.hpp"
 
-// activity bools
-extern bool b_active;
-extern bool w_active;
-
 // max level size
 const int MAX_SIZE = 50 * 50;
-
-// level class
-class level
-{
-public:
-    // level dimensions
-    int width, height;
-    
-    // character origins
-    int b_orig_x, b_orig_y, w_char_x, w_char_y;
-    
-    std::string path;
-    
-    // pointer to next level
-    level* next_level;
-};
+const int MAX_CRATES = 10;
 
 // draw the tilemap
 bool set_tiles(tile* tiles[], std::string path, int level_w, int level_h);

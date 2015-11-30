@@ -96,10 +96,10 @@ void level2_state::handle_events(engine *game)
         }
         
         // quit if he pressed escape
-        if (!b_char.handle_event(event))
+        if (!b_char.handle_event(event, this, game))
             game->quit();
         
-        if (!w_char.handle_event(event))
+        if (!w_char.handle_event(event, this, game))
             game->quit();
         
     }
@@ -111,8 +111,10 @@ void level2_state::update(engine* game)
     SDL_RenderClear(game->rend);
     
     // move the square
-    b_char.move(tileset, width, height);
-    w_char.move(tileset, width, height);
+    if (b_char.status == CHAR_ACTIVE)
+        b_char.move(this);
+    if (w_char.status == CHAR_ACTIVE)
+        w_char.move(this);
     
     // track the player
     camera.track(&b_char.col_rect, &w_char.col_rect);
