@@ -36,7 +36,7 @@ public:
 
     // velocity and acceleration constants
     const float DOT_VEL = 12;
-    const float JUMP_VEL = 17;
+    const float JUMP_VEL = 18;
     const float DOT_ACC = DOT_VEL / 12;
     const float GRAVITY = JUMP_VEL / 24;
     const float PUSH_VEL = DOT_VEL / 4;
@@ -82,6 +82,8 @@ public:
     // end of level animation
     void completed(int width, int height, SDL_Rect* end_rect);
     
+    // spring
+    void spring();
 private:
     
     // velocity variables

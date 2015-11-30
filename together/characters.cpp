@@ -17,7 +17,16 @@
 =======
 #include "levelstate.hpp"
 #include "crate.hpp"
+<<<<<<< HEAD
 >>>>>>> 2e8ee63... Implemented movable crates!!!
+=======
+#include "springboard.hpp"
+
+
+// reinitialize character textures
+extern texture b_char_tex;
+extern texture w_char_tex;
+>>>>>>> c8cecea... springs!
 
 dot::dot()
 {
@@ -140,10 +149,10 @@ void dot::move(levelstate* level)
         x_vel = DOT_VEL;
     if (x_vel < -DOT_VEL)
         x_vel = -DOT_VEL;
-    if (y_vel > JUMP_VEL)
-        y_vel = JUMP_VEL;
-    if (y_vel < -JUMP_VEL)
-        y_vel = -JUMP_VEL;
+    if (y_vel > 1.5 * JUMP_VEL)
+        y_vel = 1.5 * JUMP_VEL;
+    if (y_vel < 1.5 * -JUMP_VEL)
+        y_vel = 1.5 * -JUMP_VEL;
     
     if (status != CHAR_ACTIVE)
     {
@@ -568,8 +577,8 @@ void dot::render(SDL_Rect* camera, SDL_Renderer* rend)
 void dot::completed(int width,int height, SDL_Rect* end_rect)
 {
     // make them both big
-    if(!TILE_ACTIVE)
-        status = TILE_ACTIVE;
+    if(!CHAR_ACTIVE)
+        status = CHAR_ACTIVE;
     
     // center dot on level-end object
     while (col_rect.x < end_rect->x )
@@ -581,4 +590,13 @@ void dot::completed(int width,int height, SDL_Rect* end_rect)
     black ? y_vel -= DOT_VEL : y_vel += DOT_VEL;
     
     return;
+}
+
+void dot::spring()
+{
+    status = CHAR_ACTIVE;
+    
+    black ? y_vel -= JUMP_VEL : y_vel += JUMP_VEL;
+    
+    x_vel += DOT_VEL;
 }

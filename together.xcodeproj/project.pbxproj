@@ -11,15 +11,20 @@
 <<<<<<< HEAD
 		EF27A69E1C04F48F00459C32 /* engine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EF27A69C1C04F48F00459C32 /* engine.cpp */; };
 		EF27A6A11C0506E800459C32 /* level1_state.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EF27A69F1C0506E800459C32 /* level1_state.cpp */; };
+<<<<<<< HEAD
 		EF27A6AC1C052EC200459C32 /* levelstate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EF27A6AA1C052EC200459C32 /* levelstate.cpp */; };
 =======
 		EF27A69E1C04F48F00459C32 /* engine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EF27A69C1C04F48F00459C32 /* engine.cpp */; settings = {ASSET_TAGS = (); }; };
 		EF27A6A11C0506E800459C32 /* level1_state.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EF27A69F1C0506E800459C32 /* level1_state.cpp */; settings = {ASSET_TAGS = (); }; };
 >>>>>>> 2e8ee63... Implemented movable crates!!!
+=======
+		EF27A6AC1C052EC200459C32 /* (null) in Sources */ = {isa = PBXBuildFile; };
+>>>>>>> c8cecea... springs!
 		EF8252831BF1098A0003EF9E /* SDL2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EF8252821BF1098A0003EF9E /* SDL2.framework */; };
 		EF8252851BF109940003EF9E /* SDL2_image.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EF8252841BF109940003EF9E /* SDL2_image.framework */; };
 		EF8252901BF121490003EF9E /* levels in CopyFiles */ = {isa = PBXBuildFile; fileRef = EF0808611BF0504300338AB0 /* levels */; };
 		EF8252911BF1214D0003EF9E /* textures in CopyFiles */ = {isa = PBXBuildFile; fileRef = EFBCA0CC1BED21BF005D56CA /* textures */; };
+<<<<<<< HEAD
 <<<<<<< HEAD
 		EF8252941BF3201C0003EF9E /* camera.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EF8252921BF3201C0003EF9E /* camera.cpp */; };
 =======
@@ -27,19 +32,32 @@
 		EFA85F2F1C0675BA001113CA /* mainmenu_state.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EFA85F2D1C0675BA001113CA /* mainmenu_state.cpp */; settings = {ASSET_TAGS = (); }; };
 		EFA85F341C078C6F001113CA /* crate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EFA85F321C078C6F001113CA /* crate.cpp */; settings = {ASSET_TAGS = (); }; };
 >>>>>>> 2e8ee63... Implemented movable crates!!!
+=======
+		EF8252941BF3201C0003EF9E /* camera.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EF8252921BF3201C0003EF9E /* camera.cpp */; };
+		EFA85F2F1C0675BA001113CA /* mainmenu_state.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EFA85F2D1C0675BA001113CA /* mainmenu_state.cpp */; };
+		EFA85F341C078C6F001113CA /* crate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EFA85F321C078C6F001113CA /* crate.cpp */; };
+>>>>>>> c8cecea... springs!
 		EFBCA0BE1BED17FB005D56CA /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EFBCA0BD1BED17FB005D56CA /* main.cpp */; };
 		EFBCA0D21BED5031005D56CA /* level_draw.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EFBCA0D01BED5031005D56CA /* level_draw.cpp */; };
 		EFBCA0DB1BED5DE8005D56CA /* collisions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EFBCA0D91BED5DE8005D56CA /* collisions.cpp */; };
 		EFBCA0F71BEE8C89005D56CA /* tiles.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EFBCA0F51BEE8C89005D56CA /* tiles.cpp */; };
 		EFBCA0FA1BEE8CD2005D56CA /* characters.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EFBCA0F81BEE8CD2005D56CA /* characters.cpp */; };
 <<<<<<< HEAD
+<<<<<<< HEAD
 		EFBCA0FD1BEE8EF1005D56CA /* initialization.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EFBCA0FB1BEE8EF1005D56CA /* initialization.cpp */; };
+=======
+		EFBCA0FD1BEE8EF1005D56CA /* (null) in Sources */ = {isa = PBXBuildFile; };
+>>>>>>> c8cecea... springs!
 		FC4DA5C41C07C0A50089ABEF /* FreeType.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FC4DA5C31C07C0A50089ABEF /* FreeType.framework */; };
 		FC8A5A3D1C098AC00023A58B /* button.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FC8A5A3B1C098AC00023A58B /* button.cpp */; };
 		FC8D8AE71C081B9700A1C6F7 /* level2_state.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FC8D8AE61C081B9700A1C6F7 /* level2_state.cpp */; };
 		FC8D8AEC1C0825B900A1C6F7 /* level_end.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FC8D8AEA1C0825B900A1C6F7 /* level_end.cpp */; };
+<<<<<<< HEAD
 =======
 >>>>>>> 2e8ee63... Implemented movable crates!!!
+=======
+		FCB126F61C0CCB8B001D7EC8 /* springboard.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FCB126F41C0CCB8B001D7EC8 /* springboard.cpp */; };
+>>>>>>> c8cecea... springs!
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -95,6 +113,8 @@
 		FC8D8AE91C081C6200A1C6F7 /* level2_state.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = level2_state.hpp; sourceTree = "<group>"; };
 		FC8D8AEA1C0825B900A1C6F7 /* level_end.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = level_end.cpp; sourceTree = "<group>"; };
 		FC8D8AEB1C0825B900A1C6F7 /* level_end.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = level_end.hpp; sourceTree = "<group>"; };
+		FCB126F41C0CCB8B001D7EC8 /* springboard.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = springboard.cpp; sourceTree = "<group>"; };
+		FCB126F51C0CCB8B001D7EC8 /* springboard.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = springboard.hpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -176,11 +196,15 @@
 				EFBCA0F81BEE8CD2005D56CA /* characters.cpp */,
 <<<<<<< HEAD
 				EF0CE3B21BEFD8C50080692E /* textures.cpp */,
+<<<<<<< HEAD
 				EFBCA0FB1BEE8EF1005D56CA /* initialization.cpp */,
 =======
 				EFA85F321C078C6F001113CA /* crate.cpp */,
 				EF0CE3B21BEFD8C50080692E /* textures.cpp */,
 >>>>>>> 2e8ee63... Implemented movable crates!!!
+=======
+				FCB126F41C0CCB8B001D7EC8 /* springboard.cpp */,
+>>>>>>> c8cecea... springs!
 				EFBCA0D91BED5DE8005D56CA /* collisions.cpp */,
 				EFBCA0D01BED5031005D56CA /* level_draw.cpp */,
 				FC8A5A3B1C098AC00023A58B /* button.cpp */,
@@ -254,8 +278,12 @@
 <<<<<<< HEAD
 				FC8D8AEB1C0825B900A1C6F7 /* level_end.hpp */,
 				FC8A5A3C1C098AC00023A58B /* button.hpp */,
+<<<<<<< HEAD
 =======
 >>>>>>> 2e8ee63... Implemented movable crates!!!
+=======
+				FCB126F51C0CCB8B001D7EC8 /* springboard.hpp */,
+>>>>>>> c8cecea... springs!
 				EFBCA0FC1BEE8EF1005D56CA /* initialization.hpp */,
 				EF0CE3B31BEFD8C50080692E /* textures.hpp */,
 				EFA85F331C078C6F001113CA /* crate.hpp */,
@@ -330,8 +358,13 @@
 				EFBCA0F71BEE8C89005D56CA /* tiles.cpp in Sources */,
 				EFBCA0DB1BED5DE8005D56CA /* collisions.cpp in Sources */,
 <<<<<<< HEAD
+<<<<<<< HEAD
 				EFBCA0FD1BEE8EF1005D56CA /* initialization.cpp in Sources */,
 				EF27A6AC1C052EC200459C32 /* levelstate.cpp in Sources */,
+=======
+				EFBCA0FD1BEE8EF1005D56CA /* (null) in Sources */,
+				EF27A6AC1C052EC200459C32 /* (null) in Sources */,
+>>>>>>> c8cecea... springs!
 				FC8D8AEC1C0825B900A1C6F7 /* level_end.cpp in Sources */,
 				EF27A69E1C04F48F00459C32 /* engine.cpp in Sources */,
 				FC8D8AE71C081B9700A1C6F7 /* level2_state.cpp in Sources */,
@@ -344,6 +377,7 @@
 				EFA85F2F1C0675BA001113CA /* mainmenu_state.cpp in Sources */,
 				EFBCA0BE1BED17FB005D56CA /* main.cpp in Sources */,
 				FC8A5A3D1C098AC00023A58B /* button.cpp in Sources */,
+				FCB126F61C0CCB8B001D7EC8 /* springboard.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

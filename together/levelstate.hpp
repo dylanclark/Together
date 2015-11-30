@@ -15,6 +15,7 @@
 #include "camera.hpp"
 #include "level_end.hpp"
 #include "button.hpp"
+#include "springboard.hpp"
 
 class crate;
 
@@ -42,8 +43,13 @@ public:
     button b_button;
     button w_button;
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 =======
+=======
+    springboard w_springboard;
+    springboard b_springboard;
+>>>>>>> c8cecea... springs!
     
 >>>>>>> 1aa9403... buttons!
     // shift bool
@@ -64,7 +70,12 @@ public:
     texture crate_tex_four_by_one;
     texture crate_tex_three_by_two;
     texture crate_tex_two_by_two;
+<<<<<<< HEAD
 >>>>>>> 2e8ee63... Implemented movable crates!!!
+=======
+    texture b_springboard_tex;
+    texture w_springboard_tex;
+>>>>>>> c8cecea... springs!
     
     // tileset
     tile* tileset[MAX_SIZE];
