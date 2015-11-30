@@ -2,7 +2,11 @@
 #ifndef button_hpp
 #define button_hpp
 
+// using SDL and standard IO
+#include <iostream>
 #include <stdio.h>
+#include <SDL2/SDL.h>
+#include <SDL2_image/SDL_image.h>
 
 // include header files
 #include "characters.hpp"
@@ -14,13 +18,19 @@
 
 
 // button status constants
-const int BUTT_ACTIVE = 0;
-const int BUTT_INACTIVATE = 1;
-const int BUTT_INACTIVE = 2;
-const int BUTT_ACTIVATE = 3;
+const int BUTT_INACTIVE = 0;
+const int BUTT_ACTIVATE = 1;
+const int BUTT_ACTIVE = 2;
+const int BUTT_INACTIVATE = 3;
 
 // animation length
-const int BUTT_ANIMATION_LENGTH = 8;
+const int BUTT_ANIMATION_LENGTH = 4;
+
+// direction constants
+const int UP = 0;
+const int RIGHT = 1;
+const int DOWN = 2;
+const int LEFT = 3;
 
 
 class button
@@ -32,6 +42,15 @@ public:
     // render the item on the screen
     void render(SDL_Rect* camera, SDL_Renderer* rend);
     
+    // angle to flip
+    double angle = 0.0;
+    
+    // flip axis point
+    SDL_Point* center = NULL;
+    
+    // flip type
+    SDL_RendererFlip flip = SDL_FLIP_NONE;
+
     // collision rectangle
     SDL_Rect col_rect;
     
@@ -47,9 +66,17 @@ public:
     // single use
     bool single;
     
-    // color
-    bool black;
+    // used
+    bool used;
     
+    // direction
+    int direction;
+    
+    // animation status
+    int status;
+    
+    // frame of animation
+    int frame;
     
 };
 

@@ -41,7 +41,11 @@ public:
     level_end w_level_end;
     button b_button;
     button w_button;
+<<<<<<< HEAD
 =======
+=======
+    
+>>>>>>> 1aa9403... buttons!
     // shift bool
     bool shiftable;
 >>>>>>> 2e8ee63... Implemented movable crates!!!
