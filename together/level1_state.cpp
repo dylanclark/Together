@@ -14,6 +14,7 @@
 #include "gamestate.hpp"
 #include "button.hpp"
 #include "engine.hpp"
+#include "springboard.hpp"
 
 void level1_state::init(engine* game)
 {
@@ -56,6 +57,11 @@ void level1_state::init(engine* game)
     if(!w_button_tex.load_tile_sheet("textures/white/button/w_button.png", game->rend))
     {
         printf("Failed to load white button texture!\n");
+        return;
+    }
+    if(!b_springboard_tex.load_tile_sheet("textures/black/spring/b_spring.png", game->rend))
+    {
+        printf("Failed to load black springboard texture!\n");
         return;
     }
     
@@ -104,20 +110,15 @@ void level1_state::init(engine* game)
     b_button.tex = b_button_tex;
     b_button.col_rect.x = 960;
     b_button.col_rect.y = 480;
-    b_button.activated = false;
     b_button.single = true;
-    b_button.used = false;
-    b_button.status = 0;
     b_button.direction = LEFT;
     
     // initialize white button
     w_button.tex = w_button_tex;
     w_button.col_rect.x = 200;
     w_button.col_rect.y = 540;
-    w_button.activated = false;
-    w_button.single = false;
-    w_button.used = false;
-    w_button.status = 0;
+    
+
 }
 
 void level1_state::handle_events(engine *game)
@@ -190,6 +191,7 @@ void level1_state::update(engine* game)
         // activate
         b_button.activated = true;
         
+        // animate
         if(b_button.status == BUTT_INACTIVE)
         {
             b_button.status = (b_button.status + 1) % 4;
@@ -220,6 +222,12 @@ void level1_state::update(engine* game)
             w_button.status = (w_button.status + 1) % 4;
         }
         
+        // initialize black springboard
+        b_springboard.tex = b_springboard_tex;
+        b_springboard.col_rect.x = 800;
+        b_springboard.col_rect.y = 480;
+        b_springboard.direction = LEFT;
+        
     }
     else
     {
@@ -228,6 +236,31 @@ void level1_state::update(engine* game)
         if(w_button.status != BUTT_INACTIVE)
         {
             w_button.status = (w_button.status + 1) % 4;
+        }
+    }
+    
+    //if black springboard is activated
+    if(b_springboard.check(b_char.col_rect))
+    {
+        // activate
+        b_springboard.activated = true;
+        
+        if(b_springboard.status == BUTT_INACTIVE)
+        {
+            b_springboard.status = (b_springboard.status + 1) % 4;
+        }
+
+        b_char.spring();
+
+        
+    }
+    else
+    {
+        b_springboard.activated = false;
+        
+        if(b_springboard.status != BUTT_INACTIVE)
+        {
+            b_springboard.status = (b_springboard.status + 1) % 4;
         }
     }
 }
@@ -251,6 +284,7 @@ void level1_state::draw(engine* game)
     w_level_end.render(&camera.display, game->rend);
     b_button.render(&camera.display, game->rend);
     w_button.render(&camera.display, game->rend);
+    b_springboard.render(&camera.display, game->rend);
     SDL_RenderPresent(game->rend);
 }
 
@@ -282,6 +316,7 @@ void level1_state::cleanup()
     crate_tex_four_by_two.free();
     b_button_tex.free();
     w_button_tex.free();
+    b_springboard_tex.free();
     
 }
 
