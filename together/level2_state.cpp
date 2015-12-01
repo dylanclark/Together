@@ -269,6 +269,17 @@ void level2_state::interactions(engine* game)
             b_button.status = (b_button.status + 1) % 4;
         }
         
+        // initialize black level end
+        b_level_end.tex = b_end_tex;
+        b_level_end.col_rect.x = 1500;
+        b_level_end.col_rect.y = 480;
+        
+        // initialize black level end
+        w_level_end.tex = w_end_tex;
+        w_level_end.col_rect.x = 1500;
+        w_level_end.col_rect.y = 540;
+
+        
     }
     else
     {
@@ -323,19 +334,6 @@ void level2_state::interactions(engine* game)
         }
         
         b_char.spring();
-        
-        
-        // initialize black level end
-        b_level_end.tex = b_end_tex;
-        b_level_end.col_rect.x = 1500;
-        b_level_end.col_rect.y = 480;
-        
-        // initialize black level end
-        w_level_end.tex = w_end_tex;
-        w_level_end.col_rect.x = 1500;
-        w_level_end.col_rect.y = 540;
-        
-        
         
     }
     else
