@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include <SDL2/SDL.h>
 #include <SDL2_image/SDL_image.h>
+#include <SDL2_ttf/SDL_ttf.h>
 
 // include headers
 #include "gamestate.hpp"
@@ -29,15 +30,16 @@ public:
     void update(engine* game);
     void draw(engine* game);
     
-    static level2_state* instance()
-    {
-        return &level2_state_inst;
-    }
-    
     level2_state() { };
     
-private:
-    static level2_state level2_state_inst;
+    // load textures
+    void load_textures(engine* game);
+    
+    // init objects
+    void init_objects(engine* game);
+    
+    // object interactions
+    void interactions(engine* game);
 };
 
 #endif /* level2_state_hpp */

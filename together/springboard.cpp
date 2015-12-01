@@ -50,6 +50,7 @@ void springboard::render(SDL_Rect* camera, SDL_Renderer* rend)
     {
         case(LEFT):
             flip = SDL_FLIP_HORIZONTAL;
+            
         case(RIGHT):
             flip = SDL_FLIP_NONE;
             

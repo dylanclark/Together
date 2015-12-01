@@ -24,11 +24,11 @@
 		EFBCA0F71BEE8C89005D56CA /* tiles.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EFBCA0F51BEE8C89005D56CA /* tiles.cpp */; };
 		EFBCA0FA1BEE8CD2005D56CA /* characters.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EFBCA0F81BEE8CD2005D56CA /* characters.cpp */; };
 		EFBCA0FD1BEE8EF1005D56CA /* (null) in Sources */ = {isa = PBXBuildFile; };
-		FC4DA5C41C07C0A50089ABEF /* FreeType.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FC4DA5C31C07C0A50089ABEF /* FreeType.framework */; };
 		FC8A5A3D1C098AC00023A58B /* button.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FC8A5A3B1C098AC00023A58B /* button.cpp */; };
 		FC8D8AE71C081B9700A1C6F7 /* level2_state.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FC8D8AE61C081B9700A1C6F7 /* level2_state.cpp */; };
 		FC8D8AEC1C0825B900A1C6F7 /* level_end.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FC8D8AEA1C0825B900A1C6F7 /* level_end.cpp */; };
 		FCB126F61C0CCB8B001D7EC8 /* springboard.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FCB126F41C0CCB8B001D7EC8 /* springboard.cpp */; };
+		FCB126F81C0CE2FE001D7EC8 /* SDL2_ttf.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FCB126F71C0CE2FD001D7EC8 /* SDL2_ttf.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -77,7 +77,6 @@
 		EFBCA0F81BEE8CD2005D56CA /* characters.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = characters.cpp; sourceTree = "<group>"; };
 		EFBCA0F91BEE8CD2005D56CA /* characters.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = characters.hpp; sourceTree = "<group>"; };
 		EFBCA0FC1BEE8EF1005D56CA /* initialization.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = initialization.hpp; sourceTree = "<group>"; };
-		FC4DA5C31C07C0A50089ABEF /* FreeType.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FreeType.framework; path = ../../../../../Library/Frameworks/FreeType.framework; sourceTree = "<group>"; };
 		FC8A5A3B1C098AC00023A58B /* button.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = button.cpp; sourceTree = "<group>"; };
 		FC8A5A3C1C098AC00023A58B /* button.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = button.hpp; sourceTree = "<group>"; };
 		FC8D8AE61C081B9700A1C6F7 /* level2_state.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = level2_state.cpp; sourceTree = "<group>"; };
@@ -86,6 +85,7 @@
 		FC8D8AEB1C0825B900A1C6F7 /* level_end.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = level_end.hpp; sourceTree = "<group>"; };
 		FCB126F41C0CCB8B001D7EC8 /* springboard.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = springboard.cpp; sourceTree = "<group>"; };
 		FCB126F51C0CCB8B001D7EC8 /* springboard.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = springboard.hpp; sourceTree = "<group>"; };
+		FCB126F71C0CE2FD001D7EC8 /* SDL2_ttf.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL2_ttf.framework; path = ../../../../../Library/Frameworks/SDL2_ttf.framework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -93,7 +93,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				FC4DA5C41C07C0A50089ABEF /* FreeType.framework in Frameworks */,
+				FCB126F81C0CE2FE001D7EC8 /* SDL2_ttf.framework in Frameworks */,
 				EF8252851BF109940003EF9E /* SDL2_image.framework in Frameworks */,
 				EF8252831BF1098A0003EF9E /* SDL2.framework in Frameworks */,
 			);
@@ -203,7 +203,7 @@
 		EFBCA0B11BED17FB005D56CA = {
 			isa = PBXGroup;
 			children = (
-				FC4DA5C31C07C0A50089ABEF /* FreeType.framework */,
+				FCB126F71C0CE2FD001D7EC8 /* SDL2_ttf.framework */,
 				EF8252841BF109940003EF9E /* SDL2_image.framework */,
 				EF8252821BF1098A0003EF9E /* SDL2.framework */,
 				EFBCA0BC1BED17FB005D56CA /* project */,

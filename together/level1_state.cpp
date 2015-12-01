@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <SDL2/SDL.h>
 #include <SDL2_image/SDL_image.h>
+#include <SDL2_ttf/SDL_ttf.h>
 
 // include headers
 #include "level1_state.hpp"
@@ -17,6 +18,133 @@
 #include "springboard.hpp"
 
 void level1_state::init(engine* game)
+{
+    // load textures
+    load_textures(game);
+   
+    // initialize objects
+    init_objects(game);
+
+}
+
+void level1_state::handle_events(engine *game)
+{
+    // event handler
+    SDL_Event event;
+    
+    // handle those events, bruh
+    while (SDL_PollEvent(&event))
+    {
+        switch (event.type)
+        {
+            case SDL_QUIT:
+                game->quit();
+                break;
+        }
+        
+        // quit if he pressed escape
+        if (!b_char.handle_event(event, this, game))
+            game->quit();
+        
+        if (!w_char.handle_event(event, this, game))
+            game->quit();
+        
+    }
+    
+    shiftable = true;
+}
+
+void level1_state::update(engine* game)
+{
+    // clear the window
+    SDL_RenderClear(game->rend);
+    
+    // move the square
+    if (b_char.status == CHAR_ACTIVE)
+        b_char.move(this);
+    if (w_char.status == CHAR_ACTIVE)
+        w_char.move(this);
+    
+    for (int i = 0; i < crates.size(); i++)
+    {
+        crates[i]->update();
+    }
+    
+    // track the player
+    camera.track(&b_char.col_rect, &w_char.col_rect);
+    
+    // move that camera!
+    camera.move(width, height);
+    
+    interactions(game);
+}
+
+void level1_state::draw(engine* game)
+{
+    // draw stuff to the screen!
+    for (int i = 0; i < (width * height); i++)
+    {
+        tileset[i]->render(b_char.status, &camera.display, game->rend, &tile_tex);
+    }
+    
+    for (int i = 0; i < crates.size(); i++)
+    {
+        crates[i]->render(b_char.status, &camera.display, game->rend, this);
+    }
+    
+    b_char.render(&camera.display, game->rend);
+    w_char.render(&camera.display, game->rend);
+    b_level_end.render(&camera.display, game->rend);
+    w_level_end.render(&camera.display, game->rend);
+    //b_button.render(&camera.display, game->rend);
+    //w_button.render(&camera.display, game->rend);
+    //b_springboard.render(&camera.display, game->rend);
+    SDL_RenderPresent(game->rend);
+}
+
+void level1_state::cleanup()
+{
+    // iterate over all tiles and delete them all
+    for (int i = 0; i < width * height; i++)
+    {
+        if (tileset[i] != NULL)
+        {
+            delete tileset[i];
+            tileset[i] = NULL;
+        }
+    }
+    
+    for (int i = 0; i < crates.size(); i++)
+    {
+        if (crates[i] != NULL)
+        {
+            delete crates[i];
+            crates.pop_back();
+        }
+    }
+    
+    // free all textures
+    b_char_tex.free();
+    w_char_tex.free();
+    tile_tex.free();
+    crate_tex_four_by_two.free();
+    b_button_tex.free();
+    w_button_tex.free();
+    b_springboard_tex.free();
+    
+}
+
+void level1_state::pause()
+{
+    return;
+}
+
+void level1_state::resume()
+{
+    return;
+}
+
+void level1_state::load_textures(engine* game)
 {
     // LOAD ALL TEXTURES
     if (!b_char_tex.load_tile_sheet("textures/black/b_char.png", game->rend))
@@ -76,7 +204,10 @@ void level1_state::init(engine* game)
         printf("Failed to load level 1 map!\n");
         return;
     }
-    
+}
+
+void level1_state::init_objects(engine* game)
+{
     // initialize black dot
     b_char.status = CHAR_ACTIVE;
     b_char.tex = b_char_tex;
@@ -96,81 +227,32 @@ void level1_state::init(engine* game)
     b_level_end.col_rect.x = 1500;
     b_level_end.col_rect.y = 480;
     
+    // initialize black level end
+    w_level_end.tex = w_end_tex;
+    w_level_end.col_rect.x = 1500;
+    w_level_end.col_rect.y = 540;
+
+    
     // init crate #1
     crates.push_back(new crate(5 * TILE_WIDTH, 7  * TILE_WIDTH, FOUR_BY_TWO));
     crates.back()->tex = crate_tex_four_by_two;
     crates.back()->black = true;
     
-    // initialize black level end
-    w_level_end.tex = w_end_tex;
-    w_level_end.col_rect.x = 1500;
-    w_level_end.col_rect.y = 540;
-    
     // initialize black button
     b_button.tex = b_button_tex;
-    b_button.col_rect.x = 960;
+    b_button.col_rect.x = 1200;
     b_button.col_rect.y = 480;
     b_button.single = true;
-    b_button.direction = LEFT;
+    b_button.direction = RIGHT;
     
     // initialize white button
     w_button.tex = w_button_tex;
     w_button.col_rect.x = 200;
     w_button.col_rect.y = 540;
-    
-
 }
 
-void level1_state::handle_events(engine *game)
+void level1_state::interactions(engine* game)
 {
-    // event handler
-    SDL_Event event;
-    
-    // handle those events, bruh
-    while (SDL_PollEvent(&event))
-    {
-        switch (event.type)
-        {
-            case SDL_QUIT:
-                game->quit();
-                break;
-        }
-        
-        // quit if he pressed escape
-        if (!b_char.handle_event(event, this, game))
-            game->quit();
-        
-        if (!w_char.handle_event(event, this, game))
-            game->quit();
-        
-    }
-    
-    shiftable = true;
-}
-
-void level1_state::update(engine* game)
-{
-    // clear the window
-    SDL_RenderClear(game->rend);
-    
-    // move the square
-    if (b_char.status == CHAR_ACTIVE)
-        b_char.move(this);
-    if (w_char.status == CHAR_ACTIVE)
-        w_char.move(this);
-    
-    for (int i = 0; i < crates.size(); i++)
-    {
-        crates[i]->update();
-    }
-    
-    // track the player
-    camera.track(&b_char.col_rect, &w_char.col_rect);
-    
-    // move that camera!
-    camera.move(width, height);
-    
-    
     // if both are on level end object
     if(b_level_end.check(b_char.col_rect) && w_level_end.check(w_char.col_rect))
     {
@@ -178,154 +260,8 @@ void level1_state::update(engine* game)
         b_char.completed(width, height, &b_level_end.col_rect);
         w_char.completed(width, height, &w_level_end.col_rect);
         
+        
         // change state to level 2
         change_state(game, new level2_state);
     }
-    
-    //if black button is activated
-    if(b_button.check(b_char.col_rect) || (b_button.single && b_button.used))
-    {
-        // used
-        b_button.used = true;
-        
-        // activate
-        b_button.activated = true;
-        
-        // animate
-        if(b_button.status == BUTT_INACTIVE)
-        {
-            b_button.status = (b_button.status + 1) % 4;
-        }
-
-    }
-    else
-    {
-        b_button.activated = false;
-        
-        if(b_button.status != BUTT_INACTIVE)
-        {
-            b_button.status = (b_button.status + 1) % 4;
-        }
-    }
-    
-    //if white button is activated
-    if(w_button.check(w_char.col_rect) && !(w_button.single && w_button.used))
-    {
-        // used
-        w_button.used = true;
-        
-        // activate
-        w_button.activated = true;
-        
-        if(w_button.status == BUTT_INACTIVE)
-        {
-            w_button.status = (w_button.status + 1) % 4;
-        }
-        
-        // initialize black springboard
-        b_springboard.tex = b_springboard_tex;
-        b_springboard.col_rect.x = 800;
-        b_springboard.col_rect.y = 480;
-        b_springboard.direction = LEFT;
-        
-    }
-    else
-    {
-        w_button.activated = false;
-        
-        if(w_button.status != BUTT_INACTIVE)
-        {
-            w_button.status = (w_button.status + 1) % 4;
-        }
-    }
-    
-    //if black springboard is activated
-    if(b_springboard.check(b_char.col_rect))
-    {
-        // activate
-        b_springboard.activated = true;
-        
-        if(b_springboard.status == BUTT_INACTIVE)
-        {
-            b_springboard.status = (b_springboard.status + 1) % 4;
-        }
-
-        b_char.spring();
-
-        
-    }
-    else
-    {
-        b_springboard.activated = false;
-        
-        if(b_springboard.status != BUTT_INACTIVE)
-        {
-            b_springboard.status = (b_springboard.status + 1) % 4;
-        }
-    }
-}
-
-void level1_state::draw(engine* game)
-{
-    // draw stuff to the screen!
-    for (int i = 0; i < (width * height); i++)
-    {
-        tileset[i]->render(b_char.status, &camera.display, game->rend, &tile_tex);
-    }
-    
-    for (int i = 0; i < crates.size(); i++)
-    {
-        crates[i]->render(b_char.status, &camera.display, game->rend, this);
-    }
-    
-    b_char.render(&camera.display, game->rend);
-    w_char.render(&camera.display, game->rend);
-    b_level_end.render(&camera.display, game->rend);
-    w_level_end.render(&camera.display, game->rend);
-    b_button.render(&camera.display, game->rend);
-    w_button.render(&camera.display, game->rend);
-    b_springboard.render(&camera.display, game->rend);
-    SDL_RenderPresent(game->rend);
-}
-
-void level1_state::cleanup()
-{
-    // iterate over all tiles and delete them all
-    for (int i = 0; i < width * height; i++)
-    {
-        if (tileset[i] != NULL)
-        {
-            delete tileset[i];
-            tileset[i] = NULL;
-        }
-    }
-    
-    for (int i = 0; i < crates.size(); i++)
-    {
-        if (crates[i] != NULL)
-        {
-            delete crates[i];
-            crates.pop_back();
-        }
-    }
-    
-    // free all textures
-    b_char_tex.free();
-    w_char_tex.free();
-    tile_tex.free();
-    crate_tex_four_by_two.free();
-    b_button_tex.free();
-    w_button_tex.free();
-    b_springboard_tex.free();
-    
-}
-
-void level1_state::pause()
-{
-    return;
-}
-
-void level1_state::resume()
-{
-    return;
 }
