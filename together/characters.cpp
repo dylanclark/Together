@@ -187,14 +187,14 @@ void dot::move(levelstate* level)
         col_rect.y = 0;
         y_vel = 0;
     }
-    if (col_rect.x + col_rect.w > level->width*TILE_WIDTH)
+    if (col_rect.x + col_rect.w > level->width * TILE_WIDTH)
     {
-        col_rect.x = level->width*TILE_WIDTH - col_rect.w;
+        col_rect.x = level->width * TILE_WIDTH - col_rect.w;
         x_vel = 0;
     }
-    if (col_rect.y + col_rect.h > level->height*TILE_WIDTH)
+    if (col_rect.y + col_rect.h > level->height * TILE_WIDTH)
     {
-        col_rect.y = level->height*TILE_WIDTH - col_rect.h;
+        col_rect.y = level->height * TILE_WIDTH - col_rect.h;
         y_vel = 0;
     }
 }
@@ -433,8 +433,8 @@ bool dot::crate_col(levelstate* level)
                         
                         // move crate
                         level->crates[i]->col_rect.x += x_vel;
-                        level->crates[i]->x_vel = 0;
                         level->crates[i]->check_col(level->crates[i]->get_col_rect(), level, &repos);
+                        level->crates[i]->x_vel = 0;
                         
                         // correct dot position
                         check_collision(col_rect, level->crates[i]->get_col_rect(), &repos);
@@ -466,8 +466,7 @@ bool dot::crate_col(levelstate* level)
         {
             if (check_collision(col_rect, level->crates[i]->get_col_rect(), &repos))
             {
-                
-                
+    
                 if (level->crates[i]->black)
                 {
                     tile_col(level->crates[i]->tileset, MAX_BORDER);
