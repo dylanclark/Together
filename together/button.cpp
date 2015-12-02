@@ -28,7 +28,8 @@ button::button()
     col_rect.h = 4;
     col_rect.x = (SCREEN_WIDTH - col_rect.w) / 2;
     col_rect.y = (SCREEN_HEIGHT - col_rect.h) / 2;
-    
+
+    used = false;
 }
 
 // check for button collision
@@ -68,6 +69,9 @@ void button::render(SDL_Rect* camera, SDL_Renderer* rend)
             angle = 270.0;
             break;
         }
+        default:
+            angle = 0.0;
+            break;
             
     }
     

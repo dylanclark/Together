@@ -99,6 +99,7 @@ void level2_state::draw(engine* game)
     b_button.render(&camera.display, game->rend);
     w_button.render(&camera.display, game->rend);
     b_springboard.render(&camera.display, game->rend);
+    w_springboard.render(&camera.display, game->rend);
     SDL_RenderPresent(game->rend);
 }
 
@@ -131,6 +132,7 @@ void level2_state::cleanup()
     b_button_tex.free();
     w_button_tex.free();
     b_springboard_tex.free();
+    w_springboard_tex.free();
     
 }
 
@@ -192,6 +194,11 @@ void level2_state::load_textures(engine* game)
         printf("Failed to load black springboard texture!\n");
         return;
     }
+    if(!w_springboard_tex.load_tile_sheet("textures/white/spring/w_spring.png", game->rend))
+    {
+        printf("Failed to load white springboard texture!\n");
+        return;
+    }
     
     // initialize level
     width = 27;
@@ -238,17 +245,49 @@ void level2_state::init_objects(engine* game)
     w_button.tex = w_button_tex;
     w_button.col_rect.x = 200;
     w_button.col_rect.y = 540;
+    w_button.direction = UP;
+    
+    // initialize black springboard
+    b_springboard.tex = b_springboard_tex;
+    b_springboard.col_rect.x = 920;
+    b_springboard.col_rect.y = 480;
+    b_springboard.show = true;
+    b_springboard.direction = FLIP_RIGHT;
+    b_springboard.x_spring = 0;
+    b_springboard.y_spring = 8;
+    
+    // initialize black springboard
+    w_springboard.tex = w_springboard_tex;
+    w_springboard.col_rect.x = 920;
+    w_springboard.col_rect.y = 540;
+    w_springboard.show = true;
+    w_springboard.direction = FLIP_RIGHT;
+    // if you want to change spring to value other than default
+    //w_springboard.x_spring = 18;
+    //w_springboard.y_spring = 18;
+
+    
+
 }
 
 void level2_state::interactions(engine* game)
 {
+    
     // if both are on level end object
     if(b_level_end.check(b_char.col_rect) && w_level_end.check(w_char.col_rect))
     {
-        // do end animation
-        b_char.completed(width, height, &b_level_end.col_rect);
-        w_char.completed(width, height, &w_level_end.col_rect);
-        
+        b_char.center(&b_level_end.col_rect);
+        w_char.center(&w_level_end.col_rect);
+    
+        for (int i = 0; i < 140; i++)
+        {
+            
+            // do end animation
+            b_char.completed(width, height, i);
+            w_char.completed(width, height, i);
+
+            game->draw();
+        }
         
         // change state to level 3
         // change_state(game, new level2_state);
@@ -292,7 +331,7 @@ void level2_state::interactions(engine* game)
     }
     
     //if white button is activated
-    if(w_button.check(w_char.col_rect) && !(w_button.single && w_button.used))
+    if(w_button.check(w_char.col_rect) || (w_button.single && w_button.used))
     {
         // used
         w_button.used = true;
@@ -304,13 +343,6 @@ void level2_state::interactions(engine* game)
         {
             w_button.status = (w_button.status + 1) % 4;
         }
-        
-        // initialize black springboard
-        b_springboard.tex = b_springboard_tex;
-        b_springboard.col_rect.x = 920;
-        b_springboard.col_rect.y = 480;
-        b_springboard.direction = RIGHT;
-        
     }
     else
     {
@@ -323,7 +355,7 @@ void level2_state::interactions(engine* game)
     }
     
     //if black springboard is activated
-    if(b_springboard.check(b_char.col_rect))
+    if(b_springboard.check(b_char.col_rect) && b_springboard.show)
     {
         // activate
         b_springboard.activated = true;
@@ -333,7 +365,7 @@ void level2_state::interactions(engine* game)
             b_springboard.status = (b_springboard.status + 1) % 4;
         }
         
-        b_char.spring();
+        b_char.spring(b_springboard.x_spring, b_springboard.y_spring, b_springboard.direction);
         
     }
     else
@@ -343,6 +375,30 @@ void level2_state::interactions(engine* game)
         if(b_springboard.status != BUTT_INACTIVE)
         {
             b_springboard.status = (b_springboard.status + 1) % 4;
+        }
+    }
+    
+    //if white springboard is activated
+    if(w_springboard.check(w_char.col_rect) && w_springboard.show)
+    {
+        // activate
+        w_springboard.activated = true;
+        
+        if(w_springboard.status == BUTT_INACTIVE)
+        {
+            w_springboard.status = (w_springboard.status + 1) % 4;
+        }
+        
+        w_char.spring(w_springboard.x_spring, w_springboard.y_spring, w_springboard.direction);
+        
+    }
+    else
+    {
+        w_springboard.activated = false;
+        
+        if(w_springboard.status != BUTT_INACTIVE)
+        {
+            w_springboard.status = (w_springboard.status + 1) % 4;
         }
     }
 }

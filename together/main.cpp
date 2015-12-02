@@ -37,7 +37,7 @@ int main(void)
     game.init(SCREEN_WIDTH, SCREEN_HEIGHT);
     
     // initialize game state (to level 1, but eventually to main menu)
-    game.change_state(new level2_state);
+    game.change_state(new level1_state);
     
     // run game
     while (game.running())

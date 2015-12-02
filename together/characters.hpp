@@ -80,10 +80,14 @@ public:
     int jump;
     
     // end of level animation
-    void completed(int width, int height, SDL_Rect* end_rect);
+    void completed(int width, int height, int frame);
     
     // spring
-    void spring();
+    void spring(int x, int y, int direction);
+    
+    // center on object
+    void center(SDL_Rect* end_rect);
+
 private:
     
     // velocity variables

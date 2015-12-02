@@ -96,9 +96,6 @@ void level1_state::draw(engine* game)
     w_char.render(&camera.display, game->rend);
     b_level_end.render(&camera.display, game->rend);
     w_level_end.render(&camera.display, game->rend);
-    //b_button.render(&camera.display, game->rend);
-    //w_button.render(&camera.display, game->rend);
-    //b_springboard.render(&camera.display, game->rend);
     SDL_RenderPresent(game->rend);
 }
 
@@ -131,6 +128,7 @@ void level1_state::cleanup()
     b_button_tex.free();
     w_button_tex.free();
     b_springboard_tex.free();
+    w_springboard_tex.free();
     
 }
 
@@ -238,17 +236,7 @@ void level1_state::init_objects(engine* game)
     crates.back()->tex = crate_tex_four_by_two;
     crates.back()->black = true;
     
-    // initialize black button
-    b_button.tex = b_button_tex;
-    b_button.col_rect.x = 1200;
-    b_button.col_rect.y = 480;
-    b_button.single = true;
-    b_button.direction = RIGHT;
     
-    // initialize white button
-    w_button.tex = w_button_tex;
-    w_button.col_rect.x = 200;
-    w_button.col_rect.y = 540;
 }
 
 void level1_state::interactions(engine* game)
@@ -256,10 +244,16 @@ void level1_state::interactions(engine* game)
     // if both are on level end object
     if(b_level_end.check(b_char.col_rect) && w_level_end.check(w_char.col_rect))
     {
-        // do end animation
-        b_char.completed(width, height, &b_level_end.col_rect);
-        w_char.completed(width, height, &w_level_end.col_rect);
+        b_char.center(&b_level_end.col_rect);
+        w_char.center(&w_level_end.col_rect);
         
+        for(int i = 0; i < 140; i++)
+        {
+            // do end animation
+            b_char.completed(width, height, i);
+            w_char.completed(width, height, i);
+            draw(game);
+        }
         
         // change state to level 2
         change_state(game, new level2_state);

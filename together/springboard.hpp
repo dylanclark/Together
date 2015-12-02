@@ -15,7 +15,7 @@
 #include "collisions.hpp"
 #include "tiles.hpp"
 #include "camera.hpp"
-#include "button.hpp"
+
 
 
 // button status constants
@@ -26,6 +26,10 @@ const int BOARD_INACTIVATE = 3;
 
 // animation length
 const int BOARD_ANIMATION_LENGTH = 6;
+
+// direction
+const int FLIP_LEFT = 0;
+const int FLIP_RIGHT = 1;
 
 
 class springboard
@@ -49,6 +53,9 @@ public:
     // activated or not
     bool activated;
     
+    // shown or not
+    bool show;
+    
     // direction
     int direction;
     
@@ -65,7 +72,16 @@ public:
     SDL_Point* center = NULL;
     
     // flip type
-    SDL_RendererFlip flip = SDL_FLIP_NONE;
+    SDL_RendererFlip flip_type;
+    
+    // spring velocity
+    int x_spring;
+    
+    int y_spring;
+    
+    // default velocity and acceleration constants
+    const float SPRING_X_VEL = 2;
+    const float SPRING_Y_VEL = 10;
 
     
 };

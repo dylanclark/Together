@@ -17,8 +17,8 @@
 #include "springboard.hpp"
 
 // reinitialize textures
-extern texture b_board;
-extern texture w_board;
+extern texture b_springboard;
+extern texture w_springboard;
 
 // button class
 springboard::springboard()
@@ -29,6 +29,13 @@ springboard::springboard()
     col_rect.x = (SCREEN_WIDTH - col_rect.w) / 2;
     col_rect.y = (SCREEN_HEIGHT - col_rect.h) / 2;
     
+    show = false;
+    
+    angle = 0.0;
+    
+    x_spring = SPRING_X_VEL;
+    
+    y_spring = SPRING_Y_VEL;
 }
 
 // check for button collision
@@ -48,11 +55,14 @@ void springboard::render(SDL_Rect* camera, SDL_Renderer* rend)
     // flip
     switch(direction)
     {
-        case(LEFT):
-            flip = SDL_FLIP_HORIZONTAL;
+        case(FLIP_LEFT):
+            flip_type = SDL_FLIP_VERTICAL;
+            angle = 180;
+            break;
             
-        case(RIGHT):
-            flip = SDL_FLIP_NONE;
+        case(FLIP_RIGHT):
+            flip_type = SDL_FLIP_NONE;
+            break;
             
     }
     
@@ -63,10 +73,10 @@ void springboard::render(SDL_Rect* camera, SDL_Renderer* rend)
     switch (status)
     {
         case BOARD_INACTIVE:
-            tex.angle_render(col_rect.x, col_rect.y, &inactive_clip, camera, rend, angle, center, flip);
+            tex.angle_render(col_rect.x, col_rect.y, &inactive_clip, camera, rend, angle, center, flip_type);
             break;
         case BOARD_ACTIVE:
-            tex.angle_render(col_rect.x, col_rect.y, &active_clip, camera, rend, angle, center, flip);
+            tex.angle_render(col_rect.x, col_rect.y, &active_clip, camera, rend, angle, center, flip_type);
             break;
         case BOARD_ACTIVATE:
         {
@@ -77,7 +87,7 @@ void springboard::render(SDL_Rect* camera, SDL_Renderer* rend)
             SDL_Rect activate_clip = {16 * frame, 0, 16, 16};
             
             // render that mofo
-            tex.angle_render(col_rect.x, col_rect.y, &activate_clip, camera, rend, angle, center, flip);
+            tex.angle_render(col_rect.x, col_rect.y, &activate_clip, camera, rend, angle, center, flip_type);
             
             // change the status if animation is over!
             if (frame == BOARD_ANIMATION_LENGTH - 1)
@@ -96,7 +106,7 @@ void springboard::render(SDL_Rect* camera, SDL_Renderer* rend)
             SDL_Rect inactivate_clip = {16 * (frame + 7), 0, 16, 16};
             
             // render that mofo
-            tex.angle_render(col_rect.x, col_rect.y, &inactivate_clip, camera, rend, angle, center, flip);
+            tex.angle_render(col_rect.x, col_rect.y, &inactivate_clip, camera, rend, angle, center, flip_type);
 
             // change the status if animation is over!
             if (frame == BOARD_ANIMATION_LENGTH - 1)

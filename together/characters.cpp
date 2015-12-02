@@ -560,30 +560,45 @@ void dot::render(SDL_Rect* camera, SDL_Renderer* rend)
     }
 };
 
-// code for post-level animation (must be followed by level change or will mess shit up!)
-void dot::completed(int width,int height, SDL_Rect* end_rect)
+// code for post-level animation
+void dot::completed(int width,int height, int frame)
 {
     // make them both big
     if(!CHAR_ACTIVE)
         status = CHAR_ACTIVE;
+
+    if (frame < 20 || (40 <= frame && frame < 60) || (80 <= frame && frame < 100) || (120 <= frame && frame < 140))
+    {
+        col_rect.x--;
+    }
+    if ((20 <= frame && frame < 40) || (60 <= frame && frame < 80) || (100 <= frame && frame < 120)) {
+        col_rect.x++;
+    }
     
+    return;
+}
+
+void dot::spring(int x, int y, int direction)
+{
+    status = CHAR_ACTIVE;
+    
+    black ? y_vel -= y : y_vel += y;
+    
+    if(direction == FLIP_RIGHT)
+        x_vel += x;
+    else
+        x_vel -= x;
+}
+
+void dot::center(SDL_Rect* end_rect)
+{
     // center dot on level-end object
     while (col_rect.x < end_rect->x )
         col_rect.x++;
     while (col_rect.x > end_rect->x )
         col_rect.x--;
-    
-    // make it jump (input actual animation here)
-    black ? y_vel -= DOT_VEL : y_vel += DOT_VEL;
-    
-    return;
-}
-
-void dot::spring()
-{
-    status = CHAR_ACTIVE;
-    
-    black ? y_vel -= JUMP_VEL : y_vel += JUMP_VEL;
-    
-    x_vel += DOT_VEL;
+    while (col_rect.y < end_rect->y )
+        col_rect.y++;
+    while (col_rect.y > end_rect->y )
+        col_rect.y--;
 }
