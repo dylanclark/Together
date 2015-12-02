@@ -1,6 +1,6 @@
 
-#ifndef button_hpp
-#define button_hpp
+#ifndef springboard_hpp
+#define springboard_hpp
 
 // using SDL and standard IO
 #include <iostream>
@@ -17,40 +17,30 @@
 #include "camera.hpp"
 
 
+
 // button status constants
-const int BUTT_INACTIVE = 0;
-const int BUTT_ACTIVATE = 1;
-const int BUTT_ACTIVE = 2;
-const int BUTT_INACTIVATE = 3;
+const int BOARD_INACTIVE = 0;
+const int BOARD_ACTIVATE = 1;
+const int BOARD_ACTIVE = 2;
+const int BOARD_INACTIVATE = 3;
 
 // animation length
-const int BUTT_ANIMATION_LENGTH = 4;
+const int BOARD_ANIMATION_LENGTH = 6;
 
-// direction constants
-const int UP = 0;
-const int RIGHT = 1;
-const int DOWN = 2;
-const int LEFT = 3;
+// direction
+const int FLIP_LEFT = 0;
+const int FLIP_RIGHT = 1;
 
 
-class button
+class springboard
 {
 public:
     // initialize traits
-    button();
+    springboard();
     
     // render the item on the screen
     void render(SDL_Rect* camera, SDL_Renderer* rend);
     
-    // angle to flip
-    double angle = 0.0;
-    
-    // flip axis point
-    SDL_Point* center = NULL;
-    
-    // flip type
-    SDL_RendererFlip flip = SDL_FLIP_NONE;
-
     // collision rectangle
     SDL_Rect col_rect;
     
@@ -63,11 +53,8 @@ public:
     // activated or not
     bool activated;
     
-    // single use
-    bool single;
-    
-    // used
-    bool used;
+    // shown or not
+    bool show;
     
     // direction
     int direction;
@@ -78,7 +65,26 @@ public:
     // frame of animation
     int frame;
     
+    // angle to flip
+    double angle = 0.0;
+    
+    // flip axis point
+    SDL_Point* center = NULL;
+    
+    // flip type
+    SDL_RendererFlip flip_type;
+    
+    // spring velocity
+    int x_spring;
+    
+    int y_spring;
+    
+    // default velocity and acceleration constants
+    const float SPRING_X_VEL = 2;
+    const float SPRING_Y_VEL = 10;
+
+    
 };
 
-#endif /* button_hpp */
+#endif /* springboard_hpp */
 

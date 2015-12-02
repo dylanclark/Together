@@ -29,7 +29,6 @@ public:
     
     // check for collision with dot
     bool check(SDL_Rect dot_rect);
-    
 };
 
 #endif /* level_end_hpp */

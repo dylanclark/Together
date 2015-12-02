@@ -219,10 +219,10 @@ void dot::move(levelstate* level)
         x_vel = DOT_VEL;
     if (x_vel < -DOT_VEL)
         x_vel = -DOT_VEL;
-    if (y_vel > JUMP_VEL)
-        y_vel = JUMP_VEL;
-    if (y_vel < -JUMP_VEL)
-        y_vel = -JUMP_VEL;
+    if (y_vel > 1.5 * JUMP_VEL)
+        y_vel = 1.5 * JUMP_VEL;
+    if (y_vel < 1.5 * -JUMP_VEL)
+        y_vel = 1.5 * -JUMP_VEL;
     
     if (status != CHAR_ACTIVE)
     {
@@ -257,14 +257,14 @@ void dot::move(levelstate* level)
         col_rect.y = 0;
         y_vel = 0;
     }
-    if (col_rect.x + col_rect.w > level->width*TILE_WIDTH)
+    if (col_rect.x + col_rect.w > level->width * TILE_WIDTH)
     {
-        col_rect.x = level->width*TILE_WIDTH - col_rect.w;
+        col_rect.x = level->width * TILE_WIDTH - col_rect.w;
         x_vel = 0;
     }
-    if (col_rect.y + col_rect.h > level->height*TILE_WIDTH)
+    if (col_rect.y + col_rect.h > level->height * TILE_WIDTH)
     {
-        col_rect.y = level->height*TILE_WIDTH - col_rect.h;
+        col_rect.y = level->height * TILE_WIDTH - col_rect.h;
         y_vel = 0;
     }
 }
@@ -510,8 +510,8 @@ bool dot::crate_col(levelstate* level)
                         
                         // move crate
                         level->crates[i]->col_rect.x += x_vel;
-                        level->crates[i]->x_vel = 0;
                         level->crates[i]->check_col(level->crates[i]->get_col_rect(), level, &repos);
+                        level->crates[i]->x_vel = 0;
                         
                         // correct dot position
                         check_collision(col_rect, level->crates[i]->get_col_rect(), &repos);
@@ -543,8 +543,7 @@ bool dot::crate_col(levelstate* level)
         {
             if (check_collision(col_rect, level->crates[i]->get_col_rect(), &repos))
             {
-                
-                
+    
                 if (level->crates[i]->black)
                 {
                     tile_col(level->crates[i]->tileset, MAX_BORDER);
@@ -650,21 +649,45 @@ void dot::render(SDL_Rect* camera, SDL_Renderer* rend)
     }
 };
 
-// code for post-level animation (must be followed by level change or will mess shit up!)
-void dot::completed(int width,int height, SDL_Rect* end_rect)
+// code for post-level animation
+void dot::completed(int width,int height, int frame)
 {
     // make them both big
-    if(!TILE_ACTIVE)
-        status = TILE_ACTIVE;
+    if(!CHAR_ACTIVE)
+        status = CHAR_ACTIVE;
+
+    if (frame < 20 || (40 <= frame && frame < 60) || (80 <= frame && frame < 100) || (120 <= frame && frame < 140))
+    {
+        col_rect.x--;
+    }
+    if ((20 <= frame && frame < 40) || (60 <= frame && frame < 80) || (100 <= frame && frame < 120)) {
+        col_rect.x++;
+    }
     
+    return;
+}
+
+void dot::spring(int x, int y, int direction)
+{
+    status = CHAR_ACTIVE;
+    
+    black ? y_vel -= y : y_vel += y;
+    
+    if(direction == FLIP_RIGHT)
+        x_vel += x;
+    else
+        x_vel -= x;
+}
+
+void dot::center(SDL_Rect* end_rect)
+{
     // center dot on level-end object
     while (col_rect.x < end_rect->x )
         col_rect.x++;
     while (col_rect.x > end_rect->x )
         col_rect.x--;
-    
-    // make it jump (input actual animation here)
-    black ? y_vel -= DOT_VEL : y_vel += DOT_VEL;
-    
-    return;
+    while (col_rect.y < end_rect->y )
+        col_rect.y++;
+    while (col_rect.y > end_rect->y )
+        col_rect.y--;
 }

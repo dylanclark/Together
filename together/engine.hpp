@@ -7,6 +7,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2_image/SDL_image.h>
 #include <vector>
+#include <SDL2_ttf/SDL_ttf.h>
 
 // include headers
 #include "sound.hpp"

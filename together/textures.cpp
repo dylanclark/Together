@@ -129,7 +129,7 @@ void texture::render(int x, int y, SDL_Rect* clip, SDL_Rect* camera, SDL_Rendere
     
     // render to the screen
     SDL_RenderCopy(rend, tex, clip, &render_rect);
-};
+}
 
 void texture::render_tile(int x, int y, SDL_Rect* type_clip, SDL_Rect* active_clip, SDL_Rect* camera, SDL_Renderer* rend)
 {

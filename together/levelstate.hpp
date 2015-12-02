@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include <SDL2/SDL.h>
 #include <SDL2_image/SDL_image.h>
+#include <SDL2_ttf/SDL_ttf.h>
 
 // include headers
 #include "engine.hpp"
@@ -15,6 +16,7 @@
 #include "camera.hpp"
 #include "level_end.hpp"
 #include "button.hpp"
+#include "springboard.hpp"
 
 class crate;
 
@@ -40,6 +42,9 @@ public:
     level_end w_level_end;
     button b_button;
     button w_button;
+    springboard w_springboard;
+    springboard b_springboard;
+    
     // shift bool
     bool shiftable;
     
@@ -55,6 +60,8 @@ public:
     texture crate_tex_four_by_one;
     texture crate_tex_three_by_two;
     texture crate_tex_two_by_two;
+    texture b_springboard_tex;
+    texture w_springboard_tex;
     
     // tileset
     tile* tileset[MAX_SIZE];

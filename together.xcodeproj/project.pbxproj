@@ -20,9 +20,9 @@
 		EF8252851BF109940003EF9E /* SDL2_image.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EF8252841BF109940003EF9E /* SDL2_image.framework */; };
 		EF8252901BF121490003EF9E /* levels in CopyFiles */ = {isa = PBXBuildFile; fileRef = EF0808611BF0504300338AB0 /* levels */; };
 		EF8252911BF1214D0003EF9E /* textures in CopyFiles */ = {isa = PBXBuildFile; fileRef = EFBCA0CC1BED21BF005D56CA /* textures */; };
-		EF8252941BF3201C0003EF9E /* camera.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EF8252921BF3201C0003EF9E /* camera.cpp */; settings = {ASSET_TAGS = (); }; };
-		EFA85F2F1C0675BA001113CA /* mainmenu_state.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EFA85F2D1C0675BA001113CA /* mainmenu_state.cpp */; settings = {ASSET_TAGS = (); }; };
-		EFA85F341C078C6F001113CA /* crate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EFA85F321C078C6F001113CA /* crate.cpp */; settings = {ASSET_TAGS = (); }; };
+		EF8252941BF3201C0003EF9E /* camera.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EF8252921BF3201C0003EF9E /* camera.cpp */; };
+		EFA85F2F1C0675BA001113CA /* mainmenu_state.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EFA85F2D1C0675BA001113CA /* mainmenu_state.cpp */; };
+		EFA85F341C078C6F001113CA /* crate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EFA85F321C078C6F001113CA /* crate.cpp */; };
 		EFBCA0BE1BED17FB005D56CA /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EFBCA0BD1BED17FB005D56CA /* main.cpp */; };
 		EFBCA0D21BED5031005D56CA /* level_draw.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EFBCA0D01BED5031005D56CA /* level_draw.cpp */; };
 		EFBCA0DB1BED5DE8005D56CA /* collisions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EFBCA0D91BED5DE8005D56CA /* collisions.cpp */; };
@@ -37,6 +37,8 @@
 		FC8A5A3D1C098AC00023A58B /* button.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FC8A5A3B1C098AC00023A58B /* button.cpp */; };
 		FC8D8AE71C081B9700A1C6F7 /* level2_state.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FC8D8AE61C081B9700A1C6F7 /* level2_state.cpp */; };
 		FC8D8AEC1C0825B900A1C6F7 /* level_end.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FC8D8AEA1C0825B900A1C6F7 /* level_end.cpp */; };
+		FCB126F61C0CCB8B001D7EC8 /* springboard.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FCB126F41C0CCB8B001D7EC8 /* springboard.cpp */; };
+		FCB126F81C0CE2FE001D7EC8 /* SDL2_ttf.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FCB126F71C0CE2FD001D7EC8 /* SDL2_ttf.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -109,6 +111,9 @@
 		FC8D8AE91C081C6200A1C6F7 /* level2_state.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = level2_state.hpp; sourceTree = "<group>"; };
 		FC8D8AEA1C0825B900A1C6F7 /* level_end.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = level_end.cpp; sourceTree = "<group>"; };
 		FC8D8AEB1C0825B900A1C6F7 /* level_end.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = level_end.hpp; sourceTree = "<group>"; };
+		FCB126F41C0CCB8B001D7EC8 /* springboard.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = springboard.cpp; sourceTree = "<group>"; };
+		FCB126F51C0CCB8B001D7EC8 /* springboard.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = springboard.hpp; sourceTree = "<group>"; };
+		FCB126F71C0CE2FD001D7EC8 /* SDL2_ttf.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL2_ttf.framework; path = ../../../../../Library/Frameworks/SDL2_ttf.framework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -278,6 +283,7 @@
 				FC8D8AEB1C0825B900A1C6F7 /* level_end.hpp */,
 				EF5295AC1C0BEBEB00178AC7 /* sound.hpp */,
 				FC8A5A3C1C098AC00023A58B /* button.hpp */,
+				FCB126F51C0CCB8B001D7EC8 /* springboard.hpp */,
 				EFBCA0FC1BEE8EF1005D56CA /* initialization.hpp */,
 				EF0CE3B31BEFD8C50080692E /* textures.hpp */,
 				EF5295B21C0C107000178AC7 /* menu.hpp */,
@@ -372,6 +378,7 @@
 				EF5295B01C0BF65F00178AC7 /* gamepad.cpp in Sources */,
 				EFBCA0BE1BED17FB005D56CA /* main.cpp in Sources */,
 				FC8A5A3D1C098AC00023A58B /* button.cpp in Sources */,
+				FCB126F61C0CCB8B001D7EC8 /* springboard.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
