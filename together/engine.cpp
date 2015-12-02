@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <SDL2/SDL.h>
 #include <SDL2_image/SDL_image.h>
+#include <SDL2_mixer/SDL_mixer.h>
 #include <vector>
 #include <SDL2_ttf/SDL_ttf.h>
 
@@ -10,23 +11,33 @@
 #include "engine.hpp"
 #include "gamestate.hpp"
 
-bool engine::init(int width, int height)
+bool engine::init()
 {
     bool success = true;
     
     // attempt initialization
-    if (SDL_Init(SDL_INIT_VIDEO|SDL_INIT_TIMER|SDL_INIT_AUDIO) != 0)
+    if (SDL_Init(SDL_INIT_VIDEO|SDL_INIT_TIMER|SDL_INIT_AUDIO|SDL_INIT_JOYSTICK|SDL_INIT_GAMECONTROLLER) != 0)
     {
         printf("error initializing SDL: %s\n", SDL_GetError());
         success = false;
     }
     printf("initialization successful!\n");
     
+    SDL_DisplayMode current;
+    
+    if (SDL_GetCurrentDisplayMode(0, &current) != 0)
+    {
+        printf("could not get display info: %s\n", SDL_GetError());
+    }
+    
+    screen_width = current.w;
+    screen_height = current.h;
+    
     // creates a window that we can (eventually) draw into
     win = SDL_CreateWindow("together.",
                            SDL_WINDOWPOS_CENTERED,
                            SDL_WINDOWPOS_CENTERED,
-                           width, height, SDL_WINDOW_RESIZABLE);
+                           current.w, current.h, SDL_WINDOW_RESIZABLE);
     if (!win)
     {
         printf("error creating window: %s\n", SDL_GetError());
@@ -44,6 +55,21 @@ bool engine::init(int width, int height)
         SDL_Quit();
         success = false;
     }
+    
+    // initialize audio
+    if(Mix_OpenAudio(MIX_DEFAULT_FREQUENCY, MIX_DEFAULT_FORMAT, 2, 256 ) == -1)
+    {
+        printf("error initializing audio: %s\n", SDL_GetError());
+        Mix_CloseAudio();
+        success = false;
+    }
+    
+    if (SDL_ShowCursor(SDL_DISABLE) != 0)
+    {
+        printf("could not hide cursor: %s\n", SDL_GetError());
+    }
+    
+    sound = new sound_player;
     
     // clear the window
     SDL_RenderClear(rend);
@@ -65,6 +91,8 @@ bool engine::init(int width, int height)
 void engine::cleanup()
 {
     // clean up!
+    free(sound);
+    Mix_CloseAudio();
     SDL_DestroyRenderer(rend);
     SDL_DestroyWindow(win);
     SDL_Quit();
@@ -118,4 +146,24 @@ void engine::update()
 void engine::draw()
 {
     states.back()->draw(this);
+}
+
+void engine::resize()
+{
+    int w, h;
+    
+    SDL_GetWindowSize(win, &w, &h);
+    
+    screen_width = w;
+    screen_height = h;
+    
+    SDL_Rect viewport;
+    SDL_Rect new_viewport = {0, 0, screen_width, screen_height};
+    SDL_RenderGetViewport(rend, &viewport);
+    
+    if(viewport.w != new_viewport.w || viewport.h != new_viewport.h)
+    {
+        // change viewport size
+        SDL_RenderSetViewport(rend, &new_viewport);
+    }
 }

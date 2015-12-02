@@ -11,6 +11,11 @@
 		EF27A69E1C04F48F00459C32 /* engine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EF27A69C1C04F48F00459C32 /* engine.cpp */; };
 		EF27A6A11C0506E800459C32 /* level1_state.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EF27A69F1C0506E800459C32 /* level1_state.cpp */; };
 		EF27A6AC1C052EC200459C32 /* (null) in Sources */ = {isa = PBXBuildFile; };
+		EF5295A81C0BE7CB00178AC7 /* SDL2_ttf.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EF5295A71C0BE7CB00178AC7 /* SDL2_ttf.framework */; };
+		EF5295AA1C0BE8C000178AC7 /* SDL2_mixer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EF5295A91C0BE8C000178AC7 /* SDL2_mixer.framework */; };
+		EF5295AD1C0BEBEB00178AC7 /* sound.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EF5295AB1C0BEBEB00178AC7 /* sound.cpp */; settings = {ASSET_TAGS = (); }; };
+		EF5295B01C0BF65F00178AC7 /* gamepad.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EF5295AE1C0BF65F00178AC7 /* gamepad.cpp */; settings = {ASSET_TAGS = (); }; };
+		EF5295B31C0C107000178AC7 /* menu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EF5295B11C0C107000178AC7 /* menu.cpp */; settings = {ASSET_TAGS = (); }; };
 		EF8252831BF1098A0003EF9E /* SDL2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EF8252821BF1098A0003EF9E /* SDL2.framework */; };
 		EF8252851BF109940003EF9E /* SDL2_image.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EF8252841BF109940003EF9E /* SDL2_image.framework */; };
 		EF8252901BF121490003EF9E /* levels in CopyFiles */ = {isa = PBXBuildFile; fileRef = EF0808611BF0504300338AB0 /* levels */; };
@@ -24,6 +29,11 @@
 		EFBCA0F71BEE8C89005D56CA /* tiles.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EFBCA0F51BEE8C89005D56CA /* tiles.cpp */; };
 		EFBCA0FA1BEE8CD2005D56CA /* characters.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EFBCA0F81BEE8CD2005D56CA /* characters.cpp */; };
 		EFBCA0FD1BEE8EF1005D56CA /* (null) in Sources */ = {isa = PBXBuildFile; };
+		EFE808711C0D6A2D00E6933A /* pausemenu_state.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EFE8086F1C0D6A2D00E6933A /* pausemenu_state.cpp */; settings = {ASSET_TAGS = (); }; };
+		EFE808741C0E147600E6933A /* optionsmenu_state.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EFE808721C0E147600E6933A /* optionsmenu_state.cpp */; settings = {ASSET_TAGS = (); }; };
+		EFFB15E41C0D0747006428DB /* quitmenu_state.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EFFB15E21C0D0747006428DB /* quitmenu_state.cpp */; settings = {ASSET_TAGS = (); }; };
+		EFFB15E71C0D0779006428DB /* quitseq_state.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EFFB15E51C0D0779006428DB /* quitseq_state.cpp */; settings = {ASSET_TAGS = (); }; };
+		EFFE7EF21C0D5ADE00478C10 /* menu_buttons.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EFFE7EF01C0D5ADE00478C10 /* menu_buttons.cpp */; settings = {ASSET_TAGS = (); }; };
 		FC8A5A3D1C098AC00023A58B /* button.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FC8A5A3B1C098AC00023A58B /* button.cpp */; };
 		FC8D8AE71C081B9700A1C6F7 /* level2_state.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FC8D8AE61C081B9700A1C6F7 /* level2_state.cpp */; };
 		FC8D8AEC1C0825B900A1C6F7 /* level_end.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FC8D8AEA1C0825B900A1C6F7 /* level_end.cpp */; };
@@ -54,13 +64,21 @@
 		EF27A69F1C0506E800459C32 /* level1_state.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = level1_state.cpp; sourceTree = "<group>"; };
 		EF27A6A01C0506E800459C32 /* level1_state.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = level1_state.hpp; sourceTree = "<group>"; };
 		EF27A6AB1C052EC200459C32 /* levelstate.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = levelstate.hpp; sourceTree = "<group>"; };
+		EF5295A71C0BE7CB00178AC7 /* SDL2_ttf.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL2_ttf.framework; path = ../../../../../../Library/Frameworks/SDL2_ttf.framework; sourceTree = "<group>"; };
+		EF5295A91C0BE8C000178AC7 /* SDL2_mixer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL2_mixer.framework; path = ../../../../../../Library/Frameworks/SDL2_mixer.framework; sourceTree = "<group>"; };
+		EF5295AB1C0BEBEB00178AC7 /* sound.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = sound.cpp; sourceTree = "<group>"; };
+		EF5295AC1C0BEBEB00178AC7 /* sound.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = sound.hpp; sourceTree = "<group>"; };
+		EF5295AE1C0BF65F00178AC7 /* gamepad.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = gamepad.cpp; sourceTree = "<group>"; };
+		EF5295AF1C0BF65F00178AC7 /* gamepad.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = gamepad.hpp; sourceTree = "<group>"; };
+		EF5295B11C0C107000178AC7 /* menu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = menu.cpp; sourceTree = "<group>"; };
+		EF5295B21C0C107000178AC7 /* menu.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = menu.hpp; sourceTree = "<group>"; };
+		EF5295B51C0CC3AC00178AC7 /* sound */ = {isa = PBXFileReference; lastKnownFileType = folder; path = sound; sourceTree = "<group>"; };
 		EF68FE801C04003200E2030D /* gamestate.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = gamestate.hpp; sourceTree = "<group>"; };
 		EF69B9121BFA83D400F5DAC2 /* TODO */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = TODO; sourceTree = "<group>"; };
 		EF8252821BF1098A0003EF9E /* SDL2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL2.framework; path = ../../../../../../Library/Frameworks/SDL2.framework; sourceTree = "<group>"; };
 		EF8252841BF109940003EF9E /* SDL2_image.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL2_image.framework; path = ../../../../../../Library/Frameworks/SDL2_image.framework; sourceTree = "<group>"; };
 		EF8252921BF3201C0003EF9E /* camera.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = camera.cpp; sourceTree = "<group>"; };
 		EF8252931BF3201C0003EF9E /* camera.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = camera.hpp; sourceTree = "<group>"; };
-		EFA85F2C1C06741B001113CA /* menustate.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = menustate.hpp; sourceTree = "<group>"; };
 		EFA85F2D1C0675BA001113CA /* mainmenu_state.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = mainmenu_state.cpp; sourceTree = "<group>"; };
 		EFA85F2E1C0675BA001113CA /* mainmenu_state.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = mainmenu_state.hpp; sourceTree = "<group>"; };
 		EFA85F321C078C6F001113CA /* crate.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = crate.cpp; sourceTree = "<group>"; };
@@ -77,6 +95,16 @@
 		EFBCA0F81BEE8CD2005D56CA /* characters.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = characters.cpp; sourceTree = "<group>"; };
 		EFBCA0F91BEE8CD2005D56CA /* characters.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = characters.hpp; sourceTree = "<group>"; };
 		EFBCA0FC1BEE8EF1005D56CA /* initialization.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = initialization.hpp; sourceTree = "<group>"; };
+		EFE8086F1C0D6A2D00E6933A /* pausemenu_state.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = pausemenu_state.cpp; sourceTree = "<group>"; };
+		EFE808701C0D6A2D00E6933A /* pausemenu_state.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = pausemenu_state.hpp; sourceTree = "<group>"; };
+		EFE808721C0E147600E6933A /* optionsmenu_state.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = optionsmenu_state.cpp; sourceTree = "<group>"; };
+		EFE808731C0E147600E6933A /* optionsmenu_state.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = optionsmenu_state.hpp; sourceTree = "<group>"; };
+		EFFB15E21C0D0747006428DB /* quitmenu_state.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = quitmenu_state.cpp; sourceTree = "<group>"; };
+		EFFB15E31C0D0747006428DB /* quitmenu_state.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = quitmenu_state.hpp; sourceTree = "<group>"; };
+		EFFB15E51C0D0779006428DB /* quitseq_state.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = quitseq_state.cpp; sourceTree = "<group>"; };
+		EFFB15E61C0D0779006428DB /* quitseq_state.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = quitseq_state.hpp; sourceTree = "<group>"; };
+		EFFE7EF01C0D5ADE00478C10 /* menu_buttons.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = menu_buttons.cpp; sourceTree = "<group>"; };
+		EFFE7EF11C0D5ADE00478C10 /* menu_buttons.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = menu_buttons.hpp; sourceTree = "<group>"; };
 		FC8A5A3B1C098AC00023A58B /* button.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = button.cpp; sourceTree = "<group>"; };
 		FC8A5A3C1C098AC00023A58B /* button.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = button.hpp; sourceTree = "<group>"; };
 		FC8D8AE61C081B9700A1C6F7 /* level2_state.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = level2_state.cpp; sourceTree = "<group>"; };
@@ -93,7 +121,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				FCB126F81C0CE2FE001D7EC8 /* SDL2_ttf.framework in Frameworks */,
+				EF5295AA1C0BE8C000178AC7 /* SDL2_mixer.framework in Frameworks */,
+				EF5295A81C0BE7CB00178AC7 /* SDL2_ttf.framework in Frameworks */,
 				EF8252851BF109940003EF9E /* SDL2_image.framework in Frameworks */,
 				EF8252831BF1098A0003EF9E /* SDL2.framework in Frameworks */,
 			);
@@ -116,7 +145,6 @@
 		EF27A6A31C05072900459C32 /* menus */ = {
 			isa = PBXGroup;
 			children = (
-				EFA85F2C1C06741B001113CA /* menustate.hpp */,
 				EFA85F301C0675C0001113CA /* src */,
 				EFA85F311C0675C5001113CA /* head */,
 			);
@@ -164,6 +192,10 @@
 				EF27A69C1C04F48F00459C32 /* engine.cpp */,
 				EF8252921BF3201C0003EF9E /* camera.cpp */,
 				EFBCA0F51BEE8C89005D56CA /* tiles.cpp */,
+				EF5295B11C0C107000178AC7 /* menu.cpp */,
+				EFFE7EF01C0D5ADE00478C10 /* menu_buttons.cpp */,
+				EF5295AB1C0BEBEB00178AC7 /* sound.cpp */,
+				EF5295AE1C0BF65F00178AC7 /* gamepad.cpp */,
 				EFBCA0F81BEE8CD2005D56CA /* characters.cpp */,
 				EFA85F321C078C6F001113CA /* crate.cpp */,
 				EF0CE3B21BEFD8C50080692E /* textures.cpp */,
@@ -188,6 +220,10 @@
 			isa = PBXGroup;
 			children = (
 				EFA85F2D1C0675BA001113CA /* mainmenu_state.cpp */,
+				EFFB15E21C0D0747006428DB /* quitmenu_state.cpp */,
+				EFE808721C0E147600E6933A /* optionsmenu_state.cpp */,
+				EFE8086F1C0D6A2D00E6933A /* pausemenu_state.cpp */,
+				EFFB15E51C0D0779006428DB /* quitseq_state.cpp */,
 			);
 			name = src;
 			sourceTree = "<group>";
@@ -196,6 +232,10 @@
 			isa = PBXGroup;
 			children = (
 				EFA85F2E1C0675BA001113CA /* mainmenu_state.hpp */,
+				EFFB15E31C0D0747006428DB /* quitmenu_state.hpp */,
+				EFE808731C0E147600E6933A /* optionsmenu_state.hpp */,
+				EFE808701C0D6A2D00E6933A /* pausemenu_state.hpp */,
+				EFFB15E61C0D0779006428DB /* quitseq_state.hpp */,
 			);
 			name = head;
 			sourceTree = "<group>";
@@ -203,11 +243,13 @@
 		EFBCA0B11BED17FB005D56CA = {
 			isa = PBXGroup;
 			children = (
-				FCB126F71C0CE2FD001D7EC8 /* SDL2_ttf.framework */,
+				EF5295A91C0BE8C000178AC7 /* SDL2_mixer.framework */,
+				EF5295A71C0BE7CB00178AC7 /* SDL2_ttf.framework */,
 				EF8252841BF109940003EF9E /* SDL2_image.framework */,
 				EF8252821BF1098A0003EF9E /* SDL2.framework */,
 				EFBCA0BC1BED17FB005D56CA /* project */,
 				EFBCA0BB1BED17FB005D56CA /* Products */,
+				EF5295B51C0CC3AC00178AC7 /* sound */,
 				EF0808611BF0504300338AB0 /* levels */,
 				EFBCA0CC1BED21BF005D56CA /* textures */,
 			);
@@ -237,17 +279,21 @@
 		EFBCA0CE1BED4F75005D56CA /* head */ = {
 			isa = PBXGroup;
 			children = (
+				EF27A69D1C04F48F00459C32 /* engine.hpp */,
 				EFBCA0F61BEE8C89005D56CA /* tiles.hpp */,
 				FC8D8AEB1C0825B900A1C6F7 /* level_end.hpp */,
+				EF5295AC1C0BEBEB00178AC7 /* sound.hpp */,
 				FC8A5A3C1C098AC00023A58B /* button.hpp */,
 				FCB126F51C0CCB8B001D7EC8 /* springboard.hpp */,
 				EFBCA0FC1BEE8EF1005D56CA /* initialization.hpp */,
 				EF0CE3B31BEFD8C50080692E /* textures.hpp */,
+				EF5295B21C0C107000178AC7 /* menu.hpp */,
+				EFFE7EF11C0D5ADE00478C10 /* menu_buttons.hpp */,
 				EFA85F331C078C6F001113CA /* crate.hpp */,
+				EF5295AF1C0BF65F00178AC7 /* gamepad.hpp */,
 				EF8252931BF3201C0003EF9E /* camera.hpp */,
 				EFBCA0DA1BED5DE8005D56CA /* collisions.hpp */,
 				EFBCA0F91BEE8CD2005D56CA /* characters.hpp */,
-				EF27A69D1C04F48F00459C32 /* engine.hpp */,
 				EFBCA0D11BED5031005D56CA /* level_draw.hpp */,
 			);
 			name = head;
@@ -310,19 +356,27 @@
 			buildActionMask = 2147483647;
 			files = (
 				EFBCA0D21BED5031005D56CA /* level_draw.cpp in Sources */,
+				EFE808711C0D6A2D00E6933A /* pausemenu_state.cpp in Sources */,
+				EFFB15E71C0D0779006428DB /* quitseq_state.cpp in Sources */,
 				EF0CE3B41BEFD8C50080692E /* textures.cpp in Sources */,
 				EF8252941BF3201C0003EF9E /* camera.cpp in Sources */,
 				EFBCA0F71BEE8C89005D56CA /* tiles.cpp in Sources */,
 				EFBCA0DB1BED5DE8005D56CA /* collisions.cpp in Sources */,
 				EFBCA0FD1BEE8EF1005D56CA /* (null) in Sources */,
 				EF27A6AC1C052EC200459C32 /* (null) in Sources */,
+				EFFE7EF21C0D5ADE00478C10 /* menu_buttons.cpp in Sources */,
+				EFFB15E41C0D0747006428DB /* quitmenu_state.cpp in Sources */,
 				FC8D8AEC1C0825B900A1C6F7 /* level_end.cpp in Sources */,
 				EFA85F341C078C6F001113CA /* crate.cpp in Sources */,
 				EF27A69E1C04F48F00459C32 /* engine.cpp in Sources */,
 				FC8D8AE71C081B9700A1C6F7 /* level2_state.cpp in Sources */,
+				EFE808741C0E147600E6933A /* optionsmenu_state.cpp in Sources */,
 				EF27A6A11C0506E800459C32 /* level1_state.cpp in Sources */,
+				EF5295AD1C0BEBEB00178AC7 /* sound.cpp in Sources */,
+				EF5295B31C0C107000178AC7 /* menu.cpp in Sources */,
 				EFBCA0FA1BEE8CD2005D56CA /* characters.cpp in Sources */,
 				EFA85F2F1C0675BA001113CA /* mainmenu_state.cpp in Sources */,
+				EF5295B01C0BF65F00178AC7 /* gamepad.cpp in Sources */,
 				EFBCA0BE1BED17FB005D56CA /* main.cpp in Sources */,
 				FC8A5A3D1C098AC00023A58B /* button.cpp in Sources */,
 				FCB126F61C0CCB8B001D7EC8 /* springboard.cpp in Sources */,

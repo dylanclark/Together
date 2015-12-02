@@ -12,7 +12,7 @@
 #include "gamestate.hpp"
 #include "levelstate.hpp"
 
-camera::camera()
+camera::camera(int w, int h)
 {
     // initialize velocities
     x_vel = 0;
@@ -21,7 +21,7 @@ camera::camera()
     h_vel = 0;
     
     // initialize rectangle
-    display = {0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
+    display = {0, 0, w, h};
 };
 
 void camera::move(int level_w, int level_h)

@@ -9,13 +9,16 @@
 #include <vector>
 #include <SDL2_ttf/SDL_ttf.h>
 
+// include headers
+#include "sound.hpp"
+
 class gamestate;
 
 class engine
 {
 public:
     // game startup
-    bool init(int width, int height);
+    bool init();
     
     // game shutdown
     void cleanup();
@@ -31,6 +34,11 @@ public:
     void update();
     void draw();
     
+    // resize window!
+    void resize();
+    int screen_width;
+    int screen_height;
+    
     // running / quit functions
     bool running() { return running_flag; }
     void quit() { running_flag = false; }
@@ -38,6 +46,9 @@ public:
     // window and renderer
     SDL_Window* win;
     SDL_Renderer* rend;
+    
+    // audio player
+    sound_player* sound;
     
 private:
     // stack of gamestates

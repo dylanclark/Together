@@ -1,6 +1,6 @@
 
-#ifndef mainmenu_state_hpp
-#define mainmenu_state_hpp
+#ifndef pausemenu_state_hpp
+#define pausemenu_state_hpp
 
 // using SDL and standard IO
 #include <stdio.h>
@@ -13,7 +13,7 @@
 #include "gamestate.hpp"
 #include "textures.hpp"
 
-class mainmenu_state : public gamestate
+class pausemenu_state : public gamestate
 {
 public:
     // init and shutdown
@@ -29,16 +29,14 @@ public:
     void update(engine* game);
     void draw(engine* game);
     
-    mainmenu_state() { };
+    pausemenu_state() { };
     
-    menu* main_menu = nullptr;
+    menu* pause_menu = nullptr;
     
-    texture fade_in_tex;
-    texture title;
-    texture new_game_button;
-    texture continue_button;
+    texture resume_button;
+    texture level_select_button;
     texture options_button;
-    texture quit_button;
+    texture save_and_quit_button;
 };
 
-#endif /* mainmenu_state_hpp */
+#endif /* pausemenu_state_hpp */

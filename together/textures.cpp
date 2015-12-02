@@ -95,6 +95,16 @@ bool texture::load_tile_sheet(std::string path, SDL_Renderer* rend)
     return true;
 };
 
+void texture::set_blend_mode(SDL_BlendMode blending)
+{
+    SDL_SetTextureBlendMode(tex, blending);
+}
+
+void texture::set_alpha(Uint8 alpha)
+{
+    SDL_SetTextureAlphaMod(tex, alpha);
+}
+
 void texture::free()
 {
     // deallocate the texture if it exists
@@ -137,9 +147,16 @@ void texture::render_tile(int x, int y, SDL_Rect* type_clip, SDL_Rect* active_cl
     SDL_RenderCopy(rend, tex, &clip_rect, &render_rect);
 }
 
+void texture::render_button(SDL_Rect* button, SDL_Rect* clip, SDL_Renderer* rend)
+{
+    // rendering rectangle
+    SDL_Rect render_rect = {button->x - button->w / 2, button->y - button->h / 2, button->w, button->h};
+    
+    // render to the screen
+    SDL_RenderCopy(rend, tex, clip, &render_rect);
+}
 
-// render things with a given angle
-void texture::angle_render(int x, int y, SDL_Rect* clip, SDL_Rect* camera, SDL_Renderer* rend, double angle, SDL_Point* center, SDL_RendererFlip flip)
+void texture::angle_render(int x, int y, SDL_Rect *clip, SDL_Rect *camera, SDL_Renderer *rend, double angle, SDL_Point *center, SDL_RendererFlip flip)
 {
     int render_x = (x - camera->x) / ( (float) camera->w / (float) SCREEN_WIDTH);
     int render_y = (y - camera->y) / ((float) camera->h / (float) SCREEN_HEIGHT);
