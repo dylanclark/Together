@@ -146,7 +146,6 @@ void engine::update()
 void engine::draw()
 {
     states.back()->draw(this);
-}
 
 void engine::resize()
 {
@@ -166,4 +165,4 @@ void engine::resize()
         // change viewport size
         SDL_RenderSetViewport(rend, &new_viewport);
     }
-}
+}}

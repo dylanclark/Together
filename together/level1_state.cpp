@@ -134,6 +134,9 @@ void level1_state::cleanup()
     w_springboard_tex.free();
     w_end_animate.free();
     b_end_animate.free();
+    b_springboard_tex.free();
+    w_springboard_tex.free();
+    
 }
 
 void level1_state::pause()
