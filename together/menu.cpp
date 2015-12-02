@@ -167,7 +167,6 @@ bool menu::handle_event(SDL_Event& e, engine* game)
                     break;
                 case SDL_SCANCODE_SPACE:
                 case SDL_SCANCODE_RETURN:
-                    Mix_PlayChannel(-1, game->sound->menu_select_snd, 0);
                     if (selector < sliders.size())
                     {
                         sliders[selector]->select(game);
@@ -175,6 +174,7 @@ bool menu::handle_event(SDL_Event& e, engine* game)
                     else
                     {
                         buttons[selector - sliders.size()]->select(game);
+                        Mix_PlayChannel(-1, game->sound->menu_select_snd, 0);
                     }
                     break;
                 case SDL_SCANCODE_ESCAPE:
@@ -207,8 +207,15 @@ bool menu::handle_event(SDL_Event& e, engine* game)
             switch (e.cbutton.button)
             {
                 case SDL_CONTROLLER_BUTTON_A:
-                    Mix_PlayChannel(-1, game->sound->menu_select_snd, 0);
-                    buttons[selector]->select(game);
+                    if (selector < sliders.size())
+                    {
+                        sliders[selector]->select(game);
+                    }
+                    else
+                    {
+                        buttons[selector - sliders.size()]->select(game);
+                        Mix_PlayChannel(-1, game->sound->menu_select_snd, 0);
+                    }
                     break;
                 case SDL_CONTROLLER_BUTTON_DPAD_UP:
                     up = true;
@@ -271,7 +278,8 @@ void menu::update(engine* game)
         if (selector < sliders.size())
         {
             sliders[selector]->cur_frame = (sliders[selector]->cur_frame + 1) % sliders[selector]->frames;
-            Mix_PlayChannel(-1, game->sound->menu_choose_snd, 0);
+            sliders[selector]->select(game);
+            Mix_PlayChannel(-1, game->sound->menu_select_snd, 0);
         }
         right_up = false;
     }
@@ -280,7 +288,8 @@ void menu::update(engine* game)
         if (selector < sliders.size())
         {
             sliders[selector]->cur_frame = (sliders[selector]->cur_frame + sliders[selector]->frames - 1) % sliders[selector]->frames;
-            Mix_PlayChannel(-1, game->sound->menu_choose_snd, 0);
+            sliders[selector]->select(game);
+            Mix_PlayChannel(-1, game->sound->menu_select_snd, 0);
         }
         left_up = false;
     }

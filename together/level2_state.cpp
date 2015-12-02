@@ -88,10 +88,19 @@ void level2_state::draw(engine* game)
         tileset[i]->render(b_char.status, &camera->display, game->rend, &tile_tex);
     }
     
+    for (int i = 0; i < crates.size(); i++)
+    {
+        crates[i]->render(b_char.status, &camera->display, game->rend, this);
+    }
+    
     b_char.render(&camera->display, game->rend);
     w_char.render(&camera->display, game->rend);
     b_level_end.render(&camera->display, game->rend);
     w_level_end.render(&camera->display, game->rend);
+    b_button.render(&camera->display, game->rend);
+    w_button.render(&camera->display, game->rend);
+    b_springboard.render(&camera->display, game->rend);
+    w_springboard.render(&camera->display, game->rend);
     SDL_RenderPresent(game->rend);
 }
 

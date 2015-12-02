@@ -15,6 +15,7 @@
 #include "levelstate.hpp"
 #include "crate.hpp"
 #include "gamepad.hpp"
+#include "springboard.hpp"
 
 
 // reinitialize character textures

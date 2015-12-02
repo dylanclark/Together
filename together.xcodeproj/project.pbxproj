@@ -199,6 +199,7 @@
 				EFBCA0F81BEE8CD2005D56CA /* characters.cpp */,
 				EFA85F321C078C6F001113CA /* crate.cpp */,
 				EF0CE3B21BEFD8C50080692E /* textures.cpp */,
+				FCB126F41C0CCB8B001D7EC8 /* springboard.cpp */,
 				EFBCA0D91BED5DE8005D56CA /* collisions.cpp */,
 				EFBCA0D01BED5031005D56CA /* level_draw.cpp */,
 				FC8A5A3B1C098AC00023A58B /* button.cpp */,

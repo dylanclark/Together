@@ -25,6 +25,7 @@
 #include "level1_state.hpp"
 #include "button.hpp"
 #include "level2_state.hpp"
+#include "springboard.hpp"
 #include "mainmenu_state.hpp"
 
 // Let's do this.

@@ -155,3 +155,17 @@ void texture::render_button(SDL_Rect* button, SDL_Rect* clip, SDL_Renderer* rend
     // render to the screen
     SDL_RenderCopy(rend, tex, clip, &render_rect);
 }
+
+void texture::angle_render(int x, int y, SDL_Rect *clip, SDL_Rect *camera, SDL_Renderer *rend, double angle, SDL_Point *center, SDL_RendererFlip flip)
+{
+    int render_x = (x - camera->x) / ( (float) camera->w / (float) SCREEN_WIDTH);
+    int render_y = (y - camera->y) / ((float) camera->h / (float) SCREEN_HEIGHT);
+    int render_w = width / ((float) camera->w / (float) SCREEN_WIDTH) + 1;
+    int render_h = height / ((float) camera->h / (float) SCREEN_HEIGHT) + 1;
+    
+    // rendering rectangle
+    SDL_Rect render_rect = {render_x, render_y, render_w, render_h};
+    
+    // render to the screen
+    SDL_RenderCopyEx(rend, tex, clip, &render_rect, angle, center, flip);
+};
