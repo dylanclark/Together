@@ -117,26 +117,26 @@ void texture::free()
     }
 }
 
-void texture::render(int x, int y, SDL_Rect* clip, SDL_Rect* camera, SDL_Renderer* rend)
+void texture::render(int x, int y, SDL_Rect* clip, SDL_Rect* camera, engine* game)
 {
-    int render_x = (x - camera->x) / ( (float) camera->w / (float) SCREEN_WIDTH);
-    int render_y = (y - camera->y) / ((float) camera->h / (float) SCREEN_HEIGHT);
-    int render_w = width / ((float) camera->w / (float) SCREEN_WIDTH) + 1;
-    int render_h = height / ((float) camera->h / (float) SCREEN_HEIGHT) + 1;
+    int render_x = (x - camera->x) / ( (float) camera->w / (float) game->screen_width);
+    int render_y = (y - camera->y) / ((float) camera->h / (float) game->screen_height);
+    int render_w = width * ((float) game->screen_width / (float) camera->w) + 1;
+    int render_h = height * ((float) game->screen_height / (float) camera->h) + 1;
     
     // rendering rectangle
     SDL_Rect render_rect = {render_x, render_y, render_w, render_h};
     
     // render to the screen
-    SDL_RenderCopy(rend, tex, clip, &render_rect);
+    SDL_RenderCopy(game->rend, tex, clip, &render_rect);
 }
 
-void texture::render_tile(int x, int y, SDL_Rect* type_clip, SDL_Rect* active_clip, SDL_Rect* camera, SDL_Renderer* rend)
+void texture::render_tile(int x, int y, SDL_Rect* type_clip, SDL_Rect* active_clip, SDL_Rect* camera, engine* game)
 {
-    int render_x = (x - camera->x) / ((float) camera->w / (float) SCREEN_WIDTH);
-    int render_y = (y - camera->y) / ((float) camera->h / (float) SCREEN_HEIGHT);
-    int render_w = TILE_WIDTH * ((float) SCREEN_WIDTH / (float) camera->w) + 1;
-    int render_h = TILE_WIDTH * ((float) SCREEN_HEIGHT / (float) camera->h) + 1;
+    int render_x = (x - camera->x) / ((float) camera->w / (float) game->screen_width);
+    int render_y = (y - camera->y) / ((float) camera->h / (float) game->screen_height);
+    int render_w = TILE_WIDTH * ((float) game->screen_width / (float) camera->w) + 1;
+    int render_h = TILE_WIDTH * ((float) game->screen_height / (float) camera->h) + 1;
     
     SDL_Rect render_rect = {render_x, render_y, render_w, render_h};
     SDL_Rect clip_rect = {type_clip->x + active_clip->x,
@@ -144,7 +144,7 @@ void texture::render_tile(int x, int y, SDL_Rect* type_clip, SDL_Rect* active_cl
                           TILE_WIDTH_TEX,
                           TILE_WIDTH_TEX};
         
-    SDL_RenderCopy(rend, tex, &clip_rect, &render_rect);
+    SDL_RenderCopy(game->rend, tex, &clip_rect, &render_rect);
 }
 
 <<<<<<< HEAD
@@ -176,17 +176,64 @@ void texture::render_button(SDL_Rect* button, SDL_Rect* clip, SDL_Renderer* rend
 >>>>>>> a671362... Implemented main menu, pause menu, and options menu!
 =======
 
-void texture::angle_render(int x, int y, SDL_Rect *clip, SDL_Rect *camera, SDL_Renderer *rend, double angle, SDL_Point *center, SDL_RendererFlip flip)
+void texture::angle_render(int x, int y, SDL_Rect *clip, SDL_Rect *camera, engine* game, double angle, SDL_Point *center, SDL_RendererFlip flip)
 {
-    int render_x = (x - camera->x) / ( (float) camera->w / (float) SCREEN_WIDTH);
-    int render_y = (y - camera->y) / ((float) camera->h / (float) SCREEN_HEIGHT);
-    int render_w = width / ((float) camera->w / (float) SCREEN_WIDTH) + 1;
-    int render_h = height / ((float) camera->h / (float) SCREEN_HEIGHT) + 1;
+    int render_x = (x - camera->x) / ( (float) camera->w / (float) game->screen_width);
+    int render_y = (y - camera->y) / ((float) camera->h / (float) game->screen_height);
+    int render_w = width / ((float) camera->w / (float) game->screen_width) + 1;
+    int render_h = height / ((float) camera->h / (float) game->screen_height) + 1;
     
     // rendering rectangle
     SDL_Rect render_rect = {render_x, render_y, render_w, render_h};
     
     // render to the screen
-    SDL_RenderCopyEx(rend, tex, clip, &render_rect, angle, center, flip);
+    SDL_RenderCopyEx(game->rend, tex, clip, &render_rect, angle, center, flip);
 };
+<<<<<<< HEAD
 >>>>>>> 71027e4... Volume / sfx slider adjustment.
+=======
+
+bool texture::load_message(int w, int h, std::string path, SDL_Renderer* rend)
+{
+        // ditch the last texture
+        free();
+        
+        // new texture!
+        tex = NULL;
+        
+        SDL_Surface* surface = IMG_Load(path.c_str());
+        if (surface == NULL)
+        {
+            printf("Unable to load image %s! SDL error: %s\n", path.c_str(), SDL_GetError());
+            return false;
+        }
+        else
+        {
+            tex = SDL_CreateTextureFromSurface(rend, surface);
+            if (tex == NULL)
+            {
+                printf("Unable to create texture from image! SDL error: %s\n", SDL_GetError());
+                return false;
+            }
+            else
+            {
+                // tile dimensions
+                width = w;
+                height = h;
+            }
+            
+            SDL_FreeSurface(surface);
+        }
+        
+        return true;
+};
+
+void texture::render_message(SDL_Rect* message, SDL_Rect* clip, SDL_Renderer* rend)
+{
+    // rendering rectangle
+    SDL_Rect render_rect = {message->x, message->y, message->w, message->h};
+    
+    // render to the screen
+    SDL_RenderCopy(rend, tex, NULL, &render_rect);
+}
+>>>>>>> 250bb44... cross layer, bug fixes, levels 1 and 2,

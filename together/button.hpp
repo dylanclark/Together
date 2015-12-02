@@ -40,7 +40,7 @@ public:
     button();
     
     // render the item on the screen
-    void render(SDL_Rect* camera, SDL_Renderer* rend);
+    void render(SDL_Rect* camera, engine* game);
     
     // angle to flip
     double angle = 0.0;

@@ -18,11 +18,7 @@
  OBJECTS
 ---------
 
-- Level end. 
-- Pushable crates (three sizes: 4x2, 4x1, 2x2)
-- Buttons (two types: permanent, temporary)
 - Waterfall / holes.
-- Springboards.
 - Cross-layer springs (one character stands on a spring and is launched when the other character lands on that spring from the other side).
 - Fountain / holes. (reverse waterfall?)
 - Keys and doors.
@@ -32,9 +28,6 @@
  OPTIONAL OPTIMIZATIONS
 ------------------------
 
-- Dual music tracks (changes based on which character is being controlled).
-- Save files.
-- Options (music volume, controls, etc.)
 - Rounded corner collision detection!
 - Add more!
 
@@ -42,6 +35,10 @@
  FINISHED
 ----------
 
+- Save file.
+- Level end.
+- Springs.
+- Buttons.
 - Menu screen.
 - Pause screen.
 - Options.

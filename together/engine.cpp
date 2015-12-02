@@ -6,6 +6,8 @@
 #include <SDL2_mixer/SDL_mixer.h>
 #include <vector>
 #include <SDL2_ttf/SDL_ttf.h>
+#include <fstream>
+#include <iostream>
 
 // include headers
 #include "engine.hpp"
@@ -85,6 +87,16 @@ bool engine::init()
         success = false;
     }
     
+    
+    if (save_file.fail())
+    {
+        printf("error opening save_file\n");
+    }
+    if (save_file.fail())
+    {
+        printf("error opening save reader\n");
+    }
+    
     return success;
 }
 
@@ -92,6 +104,8 @@ void engine::cleanup()
 {
     // clean up!
     free(sound);
+    save_file.close();
+    save_reader.close();
     Mix_CloseAudio();
     SDL_DestroyRenderer(rend);
     SDL_DestroyWindow(win);
@@ -146,23 +160,37 @@ void engine::update()
 void engine::draw()
 {
     states.back()->draw(this);
+}
 
-void engine::resize()
+bool engine::save(int level)
 {
-    int w, h;
+    bool success = true;
     
-    SDL_GetWindowSize(win, &w, &h);
+    save_file.open("save/save_file.txt");
+    save_file << level;
+    save_file.close();
     
-    screen_width = w;
-    screen_height = h;
-    
-    SDL_Rect viewport;
-    SDL_Rect new_viewport = {0, 0, screen_width, screen_height};
-    SDL_RenderGetViewport(rend, &viewport);
-    
-    if(viewport.w != new_viewport.w || viewport.h != new_viewport.h)
+    if (!save_file)
     {
-        // change viewport size
-        SDL_RenderSetViewport(rend, &new_viewport);
+        printf("error saving!\n");
+        success = false;
     }
-}}
+    
+    return success;
+}
+
+int engine::read_save()
+{
+    int to_return = -1;
+    
+    save_reader.open("save/save_file.txt");
+    save_reader >> to_return;
+    save_reader.close();
+    
+    if (!save_reader)
+    {
+        printf("error reading save!\n");
+    }
+    
+    return to_return;
+}

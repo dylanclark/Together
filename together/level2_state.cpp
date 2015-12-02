@@ -6,8 +6,8 @@
 #include <SDL2_ttf/SDL_ttf.h>
 
 // include headers
-#include "level1_state.hpp"
 #include "level2_state.hpp"
+#include "level3_state.hpp"
 #include "mainmenu_state.hpp"
 #include "characters.hpp"
 #include "tiles.hpp"
@@ -17,6 +17,15 @@
 #include "button.hpp"
 #include "engine.hpp"
 #include "springboard.hpp"
+<<<<<<< HEAD
+#include "pausemenu_state.hpp"
+=======
+#include "level_messages.hpp"
+<<<<<<< HEAD
+>>>>>>> 250bb44... cross layer, bug fixes, levels 1 and 2,
+=======
+#include "pausemenu_state.hpp"
+>>>>>>> 0c27592... updated menu systems
 
 void level2_state::init(engine* game)
 {
@@ -26,6 +35,10 @@ void level2_state::init(engine* game)
     // initialize objects
     init_objects(game);
     
+    if (game->read_save() < 2)
+    {
+        game->save(2);
+    }
 }
 
 void level2_state::handle_events(engine *game)
@@ -52,11 +65,19 @@ void level2_state::handle_events(engine *game)
             game->quit();
 =======
         if (!b_char.handle_event(event, this, game))
-            game->change_state(new mainmenu_state);
+        {
+            Mix_PauseMusic();
+            Mix_PlayChannel(-1, game->sound->menu_exit_snd, 0);
+            game->push_state(new pausemenu_state);
+        }
         
+<<<<<<< HEAD
         if (!w_char.handle_event(event, this, game))
             game->change_state(new mainmenu_state);
 >>>>>>> a671362... Implemented main menu, pause menu, and options menu!
+=======
+        w_char.handle_event(event, this, game);
+>>>>>>> f939236... New level files and updated menu system.
         
     }
     
@@ -81,7 +102,7 @@ void level2_state::update(engine* game)
     camera->track(&b_char.col_rect, &w_char.col_rect);
     
     // move that camera!
-    camera->move(width, height);
+    camera->move(width, height, game);
     
     interactions(game);
 }
@@ -91,7 +112,7 @@ void level2_state::draw(engine* game)
     // draw stuff to the screen!
     for (int i = 0; i < (width * height); i++)
     {
-        tileset[i]->render(b_char.status, &camera->display, game->rend, &tile_tex);
+        tileset[i]->render(b_char.status, &camera->display, game, &tile_tex);
     }
     
 <<<<<<< HEAD
@@ -112,9 +133,10 @@ void level2_state::draw(engine* game)
 =======
     for (int i = 0; i < crates.size(); i++)
     {
-        crates[i]->render(b_char.status, &camera->display, game->rend, this);
+        crates[i]->render(b_char.status, &camera->display, game, this);
     }
     
+<<<<<<< HEAD
 >>>>>>> 71027e4... Volume / sfx slider adjustment.
     b_char.render(&camera->display, game->rend);
     w_char.render(&camera->display, game->rend);
@@ -127,7 +149,25 @@ void level2_state::draw(engine* game)
     w_button.render(&camera->display, game->rend);
     b_springboard.render(&camera->display, game->rend);
     w_springboard.render(&camera->display, game->rend);
+<<<<<<< HEAD
 >>>>>>> 71027e4... Volume / sfx slider adjustment.
+=======
+    b_cross_spring.render(&camera->display, game->rend);
+=======
+    b_char.render(&camera->display, game);
+    w_char.render(&camera->display, game);
+    b_level_end.render(&camera->display, game);
+    w_level_end.render(&camera->display, game);
+    b_button.render(&camera->display, game);
+    w_button.render(&camera->display, game);
+    b_springboard.render(&camera->display, game);
+    w_springboard.render(&camera->display, game);
+    b_cross_spring.render(&camera->display, game);
+>>>>>>> 4ff27ea... Finished dynamic camera! (finally)
+    // level2_end.render(&camera->display, game->rend);
+
+
+>>>>>>> 250bb44... cross layer, bug fixes, levels 1 and 2,
     SDL_RenderPresent(game->rend);
 }
 
@@ -160,6 +200,14 @@ void level2_state::cleanup()
     b_button_tex.free();
     w_button_tex.free();
     b_springboard_tex.free();
+<<<<<<< HEAD
+=======
+    w_springboard_tex.free();
+    b_cross_spring_tex.free();
+    w_cross_spring_tex.free();
+    level2_start_tex.free();
+    level2_end_tex.free();
+>>>>>>> 250bb44... cross layer, bug fixes, levels 1 and 2,
     
 }
 
@@ -221,6 +269,30 @@ void level2_state::load_textures(engine* game)
         printf("Failed to load black springboard texture!\n");
         return;
     }
+<<<<<<< HEAD
+=======
+    if(!w_springboard_tex.load_tile_sheet("textures/white/spring/w_spring.png", game->rend))
+    {
+        printf("Failed to load white springboard texture!\n");
+        return;
+    }
+    if(!w_cross_spring_tex.load_tile_sheet("textures/white/cross_layer/w_cross.png", game->rend))
+    {
+        printf("Failed to load white cross layer spring texture!\n");
+        return;
+    }
+    if(!b_cross_spring_tex.load_tile_sheet("textures/black/cross_layer/b_cross.png", game->rend))
+    {
+        printf("Failed to black white cross layer spring texture!\n");
+        return;
+    }
+    //if (!level2_end_tex.load_message(128, 16, "textures/levels/level_2_done.png", game->rend))
+    {
+     //   printf("Failed to load level 2 end texture!\n");
+     //   return;
+    }
+
+>>>>>>> 250bb44... cross layer, bug fixes, levels 1 and 2,
     
     // initialize level
     width = 27;
@@ -256,6 +328,8 @@ void level2_state::init_objects(engine* game)
     crates.back()->tex = crate_tex_four_by_two;
     crates.back()->black = true;
     
+    camera = new class camera(game->screen_width, game->screen_height);
+    
     // initialize black button
     b_button.tex = b_button_tex;
     b_button.col_rect.x = 1200;
@@ -267,6 +341,36 @@ void level2_state::init_objects(engine* game)
     w_button.tex = w_button_tex;
     w_button.col_rect.x = 200;
     w_button.col_rect.y = 540;
+<<<<<<< HEAD
+=======
+    w_button.direction = UP;
+    w_button.status = BUTT_INACTIVE;
+    
+    // initialize black springboard
+    b_springboard.tex = b_springboard_tex;
+    b_springboard.col_rect.x = 920;
+    b_springboard.col_rect.y = 480;
+    b_springboard.show = true;
+    b_springboard.direction = FLIP_RIGHT;
+    b_springboard.x_spring = 0;
+    b_springboard.y_spring = 10;
+    
+    // initialize white springboard
+    w_springboard.tex = w_springboard_tex;
+    w_springboard.col_rect.x = 920;
+    w_springboard.col_rect.y = 540;
+    w_springboard.show = true;
+    w_springboard.direction = FLIP_RIGHT;
+    w_springboard.x_spring = 0;
+    w_springboard.y_spring = 10;
+    
+    //level2_end.tex = level2_end_tex;
+    //level2_end.send_message(END, game);
+    
+    camera = new class camera(game->screen_width, game->screen_height);
+    
+
+>>>>>>> 250bb44... cross layer, bug fixes, levels 1 and 2,
 }
 
 void level2_state::interactions(engine* game)
@@ -274,17 +378,23 @@ void level2_state::interactions(engine* game)
     // if both are on level end object
     if(b_level_end.check(b_char.col_rect) && w_level_end.check(w_char.col_rect))
     {
+<<<<<<< HEAD
         // do end animation
         b_char.completed(width, height, &b_level_end.col_rect);
         w_char.completed(width, height, &w_level_end.col_rect);
         
         
+=======
+        b_char.center(&b_level_end.col_rect);
+        w_char.center(&w_level_end.col_rect);
+    
+>>>>>>> 250bb44... cross layer, bug fixes, levels 1 and 2,
         // change state to level 3
-        // change_state(game, new level2_state);
+        change_state(game, new level3_state);
     }
     
     //if black button is activated
-    if(b_button.check(b_char.col_rect) || (b_button.single && b_button.used))
+    if(b_button.check(b_char.col_rect))
     {
         // used
         b_button.used = true;
@@ -310,7 +420,11 @@ void level2_state::interactions(engine* game)
     }
     
     //if white button is activated
+<<<<<<< HEAD
     if(w_button.check(w_char.col_rect) && !(w_button.single && w_button.used))
+=======
+    if(w_button.check(w_char.col_rect))
+>>>>>>> 250bb44... cross layer, bug fixes, levels 1 and 2,
     {
         // used
         w_button.used = true;
@@ -334,23 +448,30 @@ void level2_state::interactions(engine* game)
     {
         w_button.activated = false;
         
-        if(w_button.status != BUTT_INACTIVE)
+        if(w_button.status == BUTT_ACTIVE)
         {
             w_button.status = (w_button.status + 1) % 4;
+        }
+        //if(w_button.status != BUTT_INACTIVE)
+        {
+           //w_button.status = (w_button.status + 1) % 4;
         }
     }
     
     //if black springboard is activated
     if(b_springboard.check(b_char.col_rect))
     {
-        // activate
+        if(b_char.col_rect.y < b_springboard.col_rect.y + 20)
+        {
+            // activate
         b_springboard.activated = true;
         
-        if(b_springboard.status == BUTT_INACTIVE)
+        if(b_springboard.status == BOARD_INACTIVE)
         {
             b_springboard.status = (b_springboard.status + 1) % 4;
         }
         
+<<<<<<< HEAD
         b_char.spring();
         
         
@@ -364,6 +485,31 @@ void level2_state::interactions(engine* game)
         w_level_end.col_rect.x = 1500;
         w_level_end.col_rect.y = 540;
         
+=======
+        b_char.spring(b_springboard.x_spring, b_springboard.y_spring, b_springboard.direction);
+        }
+    }
+    else
+    {
+        b_springboard.activated = false;
+        
+        if(b_springboard.status != BOARD_INACTIVE)
+        {
+            b_springboard.status = (b_springboard.status + 1) % 4;
+        }
+    }
+    
+    //if white springboard is activated
+    if(w_springboard.check(w_char.col_rect) && w_springboard.show)
+    {
+        // activate
+        w_springboard.activated = true;
+
+        if(w_springboard.status == BOARD_INACTIVE)
+        {
+            w_springboard.status = (w_springboard.status + 1) % 4;
+        }
+>>>>>>> 250bb44... cross layer, bug fixes, levels 1 and 2,
         
         
     }
@@ -371,7 +517,11 @@ void level2_state::interactions(engine* game)
     {
         b_springboard.activated = false;
         
+<<<<<<< HEAD
         if(b_springboard.status != BUTT_INACTIVE)
+=======
+        if(w_springboard.status != BOARD_INACTIVE)
+>>>>>>> 250bb44... cross layer, bug fixes, levels 1 and 2,
         {
             b_springboard.status = (b_springboard.status + 1) % 4;
         }

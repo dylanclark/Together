@@ -28,8 +28,10 @@
 #include "level1_state.hpp"
 #include "button.hpp"
 #include "level2_state.hpp"
+#include "level3_state.hpp"
 #include "springboard.hpp"
 #include "mainmenu_state.hpp"
+#include "level01_state.hpp"
 
 // Let's do this.
 int main(void)

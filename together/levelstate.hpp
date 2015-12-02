@@ -17,6 +17,7 @@
 #include "level_end.hpp"
 #include "button.hpp"
 #include "springboard.hpp"
+#include "level_messages.hpp"
 
 class crate;
 
@@ -50,7 +51,16 @@ public:
 =======
     springboard w_springboard;
     springboard b_springboard;
+<<<<<<< HEAD
 >>>>>>> c8cecea... springs!
+=======
+    springboard w_cross_spring;
+    springboard b_cross_spring;
+    level_message level1_end;
+    level_message level2_end;
+    level_message level1_start;
+    level_message level2_start;
+>>>>>>> 250bb44... cross layer, bug fixes, levels 1 and 2,
     
 >>>>>>> 1aa9403... buttons!
     // shift bool
@@ -76,7 +86,18 @@ public:
 =======
     texture b_springboard_tex;
     texture w_springboard_tex;
+<<<<<<< HEAD
 >>>>>>> c8cecea... springs!
+=======
+    texture w_end_animate;
+    texture b_end_animate;
+    texture b_cross_spring_tex;
+    texture w_cross_spring_tex;
+    texture level1_end_tex;
+    texture level1_start_tex;
+    texture level2_end_tex;
+    texture level2_start_tex;
+>>>>>>> 250bb44... cross layer, bug fixes, levels 1 and 2,
     
     // tileset
     tile* tileset[MAX_SIZE];

@@ -43,7 +43,7 @@ public:
     void track(SDL_Rect* b_char, SDL_Rect* w_char);
     
     // move the camera location
-    void move(int level_w, int level_h);
+    void move(int level_w, int level_h, engine* game);
     
     // update camera display
     void update(void);

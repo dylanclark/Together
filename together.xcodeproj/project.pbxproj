@@ -23,12 +23,22 @@
 >>>>>>> c8cecea... springs!
 =======
 		EF27A6AC1C052EC200459C32 /* (null) in Sources */ = {isa = PBXBuildFile; };
+		EF52494C1C117BD500C6F2A6 /* levelselectmenu_state.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EF52494A1C117BD500C6F2A6 /* levelselectmenu_state.cpp */; settings = {ASSET_TAGS = (); }; };
+		EF52494F1C117BE200C6F2A6 /* newgamemenu_state.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EF52494D1C117BE200C6F2A6 /* newgamemenu_state.cpp */; settings = {ASSET_TAGS = (); }; };
+		EF5249511C11F0E200C6F2A6 /* level3_state.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EF5249501C11F0E200C6F2A6 /* level3_state.cpp */; settings = {ASSET_TAGS = (); }; };
+		EF5249541C11F0F500C6F2A6 /* intro_state.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EF5249531C11F0F500C6F2A6 /* intro_state.cpp */; settings = {ASSET_TAGS = (); }; };
 		EF5295A81C0BE7CB00178AC7 /* SDL2_ttf.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EF5295A71C0BE7CB00178AC7 /* SDL2_ttf.framework */; };
 		EF5295AA1C0BE8C000178AC7 /* SDL2_mixer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EF5295A91C0BE8C000178AC7 /* SDL2_mixer.framework */; };
+<<<<<<< HEAD
 		EF5295AD1C0BEBEB00178AC7 /* sound.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EF5295AB1C0BEBEB00178AC7 /* sound.cpp */; settings = {ASSET_TAGS = (); }; };
 		EF5295B01C0BF65F00178AC7 /* gamepad.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EF5295AE1C0BF65F00178AC7 /* gamepad.cpp */; settings = {ASSET_TAGS = (); }; };
 		EF5295B31C0C107000178AC7 /* menu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EF5295B11C0C107000178AC7 /* menu.cpp */; settings = {ASSET_TAGS = (); }; };
 >>>>>>> a671362... Implemented main menu, pause menu, and options menu!
+=======
+		EF5295AD1C0BEBEB00178AC7 /* sound.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EF5295AB1C0BEBEB00178AC7 /* sound.cpp */; };
+		EF5295B01C0BF65F00178AC7 /* gamepad.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EF5295AE1C0BF65F00178AC7 /* gamepad.cpp */; };
+		EF5295B31C0C107000178AC7 /* menu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EF5295B11C0C107000178AC7 /* menu.cpp */; };
+>>>>>>> 250bb44... cross layer, bug fixes, levels 1 and 2,
 		EF8252831BF1098A0003EF9E /* SDL2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EF8252821BF1098A0003EF9E /* SDL2.framework */; };
 		EF8252851BF109940003EF9E /* SDL2_image.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EF8252841BF109940003EF9E /* SDL2_image.framework */; };
 		EF8252901BF121490003EF9E /* levels in CopyFiles */ = {isa = PBXBuildFile; fileRef = EF0808611BF0504300338AB0 /* levels */; };
@@ -64,12 +74,22 @@
 >>>>>>> ffa65bf... add springs and abstract level loading, put in some SDL_ttf headers
 =======
 		EFBCA0FD1BEE8EF1005D56CA /* (null) in Sources */ = {isa = PBXBuildFile; };
+<<<<<<< HEAD
 		EFE808711C0D6A2D00E6933A /* pausemenu_state.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EFE8086F1C0D6A2D00E6933A /* pausemenu_state.cpp */; settings = {ASSET_TAGS = (); }; };
 		EFE808741C0E147600E6933A /* optionsmenu_state.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EFE808721C0E147600E6933A /* optionsmenu_state.cpp */; settings = {ASSET_TAGS = (); }; };
 		EFFB15E41C0D0747006428DB /* quitmenu_state.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EFFB15E21C0D0747006428DB /* quitmenu_state.cpp */; settings = {ASSET_TAGS = (); }; };
 		EFFB15E71C0D0779006428DB /* quitseq_state.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EFFB15E51C0D0779006428DB /* quitseq_state.cpp */; settings = {ASSET_TAGS = (); }; };
 		EFFE7EF21C0D5ADE00478C10 /* menu_buttons.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EFFE7EF01C0D5ADE00478C10 /* menu_buttons.cpp */; settings = {ASSET_TAGS = (); }; };
 >>>>>>> a671362... Implemented main menu, pause menu, and options menu!
+=======
+		EFE808711C0D6A2D00E6933A /* pausemenu_state.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EFE8086F1C0D6A2D00E6933A /* pausemenu_state.cpp */; };
+		EFE808741C0E147600E6933A /* optionsmenu_state.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EFE808721C0E147600E6933A /* optionsmenu_state.cpp */; };
+		EFFB15E41C0D0747006428DB /* quitmenu_state.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EFFB15E21C0D0747006428DB /* quitmenu_state.cpp */; };
+		EFFB15E71C0D0779006428DB /* quitseq_state.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EFFB15E51C0D0779006428DB /* quitseq_state.cpp */; };
+		EFFE7EF21C0D5ADE00478C10 /* menu_buttons.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EFFE7EF01C0D5ADE00478C10 /* menu_buttons.cpp */; };
+		FC0CAD691C0F8F1F0082A147 /* level_messages.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FC0CAD671C0F8F1F0082A147 /* level_messages.cpp */; };
+		FC2F5D901C11628C00CCBC3E /* level01_state.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FC2F5D8E1C11628C00CCBC3E /* level01_state.cpp */; };
+>>>>>>> 250bb44... cross layer, bug fixes, levels 1 and 2,
 		FC8A5A3D1C098AC00023A58B /* button.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FC8A5A3B1C098AC00023A58B /* button.cpp */; };
 		FC8D8AE71C081B9700A1C6F7 /* level2_state.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FC8D8AE61C081B9700A1C6F7 /* level2_state.cpp */; };
 		FC8D8AEC1C0825B900A1C6F7 /* level_end.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FC8D8AEA1C0825B900A1C6F7 /* level_end.cpp */; };
@@ -79,10 +99,17 @@
 =======
 		FCB126F61C0CCB8B001D7EC8 /* springboard.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FCB126F41C0CCB8B001D7EC8 /* springboard.cpp */; };
 <<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
 >>>>>>> c8cecea... springs!
 =======
 		FCB126F81C0CE2FE001D7EC8 /* SDL2_ttf.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FCB126F71C0CE2FD001D7EC8 /* SDL2_ttf.framework */; };
 >>>>>>> ffa65bf... add springs and abstract level loading, put in some SDL_ttf headers
+=======
+>>>>>>> 1aed882... a
+=======
+		FCD87E8C1C114F1800C1BFF2 /* level3_state.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FCD87E8A1C114F1800C1BFF2 /* level3_state.cpp */; };
+>>>>>>> 250bb44... cross layer, bug fixes, levels 1 and 2,
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -108,6 +135,14 @@
 		EF27A69F1C0506E800459C32 /* level1_state.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = level1_state.cpp; sourceTree = "<group>"; };
 		EF27A6A01C0506E800459C32 /* level1_state.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = level1_state.hpp; sourceTree = "<group>"; };
 		EF27A6AB1C052EC200459C32 /* levelstate.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = levelstate.hpp; sourceTree = "<group>"; };
+		EF52494A1C117BD500C6F2A6 /* levelselectmenu_state.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = levelselectmenu_state.cpp; sourceTree = "<group>"; };
+		EF52494B1C117BD500C6F2A6 /* levelselectmenu_state.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = levelselectmenu_state.hpp; sourceTree = "<group>"; };
+		EF52494D1C117BE200C6F2A6 /* newgamemenu_state.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = newgamemenu_state.cpp; sourceTree = "<group>"; };
+		EF52494E1C117BE200C6F2A6 /* newgamemenu_state.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = newgamemenu_state.hpp; sourceTree = "<group>"; };
+		EF5249501C11F0E200C6F2A6 /* level3_state.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = level3_state.cpp; sourceTree = "<group>"; };
+		EF5249521C11F0E800C6F2A6 /* level3_state.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = level3_state.hpp; sourceTree = "<group>"; };
+		EF5249531C11F0F500C6F2A6 /* intro_state.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = intro_state.cpp; sourceTree = "<group>"; };
+		EF5249551C11F0FC00C6F2A6 /* intro_state.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = intro_state.hpp; sourceTree = "<group>"; };
 		EF5295A71C0BE7CB00178AC7 /* SDL2_ttf.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL2_ttf.framework; path = ../../../../../../Library/Frameworks/SDL2_ttf.framework; sourceTree = "<group>"; };
 		EF5295A91C0BE8C000178AC7 /* SDL2_mixer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL2_mixer.framework; path = ../../../../../../Library/Frameworks/SDL2_mixer.framework; sourceTree = "<group>"; };
 		EF5295AB1C0BEBEB00178AC7 /* sound.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = sound.cpp; sourceTree = "<group>"; };
@@ -151,7 +186,14 @@
 		EFFB15E61C0D0779006428DB /* quitseq_state.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = quitseq_state.hpp; sourceTree = "<group>"; };
 		EFFE7EF01C0D5ADE00478C10 /* menu_buttons.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = menu_buttons.cpp; sourceTree = "<group>"; };
 		EFFE7EF11C0D5ADE00478C10 /* menu_buttons.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = menu_buttons.hpp; sourceTree = "<group>"; };
+<<<<<<< HEAD
 >>>>>>> a671362... Implemented main menu, pause menu, and options menu!
+=======
+		FC0CAD671C0F8F1F0082A147 /* level_messages.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = level_messages.cpp; sourceTree = "<group>"; };
+		FC0CAD681C0F8F1F0082A147 /* level_messages.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = level_messages.hpp; sourceTree = "<group>"; };
+		FC2F5D8E1C11628C00CCBC3E /* level01_state.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = level01_state.cpp; sourceTree = "<group>"; };
+		FC2F5D8F1C11628C00CCBC3E /* level01_state.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = level01_state.hpp; sourceTree = "<group>"; };
+>>>>>>> 250bb44... cross layer, bug fixes, levels 1 and 2,
 		FC8A5A3B1C098AC00023A58B /* button.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = button.cpp; sourceTree = "<group>"; };
 		FC8A5A3C1C098AC00023A58B /* button.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = button.hpp; sourceTree = "<group>"; };
 		FC8D8AE61C081B9700A1C6F7 /* level2_state.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = level2_state.cpp; sourceTree = "<group>"; };
@@ -160,7 +202,11 @@
 		FC8D8AEB1C0825B900A1C6F7 /* level_end.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = level_end.hpp; sourceTree = "<group>"; };
 		FCB126F41C0CCB8B001D7EC8 /* springboard.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = springboard.cpp; sourceTree = "<group>"; };
 		FCB126F51C0CCB8B001D7EC8 /* springboard.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = springboard.hpp; sourceTree = "<group>"; };
-		FCB126F71C0CE2FD001D7EC8 /* SDL2_ttf.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL2_ttf.framework; path = ../../../../../Library/Frameworks/SDL2_ttf.framework; sourceTree = "<group>"; };
+<<<<<<< HEAD
+=======
+		FCD87E8A1C114F1800C1BFF2 /* level3_state.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = level3_state.cpp; sourceTree = "<group>"; };
+		FCD87E8B1C114F1800C1BFF2 /* level3_state.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = level3_state.hpp; sourceTree = "<group>"; };
+>>>>>>> 250bb44... cross layer, bug fixes, levels 1 and 2,
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -223,6 +269,8 @@
 			isa = PBXGroup;
 			children = (
 				EF27A6A01C0506E800459C32 /* level1_state.hpp */,
+				EF5249521C11F0E800C6F2A6 /* level3_state.hpp */,
+				FC2F5D8F1C11628C00CCBC3E /* level01_state.hpp */,
 				FC8D8AE91C081C6200A1C6F7 /* level2_state.hpp */,
 			);
 			name = head;
@@ -233,6 +281,8 @@
 			children = (
 				EF27A69F1C0506E800459C32 /* level1_state.cpp */,
 				FC8D8AE61C081B9700A1C6F7 /* level2_state.cpp */,
+				EF5249501C11F0E200C6F2A6 /* level3_state.cpp */,
+				FC2F5D8E1C11628C00CCBC3E /* level01_state.cpp */,
 			);
 			name = src;
 			sourceTree = "<group>";
@@ -267,6 +317,7 @@
 				FCB126F41C0CCB8B001D7EC8 /* springboard.cpp */,
 >>>>>>> 71027e4... Volume / sfx slider adjustment.
 				EFBCA0D91BED5DE8005D56CA /* collisions.cpp */,
+				FC0CAD671C0F8F1F0082A147 /* level_messages.cpp */,
 				EFBCA0D01BED5031005D56CA /* level_draw.cpp */,
 				FC8A5A3B1C098AC00023A58B /* button.cpp */,
 				FC8D8AEA1C0825B900A1C6F7 /* level_end.cpp */,
@@ -287,9 +338,12 @@
 			children = (
 				EFA85F2D1C0675BA001113CA /* mainmenu_state.cpp */,
 				EFFB15E21C0D0747006428DB /* quitmenu_state.cpp */,
+				EF52494A1C117BD500C6F2A6 /* levelselectmenu_state.cpp */,
+				EF52494D1C117BE200C6F2A6 /* newgamemenu_state.cpp */,
 				EFE808721C0E147600E6933A /* optionsmenu_state.cpp */,
 				EFE8086F1C0D6A2D00E6933A /* pausemenu_state.cpp */,
 				EFFB15E51C0D0779006428DB /* quitseq_state.cpp */,
+				EF5249531C11F0F500C6F2A6 /* intro_state.cpp */,
 			);
 			name = src;
 			sourceTree = "<group>";
@@ -298,10 +352,13 @@
 			isa = PBXGroup;
 			children = (
 				EFA85F2E1C0675BA001113CA /* mainmenu_state.hpp */,
+				EF52494E1C117BE200C6F2A6 /* newgamemenu_state.hpp */,
 				EFFB15E31C0D0747006428DB /* quitmenu_state.hpp */,
+				EF52494B1C117BD500C6F2A6 /* levelselectmenu_state.hpp */,
 				EFE808731C0E147600E6933A /* optionsmenu_state.hpp */,
 				EFE808701C0D6A2D00E6933A /* pausemenu_state.hpp */,
 				EFFB15E61C0D0779006428DB /* quitseq_state.hpp */,
+				EF5249551C11F0FC00C6F2A6 /* intro_state.hpp */,
 			);
 			name = head;
 			sourceTree = "<group>";
@@ -350,6 +407,7 @@
 			isa = PBXGroup;
 			children = (
 				EF27A69D1C04F48F00459C32 /* engine.hpp */,
+				FC0CAD681C0F8F1F0082A147 /* level_messages.hpp */,
 				EFBCA0F61BEE8C89005D56CA /* tiles.hpp */,
 <<<<<<< HEAD
 				FC8D8AEB1C0825B900A1C6F7 /* level_end.hpp */,
@@ -437,6 +495,7 @@
 				EF0CE3B41BEFD8C50080692E /* textures.cpp in Sources */,
 				EF8252941BF3201C0003EF9E /* camera.cpp in Sources */,
 				EFBCA0F71BEE8C89005D56CA /* tiles.cpp in Sources */,
+				FC0CAD691C0F8F1F0082A147 /* level_messages.cpp in Sources */,
 				EFBCA0DB1BED5DE8005D56CA /* collisions.cpp in Sources */,
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -450,10 +509,20 @@
 =======
 				EFBCA0FD1BEE8EF1005D56CA /* (null) in Sources */,
 				EF27A6AC1C052EC200459C32 /* (null) in Sources */,
+				EF5249511C11F0E200C6F2A6 /* level3_state.cpp in Sources */,
 				EFFE7EF21C0D5ADE00478C10 /* menu_buttons.cpp in Sources */,
 				EFFB15E41C0D0747006428DB /* quitmenu_state.cpp in Sources */,
 >>>>>>> a671362... Implemented main menu, pause menu, and options menu!
 				FC8D8AEC1C0825B900A1C6F7 /* level_end.cpp in Sources */,
+<<<<<<< HEAD
+<<<<<<< HEAD
+=======
+				FCD87E8C1C114F1800C1BFF2 /* level3_state.cpp in Sources */,
+=======
+>>>>>>> 4ff27ea... Finished dynamic camera! (finally)
+				EFA85F341C078C6F001113CA /* crate.cpp in Sources */,
+				FC2F5D901C11628C00CCBC3E /* level01_state.cpp in Sources */,
+>>>>>>> 250bb44... cross layer, bug fixes, levels 1 and 2,
 				EF27A69E1C04F48F00459C32 /* engine.cpp in Sources */,
 				FC8D8AE71C081B9700A1C6F7 /* level2_state.cpp in Sources */,
 <<<<<<< HEAD
@@ -467,12 +536,15 @@
 				EF27A6A11C0506E800459C32 /* level1_state.cpp in Sources */,
 				EF5295AD1C0BEBEB00178AC7 /* sound.cpp in Sources */,
 				EF5295B31C0C107000178AC7 /* menu.cpp in Sources */,
+				EF52494C1C117BD500C6F2A6 /* levelselectmenu_state.cpp in Sources */,
 				EFBCA0FA1BEE8CD2005D56CA /* characters.cpp in Sources */,
 				EFA85F2F1C0675BA001113CA /* mainmenu_state.cpp in Sources */,
 				EF5295B01C0BF65F00178AC7 /* gamepad.cpp in Sources */,
+				EF5249541C11F0F500C6F2A6 /* intro_state.cpp in Sources */,
 				EFBCA0BE1BED17FB005D56CA /* main.cpp in Sources */,
 				FC8A5A3D1C098AC00023A58B /* button.cpp in Sources */,
 				FCB126F61C0CCB8B001D7EC8 /* springboard.cpp in Sources */,
+				EF52494F1C117BE200C6F2A6 /* newgamemenu_state.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -496,6 +568,7 @@
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -514,6 +587,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				INSTALL_PATH = /Applications;
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -538,6 +612,7 @@
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
@@ -550,6 +625,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				INSTALL_PATH = /Applications;
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = macosx;

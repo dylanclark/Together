@@ -39,7 +39,7 @@ public:
     const float DOT_VEL = 12;
     const float JUMP_VEL = 18;
     const float DOT_ACC = DOT_VEL / 12;
-    const float GRAVITY = JUMP_VEL / 24;
+    const float GRAVITY = JUMP_VEL / 26;
     const float PUSH_VEL = DOT_VEL / 4;
     
     // controller bools
@@ -69,7 +69,7 @@ public:
     bool tile_col(tile* tileset[], int size);
     
     // render the square on the screen
-    void render(SDL_Rect* camera, SDL_Renderer* rend);
+    void render(SDL_Rect* camera, engine* game);
     
     // collision rectangle
     SDL_Rect col_rect;
@@ -83,11 +83,22 @@ public:
     // jumps
     int jump;
     
+<<<<<<< HEAD
     // end of level animation
     void completed(int width, int height, SDL_Rect* end_rect);
     
     // spring
     void spring();
+=======
+    // spring
+    void spring(int x, int y, int direction);
+    
+    // center on object
+    bool center(SDL_Rect* end_rect);
+    
+    float get_y_vel();
+
+>>>>>>> 250bb44... cross layer, bug fixes, levels 1 and 2,
 private:
     
     // velocity variables

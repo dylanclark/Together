@@ -18,6 +18,9 @@
 #include "button.hpp"
 #include "engine.hpp"
 #include "springboard.hpp"
+#include "menu.hpp"
+#include "level_messages.hpp"
+#include "level01_state.hpp"
 
 level1_state level1_state::level1_state_inst;
 =======
@@ -158,11 +161,19 @@ void level1_state::init(engine* game)
     // initialize objects
     init_objects(game);
 <<<<<<< HEAD
+<<<<<<< HEAD
 >>>>>>> ffa65bf... add springs and abstract level loading, put in some SDL_ttf headers
 =======
 >>>>>>> 71027e4... Volume / sfx slider adjustment.
 
 >>>>>>> c8cecea... springs!
+=======
+    
+    if (game->read_save() < 1)
+    {
+        game->save(1);
+    }
+>>>>>>> f939236... New level files and updated menu system.
 }
 
 void level1_state::handle_events(engine *game)
@@ -184,7 +195,7 @@ void level1_state::handle_events(engine *game)
         if (!b_char.handle_event(event, this, game))
         {
             Mix_PauseMusic();
-            Mix_PlayChannel(-1, game->sound->menu_select_snd, 0);
+            Mix_PlayChannel(-1, game->sound->menu_exit_snd, 0);
             game->push_state(new pausemenu_state);
         }
         
@@ -215,7 +226,7 @@ void level1_state::update(engine* game)
     camera->track(&b_char.col_rect, &w_char.col_rect);
     
     // move that camera!
-    camera->move(width, height);
+    camera->move(width, height, game);
     
     interactions(game);
 }
@@ -225,24 +236,36 @@ void level1_state::draw(engine* game)
     // draw stuff to the screen!
     for (int i = 0; i < (width * height); i++)
     {
-        tileset[i]->render(b_char.status, &camera->display, game->rend, &tile_tex);
+        tileset[i]->render(b_char.status, &camera->display, game, &tile_tex);
     }
     
     for (int i = 0; i < crates.size(); i++)
     {
-        crates[i]->render(b_char.status, &camera->display, game->rend, this);
+        crates[i]->render(b_char.status, &camera->display, game, this);
     }
     
+<<<<<<< HEAD
     b_char.render(&camera->display, game->rend);
     w_char.render(&camera->display, game->rend);
     b_level_end.render(&camera->display, game->rend);
     w_level_end.render(&camera->display, game->rend);
+<<<<<<< HEAD
 <<<<<<< HEAD
     //b_button.render(&camera.display, game->rend);
     //w_button.render(&camera.display, game->rend);
     //b_springboard.render(&camera.display, game->rend);
 =======
 >>>>>>> 71027e4... Volume / sfx slider adjustment.
+=======
+    b_cross_spring.render(&camera->display, game->rend);
+>>>>>>> 250bb44... cross layer, bug fixes, levels 1 and 2,
+=======
+    b_char.render(&camera->display, game);
+    w_char.render(&camera->display, game);
+    b_level_end.render(&camera->display, game);
+    w_level_end.render(&camera->display, game);
+    b_cross_spring.render(&camera->display, game);
+>>>>>>> 4ff27ea... Finished dynamic camera! (finally)
     SDL_RenderPresent(game->rend);
 }
 
@@ -285,7 +308,14 @@ void level1_state::cleanup()
     b_end_animate.free();
     b_springboard_tex.free();
     w_springboard_tex.free();
+<<<<<<< HEAD
 >>>>>>> b25d2b2... woo
+=======
+    b_cross_spring_tex.free();
+    w_cross_spring_tex.free();
+    level1_end_tex.free();
+    level1_start_tex.free();
+>>>>>>> 250bb44... cross layer, bug fixes, levels 1 and 2,
     
 }
 
@@ -347,6 +377,29 @@ void level1_state::load_textures(engine* game)
         printf("Failed to load black springboard texture!\n");
         return;
     }
+<<<<<<< HEAD
+=======
+    if(!b_end_animate.load_tile_sheet("textures/black/end_char/b_end_animate.png", game->rend))
+    {
+        printf("Failed to load black animating texture!\n");
+        return;
+    }
+    if(!w_end_animate.load_tile_sheet("textures/white/end_char/w_end_animate.png", game->rend))
+    {
+        printf("Failed to load black animating texture!\n");
+        return;
+    }
+    if(!w_cross_spring_tex.load_tile_sheet("textures/white/cross_layer/w_cross.png", game->rend))
+    {
+        printf("Failed to load white cross layer spring texture!\n");
+        return;
+    }
+    if(!b_cross_spring_tex.load_tile_sheet("textures/black/cross_layer/b_cross.png", game->rend))
+    {
+        printf("Failed to black white cross layer spring texture!\n");
+        return;
+    }
+>>>>>>> 250bb44... cross layer, bug fixes, levels 1 and 2,
     
     // initialize level
     width = 27;
@@ -387,6 +440,17 @@ void level1_state::init_objects(engine* game)
     w_level_end.col_rect.x = 1500;
     w_level_end.col_rect.y = 540;
     
+    
+    // initialize black cross - layer spring, a variant of springboard
+    b_cross_spring.tex = b_cross_spring_tex;
+    b_cross_spring.status = BOARD_INACTIVE;
+    b_cross_spring.col_rect.x = 880;
+    b_cross_spring.col_rect.y = 490;
+    b_cross_spring.col_rect.h = 120;
+    b_cross_spring.show = true;
+    b_cross_spring.y_spring = 8;
+    b_cross_spring.direction = FLIP_RIGHT;
+    
     camera = new class camera(game->screen_width, game->screen_height);
     
     // init crate #1
@@ -410,14 +474,41 @@ void level1_state::init_objects(engine* game)
 void level1_state::interactions(engine* game)
 {
     // if both are on level end object
-    if(b_level_end.check(b_char.col_rect) && w_level_end.check(w_char.col_rect))
+    if ((b_level_end.check(b_char.col_rect)) && (w_level_end.check(w_char.col_rect)))
     {
+<<<<<<< HEAD
+<<<<<<< HEAD
         // do end animation
         b_char.completed(width, height, &b_level_end.col_rect);
         w_char.completed(width, height, &w_level_end.col_rect);
+=======
+        b_char.center(&b_level_end.col_rect);
+        w_char.center(&w_level_end.col_rect);
         
-        
+=======
+>>>>>>> 4754007... Updated level-end detection.
         // change state to level 2
-        change_state(game, new level2_state);
+        change_state(game, new level01_state);
+    }
+    
+    // if black cross spring is activated
+    if(b_cross_spring.check(w_char.col_rect) && b_cross_spring.check(b_char.col_rect) && b_cross_spring.show)
+    {
+<<<<<<< HEAD
+>>>>>>> 250bb44... cross layer, bug fixes, levels 1 and 2,
+        
+=======
+>>>>>>> 4754007... Updated level-end detection.
+        b_cross_spring.cross_spring(&w_char, &b_char, LOCATION);
+        // activate
+    }
+    else
+    {
+        b_cross_spring.activated = false;
+        
+        while (b_cross_spring.status != BOARD_INACTIVE)
+        {
+            b_cross_spring.status = BOARD_INACTIVE;
+        }
     }
 }

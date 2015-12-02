@@ -24,7 +24,7 @@ camera::camera(int w, int h)
     display = {0, 0, w, h};
 };
 
-void camera::move(int level_w, int level_h)
+void camera::move(int level_w, int level_h, engine* game)
 {
     // update positions
     location.x += x_vel;
@@ -33,76 +33,86 @@ void camera::move(int level_w, int level_h)
     location.h += h_vel;
     
     // don't shrink too small
-    if (location.w < SCREEN_WIDTH)
+    if (location.h < game->screen_height)
     {
-        location.w = SCREEN_WIDTH;
-        w_vel = 0;
-    }
-    if (location.h < SCREEN_HEIGHT)
-    {
-        location.h = SCREEN_HEIGHT;
+        location.h = game->screen_height;
         h_vel = 0;
     }
+    if (location.w < game->screen_width)
+    {
+        location.w = game->screen_width;
+        w_vel = 0;
+    }
+    
     
     // don't get too big (max dimensions)
-    if (location.w > SCREEN_WIDTH * 2 || location.h > SCREEN_HEIGHT * 2)
+    if (location.w > game->screen_width * 2 || location.h > game->screen_height * 2)
     {
-        location.w = SCREEN_WIDTH * 2;
-        location.h = SCREEN_HEIGHT * 2;
+        location.w = game->screen_width * 2;
+        location.h = game->screen_height * 2;
     }
     
     // don't get too big (level dimensions)
     if (location.w > level_w * TILE_WIDTH)
     {
         location.w = level_w * TILE_WIDTH;
-        location.x = location.w / 2;
-        w_vel = 0;
-        h_vel = 0;
-        x_vel = 0;
     }
     if (location.h > level_h * TILE_WIDTH)
     {
         location.h = level_h * TILE_WIDTH;
-        location.y = location.h / 2;
-        h_vel = 0;
-        w_vel = 0;
-        y_vel = 0;
-    }
-    
-    // keep correct aspect ratio
-    if ((float) location.w / (float) SCREEN_WIDTH > (float) location.h / (float) SCREEN_WIDTH)
-    {
-        location.h = ((float) location.w / (float) SCREEN_WIDTH) * SCREEN_HEIGHT;
-    }
-    if ((float) location.w / (float) SCREEN_WIDTH < (float) location.h / (float) SCREEN_WIDTH)
-    {
-        location.w = ((float) location.h / (float) SCREEN_HEIGHT) * SCREEN_WIDTH;
     }
     
     
-    if (location.x - location.w / 2 < 0)
+    if (location.x - location.w / 2 < 1)
     {
         location.x = location.w / 2;
         x_vel = 0;
     }
-    if (location.x + location.w / 2 > level_w * TILE_WIDTH)
+    if (location.x + location.w / 2 + 1 > level_w * TILE_WIDTH)
     {
-        location.x = level_w * TILE_WIDTH - location.w / 2;
-        x_vel = 0;
+        if (location.w > level_w * TILE_WIDTH - 1)
+        {
+            location.w = level_w * TILE_WIDTH - 1;
+            location.x = (level_w * TILE_WIDTH - 1) / 2;
+            x_vel = 0;
+            w_vel = 0;
+        }
+        else
+        {
+            location.x = (level_w * TILE_WIDTH - 1) - location.w / 2;
+            x_vel = 0;
+        }
     }
-    if (location.y - location.h / 2 < 0)
+    if (location.y - location.h / 2 < 1)
     {
         location.y = location.h / 2;
         y_vel = 0;
     }
-    if (location.y + location.h / 2 > level_h * TILE_WIDTH)
+    if (location.y + location.h / 2 + 1 > level_h * TILE_WIDTH)
     {
-        location.y = level_h * TILE_WIDTH - location.h / 2;
-        y_vel = 0;
+        if (location.h > level_h * TILE_WIDTH - 1)
+        {
+            location.h = level_h * TILE_WIDTH - 1;
+            location.y = (level_h * TILE_WIDTH - 1) / 2;
+            y_vel = 0;
+            h_vel = 0;
+        }
+        else
+        {
+            location.y = (level_h * TILE_WIDTH - 1) - location.h / 2;
+            y_vel = 0;
+        }
     }
     
-    
-    
+    // keep correct aspect ratio
+    if ((float) location.w / (float) game->screen_width < (float) location.h / (float) game->screen_height)
+    {
+        location.h = ((float) location.w / (float) game->screen_width) * game->screen_height;
+    }
+    if ((float) location.w / (float) game->screen_width > (float) location.h / (float) game->screen_height)
+    {
+        location.w = ((float) location.h / (float) game->screen_height) * game->screen_width;
+    }
 
     // change the actual positions based on this origin
     update();

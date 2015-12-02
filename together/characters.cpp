@@ -93,7 +93,10 @@ bool dot::handle_event(SDL_Event &e, levelstate* level, engine* game)
                 case SDL_SCANCODE_LSHIFT:
                 case SDL_SCANCODE_RSHIFT:
                     if (level->shiftable)
+                    {
+                        Mix_PlayChannel(-1, game->sound->level_switch_snd, 0);
                         status = (status + 1) % 4;
+                    }
                     break;
                 case SDL_SCANCODE_R:
                     game->restart_state();
@@ -180,7 +183,10 @@ bool dot::handle_event(SDL_Event &e, levelstate* level, engine* game)
                 case SDL_CONTROLLER_BUTTON_RIGHTSHOULDER:
                 case SDL_CONTROLLER_BUTTON_X:
                     if (level->shiftable)
+                    {
+                        Mix_PlayChannel(-1, game->sound->level_switch_snd, 0);
                         status = (status + 1) % 4;
+                    }
                     break;
                 case SDL_CONTROLLER_BUTTON_Y:
                     game->restart_state();
@@ -227,7 +233,6 @@ void dot::move(levelstate* level)
     // if the square is moving slowly enough, stop him
     if (x_vel < (DOT_ACC) && x_vel > -(DOT_ACC))
         x_vel = 0;
-    
     
     // limit top speed
     if (x_vel > DOT_VEL)
@@ -308,8 +313,7 @@ bool dot::tile_col(tile* tileset[], int size)
                 // black floor
                 else if (tileset[i]->floor_b && !tileset[i]->wall_b)
                 {
-                    if (col_rect.y + col_rect.h / 2 >= tileset[i]->get_col_rect().y + tileset[i]->get_col_rect().h / 2)
-                        continue;
+                    if (col_rect.y + col_rect.h / 2 >= tileset[i]->get_col_rect().y + tileset[i]->get_col_rect().h / 2)continue;
                     
                     col_rect.y += repos.y;
                     y_vel = 0;
@@ -615,18 +619,18 @@ bool dot::crate_col(levelstate* level)
     return false;
 }
 
-void dot::render(SDL_Rect* camera, SDL_Renderer* rend)
+void dot::render(SDL_Rect* camera, engine* game)
 {
     SDL_Rect active_clip = {0, 0, 16, 16};
-    SDL_Rect inactive_clip = {16 * 9, 0, 16, 16};
+    SDL_Rect inactive_clip = {16 * ANIMATION_LENGTH, 0, 16, 16};
     
     switch (status)
     {
         case CHAR_ACTIVE:
-            tex.render(col_rect.x, col_rect.y, &active_clip, camera, rend);
+            tex.render(col_rect.x, col_rect.y, &active_clip, camera, game);
             break;
         case CHAR_INACTIVE:
-            tex.render(col_rect.x, col_rect.y, &inactive_clip, camera, rend);
+            tex.render(col_rect.x, col_rect.y, &inactive_clip, camera, game);
             break;
         case CHAR_INACTIVATE:
         {
@@ -637,7 +641,7 @@ void dot::render(SDL_Rect* camera, SDL_Renderer* rend)
             SDL_Rect inactivate_clip = {16 * frame, 0, 16, 16};
             
             // render that mofo
-            tex.render(col_rect.x, col_rect.y, &inactivate_clip, camera, rend);
+            tex.render(col_rect.x, col_rect.y, &inactivate_clip, camera, game);
             
             // change the status if animation is over!
             if (frame == ANIMATION_LENGTH - 1)
@@ -656,7 +660,7 @@ void dot::render(SDL_Rect* camera, SDL_Renderer* rend)
             SDL_Rect activate_clip = {16 * (frame + 8), 0, 16, 16};
             
             // render that mofo
-            tex.render(col_rect.x, col_rect.y, &activate_clip, camera, rend);
+            tex.render(col_rect.x, col_rect.y, &activate_clip, camera, game);
             
             // change the status if animation is over!
             if (frame == ANIMATION_LENGTH - 1)
@@ -669,6 +673,7 @@ void dot::render(SDL_Rect* camera, SDL_Renderer* rend)
     }
 };
 
+<<<<<<< HEAD
 // code for post-level animation (must be followed by level change or will mess shit up!)
 void dot::completed(int width,int height, SDL_Rect* end_rect)
 {
@@ -695,4 +700,43 @@ void dot::spring()
     black ? y_vel -= JUMP_VEL : y_vel += JUMP_VEL;
     
     x_vel += DOT_VEL;
+=======
+
+void dot::spring(int x, int y, int direction)
+{ 
+    
+    status = CHAR_ACTIVE;
+    
+    black ? y_vel -= y : y_vel += y;
+    
+    if(direction == FLIP_RIGHT)
+    {
+        x_vel += x;
+    }
+    else
+    {
+        x_vel -= x;
+    }
+    return;
+}
+
+bool dot::center(SDL_Rect* end_rect)
+{
+    // center dot on an object
+    while (col_rect.x < end_rect->x )
+        col_rect.x++;
+    while (col_rect.x > end_rect->x )
+        col_rect.x--;
+    while (col_rect.y < end_rect->y )
+        col_rect.y++;
+    while (col_rect.y > end_rect->y )
+        col_rect.y--;
+    
+    return true;
+}
+
+float dot::get_y_vel()
+{
+    return y_vel;
+>>>>>>> 250bb44... cross layer, bug fixes, levels 1 and 2,
 }
