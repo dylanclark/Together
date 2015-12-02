@@ -20,6 +20,8 @@
 // reinitialize character textures
 extern texture b_char_tex;
 extern texture w_char_tex;
+extern texture b_end_animate;
+extern texture w_end_animate;
 
 dot::dot()
 {
@@ -567,13 +569,27 @@ void dot::completed(int width,int height, int frame)
     if(!CHAR_ACTIVE)
         status = CHAR_ACTIVE;
 
-    if (frame < 20 || (40 <= frame && frame < 60) || (80 <= frame && frame < 100) || (120 <= frame && frame < 140))
+    if (frame < 10 || (40 <= frame && frame < 50) || (80 <= frame && frame < 90) || (130 <= frame && frame < 140))
     {
-        col_rect.x--;
+        black ? col_rect.x-- : col_rect.x++;
     }
-    if ((20 <= frame && frame < 40) || (60 <= frame && frame < 80) || (100 <= frame && frame < 120)) {
-        col_rect.x++;
+    if ((20 <= frame && frame < 30) || (60 <= frame && frame < 70) || (100 <= frame && frame < 120)) {
+        black ? col_rect.x++ : col_rect.x--;
     }
+    if ((frame < 15 || (60 <= frame && frame < 75) || (120 <= frame && frame < 135))) {
+        black ? col_rect.y-- : col_rect.y++;
+    }
+    if ((30 <= frame && frame < 45) || (90 <= frame && frame < 105) || (150 <= frame && frame < 160)) {
+        black ? col_rect.y++ : col_rect.y--;
+    }
+    if (frame > 160 && frame <= 190)
+    {
+        black ? col_rect.y++ : col_rect.y--;
+    }
+    if (frame > 190)
+        col_rect.y--;
+    if (frame > 220)
+        col_rect.x += 2;
     
     return;
 }
@@ -590,7 +606,7 @@ void dot::spring(int x, int y, int direction)
         x_vel -= x;
 }
 
-void dot::center(SDL_Rect* end_rect)
+bool dot::center(SDL_Rect* end_rect)
 {
     // center dot on level-end object
     while (col_rect.x < end_rect->x )
@@ -601,4 +617,6 @@ void dot::center(SDL_Rect* end_rect)
         col_rect.y++;
     while (col_rect.y > end_rect->y )
         col_rect.y--;
+    
+    return true;
 }

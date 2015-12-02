@@ -86,7 +86,7 @@ public:
     void spring(int x, int y, int direction);
     
     // center on object
-    void center(SDL_Rect* end_rect);
+    bool center(SDL_Rect* end_rect);
 
 private:
     

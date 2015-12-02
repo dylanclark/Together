@@ -129,7 +129,8 @@ void level1_state::cleanup()
     w_button_tex.free();
     b_springboard_tex.free();
     w_springboard_tex.free();
-    
+    w_end_animate.free();
+    b_end_animate.free();
 }
 
 void level1_state::pause()
@@ -190,7 +191,16 @@ void level1_state::load_textures(engine* game)
         printf("Failed to load black springboard texture!\n");
         return;
     }
-    
+    if(!b_end_animate.load_tile_sheet("textures/black/end_char/b_end_animate.png", game->rend))
+    {
+        printf("Failed to load black animating texture!\n");
+        return;
+    }
+    if(!w_end_animate.load_tile_sheet("textures/white/end_char/w_end_animate.png", game->rend))
+    {
+        printf("Failed to load black animating texture!\n");
+        return;
+    }
     // initialize level
     width = 27;
     height = 19;
@@ -244,16 +254,22 @@ void level1_state::interactions(engine* game)
     // if both are on level end object
     if(b_level_end.check(b_char.col_rect) && w_level_end.check(w_char.col_rect))
     {
-        b_char.center(&b_level_end.col_rect);
-        w_char.center(&w_level_end.col_rect);
+        if(b_char.center(&b_level_end.col_rect))
+            if(w_char.center(&w_level_end.col_rect))
+            {
+                b_char.tex = b_end_animate;
+                w_char.tex = w_end_animate;
+            }
         
-        for(int i = 0; i < 140; i++)
+        for(int i = 0; i < 300; i++)
         {
             // do end animation
             b_char.completed(width, height, i);
             w_char.completed(width, height, i);
             draw(game);
+            
         }
+        
         
         // change state to level 2
         change_state(game, new level2_state);

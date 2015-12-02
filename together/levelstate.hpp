@@ -62,6 +62,8 @@ public:
     texture crate_tex_two_by_two;
     texture b_springboard_tex;
     texture w_springboard_tex;
+    texture w_end_animate;
+    texture b_end_animate;
     
     // tileset
     tile* tileset[MAX_SIZE];
