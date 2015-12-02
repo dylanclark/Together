@@ -13,6 +13,7 @@
 #include "level_end.hpp"
 #include "camera.hpp"
 #include "engine.hpp"
+#include "gamepad.hpp"
 
 // dot status constants
 const int CHAR_ACTIVE = 0;
@@ -43,6 +44,9 @@ public:
     
     // controller bools
     bool up, down, left, right;
+    
+    // gamepad
+    controller* controller;
 
     // activity!
     int status;

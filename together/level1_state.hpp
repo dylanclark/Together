@@ -26,7 +26,7 @@ public:
     void resume();
     
     // handling control of screen
-    void handle_events(engine* game);
+    void handle_events(engine* games);
     void update(engine* game);
     void draw(engine* game);
     

@@ -8,6 +8,8 @@
 // include headers
 #include "level1_state.hpp"
 #include "level2_state.hpp"
+#include "mainmenu_state.hpp"
+#include "pausemenu_state.hpp"
 #include "characters.hpp"
 #include "tiles.hpp"
 <<<<<<< HEAD
@@ -24,6 +26,7 @@ level1_state level1_state::level1_state_inst;
 
 void level1_state::init(engine* game)
 {
+<<<<<<< HEAD
 <<<<<<< HEAD
     // LOAD ALL TEXTURES
     if (!b_char_tex.load_tile_sheet("textures/black/b_char.png", game->rend))
@@ -85,6 +88,8 @@ void level1_state::init(engine* game)
         return;
     }
     
+    camera = new class camera(game->screen_width, game->screen_height);
+    
     // initialize black dot
     b_char.status = CHAR_ACTIVE;
     b_char.tex = b_char_tex;
@@ -145,12 +150,17 @@ void level1_state::init(engine* game)
 =======
     
 =======
+=======
+>>>>>>> 71027e4... Volume / sfx slider adjustment.
     // load textures
     load_textures(game);
    
     // initialize objects
     init_objects(game);
+<<<<<<< HEAD
 >>>>>>> ffa65bf... add springs and abstract level loading, put in some SDL_ttf headers
+=======
+>>>>>>> 71027e4... Volume / sfx slider adjustment.
 
 >>>>>>> c8cecea... springs!
 }
@@ -172,10 +182,13 @@ void level1_state::handle_events(engine *game)
         
         // quit if he pressed escape
         if (!b_char.handle_event(event, this, game))
-            game->quit();
+        {
+            Mix_PauseMusic();
+            Mix_PlayChannel(-1, game->sound->menu_select_snd, 0);
+            game->push_state(new pausemenu_state);
+        }
         
-        if (!w_char.handle_event(event, this, game))
-            game->quit();
+        w_char.handle_event(event, this, game);
         
     }
     
@@ -199,10 +212,10 @@ void level1_state::update(engine* game)
     }
     
     // track the player
-    camera.track(&b_char.col_rect, &w_char.col_rect);
+    camera->track(&b_char.col_rect, &w_char.col_rect);
     
     // move that camera!
-    camera.move(width, height);
+    camera->move(width, height);
     
     interactions(game);
 }
@@ -212,21 +225,24 @@ void level1_state::draw(engine* game)
     // draw stuff to the screen!
     for (int i = 0; i < (width * height); i++)
     {
-        tileset[i]->render(b_char.status, &camera.display, game->rend, &tile_tex);
+        tileset[i]->render(b_char.status, &camera->display, game->rend, &tile_tex);
     }
     
     for (int i = 0; i < crates.size(); i++)
     {
-        crates[i]->render(b_char.status, &camera.display, game->rend, this);
+        crates[i]->render(b_char.status, &camera->display, game->rend, this);
     }
     
-    b_char.render(&camera.display, game->rend);
-    w_char.render(&camera.display, game->rend);
-    b_level_end.render(&camera.display, game->rend);
-    w_level_end.render(&camera.display, game->rend);
+    b_char.render(&camera->display, game->rend);
+    w_char.render(&camera->display, game->rend);
+    b_level_end.render(&camera->display, game->rend);
+    w_level_end.render(&camera->display, game->rend);
+<<<<<<< HEAD
     //b_button.render(&camera.display, game->rend);
     //w_button.render(&camera.display, game->rend);
     //b_springboard.render(&camera.display, game->rend);
+=======
+>>>>>>> 71027e4... Volume / sfx slider adjustment.
     SDL_RenderPresent(game->rend);
 }
 
@@ -254,11 +270,22 @@ void level1_state::cleanup()
     // free all textures
     b_char_tex.free();
     w_char_tex.free();
-    tile_tex.free();
-    crate_tex_four_by_two.free();
     b_button_tex.free();
     w_button_tex.free();
     b_springboard_tex.free();
+<<<<<<< HEAD
+=======
+    w_springboard_tex.free();
+<<<<<<< HEAD
+    b_springboard_tex.free();
+    w_springboard_tex.free();
+>>>>>>> 71027e4... Volume / sfx slider adjustment.
+=======
+    w_end_animate.free();
+    b_end_animate.free();
+    b_springboard_tex.free();
+    w_springboard_tex.free();
+>>>>>>> b25d2b2... woo
     
 }
 
@@ -359,7 +386,8 @@ void level1_state::init_objects(engine* game)
     w_level_end.tex = w_end_tex;
     w_level_end.col_rect.x = 1500;
     w_level_end.col_rect.y = 540;
-
+    
+    camera = new class camera(game->screen_width, game->screen_height);
     
     // init crate #1
     crates.push_back(new crate(5 * TILE_WIDTH, 7  * TILE_WIDTH, FOUR_BY_TWO));

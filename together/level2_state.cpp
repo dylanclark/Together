@@ -8,6 +8,7 @@
 // include headers
 #include "level1_state.hpp"
 #include "level2_state.hpp"
+#include "mainmenu_state.hpp"
 #include "characters.hpp"
 #include "tiles.hpp"
 #include "crate.hpp"
@@ -43,11 +44,19 @@ void level2_state::handle_events(engine *game)
         }
         
         // quit if he pressed escape
+<<<<<<< HEAD
         if (!b_char.handle_event(event))
             game->quit();
         
         if (!w_char.handle_event(event))
             game->quit();
+=======
+        if (!b_char.handle_event(event, this, game))
+            game->change_state(new mainmenu_state);
+        
+        if (!w_char.handle_event(event, this, game))
+            game->change_state(new mainmenu_state);
+>>>>>>> a671362... Implemented main menu, pause menu, and options menu!
         
     }
     
@@ -69,10 +78,10 @@ void level2_state::update(engine* game)
     }
     
     // track the player
-    camera.track(&b_char.col_rect, &w_char.col_rect);
+    camera->track(&b_char.col_rect, &w_char.col_rect);
     
     // move that camera!
-    camera.move(width, height);
+    camera->move(width, height);
     
     interactions(game);
 }
@@ -82,9 +91,11 @@ void level2_state::draw(engine* game)
     // draw stuff to the screen!
     for (int i = 0; i < (width * height); i++)
     {
-        tileset[i]->render(b_char.status, &camera.display, game->rend, &tile_tex);
+        tileset[i]->render(b_char.status, &camera->display, game->rend, &tile_tex);
     }
     
+<<<<<<< HEAD
+<<<<<<< HEAD
     for (int i = 0; i < crates.size(); i++)
     {
         crates[i]->render(b_char.status, &camera.display, game->rend, this);
@@ -97,6 +108,26 @@ void level2_state::draw(engine* game)
     b_button.render(&camera.display, game->rend);
     w_button.render(&camera.display, game->rend);
     b_springboard.render(&camera.display, game->rend);
+=======
+=======
+    for (int i = 0; i < crates.size(); i++)
+    {
+        crates[i]->render(b_char.status, &camera->display, game->rend, this);
+    }
+    
+>>>>>>> 71027e4... Volume / sfx slider adjustment.
+    b_char.render(&camera->display, game->rend);
+    w_char.render(&camera->display, game->rend);
+    b_level_end.render(&camera->display, game->rend);
+    w_level_end.render(&camera->display, game->rend);
+<<<<<<< HEAD
+>>>>>>> a671362... Implemented main menu, pause menu, and options menu!
+=======
+    b_button.render(&camera->display, game->rend);
+    w_button.render(&camera->display, game->rend);
+    b_springboard.render(&camera->display, game->rend);
+    w_springboard.render(&camera->display, game->rend);
+>>>>>>> 71027e4... Volume / sfx slider adjustment.
     SDL_RenderPresent(game->rend);
 }
 
