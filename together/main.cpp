@@ -25,6 +25,7 @@
 #include "level1_state.hpp"
 #include "button.hpp"
 #include "level2_state.hpp"
+#include "mainmenu_state.hpp"
 
 // Let's do this.
 int main(void)
@@ -33,10 +34,10 @@ int main(void)
     engine game;
     
     // initialize screen
-    game.init(SCREEN_WIDTH, SCREEN_HEIGHT);
+    game.init();
     
     // initialize game state (to level 1, but eventually to main menu)
-    game.change_state(new level1_state);
+    game.change_state(new mainmenu_state);
     
     // run game
     while (game.running())

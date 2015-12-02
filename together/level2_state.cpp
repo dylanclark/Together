@@ -6,6 +6,7 @@
 
 // include headers
 #include "level2_state.hpp"
+#include "mainmenu_state.hpp"
 #include "characters.hpp"
 #include "tiles.hpp"
 #include "level_end.hpp"
@@ -97,10 +98,10 @@ void level2_state::handle_events(engine *game)
         
         // quit if he pressed escape
         if (!b_char.handle_event(event, this, game))
-            game->quit();
+            game->change_state(new mainmenu_state);
         
         if (!w_char.handle_event(event, this, game))
-            game->quit();
+            game->change_state(new mainmenu_state);
         
     }
 }
@@ -117,10 +118,10 @@ void level2_state::update(engine* game)
         w_char.move(this);
     
     // track the player
-    camera.track(&b_char.col_rect, &w_char.col_rect);
+    camera->track(&b_char.col_rect, &w_char.col_rect);
     
     // move that camera!
-    camera.move(width, height);
+    camera->move(width, height);
     
     
     // if both are on level end object
@@ -143,13 +144,13 @@ void level2_state::draw(engine* game)
     // draw stuff to the screen!
     for (int i = 0; i < (width * height); i++)
     {
-        tileset[i]->render(b_char.status, &camera.display, game->rend, &tile_tex);
+        tileset[i]->render(b_char.status, &camera->display, game->rend, &tile_tex);
     }
     
-    b_char.render(&camera.display, game->rend);
-    w_char.render(&camera.display, game->rend);
-    b_level_end.render(&camera.display, game->rend);
-    w_level_end.render(&camera.display, game->rend);
+    b_char.render(&camera->display, game->rend);
+    w_char.render(&camera->display, game->rend);
+    b_level_end.render(&camera->display, game->rend);
+    w_level_end.render(&camera->display, game->rend);
     SDL_RenderPresent(game->rend);
 }
 

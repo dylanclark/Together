@@ -14,6 +14,7 @@
 #include "level_end.hpp"
 #include "levelstate.hpp"
 #include "crate.hpp"
+#include "gamepad.hpp"
 
 
 // reinitialize character textures
@@ -31,6 +32,9 @@ dot::dot()
     down = false;
     right = false;
     left = false;
+    
+    // initiliaze gamepad
+    controller = new class controller;
     
     // initialize active
     status = TILE_ACTIVE;
@@ -50,62 +54,136 @@ bool dot::handle_event(SDL_Event &e, levelstate* level, engine* game)
     // handle those events, duder
     switch (e.type)
     {
-    case SDL_KEYDOWN:
-        switch (e.key.keysym.scancode)
-        {
-            case SDL_SCANCODE_UP:
-            case SDL_SCANCODE_W:
-            case SDL_SCANCODE_SPACE:
-                up = true;
-                break;
-            case SDL_SCANCODE_DOWN:
-            case SDL_SCANCODE_S:
-                down = true;
-                break;
-            case SDL_SCANCODE_LEFT:
-            case SDL_SCANCODE_A:
-                left = true;
-                break;
-            case SDL_SCANCODE_RIGHT:
-            case SDL_SCANCODE_D:
-                right = true;
-                break;
-            case SDL_SCANCODE_Q:
-            case SDL_SCANCODE_LSHIFT:
-            case SDL_SCANCODE_RSHIFT:
-                if (level->shiftable)
-                    status = (status + 1) % 4;
-                break;
-            case SDL_SCANCODE_R:
-                game->restart_state();
-                break;
-            case SDL_SCANCODE_ESCAPE:
-                return false;
-                break;
+        case SDL_KEYDOWN:
+            switch (e.key.keysym.scancode)
+            {
+                case SDL_SCANCODE_UP:
+                case SDL_SCANCODE_W:
+                case SDL_SCANCODE_SPACE:
+                    up = true;
+                    break;
+                case SDL_SCANCODE_DOWN:
+                case SDL_SCANCODE_S:
+                    down = true;
+                    break;
+                case SDL_SCANCODE_LEFT:
+                case SDL_SCANCODE_A:
+                    left = true;
+                    break;
+                case SDL_SCANCODE_RIGHT:
+                case SDL_SCANCODE_D:
+                    right = true;
+                    break;
+                case SDL_SCANCODE_Q:
+                case SDL_SCANCODE_LSHIFT:
+                case SDL_SCANCODE_RSHIFT:
+                    if (level->shiftable)
+                        status = (status + 1) % 4;
+                    break;
+                case SDL_SCANCODE_R:
+                    game->restart_state();
+                    break;
+                case SDL_SCANCODE_ESCAPE:
+                    return false;
+                    break;
+            }
+            break;
+        case SDL_KEYUP:
+            switch (e.key.keysym.scancode)
+            {
+                case SDL_SCANCODE_UP:
+                case SDL_SCANCODE_W:
+                case SDL_SCANCODE_SPACE:
+                    up = false;
+                    break;
+                case SDL_SCANCODE_DOWN:
+                case SDL_SCANCODE_S:
+                    down = false;
+                    break;
+                case SDL_SCANCODE_LEFT:
+                case SDL_SCANCODE_A:
+                    left = false;
+                    break;
+                case SDL_SCANCODE_RIGHT:
+                case SDL_SCANCODE_D:
+                    right = false;
+                    break;
+            }
+            break;
+        case SDL_JOYAXISMOTION:
+            if (e.jaxis.which == 0)
+            {
+                switch (e.jaxis.axis)
+                {
+                    case 0:
+                        if (e.jaxis.value > controller->DEAD_ZONE)
+                        {
+                            right = true;
+                            left = false;
+                            break;
+                        }
+                        else if (e.jaxis.value < -(controller->DEAD_ZONE))
+                        {
+                            left = true;
+                            right = false;
+                            break;
+                        }
+                        else
+                        {
+                            left = false;
+                            right = false;
+                            break;
+                        }
+                        break;
+                    case 1:
+                        if (e.jaxis.value > controller->DEAD_ZONE)
+                        {
+                            down = true;
+                            break;
+                        }
+                        else if (e.jaxis.value < -(controller->DEAD_ZONE))
+                        {
+                            // up = true;
+                            break;
+                        }
+                        else
+                        {
+                            // up = false;
+                            down = false;
+                            break;
+                        }
+                        break;
+                }
+            }
+            break;
+        case SDL_CONTROLLERBUTTONDOWN:
+            switch (e.cbutton.button)
+            {
+                case SDL_CONTROLLER_BUTTON_A:
+                    up = true;
+                    break;
+                case SDL_CONTROLLER_BUTTON_RIGHTSHOULDER:
+                case SDL_CONTROLLER_BUTTON_X:
+                    if (level->shiftable)
+                        status = (status + 1) % 4;
+                    break;
+                case SDL_CONTROLLER_BUTTON_Y:
+                    game->restart_state();
+                    break;
+                case SDL_CONTROLLER_BUTTON_START:
+                    return false;
+                    break;
+            }
+            break;
+        case SDL_CONTROLLERBUTTONUP:
+            switch (e.cbutton.button)
+            {
+                case SDL_CONTROLLER_BUTTON_A:
+                    up = false;
+                    break;
         }
-        break;
-    case SDL_KEYUP:
-        switch (e.key.keysym.scancode)
-        {
-            case SDL_SCANCODE_UP:
-            case SDL_SCANCODE_W:
-            case SDL_SCANCODE_SPACE:
-                up = false;
-                break;
-            case SDL_SCANCODE_DOWN:
-            case SDL_SCANCODE_S:
-                down = false;
-                break;
-            case SDL_SCANCODE_LEFT:
-            case SDL_SCANCODE_A:
-                left = false;
-                break;
-            case SDL_SCANCODE_RIGHT:
-            case SDL_SCANCODE_D:
-                right = false;
-                break;
-        }
-        break;
+            
+                    
     }
     
     // success! (no quitting)
@@ -215,6 +293,9 @@ bool dot::tile_col(tile* tileset[], int size)
                 // black floor
                 else if (tileset[i]->floor_b && !tileset[i]->wall_b)
                 {
+                    if (col_rect.y + col_rect.h / 2 >= tileset[i]->get_col_rect().y + tileset[i]->get_col_rect().h / 2)
+                        continue;
+                    
                     col_rect.y += repos.y;
                     y_vel = 0;
                     
@@ -240,6 +321,9 @@ bool dot::tile_col(tile* tileset[], int size)
                     }
                     else if (y_vel > 0)
                     {
+                        if (col_rect.y + col_rect.h / 2 >= tileset[i]->get_col_rect().y + tileset[i]->get_col_rect().h / 2)
+                            continue;
+                        
                         // adjust y pos
                         col_rect.y += repos.y;
                         y_vel = 0;
@@ -312,6 +396,9 @@ bool dot::tile_col(tile* tileset[], int size)
                 // white floor
                 else if (tileset[i]->floor_w && !tileset[i]->wall_w)
                 {
+                    if (col_rect.y + col_rect.h / 2 <= tileset[i]->get_col_rect().y + tileset[i]->get_col_rect().h / 2)
+                        continue;
+                    
                     col_rect.y += repos.y;
                     y_vel = 0;
                     
@@ -338,6 +425,9 @@ bool dot::tile_col(tile* tileset[], int size)
                     }
                     else if (y_vel < 0)
                     {
+                        if (col_rect.y + col_rect.h / 2 <= tileset[i]->get_col_rect().y + tileset[i]->get_col_rect().h / 2)
+                            continue;
+                        
                         // adjust y pos
                         col_rect.y += repos.y;
                         y_vel = 0;

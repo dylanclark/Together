@@ -9,6 +9,7 @@
 
 // include character header file for dot class
 #include "characters.hpp"
+#include "engine.hpp"
 #include "level_draw.hpp"
 
 class levelstate;
@@ -36,7 +37,7 @@ public:
     float h_vel;
     
     // initialize
-    camera();
+    camera(int w, int h);
     
     // track a character
     void track(SDL_Rect* b_char, SDL_Rect* w_char);

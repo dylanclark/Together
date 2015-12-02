@@ -29,7 +29,7 @@ public:
     levelstate() { };
     
     // camera
-    camera camera;
+    camera* camera;
     
     // characters
     dot b_char;

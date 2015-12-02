@@ -7,6 +7,8 @@
 // include headers
 #include "level1_state.hpp"
 #include "level2_state.hpp"
+#include "mainmenu_state.hpp"
+#include "pausemenu_state.hpp"
 #include "characters.hpp"
 #include "tiles.hpp"
 #include "crate.hpp"
@@ -71,6 +73,8 @@ void level1_state::init(engine* game)
         return;
     }
     
+    camera = new class camera(game->screen_width, game->screen_height);
+    
     // initialize black dot
     b_char.status = CHAR_ACTIVE;
     b_char.tex = b_char_tex;
@@ -134,10 +138,13 @@ void level1_state::handle_events(engine *game)
         
         // quit if he pressed escape
         if (!b_char.handle_event(event, this, game))
-            game->quit();
+        {
+            Mix_PauseMusic();
+            Mix_PlayChannel(-1, game->sound->menu_select_snd, 0);
+            game->push_state(new pausemenu_state);
+        }
         
-        if (!w_char.handle_event(event, this, game))
-            game->quit();
+        w_char.handle_event(event, this, game);
         
     }
     
@@ -161,10 +168,10 @@ void level1_state::update(engine* game)
     }
     
     // track the player
-    camera.track(&b_char.col_rect, &w_char.col_rect);
+    camera->track(&b_char.col_rect, &w_char.col_rect);
     
     // move that camera!
-    camera.move(width, height);
+    camera->move(width, height);
     
     
     // if both are on level end object
@@ -200,18 +207,18 @@ void level1_state::draw(engine* game)
     // draw stuff to the screen!
     for (int i = 0; i < (width * height); i++)
     {
-        tileset[i]->render(b_char.status, &camera.display, game->rend, &tile_tex);
+        tileset[i]->render(b_char.status, &camera->display, game->rend, &tile_tex);
     }
     
     for (int i = 0; i < crates.size(); i++)
     {
-        crates[i]->render(b_char.status, &camera.display, game->rend, this);
+        crates[i]->render(b_char.status, &camera->display, game->rend, this);
     }
     
-    b_char.render(&camera.display, game->rend);
-    w_char.render(&camera.display, game->rend);
-    b_level_end.render(&camera.display, game->rend);
-    w_level_end.render(&camera.display, game->rend);
+    b_char.render(&camera->display, game->rend);
+    w_char.render(&camera->display, game->rend);
+    b_level_end.render(&camera->display, game->rend);
+    w_level_end.render(&camera->display, game->rend);
     //b_button.render(&camera.display, game->rend);
 //w_button.render(&camera.display, game->rend);
     SDL_RenderPresent(game->rend);
