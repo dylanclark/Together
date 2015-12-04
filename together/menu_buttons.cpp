@@ -34,11 +34,7 @@ void new_game_button::select(engine* game)
 
 void continue_button::select(engine* game)
 {
-    game->save_reader.open("save/save_file.txt");
-    int level = -1;
-    game->save_reader >> level;
-    game->save_reader.close();
-    printf("%i\n", level);
+    int level = game->read_save();
     switch (level)
     {
         case 0:
