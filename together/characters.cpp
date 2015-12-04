@@ -703,8 +703,7 @@ void dot::spring()
 =======
 
 void dot::spring(int x, int y, int direction)
-{ 
-    
+{
     status = CHAR_ACTIVE;
     
     y_vel = 0;
