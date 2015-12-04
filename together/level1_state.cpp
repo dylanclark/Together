@@ -7,6 +7,7 @@
 
 // include headers
 #include "level1_state.hpp"
+#include "level4_state.hpp"
 #include "level01_state.hpp"
 #include "level2_state.hpp"
 #include "mainmenu_state.hpp"
@@ -185,7 +186,7 @@ void level1_state::init_objects(engine* game)
     
     // initialize black level end
     b_level_end.tex = b_end_tex;
-    b_level_end.col_rect.x = 1200;
+    b_level_end.col_rect.x = 1360;
     b_level_end.col_rect.y = 720;
     
     
