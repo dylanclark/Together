@@ -8,6 +8,9 @@
 #include <SDL2/SDL.h>
 #include <SDL2_image/SDL_image.h>
 
+// include headers
+#include "engine.hpp"
+
 const int START = 0;
 const int END = 1;
 
@@ -30,10 +33,10 @@ public:
     bool load_tile_sheet(std::string path, SDL_Renderer* rend);
     
     // various render functions
-    void render(int x, int y, SDL_Rect* clip, SDL_Rect* camera, SDL_Renderer* rend);
-    void render_tile(int x, int y, SDL_Rect* type_clip, SDL_Rect* active_clip, SDL_Rect* camera, SDL_Renderer* rend);
+    void render(int x, int y, SDL_Rect* clip, SDL_Rect* camera, engine* game);
+    void render_tile(int x, int y, SDL_Rect* type_clip, SDL_Rect* active_clip, SDL_Rect* camera, engine* game);
     void render_button(SDL_Rect* button, SDL_Rect* clip, SDL_Renderer* rend);
-    void angle_render(int x, int y, SDL_Rect *clip, SDL_Rect *camera, SDL_Renderer *rend, double angle, SDL_Point *center, SDL_RendererFlip flip);
+    void angle_render(int x, int y, SDL_Rect *clip, SDL_Rect *camera, engine* game, double angle, SDL_Point *center, SDL_RendererFlip flip);
 
     
     // set blending

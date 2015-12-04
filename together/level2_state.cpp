@@ -84,7 +84,7 @@ void level2_state::update(engine* game)
     camera->track(&b_char.col_rect, &w_char.col_rect);
     
     // move that camera!
-    camera->move(width, height);
+    camera->move(width, height, game);
     
     interactions(game);
 }
@@ -94,23 +94,23 @@ void level2_state::draw(engine* game)
     // draw stuff to the screen!
     for (int i = 0; i < (width * height); i++)
     {
-        tileset[i]->render(b_char.status, &camera->display, game->rend, &tile_tex);
+        tileset[i]->render(b_char.status, &camera->display, game, &tile_tex);
     }
     
     for (int i = 0; i < crates.size(); i++)
     {
-        crates[i]->render(b_char.status, &camera->display, game->rend, this);
+        crates[i]->render(b_char.status, &camera->display, game, this);
     }
     
-    b_char.render(&camera->display, game->rend);
-    w_char.render(&camera->display, game->rend);
-    b_level_end.render(&camera->display, game->rend);
-    w_level_end.render(&camera->display, game->rend);
-    b_button.render(&camera->display, game->rend);
-    w_button.render(&camera->display, game->rend);
-    b_springboard.render(&camera->display, game->rend);
-    w_springboard.render(&camera->display, game->rend);
-    b_cross_spring.render(&camera->display, game->rend);
+    b_char.render(&camera->display, game);
+    w_char.render(&camera->display, game);
+    b_level_end.render(&camera->display, game);
+    w_level_end.render(&camera->display, game);
+    b_button.render(&camera->display, game);
+    w_button.render(&camera->display, game);
+    b_springboard.render(&camera->display, game);
+    w_springboard.render(&camera->display, game);
+    b_cross_spring.render(&camera->display, game);
     // level2_end.render(&camera->display, game->rend);
 
 

@@ -69,7 +69,7 @@ public:
     bool tile_col(tile* tileset[], int size);
     
     // render the square on the screen
-    void render(SDL_Rect* camera, SDL_Renderer* rend);
+    void render(SDL_Rect* camera, engine* game);
     
     // collision rectangle
     SDL_Rect col_rect;

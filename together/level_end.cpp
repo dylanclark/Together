@@ -29,10 +29,10 @@ level_end::level_end()
 }
 
 // draw on screen
-void level_end::render(SDL_Rect* camera, SDL_Renderer* rend)
+void level_end::render(SDL_Rect* camera, engine* game)
 {
     SDL_Rect active_clip = {0, 0, 16, 16};
-    tex.render(col_rect.x, col_rect.y, &active_clip, camera, rend);
+    tex.render(col_rect.x, col_rect.y, &active_clip, camera, game);
 };
 
 // check for level end collision

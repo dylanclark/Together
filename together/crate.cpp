@@ -68,7 +68,7 @@ void crate::update()
     col_rect.x += x_vel;
 }
 
-void crate::render(int b_status, SDL_Rect* camera, SDL_Renderer* rend, levelstate* level)
+void crate::render(int b_status, SDL_Rect* camera, engine* game, levelstate* level)
 {
     // determine which chunk of the texture to render
     SDL_Rect active_clip = {0, 0, 64, 32};
@@ -77,13 +77,13 @@ void crate::render(int b_status, SDL_Rect* camera, SDL_Renderer* rend, levelstat
     // render based on char status
     if (b_status == CHAR_ACTIVE)
     {
-        tex.render(col_rect.x, col_rect.y, &active_clip, camera, rend);
+        tex.render(col_rect.x, col_rect.y, &active_clip, camera, game);
         if (!generating)
             generating = true;
     }
     else
     {
-        tex.render(col_rect.x, col_rect.y, &inactive_clip, camera, rend);
+        tex.render(col_rect.x, col_rect.y, &inactive_clip, camera, game);
         
         if (generating)
         {
@@ -93,7 +93,7 @@ void crate::render(int b_status, SDL_Rect* camera, SDL_Renderer* rend, levelstat
         
         for (int i = 0; i < MAX_BORDER; i++)
         {
-            tileset[i]->render(b_status, camera, rend, &level->tile_tex);
+            tileset[i]->render(b_status, camera, game, &level->tile_tex);
         }
     }
 }

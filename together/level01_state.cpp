@@ -81,7 +81,7 @@ void level01_state::update(engine* game)
     camera->track(&b_char.col_rect, &b_char.col_rect);
     
     // move that camera!
-    camera->move(width, height);
+    camera->move(width, height, game);
     
     interactions(game);
 }
@@ -91,16 +91,16 @@ void level01_state::draw(engine* game)
     // draw stuff to the screen!
     for (int i = 0; i < (width * height); i++)
     {
-        tileset[i]->render(b_char.status, &camera->display, game->rend, &tile_tex);
+        tileset[i]->render(b_char.status, &camera->display, game, &tile_tex);
     }
     
     for (int i = 0; i < crates.size(); i++)
     {
-        crates[i]->render(b_char.status, &camera->display, game->rend, this);
+        crates[i]->render(b_char.status, &camera->display, game, this);
     }
     
-    b_char.render(&camera->display, game->rend);
-    b_level_end.render(&camera->display, game->rend);
+    b_char.render(&camera->display, game);
+    b_level_end.render(&camera->display, game);
     SDL_RenderPresent(game->rend);
 }
 
