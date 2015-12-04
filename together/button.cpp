@@ -24,12 +24,14 @@ extern texture w_button;
 button::button()
 {
     // initialize collision rectangle
-    col_rect.w = 14;
-    col_rect.h = 4;
+    col_rect.w = 16;
+    col_rect.h = 16;
     col_rect.x = (SCREEN_WIDTH - col_rect.w) / 2;
     col_rect.y = (SCREEN_HEIGHT - col_rect.h) / 2;
 
     used = false;
+    
+    frame = 0;
 }
 
 // check for button collision
@@ -86,9 +88,11 @@ void button::render(SDL_Rect* camera, SDL_Renderer* rend)
     {
         case BUTT_INACTIVE:
             tex.angle_render(col_rect.x, col_rect.y, &inactive_clip, camera, rend, angle, center, flip);
+            frame = 0;
             break;
         case BUTT_ACTIVE:
             tex.angle_render(col_rect.x, col_rect.y, &active_clip, camera, rend, angle, center, flip);
+            frame = 0;
             break;
         case BUTT_ACTIVATE:
         {
@@ -114,8 +118,8 @@ void button::render(SDL_Rect* camera, SDL_Renderer* rend)
             // next frame!
             frame++;
             
-            // sprite sheet clipper
-            SDL_Rect inactivate_clip = {16 * (frame + 4), 0, 16, 16};
+            // sprite sheet clipper (LOOK INTO IT)
+            SDL_Rect inactivate_clip = {(16 * (frame + 3)) , 0, 16, 16};
             
             // render that mofo
             tex.angle_render(col_rect.x, col_rect.y, &inactivate_clip, camera, rend, angle, center, flip);

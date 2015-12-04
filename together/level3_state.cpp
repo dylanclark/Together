@@ -6,7 +6,6 @@
 #include <SDL2_ttf/SDL_ttf.h>
 
 // include headers
-#include "level2_state.hpp"
 #include "level3_state.hpp"
 #include "mainmenu_state.hpp"
 #include "characters.hpp"
@@ -19,7 +18,7 @@
 #include "springboard.hpp"
 #include "level_messages.hpp"
 
-void level2_state::init(engine* game)
+void level3_state::init(engine* game)
 {
     // load textures
     load_textures(game);
@@ -27,13 +26,9 @@ void level2_state::init(engine* game)
     // initialize objects
     init_objects(game);
     
-    if (game->read_save() < 2)
-    {
-        game->save(2);
-    }
 }
 
-void level2_state::handle_events(engine *game)
+void level3_state::handle_events(engine *game)
 {
     // event handler
     SDL_Event event;
@@ -50,20 +45,17 @@ void level2_state::handle_events(engine *game)
         
         // quit if he pressed escape
         if (!b_char.handle_event(event, this, game))
-        {
-            Mix_PauseMusic();
-            Mix_PlayChannel(-1, game->sound->menu_exit_snd, 0);
-            game->push_state(new pausemenu_state);
-        }
+            game->change_state(new mainmenu_state);
         
-        w_char.handle_event(event, this, game);
+        if (!w_char.handle_event(event, this, game))
+            game->change_state(new mainmenu_state);
         
     }
     
     shiftable = true;
 }
 
-void level2_state::update(engine* game)
+void level3_state::update(engine* game)
 {
     // clear the window
     SDL_RenderClear(game->rend);
@@ -88,7 +80,7 @@ void level2_state::update(engine* game)
     interactions(game);
 }
 
-void level2_state::draw(engine* game)
+void level3_state::draw(engine* game)
 {
     // draw stuff to the screen!
     for (int i = 0; i < (width * height); i++)
@@ -110,13 +102,11 @@ void level2_state::draw(engine* game)
     b_springboard.render(&camera->display, game->rend);
     w_springboard.render(&camera->display, game->rend);
     b_cross_spring.render(&camera->display, game->rend);
-    // level2_end.render(&camera->display, game->rend);
-
-
+    
     SDL_RenderPresent(game->rend);
 }
 
-void level2_state::cleanup()
+void level3_state::cleanup()
 {
     // iterate over all tiles and delete them all
     for (int i = 0; i < width * height; i++)
@@ -148,22 +138,20 @@ void level2_state::cleanup()
     w_springboard_tex.free();
     b_cross_spring_tex.free();
     w_cross_spring_tex.free();
-    level2_start_tex.free();
-    level2_end_tex.free();
     
 }
 
-void level2_state::pause()
+void level3_state::pause()
 {
     return;
 }
 
-void level2_state::resume()
+void level3_state::resume()
 {
     return;
 }
 
-void level2_state::load_textures(engine* game)
+void level3_state::load_textures(engine* game)
 {
     // LOAD ALL TEXTURES
     if (!b_char_tex.load_tile_sheet("textures/black/b_char.png", game->rend))
@@ -226,27 +214,23 @@ void level2_state::load_textures(engine* game)
         printf("Failed to black white cross layer spring texture!\n");
         return;
     }
-    //if (!level2_end_tex.load_message(128, 16, "textures/levels/level_2_done.png", game->rend))
-    {
-     //   printf("Failed to load level 2 end texture!\n");
-     //   return;
-    }
-
+    
+    
     
     // initialize level
     width = 27;
     height = 19;
     
-    path = "levels/level_002.csv";
+    path = "levels/level_003.csv";
     
     if (!set_tiles(tileset, path, width, height))
     {
-        printf("Failed to load level 2 map!\n");
+        printf("Failed to load level 3 map!\n");
         return;
     }
 }
 
-void level2_state::init_objects(engine* game)
+void level3_state::init_objects(engine* game)
 {
     // initialize black dot
     b_char.status = CHAR_ACTIVE;
@@ -266,8 +250,6 @@ void level2_state::init_objects(engine* game)
     crates.push_back(new crate(5 * TILE_WIDTH, 7  * TILE_WIDTH, FOUR_BY_TWO));
     crates.back()->tex = crate_tex_four_by_two;
     crates.back()->black = true;
-    
-    camera = new class camera(game->screen_width, game->screen_height);
     
     // initialize black button
     b_button.tex = b_button_tex;
@@ -290,7 +272,7 @@ void level2_state::init_objects(engine* game)
     b_springboard.show = true;
     b_springboard.direction = FLIP_RIGHT;
     b_springboard.x_spring = 0;
-    b_springboard.y_spring = 10;
+    b_springboard.y_spring = 8;
     
     // initialize white springboard
     w_springboard.tex = w_springboard_tex;
@@ -299,17 +281,15 @@ void level2_state::init_objects(engine* game)
     w_springboard.show = true;
     w_springboard.direction = FLIP_RIGHT;
     w_springboard.x_spring = 0;
-    w_springboard.y_spring = 10;
+    w_springboard.y_spring = 8;
     
-    //level2_end.tex = level2_end_tex;
-    //level2_end.send_message(END, game);
-    
+
     camera = new class camera(game->screen_width, game->screen_height);
     
-
+    
 }
 
-void level2_state::interactions(engine* game)
+void level3_state::interactions(engine* game)
 {
     
     // if both are on level end object
@@ -317,9 +297,9 @@ void level2_state::interactions(engine* game)
     {
         b_char.center(&b_level_end.col_rect);
         w_char.center(&w_level_end.col_rect);
-    
+        
         // change state to level 3
-        change_state(game, new level3_state);
+        // change_state(game, new level2_state);
     }
     
     //if black button is activated
@@ -346,7 +326,7 @@ void level2_state::interactions(engine* game)
         w_level_end.tex = w_end_tex;
         w_level_end.col_rect.x = 1500;
         w_level_end.col_rect.y = 540;
-
+        
         
     }
     else
@@ -383,7 +363,7 @@ void level2_state::interactions(engine* game)
         }
         //if(w_button.status != BUTT_INACTIVE)
         {
-           //w_button.status = (w_button.status + 1) % 4;
+            //w_button.status = (w_button.status + 1) % 4;
         }
     }
     
@@ -393,14 +373,14 @@ void level2_state::interactions(engine* game)
         if(b_char.col_rect.y < b_springboard.col_rect.y + 20)
         {
             // activate
-        b_springboard.activated = true;
-        
-        if(b_springboard.status == BOARD_INACTIVE)
-        {
-            b_springboard.status = (b_springboard.status + 1) % 4;
-        }
-        
-        b_char.spring(b_springboard.x_spring, b_springboard.y_spring, b_springboard.direction);
+            b_springboard.activated = true;
+            
+            if(b_springboard.status == BOARD_INACTIVE)
+            {
+                b_springboard.status = (b_springboard.status + 1) % 4;
+            }
+            
+            b_char.spring(b_springboard.x_spring, b_springboard.y_spring, b_springboard.direction);
         }
     }
     else
@@ -418,7 +398,7 @@ void level2_state::interactions(engine* game)
     {
         // activate
         w_springboard.activated = true;
-
+        
         if(w_springboard.status == BOARD_INACTIVE)
         {
             w_springboard.status = (w_springboard.status + 1) % 4;

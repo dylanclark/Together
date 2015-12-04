@@ -18,6 +18,9 @@
 #include "button.hpp"
 #include "engine.hpp"
 #include "springboard.hpp"
+#include "menu.hpp"
+#include "level_messages.hpp"
+#include "level01_state.hpp"
 
 void level1_state::init(engine* game)
 {
@@ -105,6 +108,7 @@ void level1_state::draw(engine* game)
     w_char.render(&camera->display, game->rend);
     b_level_end.render(&camera->display, game->rend);
     w_level_end.render(&camera->display, game->rend);
+    b_cross_spring.render(&camera->display, game->rend);
     SDL_RenderPresent(game->rend);
 }
 
@@ -140,6 +144,10 @@ void level1_state::cleanup()
     b_end_animate.free();
     b_springboard_tex.free();
     w_springboard_tex.free();
+    b_cross_spring_tex.free();
+    w_cross_spring_tex.free();
+    level1_end_tex.free();
+    level1_start_tex.free();
     
 }
 
@@ -211,6 +219,17 @@ void level1_state::load_textures(engine* game)
         printf("Failed to load black animating texture!\n");
         return;
     }
+    if(!w_cross_spring_tex.load_tile_sheet("textures/white/cross_layer/w_cross.png", game->rend))
+    {
+        printf("Failed to load white cross layer spring texture!\n");
+        return;
+    }
+    if(!b_cross_spring_tex.load_tile_sheet("textures/black/cross_layer/b_cross.png", game->rend))
+    {
+        printf("Failed to black white cross layer spring texture!\n");
+        return;
+    }
+    
     // initialize level
     width = 27;
     height = 19;
@@ -250,6 +269,17 @@ void level1_state::init_objects(engine* game)
     w_level_end.col_rect.x = 1500;
     w_level_end.col_rect.y = 540;
     
+    
+    // initialize black cross - layer spring, a variant of springboard
+    b_cross_spring.tex = b_cross_spring_tex;
+    b_cross_spring.status = BOARD_INACTIVE;
+    b_cross_spring.col_rect.x = 880;
+    b_cross_spring.col_rect.y = 490;
+    b_cross_spring.col_rect.h = 120;
+    b_cross_spring.show = true;
+    b_cross_spring.y_spring = 8;
+    b_cross_spring.direction = FLIP_RIGHT;
+    
     camera = new class camera(game->screen_width, game->screen_height);
     
     // init crate #1
@@ -265,24 +295,27 @@ void level1_state::interactions(engine* game)
     // if both are on level end object
     if(b_level_end.check(b_char.col_rect) && w_level_end.check(w_char.col_rect))
     {
-        if(b_char.center(&b_level_end.col_rect))
-            if(w_char.center(&w_level_end.col_rect))
-            {
-                b_char.tex = b_end_animate;
-                w_char.tex = w_end_animate;
-            }
-        
-        for(int i = 0; i < 300; i++)
-        {
-            // do end animation
-            b_char.completed(width, height, i);
-            w_char.completed(width, height, i);
-            draw(game);
-            
-        }
-        
+        b_char.center(&b_level_end.col_rect);
+        w_char.center(&w_level_end.col_rect);
         
         // change state to level 2
-        change_state(game, new level2_state);
+        change_state(game, new level01_state);
+    }
+    
+    //if black cross spring is activated
+    if(b_cross_spring.check(w_char.col_rect) && b_cross_spring.check(b_char.col_rect) && b_cross_spring.show)
+    {
+        
+        b_cross_spring.cross_spring(&w_char, &b_char, LOCATION);
+        // activate
+    }
+    else
+    {
+        b_cross_spring.activated = false;
+        
+        while(b_cross_spring.status != BOARD_INACTIVE)
+        {
+            b_cross_spring.status = BOARD_INACTIVE;
+        }
     }
 }

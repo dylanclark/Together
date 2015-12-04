@@ -13,6 +13,7 @@
 #include "initialization.hpp"
 #include "level1_state.hpp"
 #include "level2_state.hpp"
+#include "level3_state.hpp"
 #include "menu_buttons.hpp"
 
 void quitmenu_state::init(engine* game)

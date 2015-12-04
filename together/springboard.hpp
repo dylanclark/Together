@@ -25,11 +25,14 @@ const int BOARD_ACTIVE = 2;
 const int BOARD_INACTIVATE = 3;
 
 // animation length
-const int BOARD_ANIMATION_LENGTH = 6;
+const int BOARD_ANIMATION_LENGTH = 8;
 
 // direction
 const int FLIP_LEFT = 0;
 const int FLIP_RIGHT = 1;
+
+const int LOCATION = 0;
+const int VELOCITY = 1;
 
 
 class springboard
@@ -65,6 +68,10 @@ public:
     // frame of animation
     int frame;
     
+    // type. can be LOCATION for defualt jumping or VELOCITY for jumping the
+    // abount of the dot doing the springing
+    int type;
+    
     // angle to flip
     double angle = 0.0;
     
@@ -75,14 +82,16 @@ public:
     SDL_RendererFlip flip_type;
     
     // spring velocity
-    int x_spring;
+    float x_spring;
     
-    int y_spring;
+    float y_spring;
     
     // default velocity and acceleration constants
-    const float SPRING_X_VEL = 2;
+    const float SPRING_X_VEL = 0;
     const float SPRING_Y_VEL = 10;
-
+    
+    // cross-layer spring logic
+    void cross_spring(dot* springer, dot* springee, int type);
     
 };
 
