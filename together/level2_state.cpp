@@ -17,6 +17,7 @@
 #include "button.hpp"
 #include "engine.hpp"
 #include "springboard.hpp"
+#include "pausemenu_state.hpp"
 
 void level2_state::init(engine* game)
 {
@@ -26,6 +27,10 @@ void level2_state::init(engine* game)
     // initialize objects
     init_objects(game);
     
+    if (game->read_save() < 2)
+    {
+        game->save(2);
+    }
 }
 
 void level2_state::handle_events(engine *game)
@@ -45,10 +50,13 @@ void level2_state::handle_events(engine *game)
         
         // quit if he pressed escape
         if (!b_char.handle_event(event, this, game))
-            game->change_state(new mainmenu_state);
+        {
+            Mix_PauseMusic();
+            Mix_PlayChannel(-1, game->sound->menu_exit_snd, 0);
+            game->push_state(new pausemenu_state);
+        }
         
-        if (!w_char.handle_event(event, this, game))
-            game->change_state(new mainmenu_state);
+        w_char.handle_event(event, this, game);
         
     }
     
@@ -234,6 +242,8 @@ void level2_state::init_objects(engine* game)
     crates.push_back(new crate(5 * TILE_WIDTH, 7  * TILE_WIDTH, FOUR_BY_TWO));
     crates.back()->tex = crate_tex_four_by_two;
     crates.back()->black = true;
+    
+    camera = new class camera(game->screen_width, game->screen_height);
     
     // initialize black button
     b_button.tex = b_button_tex;

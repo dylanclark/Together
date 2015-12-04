@@ -36,7 +36,7 @@ void menu_button::render(SDL_Renderer* rend)
     }
 }
 
-menu_slider::menu_slider(bool select, int length, int x, int y, int w, int h)
+menu_slider::menu_slider(bool select, int length, bool permanent, int x, int y, int w, int h)
 {
     selected = select;
     frames = length;
@@ -174,7 +174,6 @@ bool menu::handle_event(SDL_Event& e, engine* game)
                     else
                     {
                         buttons[selector - sliders.size()]->select(game);
-                        Mix_PlayChannel(-1, game->sound->menu_select_snd, 0);
                     }
                     break;
                 case SDL_SCANCODE_ESCAPE:
@@ -214,7 +213,6 @@ bool menu::handle_event(SDL_Event& e, engine* game)
                     else
                     {
                         buttons[selector - sliders.size()]->select(game);
-                        Mix_PlayChannel(-1, game->sound->menu_select_snd, 0);
                     }
                     break;
                 case SDL_CONTROLLER_BUTTON_DPAD_UP:
@@ -278,8 +276,11 @@ void menu::update(engine* game)
         if (selector < sliders.size())
         {
             sliders[selector]->cur_frame = (sliders[selector]->cur_frame + 1) % sliders[selector]->frames;
-            sliders[selector]->select(game);
-            Mix_PlayChannel(-1, game->sound->menu_select_snd, 0);
+            if (sliders[selector]->permanent)
+            {
+                sliders[selector]->select(game);
+            }
+            Mix_PlayChannel(-1, game->sound->menu_choose_snd, 0);
         }
         right_up = false;
     }
@@ -288,8 +289,11 @@ void menu::update(engine* game)
         if (selector < sliders.size())
         {
             sliders[selector]->cur_frame = (sliders[selector]->cur_frame + sliders[selector]->frames - 1) % sliders[selector]->frames;
-            sliders[selector]->select(game);
-            Mix_PlayChannel(-1, game->sound->menu_select_snd, 0);
+            if (sliders[selector]->permanent)
+            {
+                sliders[selector]->select(game);
+            }
+            Mix_PlayChannel(-1, game->sound->menu_choose_snd, 0);
         }
         left_up = false;
     }

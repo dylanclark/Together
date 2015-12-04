@@ -47,16 +47,16 @@ void optionsmenu_state::init(engine* game)
     options_menu = new class menu(game->screen_width, game->screen_height, 0);
     options_menu->size = 4;
     
-    options_menu->sliders.push_back(new class volume_slider(true, 5, game->screen_width / 2, game->screen_height / 2 - 120, 600, 60));
+    options_menu->sliders.push_back(new class volume_slider(true, 5, true, game->screen_width / 2, game->screen_height / 2 - 135, 640, 80));
     options_menu->sliders[0]->tex = &volume_slider;
     
-    options_menu->sliders.push_back(new class sfx_slider(true, 5, game->screen_width / 2, game->screen_height / 2 - 40, 600, 60));
+    options_menu->sliders.push_back(new class sfx_slider(true, 5, true, game->screen_width / 2, game->screen_height / 2 - 45, 640, 80));
     options_menu->sliders[1]->tex = &sfx_slider;
     
-    options_menu->buttons.push_back(new class controls_button(true, game->screen_width / 2, game->screen_height / 2 + 40, 400, 60));
+    options_menu->buttons.push_back(new class controls_button(true, game->screen_width / 2, game->screen_height / 2 + 45, 480, 80));
     options_menu->buttons[0]->tex = &controls_button;
     
-    options_menu->buttons.push_back(new class back_button(true, game->screen_width / 2, game->screen_height / 2 + 120, 300, 60));
+    options_menu->buttons.push_back(new class back_button(true, game->screen_width / 2, game->screen_height / 2 + 135, 320, 80));
     options_menu->buttons[1]->tex = &back_button;
     
     

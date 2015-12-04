@@ -41,7 +41,15 @@ public:
     void select(engine* game);
 };
 
-class yes_button : public menu_button
+class yes_quit_button : public menu_button
+{
+public:
+    using menu_button::menu_button;
+    
+    void select(engine* game);
+};
+
+class yes_newgame_button : public menu_button
 {
 public:
     using menu_button::menu_button;
@@ -102,7 +110,7 @@ public:
 class volume_slider : public menu_slider
 {
 public:
-    volume_slider(bool selected, int length, int x, int y, int w, int h);
+    volume_slider(bool selected, int length, bool permanent, int x, int y, int w, int h);
     
     void select(engine* game);
 };
@@ -110,7 +118,15 @@ public:
 class sfx_slider : public menu_slider
 {
 public:
-    sfx_slider(bool selected, int length, int x, int y, int w, int h);
+    sfx_slider(bool selected, int length, bool permanent, int x, int y, int w, int h);
+    
+    void select(engine* game);
+};
+
+class level_slider : public menu_slider
+{
+public:
+    using menu_slider::menu_slider;
     
     void select(engine* game);
 };
