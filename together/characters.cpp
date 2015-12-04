@@ -662,7 +662,8 @@ void dot::spring(int x, int y, int direction)
     
     status = CHAR_ACTIVE;
     
-    black ? y_vel -= y : y_vel += y;
+    y_vel = 0;
+    black ? y_vel -= y * 2 : y_vel += y * 2;
     
     if(direction == FLIP_RIGHT)
     {

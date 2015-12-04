@@ -49,7 +49,10 @@ bool springboard::check(SDL_Rect dot_rect)
     
     if(check_collision(col_rect, dot_rect, &repos))
     {
-        return true;
+        if (abs(repos.x) > 20 && abs(repos.y) > 50)
+        {
+            return true;
+        }
     }
     return false;
 };

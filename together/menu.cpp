@@ -36,11 +36,12 @@ void menu_button::render(SDL_Renderer* rend)
     }
 }
 
-menu_slider::menu_slider(bool select, int length, bool permanent, int x, int y, int w, int h)
+menu_slider::menu_slider(bool select, int length, bool perm, int x, int y, int w, int h)
 {
     selected = select;
     frames = length;
     cur_frame = 0;
+    permanent = perm;
     
     rect.x = x;
     rect.y = y;
