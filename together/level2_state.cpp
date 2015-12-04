@@ -18,6 +18,7 @@
 #include "engine.hpp"
 #include "springboard.hpp"
 #include "level_messages.hpp"
+#include "pausemenu_state.hpp"
 
 void level2_state::init(engine* game)
 {

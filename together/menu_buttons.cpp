@@ -140,7 +140,6 @@ void volume_slider::select(engine *game)
 sfx_slider::sfx_slider(bool selected, int length, bool permanent, int x, int y, int w, int h) : menu_slider(selected, length, permanent, x, y, w, h)
 {
     cur_frame = frames - ((float) Mix_Volume(-1, -1) / (float) MIX_MAX_VOLUME) * ((float) length - 1) - 1;
-    printf("cur sfx volume: %i, frame: %i\n", Mix_Volume(-1, -1), cur_frame);
 }
 
 void sfx_slider::select(engine *game)
