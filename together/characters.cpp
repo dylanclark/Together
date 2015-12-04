@@ -658,8 +658,7 @@ void dot::render(SDL_Rect* camera, engine* game)
 
 
 void dot::spring(int x, int y, int direction)
-{ 
-    
+{
     status = CHAR_ACTIVE;
     
     y_vel = 0;
