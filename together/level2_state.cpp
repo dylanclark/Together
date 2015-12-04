@@ -159,8 +159,8 @@ void level2_state::draw(engine* game)
     b_cross_spring.render(&camera->display, game->rend);
 =======
     b_char.render(&camera->display, game);
-    w_char.render(&camera->display, game);
     b_level_end.render(&camera->display, game);
+<<<<<<< HEAD
     w_level_end.render(&camera->display, game);
     b_button.render(&camera->display, game);
     w_button.render(&camera->display, game);
@@ -170,6 +170,8 @@ void level2_state::draw(engine* game)
 >>>>>>> 4ff27ea... Finished dynamic camera! (finally)
     // level2_end.render(&camera->display, game->rend);
 
+=======
+>>>>>>> 74e2e9b... levels 1 and 2 now complete!!1
 
 >>>>>>> 250bb44... cross layer, bug fixes, levels 1 and 2,
     SDL_RenderPresent(game->rend);
@@ -258,6 +260,7 @@ void level2_state::load_textures(engine* game)
         printf("Failed to load  white level end texture!\n");
         return;
     }
+<<<<<<< HEAD
     if(!b_button_tex.load_tile_sheet("textures/black/button/b_button.png", game->rend))
     {
         printf("Failed to load black button texture!\n");
@@ -295,14 +298,16 @@ void level2_state::load_textures(engine* game)
      //   printf("Failed to load level 2 end texture!\n");
      //   return;
     }
+=======
+>>>>>>> 74e2e9b... levels 1 and 2 now complete!!1
 
 >>>>>>> 250bb44... cross layer, bug fixes, levels 1 and 2,
     
     // initialize level
     width = 27;
-    height = 19;
+    height = 18;
     
-    path = "levels/level_002.csv";
+    path = "levels/level_02.csv";
     
     if (!set_tiles(tileset, path, width, height))
     {
@@ -320,20 +325,9 @@ void level2_state::init_objects(engine* game)
     b_char.col_rect.y = 8 * TILE_WIDTH;
     b_char.black = true;
     
-    // initialize white dot
-    w_char.status = CHAR_INACTIVE;
-    w_char.tex = w_char_tex;
-    w_char.col_rect.x = 2 * TILE_WIDTH;
-    w_char.col_rect.y = 9 * TILE_WIDTH;
-    w_char.black = false;
-    
-    // init crate #1
-    crates.push_back(new crate(5 * TILE_WIDTH, 7  * TILE_WIDTH, FOUR_BY_TWO));
-    crates.back()->tex = crate_tex_four_by_two;
-    crates.back()->black = true;
-    
     camera = new class camera(game->screen_width, game->screen_height);
     
+<<<<<<< HEAD
     // initialize black button
     b_button.tex = b_button_tex;
     b_button.col_rect.x = 1200;
@@ -375,12 +369,21 @@ void level2_state::init_objects(engine* game)
     
 
 >>>>>>> 250bb44... cross layer, bug fixes, levels 1 and 2,
+=======
+    // initialize black level end
+    b_level_end.tex = b_end_tex;
+    b_level_end.col_rect.x = 1500;
+    b_level_end.col_rect.y = 11 * TILE_WIDTH;
+    
+
+
+>>>>>>> 74e2e9b... levels 1 and 2 now complete!!1
 }
 
 void level2_state::interactions(engine* game)
 {
     // if both are on level end object
-    if(b_level_end.check(b_char.col_rect) && w_level_end.check(w_char.col_rect))
+    if(b_level_end.check(b_char.col_rect))
     {
 <<<<<<< HEAD
         // do end animation
@@ -397,6 +400,7 @@ void level2_state::interactions(engine* game)
         change_state(game, new level3_state);
     }
     
+<<<<<<< HEAD
     //if black button is activated
     if(b_button.check(b_char.col_rect))
     {
@@ -530,4 +534,6 @@ void level2_state::interactions(engine* game)
             b_springboard.status = (b_springboard.status + 1) % 4;
         }
     }
+=======
+>>>>>>> 74e2e9b... levels 1 and 2 now complete!!1
 }
