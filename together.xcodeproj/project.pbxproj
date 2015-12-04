@@ -11,6 +11,10 @@
 		EF27A69E1C04F48F00459C32 /* engine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EF27A69C1C04F48F00459C32 /* engine.cpp */; };
 		EF27A6A11C0506E800459C32 /* level1_state.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EF27A69F1C0506E800459C32 /* level1_state.cpp */; };
 		EF27A6AC1C052EC200459C32 /* (null) in Sources */ = {isa = PBXBuildFile; };
+		EF52494C1C117BD500C6F2A6 /* levelselectmenu_state.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EF52494A1C117BD500C6F2A6 /* levelselectmenu_state.cpp */; settings = {ASSET_TAGS = (); }; };
+		EF52494F1C117BE200C6F2A6 /* newgamemenu_state.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EF52494D1C117BE200C6F2A6 /* newgamemenu_state.cpp */; settings = {ASSET_TAGS = (); }; };
+		EF5249511C11F0E200C6F2A6 /* level3_state.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EF5249501C11F0E200C6F2A6 /* level3_state.cpp */; settings = {ASSET_TAGS = (); }; };
+		EF5249541C11F0F500C6F2A6 /* intro_state.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EF5249531C11F0F500C6F2A6 /* intro_state.cpp */; settings = {ASSET_TAGS = (); }; };
 		EF5295A81C0BE7CB00178AC7 /* SDL2_ttf.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EF5295A71C0BE7CB00178AC7 /* SDL2_ttf.framework */; };
 		EF5295AA1C0BE8C000178AC7 /* SDL2_mixer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EF5295A91C0BE8C000178AC7 /* SDL2_mixer.framework */; };
 		EF5295AD1C0BEBEB00178AC7 /* sound.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EF5295AB1C0BEBEB00178AC7 /* sound.cpp */; };
@@ -43,7 +47,6 @@
 		FC8D8AE71C081B9700A1C6F7 /* level2_state.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FC8D8AE61C081B9700A1C6F7 /* level2_state.cpp */; };
 		FC8D8AEC1C0825B900A1C6F7 /* level_end.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FC8D8AEA1C0825B900A1C6F7 /* level_end.cpp */; };
 		FCB126F61C0CCB8B001D7EC8 /* springboard.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FCB126F41C0CCB8B001D7EC8 /* springboard.cpp */; };
-		FCD87E8C1C114F1800C1BFF2 /* level3_state.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FCD87E8A1C114F1800C1BFF2 /* level3_state.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -69,6 +72,14 @@
 		EF27A69F1C0506E800459C32 /* level1_state.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = level1_state.cpp; sourceTree = "<group>"; };
 		EF27A6A01C0506E800459C32 /* level1_state.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = level1_state.hpp; sourceTree = "<group>"; };
 		EF27A6AB1C052EC200459C32 /* levelstate.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = levelstate.hpp; sourceTree = "<group>"; };
+		EF52494A1C117BD500C6F2A6 /* levelselectmenu_state.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = levelselectmenu_state.cpp; sourceTree = "<group>"; };
+		EF52494B1C117BD500C6F2A6 /* levelselectmenu_state.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = levelselectmenu_state.hpp; sourceTree = "<group>"; };
+		EF52494D1C117BE200C6F2A6 /* newgamemenu_state.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = newgamemenu_state.cpp; sourceTree = "<group>"; };
+		EF52494E1C117BE200C6F2A6 /* newgamemenu_state.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = newgamemenu_state.hpp; sourceTree = "<group>"; };
+		EF5249501C11F0E200C6F2A6 /* level3_state.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = level3_state.cpp; sourceTree = "<group>"; };
+		EF5249521C11F0E800C6F2A6 /* level3_state.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = level3_state.hpp; sourceTree = "<group>"; };
+		EF5249531C11F0F500C6F2A6 /* intro_state.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = intro_state.cpp; sourceTree = "<group>"; };
+		EF5249551C11F0FC00C6F2A6 /* intro_state.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = intro_state.hpp; sourceTree = "<group>"; };
 		EF5295A71C0BE7CB00178AC7 /* SDL2_ttf.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL2_ttf.framework; path = ../../../../../../Library/Frameworks/SDL2_ttf.framework; sourceTree = "<group>"; };
 		EF5295A91C0BE8C000178AC7 /* SDL2_mixer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL2_mixer.framework; path = ../../../../../../Library/Frameworks/SDL2_mixer.framework; sourceTree = "<group>"; };
 		EF5295AB1C0BEBEB00178AC7 /* sound.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = sound.cpp; sourceTree = "<group>"; };
@@ -128,8 +139,6 @@
 		FC8D8AEB1C0825B900A1C6F7 /* level_end.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = level_end.hpp; sourceTree = "<group>"; };
 		FCB126F41C0CCB8B001D7EC8 /* springboard.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = springboard.cpp; sourceTree = "<group>"; };
 		FCB126F51C0CCB8B001D7EC8 /* springboard.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = springboard.hpp; sourceTree = "<group>"; };
-		FCD87E8A1C114F1800C1BFF2 /* level3_state.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = level3_state.cpp; sourceTree = "<group>"; };
-		FCD87E8B1C114F1800C1BFF2 /* level3_state.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = level3_state.hpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -188,9 +197,9 @@
 			isa = PBXGroup;
 			children = (
 				EF27A6A01C0506E800459C32 /* level1_state.hpp */,
+				EF5249521C11F0E800C6F2A6 /* level3_state.hpp */,
 				FC2F5D8F1C11628C00CCBC3E /* level01_state.hpp */,
 				FC8D8AE91C081C6200A1C6F7 /* level2_state.hpp */,
-				FCD87E8B1C114F1800C1BFF2 /* level3_state.hpp */,
 			);
 			name = head;
 			sourceTree = "<group>";
@@ -200,8 +209,8 @@
 			children = (
 				EF27A69F1C0506E800459C32 /* level1_state.cpp */,
 				FC8D8AE61C081B9700A1C6F7 /* level2_state.cpp */,
+				EF5249501C11F0E200C6F2A6 /* level3_state.cpp */,
 				FC2F5D8E1C11628C00CCBC3E /* level01_state.cpp */,
-				FCD87E8A1C114F1800C1BFF2 /* level3_state.cpp */,
 			);
 			name = src;
 			sourceTree = "<group>";
@@ -248,6 +257,7 @@
 				FC4AE44B1C11F42000B67E46 /* intro_state.cpp */,
 				EFE8086F1C0D6A2D00E6933A /* pausemenu_state.cpp */,
 				EFFB15E51C0D0779006428DB /* quitseq_state.cpp */,
+				EF5249531C11F0F500C6F2A6 /* intro_state.cpp */,
 			);
 			name = src;
 			sourceTree = "<group>";
@@ -256,13 +266,16 @@
 			isa = PBXGroup;
 			children = (
 				EFA85F2E1C0675BA001113CA /* mainmenu_state.hpp */,
+				EF52494E1C117BE200C6F2A6 /* newgamemenu_state.hpp */,
 				EFFB15E31C0D0747006428DB /* quitmenu_state.hpp */,
+				EF52494B1C117BD500C6F2A6 /* levelselectmenu_state.hpp */,
 				EFE808731C0E147600E6933A /* optionsmenu_state.hpp */,
 				FC4AE44A1C11F41B00B67E46 /* intro_state.hpp */,
 				FC4AE4481C11F3FC00B67E46 /* levelselectmenu_state.hpp */,
 				FC4AE4491C11F3FC00B67E46 /* newgamemenu_state.hpp */,
 				EFE808701C0D6A2D00E6933A /* pausemenu_state.hpp */,
 				EFFB15E61C0D0779006428DB /* quitseq_state.hpp */,
+				EF5249551C11F0FC00C6F2A6 /* intro_state.hpp */,
 			);
 			name = head;
 			sourceTree = "<group>";
@@ -393,10 +406,10 @@
 				EFBCA0DB1BED5DE8005D56CA /* collisions.cpp in Sources */,
 				EFBCA0FD1BEE8EF1005D56CA /* (null) in Sources */,
 				EF27A6AC1C052EC200459C32 /* (null) in Sources */,
+				EF5249511C11F0E200C6F2A6 /* level3_state.cpp in Sources */,
 				EFFE7EF21C0D5ADE00478C10 /* menu_buttons.cpp in Sources */,
 				EFFB15E41C0D0747006428DB /* quitmenu_state.cpp in Sources */,
 				FC8D8AEC1C0825B900A1C6F7 /* level_end.cpp in Sources */,
-				FCD87E8C1C114F1800C1BFF2 /* level3_state.cpp in Sources */,
 				EFA85F341C078C6F001113CA /* crate.cpp in Sources */,
 				FC2F5D901C11628C00CCBC3E /* level01_state.cpp in Sources */,
 				EF27A69E1C04F48F00459C32 /* engine.cpp in Sources */,
@@ -411,9 +424,11 @@
 				EFA85F2F1C0675BA001113CA /* mainmenu_state.cpp in Sources */,
 				FC4AE44C1C11F42000B67E46 /* intro_state.cpp in Sources */,
 				EF5295B01C0BF65F00178AC7 /* gamepad.cpp in Sources */,
+				EF5249541C11F0F500C6F2A6 /* intro_state.cpp in Sources */,
 				EFBCA0BE1BED17FB005D56CA /* main.cpp in Sources */,
 				FC8A5A3D1C098AC00023A58B /* button.cpp in Sources */,
 				FCB126F61C0CCB8B001D7EC8 /* springboard.cpp in Sources */,
+				EF52494F1C117BE200C6F2A6 /* newgamemenu_state.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

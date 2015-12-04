@@ -55,7 +55,7 @@ bool springboard::check(SDL_Rect dot_rect)
 };
 
 
-void springboard::render(SDL_Rect* camera, SDL_Renderer* rend)
+void springboard::render(SDL_Rect* camera, engine* game)
 {
     // flip
     switch(direction)
@@ -78,11 +78,11 @@ void springboard::render(SDL_Rect* camera, SDL_Renderer* rend)
     switch (status)
     {
         case BOARD_INACTIVE:
-            tex.angle_render(col_rect.x, col_rect.y, &inactive_clip, camera, rend, angle, center, flip_type);
+            tex.angle_render(col_rect.x, col_rect.y, &inactive_clip, camera, game, angle, center, flip_type);
             frame = 0;
             break;
         case BOARD_ACTIVE:
-            tex.angle_render(col_rect.x, col_rect.y, &active_clip, camera, rend, angle, center, flip_type);
+            tex.angle_render(col_rect.x, col_rect.y, &active_clip, camera, game, angle, center, flip_type);
             frame = 0; // do this elsewhere!
             break;
         case BOARD_ACTIVATE:
@@ -94,7 +94,7 @@ void springboard::render(SDL_Rect* camera, SDL_Renderer* rend)
             SDL_Rect activate_clip = {16 * frame, 0, 16, 16};
             
             // render that mofo
-            tex.angle_render(col_rect.x, col_rect.y, &activate_clip, camera, rend, angle, center, flip_type);
+            tex.angle_render(col_rect.x, col_rect.y, &activate_clip, camera, game, angle, center, flip_type);
             
             // change the status if animation is over!
             if (frame == BOARD_ANIMATION_LENGTH - 1)
@@ -113,7 +113,7 @@ void springboard::render(SDL_Rect* camera, SDL_Renderer* rend)
             SDL_Rect inactivate_clip = {16 * (frame + 8), 0, 16, 16};
             
             // render that mofo
-            tex.angle_render(col_rect.x, col_rect.y, &inactivate_clip, camera, rend, angle, center, flip_type);
+            tex.angle_render(col_rect.x, col_rect.y, &inactivate_clip, camera, game, angle, center, flip_type);
 
             // change the status if animation is over!
             if (frame == BOARD_ANIMATION_LENGTH - 1)

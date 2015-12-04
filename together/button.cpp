@@ -46,7 +46,7 @@ bool button::check(SDL_Rect dot_rect)
 };
 
 
-void button::render(SDL_Rect* camera, SDL_Renderer* rend)
+void button::render(SDL_Rect* camera, engine* game)
 {
     // flip
     switch(direction)
@@ -87,11 +87,11 @@ void button::render(SDL_Rect* camera, SDL_Renderer* rend)
     switch (status)
     {
         case BUTT_INACTIVE:
-            tex.angle_render(col_rect.x, col_rect.y, &inactive_clip, camera, rend, angle, center, flip);
+            tex.angle_render(col_rect.x, col_rect.y, &inactive_clip, camera, game, angle, center, flip);
             frame = 0;
             break;
         case BUTT_ACTIVE:
-            tex.angle_render(col_rect.x, col_rect.y, &active_clip, camera, rend, angle, center, flip);
+            tex.angle_render(col_rect.x, col_rect.y, &active_clip, camera, game, angle, center, flip);
             frame = 0;
             break;
         case BUTT_ACTIVATE:
@@ -103,7 +103,7 @@ void button::render(SDL_Rect* camera, SDL_Renderer* rend)
             SDL_Rect activate_clip = {16 * frame, 0, 16, 16};
             
             // render that mofo
-            tex.angle_render(col_rect.x, col_rect.y, &activate_clip, camera, rend, angle, center, flip);
+            tex.angle_render(col_rect.x, col_rect.y, &activate_clip, camera, game, angle, center, flip);
             
             // change the status if animation is over!
             if (frame == BUTT_ANIMATION_LENGTH - 1)
@@ -122,7 +122,7 @@ void button::render(SDL_Rect* camera, SDL_Renderer* rend)
             SDL_Rect inactivate_clip = {(16 * (frame + 3)) , 0, 16, 16};
             
             // render that mofo
-            tex.angle_render(col_rect.x, col_rect.y, &inactivate_clip, camera, rend, angle, center, flip);
+            tex.angle_render(col_rect.x, col_rect.y, &inactivate_clip, camera, game, angle, center, flip);
             
             // change the status if animation is over!
             if (frame == BUTT_ANIMATION_LENGTH - 1)

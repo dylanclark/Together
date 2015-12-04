@@ -38,7 +38,7 @@ public:
     void update();
     
     // render function
-    void render(int b_status, SDL_Rect* camera, SDL_Renderer* rend, levelstate* level);
+    void render(int b_status, SDL_Rect* camera, engine* game, levelstate* level);
     
     // crate texture
     texture tex;

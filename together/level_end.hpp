@@ -11,6 +11,7 @@
 #include "collisions.hpp"
 #include "tiles.hpp"
 #include "camera.hpp"
+#include "engine.hpp"
 
 class level_end
 {
@@ -19,7 +20,7 @@ public:
     level_end();
     
     // render the item on the screen
-    void render(SDL_Rect* camera, SDL_Renderer* rend);
+    void render(SDL_Rect* camera, engine* game);
     
     // collision rectangle
     SDL_Rect col_rect;

@@ -42,7 +42,7 @@ public:
     springboard();
     
     // render the item on the screen
-    void render(SDL_Rect* camera, SDL_Renderer* rend);
+    void render(SDL_Rect* camera, engine* game);
     
     // collision rectangle
     SDL_Rect col_rect;
