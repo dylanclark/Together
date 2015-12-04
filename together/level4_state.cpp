@@ -229,8 +229,9 @@ void level4_state::init_objects(engine* game)
 void level4_state::interactions(engine* game)
 {
     
-    // if both are on level end object
-    if(b_level_end.check(b_char.col_rect))
+    // if both are on level end object (making sure it hasnt been activate
+    // to change level ends already
+    if(b_level_end.check(b_char.col_rect) && (w_level_end.col_rect.x != 1700))
     {
         //b_char.center(&b_level_end.col_rect);
         
