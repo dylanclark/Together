@@ -39,7 +39,7 @@ bool engine::init()
     win = SDL_CreateWindow("together.",
                            SDL_WINDOWPOS_CENTERED,
                            SDL_WINDOWPOS_CENTERED,
-                           current.w, current.h, SDL_WINDOW_FULLSCREEN);
+                           current.w, current.h, SDL_WINDOW_RESIZABLE);
     if (!win)
     {
         printf("error creating window: %s\n", SDL_GetError());

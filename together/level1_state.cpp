@@ -293,19 +293,15 @@ void level1_state::init_objects(engine* game)
 void level1_state::interactions(engine* game)
 {
     // if both are on level end object
-    if(b_level_end.check(b_char.col_rect) && w_level_end.check(w_char.col_rect))
+    if ((b_level_end.check(b_char.col_rect)) && (w_level_end.check(w_char.col_rect)))
     {
-        b_char.center(&b_level_end.col_rect);
-        w_char.center(&w_level_end.col_rect);
-        
         // change state to level 2
         change_state(game, new level01_state);
     }
     
-    //if black cross spring is activated
+    // if black cross spring is activated
     if(b_cross_spring.check(w_char.col_rect) && b_cross_spring.check(b_char.col_rect) && b_cross_spring.show)
     {
-        
         b_cross_spring.cross_spring(&w_char, &b_char, LOCATION);
         // activate
     }
@@ -313,7 +309,7 @@ void level1_state::interactions(engine* game)
     {
         b_cross_spring.activated = false;
         
-        while(b_cross_spring.status != BOARD_INACTIVE)
+        while (b_cross_spring.status != BOARD_INACTIVE)
         {
             b_cross_spring.status = BOARD_INACTIVE;
         }

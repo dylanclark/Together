@@ -21,8 +21,8 @@ extern texture w_level_end;
 level_end::level_end()
 {
     // initialize collision rectangle
-    col_rect.w = 16;
-    col_rect.h = 16;
+    col_rect.w = TILE_WIDTH;
+    col_rect.h = TILE_WIDTH;
     col_rect.x = (SCREEN_WIDTH - col_rect.w) / 2;
     col_rect.y = (SCREEN_HEIGHT - col_rect.h) / 2;
     
@@ -41,7 +41,10 @@ bool level_end::check(SDL_Rect dot_rect)
     vector repos;
     if(check_collision(col_rect, dot_rect, &repos))
     {
-        return true;
+        if (abs(repos.x) > 40 && abs(repos.y) > 40)
+        {
+            return true;
+        }
     }
     return false;
 };

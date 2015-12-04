@@ -33,16 +33,17 @@ void camera::move(int level_w, int level_h, engine* game)
     location.h += h_vel;
     
     // don't shrink too small
-    if (location.w < game->screen_width)
-    {
-        location.w = game->screen_width;
-        w_vel = 0;
-    }
     if (location.h < game->screen_height)
     {
         location.h = game->screen_height;
         h_vel = 0;
     }
+    if (location.w < game->screen_width)
+    {
+        location.w = game->screen_width;
+        w_vel = 0;
+    }
+    
     
     // don't get too big (max dimensions)
     if (location.w > game->screen_width * 2 || location.h > game->screen_height * 2)
@@ -112,9 +113,6 @@ void camera::move(int level_w, int level_h, engine* game)
     {
         location.w = ((float) location.h / (float) game->screen_height) * game->screen_width;
     }
-    
-    printf("width: %i, height: %i, level_w: %i, x: %i\n", location.w, location.h, level_w * TILE_WIDTH, location.x);
-    
 
     // change the actual positions based on this origin
     update();
@@ -126,8 +124,6 @@ void camera::update()
     display.y = location.y - location.h / 2;
     display.w = location.w;
     display.h = location.h;
-    
-    printf("x: %i, y: %i, w: %i, h: %i\n", display.x, display.y, display.w, display.h);
 }
 
 void camera::track(SDL_Rect* b_char, SDL_Rect* w_char)
@@ -137,8 +133,6 @@ void camera::track(SDL_Rect* b_char, SDL_Rect* w_char)
     int max_x;
     int min_y;
     int max_y;
-    
-    printf("char x: %i\n\n", b_char->x);
     
     // x bounds
     if (b_char->x >= w_char->x)
