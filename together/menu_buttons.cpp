@@ -16,6 +16,7 @@
 #include "quitmenu_state.hpp"
 #include "level1_state.hpp"
 #include "level2_state.hpp"
+#include "level3_state.hpp"
 #include "menu.hpp"
 #include "mainmenu_state.hpp"
 #include "optionsmenu_state.hpp"

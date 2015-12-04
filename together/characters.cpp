@@ -216,7 +216,6 @@ void dot::move(levelstate* level)
     if (x_vel < (DOT_ACC) && x_vel > -(DOT_ACC))
         x_vel = 0;
     
-    
     // limit top speed
     if (x_vel > DOT_VEL)
         x_vel = DOT_VEL;
@@ -296,8 +295,7 @@ bool dot::tile_col(tile* tileset[], int size)
                 // black floor
                 else if (tileset[i]->floor_b && !tileset[i]->wall_b)
                 {
-                    if (col_rect.y + col_rect.h / 2 >= tileset[i]->get_col_rect().y + tileset[i]->get_col_rect().h / 2)
-                        continue;
+                    if (col_rect.y + col_rect.h / 2 >= tileset[i]->get_col_rect().y + tileset[i]->get_col_rect().h / 2)continue;
                     
                     col_rect.y += repos.y;
                     y_vel = 0;
@@ -601,7 +599,7 @@ bool dot::crate_col(levelstate* level)
 void dot::render(SDL_Rect* camera, SDL_Renderer* rend)
 {
     SDL_Rect active_clip = {0, 0, 16, 16};
-    SDL_Rect inactive_clip = {16 * 9, 0, 16, 16};
+    SDL_Rect inactive_clip = {16 * ANIMATION_LENGTH, 0, 16, 16};
     
     switch (status)
     {
@@ -652,53 +650,28 @@ void dot::render(SDL_Rect* camera, SDL_Renderer* rend)
     }
 };
 
-// code for post-level animation
-void dot::completed(int width,int height, int frame)
-{
-    // make them both big
-    if(!CHAR_ACTIVE)
-        status = CHAR_ACTIVE;
-
-    if (frame < 10 || (40 <= frame && frame < 50) || (80 <= frame && frame < 90) || (130 <= frame && frame < 140))
-    {
-        black ? col_rect.x-- : col_rect.x++;
-    }
-    if ((20 <= frame && frame < 30) || (60 <= frame && frame < 70) || (100 <= frame && frame < 120)) {
-        black ? col_rect.x++ : col_rect.x--;
-    }
-    if ((frame < 15 || (60 <= frame && frame < 75) || (120 <= frame && frame < 135))) {
-        black ? col_rect.y-- : col_rect.y++;
-    }
-    if ((30 <= frame && frame < 45) || (90 <= frame && frame < 105) || (150 <= frame && frame < 160)) {
-        black ? col_rect.y++ : col_rect.y--;
-    }
-    if (frame > 160 && frame <= 190)
-    {
-        black ? col_rect.y++ : col_rect.y--;
-    }
-    if (frame > 190)
-        col_rect.y--;
-    if (frame > 220)
-        col_rect.x += 2;
-    
-    return;
-}
 
 void dot::spring(int x, int y, int direction)
-{
+{ 
+    
     status = CHAR_ACTIVE;
     
     black ? y_vel -= y : y_vel += y;
     
     if(direction == FLIP_RIGHT)
+    {
         x_vel += x;
+    }
     else
+    {
         x_vel -= x;
+    }
+    return;
 }
 
 bool dot::center(SDL_Rect* end_rect)
 {
-    // center dot on level-end object
+    // center dot on an object
     while (col_rect.x < end_rect->x )
         col_rect.x++;
     while (col_rect.x > end_rect->x )
@@ -709,4 +682,9 @@ bool dot::center(SDL_Rect* end_rect)
         col_rect.y--;
     
     return true;
+}
+
+float dot::get_y_vel()
+{
+    return y_vel;
 }

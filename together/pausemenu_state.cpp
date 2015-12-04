@@ -11,6 +11,7 @@
 #include "engine.hpp"
 #include "menu.hpp"
 #include "initialization.hpp"
+#include "level3_state.hpp"
 #include "level1_state.hpp"
 #include "level2_state.hpp"
 #include "menu_buttons.hpp"
@@ -57,7 +58,6 @@ void pausemenu_state::init(engine* game)
     
     pause_menu->buttons.push_back(new class save_and_quit_button(true, game->screen_width / 2, game->screen_height / 2 + 120, 600, 60));
     pause_menu->buttons[3]->tex = &save_and_quit_button;
-    
     
 }
 

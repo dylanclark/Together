@@ -39,7 +39,7 @@ public:
     const float DOT_VEL = 12;
     const float JUMP_VEL = 18;
     const float DOT_ACC = DOT_VEL / 12;
-    const float GRAVITY = JUMP_VEL / 24;
+    const float GRAVITY = JUMP_VEL / 26;
     const float PUSH_VEL = DOT_VEL / 4;
     
     // controller bools
@@ -83,14 +83,13 @@ public:
     // jumps
     int jump;
     
-    // end of level animation
-    void completed(int width, int height, int frame);
-    
     // spring
     void spring(int x, int y, int direction);
     
     // center on object
     bool center(SDL_Rect* end_rect);
+    
+    float get_y_vel();
 
 private:
     
