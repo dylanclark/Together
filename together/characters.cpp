@@ -81,7 +81,10 @@ bool dot::handle_event(SDL_Event &e, levelstate* level, engine* game)
                 case SDL_SCANCODE_LSHIFT:
                 case SDL_SCANCODE_RSHIFT:
                     if (level->shiftable)
+                    {
+                        Mix_PlayChannel(-1, game->sound->level_switch_snd, 0);
                         status = (status + 1) % 4;
+                    }
                     break;
                 case SDL_SCANCODE_R:
                     game->restart_state();
@@ -168,7 +171,10 @@ bool dot::handle_event(SDL_Event &e, levelstate* level, engine* game)
                 case SDL_CONTROLLER_BUTTON_RIGHTSHOULDER:
                 case SDL_CONTROLLER_BUTTON_X:
                     if (level->shiftable)
+                    {
+                        Mix_PlayChannel(-1, game->sound->level_switch_snd, 0);
                         status = (status + 1) % 4;
+                    }
                     break;
                 case SDL_CONTROLLER_BUTTON_Y:
                     game->restart_state();

@@ -47,16 +47,16 @@ void pausemenu_state::init(engine* game)
     pause_menu = new class menu(game->screen_width, game->screen_height, 0);
     pause_menu->size = 4;
     
-    pause_menu->buttons.push_back(new class resume_button(true, game->screen_width / 2, game->screen_height / 2 - 120, 300, 60));
+    pause_menu->buttons.push_back(new class resume_button(true, game->screen_width / 2, game->screen_height / 2 - 135, 320, 80));
     pause_menu->buttons[0]->tex = &resume_button;
     
-    pause_menu->buttons.push_back(new class level_select_button(true, game->screen_width / 2, game->screen_height / 2 - 40, 600, 60));
+    pause_menu->buttons.push_back(new class level_select_button(true, game->screen_width / 2, game->screen_height / 2 - 45, 640, 80));
     pause_menu->buttons[1]->tex = &level_select_button;
     
-    pause_menu->buttons.push_back(new class options_button(true, game->screen_width / 2, game->screen_height / 2 + 40, 300, 60));
+    pause_menu->buttons.push_back(new class options_button(true, game->screen_width / 2, game->screen_height / 2 + 45, 320, 80));
     pause_menu->buttons[2]->tex = &options_button;
     
-    pause_menu->buttons.push_back(new class save_and_quit_button(true, game->screen_width / 2, game->screen_height / 2 + 120, 600, 60));
+    pause_menu->buttons.push_back(new class save_and_quit_button(true, game->screen_width / 2, game->screen_height / 2 + 135, 640, 80));
     pause_menu->buttons[3]->tex = &save_and_quit_button;
     
 }

@@ -24,7 +24,7 @@ void quitmenu_state::init(engine* game)
         return;
     }
     
-    if (!yes_button.load_object(32, 16, "textures/menu/yes.png", game->rend))
+    if (!yes_button.load_object(32, 16, "textures/menu/yes_quit.png", game->rend))
     {
         printf("Failed to load yes button texture!\n");
         return;
@@ -40,13 +40,13 @@ void quitmenu_state::init(engine* game)
     quit_menu = new class menu(game->screen_width, game->screen_height, 0);
     quit_menu->size = 2;
     
-    quit_menu->menu_title = new class title (game->screen_width / 2,  game->screen_height / 3, 600, 60);
+    quit_menu->menu_title = new class title (game->screen_width / 2,  game->screen_height / 3, 640, 80);
     quit_menu->menu_title->tex = &quit_title;
     
-    quit_menu->buttons.push_back(new class yes_button(true, game->screen_width / 2, game->screen_height / 2, 150, 60));
+    quit_menu->buttons.push_back(new class yes_quit_button(true, game->screen_width / 2, game->screen_height / 2, 160, 80));
     quit_menu->buttons[0]->tex = &yes_button;
     
-    quit_menu->buttons.push_back(new class no_button(true, game->screen_width / 2, game->screen_height / 2 + 75, 150, 60));
+    quit_menu->buttons.push_back(new class no_button(true, game->screen_width / 2, game->screen_height / 2 + 90, 160, 80));
     quit_menu->buttons[1]->tex = &no_button;
 }
 

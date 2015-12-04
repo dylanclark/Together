@@ -80,7 +80,7 @@ class menu_slider
 public:
     
     // init
-    menu_slider(bool selected, int length, int x, int y, int w, int h);
+    menu_slider(bool selected, int length, bool permanent, int x, int y, int w, int h);
     
     // dealloc
     ~menu_slider();
@@ -93,6 +93,9 @@ public:
     
     // current frame
     int cur_frame;
+    
+    // permanent
+    bool permanent;
     
     // position rectangle
     SDL_Rect rect;

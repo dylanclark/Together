@@ -8,6 +8,8 @@
 #include <SDL2_image/SDL_image.h>
 #include <vector>
 #include <SDL2_ttf/SDL_ttf.h>
+#include <iostream>
+#include <fstream>
 
 // include headers
 #include "sound.hpp"
@@ -49,6 +51,14 @@ public:
     
     // audio player
     sound_player* sound;
+    
+    // save objects
+    std::ofstream save_file;
+    std::ifstream save_reader;
+    
+    // save functions
+    bool save(int level);
+    int read_save();
     
 private:
     // stack of gamestates

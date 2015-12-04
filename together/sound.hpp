@@ -25,6 +25,9 @@ public:
     Mix_Chunk* menu_select_snd = nullptr;
     Mix_Chunk* menu_choose_snd = nullptr;
     Mix_Chunk* menu_onset_snd = nullptr;
+    Mix_Chunk* menu_exit_snd = nullptr;
+    Mix_Chunk* level_crate_snd = nullptr;
+    Mix_Chunk* level_switch_snd = nullptr;
 };
 
 #endif /* sound_hpp */

@@ -29,7 +29,11 @@ void level1_state::init(engine* game)
    
     // initialize objects
     init_objects(game);
-
+    
+    if (game->read_save() < 1)
+    {
+        game->save(1);
+    }
 }
 
 void level1_state::handle_events(engine *game)
@@ -51,7 +55,7 @@ void level1_state::handle_events(engine *game)
         if (!b_char.handle_event(event, this, game))
         {
             Mix_PauseMusic();
-            Mix_PlayChannel(-1, game->sound->menu_select_snd, 0);
+            Mix_PlayChannel(-1, game->sound->menu_exit_snd, 0);
             game->push_state(new pausemenu_state);
         }
         

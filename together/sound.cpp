@@ -22,6 +22,9 @@ sound_player::sound_player()
     }
     menu_select_snd = Mix_LoadWAV("sound/fx/menu/select.wav");
     menu_onset_snd = Mix_LoadWAV("sound/fx/menu/onset.wav");
+    menu_exit_snd = Mix_LoadWAV("sound/fx/menu/exit.wav");
+    level_crate_snd = Mix_LoadWAV("sound/fx/level/crate.wav");
+    level_switch_snd = Mix_LoadWAV("sound/fx/level/switch2.wav");
 }
 
 sound_player::~sound_player()
@@ -33,4 +36,7 @@ sound_player::~sound_player()
     Mix_FreeChunk(menu_choose_snd);
     Mix_FreeChunk(menu_select_snd);
     Mix_FreeChunk(menu_onset_snd);
+    Mix_FreeChunk(menu_exit_snd);
+    Mix_FreeChunk(level_crate_snd);
+    Mix_FreeChunk(level_switch_snd);
 }
