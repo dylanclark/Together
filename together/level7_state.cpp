@@ -22,7 +22,7 @@
 #include "level_messages.hpp"
 #include "pausemenu_state.hpp"
 
-void level6_state::init(engine* game)
+void level7_state::init(engine* game)
 {
     // load textures
     load_textures(game);
@@ -30,13 +30,13 @@ void level6_state::init(engine* game)
     // initialize objects
     init_objects(game);
     
-    if (game->read_save() < 6)
+    if (game->read_save() < 7)
     {
-        game->save(6);
+        game->save(7);
     }
 }
 
-void level6_state::handle_events(engine *game)
+void level7_state::handle_events(engine *game)
 {
     // event handler
     SDL_Event event;
@@ -67,7 +67,7 @@ void level6_state::handle_events(engine *game)
     shiftable = true;
 }
 
-void level6_state::update(engine* game)
+void level7_state::update(engine* game)
 {
     // clear the window
     SDL_RenderClear(game->rend);
@@ -92,7 +92,7 @@ void level6_state::update(engine* game)
     interactions(game);
 }
 
-void level6_state::draw(engine* game)
+void level7_state::draw(engine* game)
 {
     // draw stuff to the screen!
     for (int i = 0; i < (width * height); i++)
@@ -103,7 +103,7 @@ void level6_state::draw(engine* game)
     {
         crates[i]->render(b_char.status, &camera->display, game, this);
     }
-
+    
     b_char.render(&camera->display, game);
     b_level_end.render(&camera->display, game);
     w_level_end.render(&camera->display, game);
@@ -112,7 +112,7 @@ void level6_state::draw(engine* game)
     SDL_RenderPresent(game->rend);
 }
 
-void level6_state::cleanup()
+void level7_state::cleanup()
 {
     // iterate over all tiles and delete them all
     for (int i = 0; i < width * height; i++)
@@ -147,17 +147,17 @@ void level6_state::cleanup()
     
 }
 
-void level6_state::pause()
+void level7_state::pause()
 {
     return;
 }
 
-void level6_state::resume()
+void level7_state::resume()
 {
     return;
 }
 
-void level6_state::load_textures(engine* game)
+void level7_state::load_textures(engine* game)
 {
     // LOAD ALL TEXTURES
     if (!b_char_tex.load_tile_sheet("textures/black/b_char.png", game->rend))
@@ -180,9 +180,9 @@ void level6_state::load_textures(engine* game)
         printf("Failed to load black level end texter!\n");
         return;
     }
-    if (!crate_tex_four_by_two.load_object(TILE_WIDTH * 4, TILE_WIDTH * 2, "textures/black/crates/b_crate.png", game->rend))
+    if (!w_crate_tex_four_by_two.load_object(TILE_WIDTH * 4, TILE_WIDTH * 2, "textures/white/crates/w_crate.png", game->rend))
     {
-        printf("Failed to load crate (4x2) texture!\n");
+        printf("Failed to load white crate (4x2) texture!\n");
         return;
     }
     if (!w_end_tex.load_tile_sheet("textures/white/level_end/white_end.png", game->rend))
@@ -195,27 +195,32 @@ void level6_state::load_textures(engine* game)
         printf("Failed to load  black button texture!\n");
         return;
     }
+    if (!w_button_tex.load_tile_sheet("textures/white/button/w_button.png", game-> rend))
+    {
+        printf("Failed to load white button texture!\n");
+        return;
+    }
     
     // initialize level
-    width = 20;
-    height = 20;
+    width = 26;
+    height = 28;
     
-    path = "levels/level_06.csv";
+    path = "levels/level_07.csv";
     
     if (!set_tiles(tileset, path, width, height))
     {
-        printf("Failed to load level 6 map!\n");
+        printf("Failed to load level 7 map!\n");
         return;
     }
 }
 
-void level6_state::init_objects(engine* game)
+void level7_state::init_objects(engine* game)
 {
     // initialize black dot
     b_char.status = CHAR_ACTIVE;
     b_char.tex = b_char_tex;
     b_char.col_rect.x = 2 * TILE_WIDTH;
-    b_char.col_rect.y = 8 * TILE_WIDTH;
+    b_char.col_rect.y = 9 * TILE_WIDTH;
     b_char.black = true;
     
     camera = new class camera(game->screen_width, game->screen_height);
@@ -229,7 +234,7 @@ void level6_state::init_objects(engine* game)
     w_char.status = CHAR_INACTIVE;
     w_char.tex = w_char_tex;
     w_char.col_rect.x = 2 * TILE_WIDTH;
-    w_char.col_rect.y = 9 * TILE_WIDTH;
+    w_char.col_rect.y = 12 * TILE_WIDTH;
     w_char.black = false;
     
     // initialize white level end
@@ -237,25 +242,25 @@ void level6_state::init_objects(engine* game)
     w_level_end.col_rect.x = 1100;
     w_level_end.col_rect.y = 9 * TILE_WIDTH;
     
-
+    
     // initialize black button
     b_button.tex = b_button_tex;
-    b_button.col_rect.x = 800;
-    b_button.col_rect.y = 8 * TILE_WIDTH;
+    b_button.col_rect.x = 1250;
+    b_button.col_rect.y = 5 * TILE_WIDTH;
     b_button.single = true;
     b_button.direction = UP;
     
 }
 
-void level6_state::interactions(engine* game)
+void level7_state::interactions(engine* game)
 {
     
     // if both are on level end object
     if(b_level_end.check(b_char.col_rect) && w_level_end.check(w_char.col_rect))
         
     {
-        // change state to level 7
-        change_state(game, new level7_state);
+        // change state to level 5
+        //change_state(game, new level5_state);
     }
     
     
@@ -275,9 +280,9 @@ void level6_state::interactions(engine* game)
         }
         
         // init crate #1
-        crates.push_back(new crate(5 * TILE_WIDTH, 7  * TILE_WIDTH, FOUR_BY_TWO));
-        crates.back()->tex = crate_tex_four_by_two;
-        crates.back()->black = true;
+        crates.push_back(new crate(5 * TILE_WIDTH, 12 * TILE_WIDTH, FOUR_BY_TWO));
+        crates.back()->tex = w_crate_tex_four_by_two;
+        crates.back()->black = false;
         
     }
     else

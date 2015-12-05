@@ -45,6 +45,7 @@
 		FCB126F61C0CCB8B001D7EC8 /* springboard.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FCB126F41C0CCB8B001D7EC8 /* springboard.cpp */; };
 		FCD4DFB31C126476008546AB /* level5_state.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FCD4DFB11C126476008546AB /* level5_state.cpp */; };
 		FCD4DFB61C126A3A008546AB /* level6_state.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FCD4DFB41C126A3A008546AB /* level6_state.cpp */; };
+		FCF21E0D1C12742D008BEE77 /* level7_state.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FCF21E0B1C12742D008BEE77 /* level7_state.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -142,6 +143,8 @@
 		FCD4DFB21C126476008546AB /* level5_state.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = level5_state.hpp; sourceTree = "<group>"; };
 		FCD4DFB41C126A3A008546AB /* level6_state.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = level6_state.cpp; sourceTree = "<group>"; };
 		FCD4DFB51C126A3A008546AB /* level6_state.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = level6_state.hpp; sourceTree = "<group>"; };
+		FCF21E0B1C12742D008BEE77 /* level7_state.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = level7_state.cpp; sourceTree = "<group>"; };
+		FCF21E0C1C12742D008BEE77 /* level7_state.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = level7_state.hpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -201,6 +204,7 @@
 			children = (
 				EF27A6A01C0506E800459C32 /* level1_state.hpp */,
 				FCD4DFB51C126A3A008546AB /* level6_state.hpp */,
+				FCF21E0C1C12742D008BEE77 /* level7_state.hpp */,
 				FCD4DFB21C126476008546AB /* level5_state.hpp */,
 				EF5249521C11F0E800C6F2A6 /* level3_state.hpp */,
 				FC1B50F31C12313F00CD8588 /* level4_state.hpp */,
@@ -219,6 +223,7 @@
 				FCD4DFB11C126476008546AB /* level5_state.cpp */,
 				FC2F5D8E1C11628C00CCBC3E /* level01_state.cpp */,
 				FC1B50F21C12313E00CD8588 /* level4_state.cpp */,
+				FCF21E0B1C12742D008BEE77 /* level7_state.cpp */,
 				FCD4DFB41C126A3A008546AB /* level6_state.cpp */,
 			);
 			name = src;
@@ -428,6 +433,7 @@
 				FC1B50F41C12313F00CD8588 /* level4_state.cpp in Sources */,
 				EF27A6A11C0506E800459C32 /* level1_state.cpp in Sources */,
 				EF5295AD1C0BEBEB00178AC7 /* sound.cpp in Sources */,
+				FCF21E0D1C12742D008BEE77 /* level7_state.cpp in Sources */,
 				EF5295B31C0C107000178AC7 /* menu.cpp in Sources */,
 				EF52494C1C117BD500C6F2A6 /* levelselectmenu_state.cpp in Sources */,
 				EFBCA0FA1BEE8CD2005D56CA /* characters.cpp in Sources */,
