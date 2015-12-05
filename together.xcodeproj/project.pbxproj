@@ -43,6 +43,8 @@
 		FC8D8AE71C081B9700A1C6F7 /* level2_state.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FC8D8AE61C081B9700A1C6F7 /* level2_state.cpp */; };
 		FC8D8AEC1C0825B900A1C6F7 /* level_end.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FC8D8AEA1C0825B900A1C6F7 /* level_end.cpp */; };
 		FCB126F61C0CCB8B001D7EC8 /* springboard.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FCB126F41C0CCB8B001D7EC8 /* springboard.cpp */; };
+		FCD4DFB31C126476008546AB /* level5_state.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FCD4DFB11C126476008546AB /* level5_state.cpp */; };
+		FCD4DFB61C126A3A008546AB /* level6_state.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FCD4DFB41C126A3A008546AB /* level6_state.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -136,6 +138,10 @@
 		FC8D8AEB1C0825B900A1C6F7 /* level_end.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = level_end.hpp; sourceTree = "<group>"; };
 		FCB126F41C0CCB8B001D7EC8 /* springboard.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = springboard.cpp; sourceTree = "<group>"; };
 		FCB126F51C0CCB8B001D7EC8 /* springboard.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = springboard.hpp; sourceTree = "<group>"; };
+		FCD4DFB11C126476008546AB /* level5_state.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = level5_state.cpp; sourceTree = "<group>"; };
+		FCD4DFB21C126476008546AB /* level5_state.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = level5_state.hpp; sourceTree = "<group>"; };
+		FCD4DFB41C126A3A008546AB /* level6_state.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = level6_state.cpp; sourceTree = "<group>"; };
+		FCD4DFB51C126A3A008546AB /* level6_state.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = level6_state.hpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -194,6 +200,8 @@
 			isa = PBXGroup;
 			children = (
 				EF27A6A01C0506E800459C32 /* level1_state.hpp */,
+				FCD4DFB51C126A3A008546AB /* level6_state.hpp */,
+				FCD4DFB21C126476008546AB /* level5_state.hpp */,
 				EF5249521C11F0E800C6F2A6 /* level3_state.hpp */,
 				FC1B50F31C12313F00CD8588 /* level4_state.hpp */,
 				FC2F5D8F1C11628C00CCBC3E /* level01_state.hpp */,
@@ -208,8 +216,10 @@
 				EF27A69F1C0506E800459C32 /* level1_state.cpp */,
 				FC8D8AE61C081B9700A1C6F7 /* level2_state.cpp */,
 				FC2C37AC1C1223F10040EC98 /* level3_state.cpp */,
+				FCD4DFB11C126476008546AB /* level5_state.cpp */,
 				FC2F5D8E1C11628C00CCBC3E /* level01_state.cpp */,
 				FC1B50F21C12313E00CD8588 /* level4_state.cpp */,
+				FCD4DFB41C126A3A008546AB /* level6_state.cpp */,
 			);
 			name = src;
 			sourceTree = "<group>";
@@ -410,6 +420,8 @@
 				FC8D8AEC1C0825B900A1C6F7 /* level_end.cpp in Sources */,
 				EFA85F341C078C6F001113CA /* crate.cpp in Sources */,
 				FC2F5D901C11628C00CCBC3E /* level01_state.cpp in Sources */,
+				FCD4DFB31C126476008546AB /* level5_state.cpp in Sources */,
+				FCD4DFB61C126A3A008546AB /* level6_state.cpp in Sources */,
 				EF27A69E1C04F48F00459C32 /* engine.cpp in Sources */,
 				FC8D8AE71C081B9700A1C6F7 /* level2_state.cpp in Sources */,
 				EFE808741C0E147600E6933A /* optionsmenu_state.cpp in Sources */,
