@@ -1,0 +1,45 @@
+
+------------
+ Fraser Weist and Dylan Clark
+
+ Together.
+
+ design.txt.
+------------
+
+
+Tutorials that influenced our design:
+http://lazyfoo.net/tutorials/SDL/ for SDL tutorials (tiling, collision checking, rendering, etc.)
+http://gamedevgeek.com/tutorials/managing-game-states-in-c/ for help with game state system
+
+
+
+The basis of our dots' interactions with the level objects is our collision checker, found in collisions.cpp. This function detects the magnitude of collisions between collision rectangles and
+
+
+
+- Save file.
+- Menu screen.
+- Pause screen.
+- Options.
+- Quit mechanics.
+- Gamepad / Controller support.
+- Restart button.
+- Pushable crates.
+- Engine / gamestate system.
+- Tile drawing.
+- Simple animation.
+- Keyboard input.
+- Basic camera.
+- Level select
+- Music
+- Dynamic Camera
+
+- Collision detection.
+- Gravity / jumping.
+- Levels
+- Level end.
+- Customizeable springs.
+- Customizeable buttons.
+- Different world interaction between characters.
+- Cross layer springs
