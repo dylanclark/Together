@@ -109,6 +109,7 @@ void level7_state::draw(engine* game)
     w_level_end.render(&camera->display, game);
     w_char.render(&camera->display, game);
     b_button.render(&camera->display, game);
+    w_button.render(&camera->display, game);
     SDL_RenderPresent(game->rend);
 }
 
@@ -227,8 +228,8 @@ void level7_state::init_objects(engine* game)
     
     // initialize black level end
     b_level_end.tex = b_end_tex;
-    b_level_end.col_rect.x = 1100;
-    b_level_end.col_rect.y = 8 * TILE_WIDTH;
+    b_level_end.col_rect.x = 1300;
+    b_level_end.col_rect.y = 20 * TILE_WIDTH;
     
     // initialize white dot
     w_char.status = CHAR_INACTIVE;
@@ -239,8 +240,8 @@ void level7_state::init_objects(engine* game)
     
     // initialize white level end
     w_level_end.tex = w_end_tex;
-    w_level_end.col_rect.x = 1100;
-    w_level_end.col_rect.y = 9 * TILE_WIDTH;
+    w_level_end.col_rect.x = 1300;
+    w_level_end.col_rect.y = 21 * TILE_WIDTH;
     
     
     // initialize black button
@@ -249,6 +250,13 @@ void level7_state::init_objects(engine* game)
     b_button.col_rect.y = 5 * TILE_WIDTH;
     b_button.single = true;
     b_button.direction = UP;
+    
+    // initialize black button
+    w_button.tex = w_button_tex;
+    w_button.col_rect.x = 900;
+    w_button.col_rect.y = 17.5 * TILE_WIDTH;
+    w_button.single = true;
+    w_button.direction = LEFT;
     
 }
 
@@ -265,7 +273,7 @@ void level7_state::interactions(engine* game)
     
     
     //if black button is activated
-    if(b_button.check(b_char.col_rect))
+    if(b_button.check(b_char.col_rect) && b_button.used == false)
     {
         // used
         b_button.used = true;
@@ -294,4 +302,36 @@ void level7_state::interactions(engine* game)
             b_button.status = (b_button.status + 1) % 4;
         }
     }
+    //if white button is activated
+    if(w_button.check(w_char.col_rect) && w_button.used == false)
+    {
+        // used
+        w_button.used = true;
+        
+        // activate
+        w_button.activated = true;
+        
+        // animate
+        if(w_button.status == BUTT_INACTIVE)
+        {
+            w_button.status = (w_button.status + 1) % 4;
+        }
+        
+        // init crate #2
+        crates.push_back(new crate(5 * TILE_WIDTH, 17 * TILE_WIDTH, FOUR_BY_TWO));
+        crates.back()->tex = w_crate_tex_four_by_two;
+        crates.back()->black = false;
+        
+    }
+    else
+    {
+        w_button.activated = false;
+        
+        if(w_button.status != BUTT_INACTIVE)
+        {
+            w_button.status = (w_button.status + 1) % 4;
+        }
+    }
+
+
 }

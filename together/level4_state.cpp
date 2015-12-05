@@ -83,8 +83,13 @@ void level4_state::update(engine* game)
         crates[i]->update();
     }
     
-    // track the player
-    camera->track(&b_char.col_rect, &b_char.col_rect);
+    // if white is active
+    if(w_char.col_rect.y > 9 * TILE_WIDTH)
+        // track both
+        camera->track(&b_char.col_rect, &w_char.col_rect);
+    else
+        // track the black player
+        camera->track(&b_char.col_rect, &b_char.col_rect);
     
     // move that camera!
     camera->move(width, height, game);
@@ -249,12 +254,10 @@ void level4_state::interactions(engine* game)
         w_level_end.tex = w_end_tex;
         w_level_end.col_rect.x = 1700;
         w_level_end.col_rect.y = 14 * TILE_WIDTH;
-
-
     }
     
     if(b_level_end.check(b_char.col_rect) && w_level_end.check(w_char.col_rect))
-        
+
     {
         
         // change state to level 5
