@@ -7,7 +7,7 @@
 
 // include headers
 #include "level4_state.hpp"
-#include "level01_state.hpp"
+#include "level6_state.hpp"
 #include "level5_state.hpp"
 #include "mainmenu_state.hpp"
 #include "characters.hpp"
@@ -22,7 +22,7 @@
 #include "level_messages.hpp"
 #include "pausemenu_state.hpp"
 
-void level4_state::init(engine* game)
+void level5_state::init(engine* game)
 {
     // load textures
     load_textures(game);
@@ -30,13 +30,13 @@ void level4_state::init(engine* game)
     // initialize objects
     init_objects(game);
     
-    if (game->read_save() < 4)
+    if (game->read_save() < 5)
     {
-        game->save(4);
+        game->save(5);
     }
 }
 
-void level4_state::handle_events(engine *game)
+void level5_state::handle_events(engine *game)
 {
     // event handler
     SDL_Event event;
@@ -67,7 +67,7 @@ void level4_state::handle_events(engine *game)
     shiftable = true;
 }
 
-void level4_state::update(engine* game)
+void level5_state::update(engine* game)
 {
     // clear the window
     SDL_RenderClear(game->rend);
@@ -84,7 +84,7 @@ void level4_state::update(engine* game)
     }
     
     // track the player
-    camera->track(&b_char.col_rect, &b_char.col_rect);
+    camera->track(&b_char.col_rect, &w_char.col_rect);
     
     // move that camera!
     camera->move(width, height, game);
@@ -92,7 +92,7 @@ void level4_state::update(engine* game)
     interactions(game);
 }
 
-void level4_state::draw(engine* game)
+void level5_state::draw(engine* game)
 {
     // draw stuff to the screen!
     for (int i = 0; i < (width * height); i++)
@@ -109,11 +109,11 @@ void level4_state::draw(engine* game)
     b_level_end.render(&camera->display, game);
     w_level_end.render(&camera->display, game);
     w_char.render(&camera->display, game);
-
+    
     SDL_RenderPresent(game->rend);
 }
 
-void level4_state::cleanup()
+void level5_state::cleanup()
 {
     // iterate over all tiles and delete them all
     for (int i = 0; i < width * height; i++)
@@ -148,17 +148,17 @@ void level4_state::cleanup()
     
 }
 
-void level4_state::pause()
+void level5_state::pause()
 {
     return;
 }
 
-void level4_state::resume()
+void level5_state::resume()
 {
     return;
 }
 
-void level4_state::load_textures(engine* game)
+void level5_state::load_textures(engine* game)
 {
     // LOAD ALL TEXTURES
     if (!b_char_tex.load_tile_sheet("textures/black/b_char.png", game->rend))
@@ -194,19 +194,19 @@ void level4_state::load_textures(engine* game)
     
     
     // initialize level
-    width = 32;
-    height = 20;
+    width = 29;
+    height = 21;
     
-    path = "levels/level_04.csv";
+    path = "levels/level_05.csv";
     
     if (!set_tiles(tileset, path, width, height))
     {
-        printf("Failed to load level 4 map!\n");
+        printf("Failed to load level 5 map!\n");
         return;
     }
 }
 
-void level4_state::init_objects(engine* game)
+void level5_state::init_objects(engine* game)
 {
     // initialize black dot
     b_char.status = CHAR_ACTIVE;
@@ -219,45 +219,33 @@ void level4_state::init_objects(engine* game)
     
     // initialize black level end
     b_level_end.tex = b_end_tex;
-    b_level_end.col_rect.x = 920;
+    b_level_end.col_rect.x = 1600;
     b_level_end.col_rect.y = 8 * TILE_WIDTH;
+    
+    // initialize white dot
+    w_char.status = CHAR_INACTIVE;
+    w_char.tex = w_char_tex;
+    w_char.col_rect.x = 2 * TILE_WIDTH;
+    w_char.col_rect.y = 9 * TILE_WIDTH;
+    w_char.black = false;
+    
+    // initialize white level end
+    w_level_end.tex = w_end_tex;
+    w_level_end.col_rect.x = 1600;
+    w_level_end.col_rect.y = 9 * TILE_WIDTH;
     
     
     
 }
 
-void level4_state::interactions(engine* game)
+void level5_state::interactions(engine* game)
 {
     
-    // if both are on level end object (making sure it hasnt been activate
-    // to change level ends already
-    if(b_level_end.check(b_char.col_rect) && (w_level_end.col_rect.x != 1700))
-    {
-        //b_char.center(&b_level_end.col_rect);
-        
-        // initialize white dot
-        w_char.status = CHAR_INACTIVE;
-        w_char.tex = w_char_tex;
-        w_char.col_rect.x = 920;
-        w_char.col_rect.y = 9 * TILE_WIDTH;
-        w_char.black = false;
-        
-        b_level_end.col_rect.x = 1700;
-        b_level_end.col_rect.y = 13 * TILE_WIDTH;
-        
-        // initialize white level end
-        w_level_end.tex = w_end_tex;
-        w_level_end.col_rect.x = 1700;
-        w_level_end.col_rect.y = 14 * TILE_WIDTH;
-
-
-    }
-    
+    // if both are on level end object
     if(b_level_end.check(b_char.col_rect) && w_level_end.check(w_char.col_rect))
         
     {
-        
         // change state to level 5
-        change_state(game, new level5_state);
+        change_state(game, new level6_state);
     }
 }
