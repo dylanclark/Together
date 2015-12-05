@@ -7,6 +7,7 @@
 
 // include headers
 #include "level1_state.hpp"
+#include "level4_state.hpp"
 #include "level01_state.hpp"
 #include "level2_state.hpp"
 #include "mainmenu_state.hpp"
@@ -157,7 +158,7 @@ void level1_state::init(engine* game)
 >>>>>>> 71027e4... Volume / sfx slider adjustment.
     // load textures
     load_textures(game);
-    
+   
     // initialize objects
     init_objects(game);
 <<<<<<< HEAD
@@ -170,13 +171,19 @@ void level1_state::init(engine* game)
 =======
     
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 5cc4fc2... small updates
     if (game->read_save() < 1)
     {
         game->save(1);
     }
+<<<<<<< HEAD
 >>>>>>> f939236... New level files and updated menu system.
 =======
 >>>>>>> 74e2e9b... levels 1 and 2 now complete!!1
+=======
+>>>>>>> 5cc4fc2... small updates
 }
 
 void level1_state::handle_events(engine *game)
@@ -198,7 +205,7 @@ void level1_state::handle_events(engine *game)
         if (!b_char.handle_event(event, this, game))
         {
             Mix_PauseMusic();
-            Mix_PlayChannel(-1, game->sound->menu_select_snd, 0);
+            Mix_PlayChannel(-1, game->sound->menu_exit_snd, 0);
             game->push_state(new pausemenu_state);
         }
         
@@ -431,7 +438,7 @@ void level1_state::init_objects(engine* game)
     
     // initialize black level end
     b_level_end.tex = b_end_tex;
-    b_level_end.col_rect.x = 1200;
+    b_level_end.col_rect.x = 1360;
     b_level_end.col_rect.y = 720;
     
     
@@ -463,6 +470,7 @@ void level1_state::interactions(engine* game)
 {
     // if both are on level end object
 <<<<<<< HEAD
+<<<<<<< HEAD
     if ((b_level_end.check(b_char.col_rect)) && (w_level_end.check(w_char.col_rect)))
 =======
     if(b_level_end.check(b_char.col_rect))
@@ -478,10 +486,17 @@ void level1_state::interactions(engine* game)
         
 =======
 >>>>>>> 4754007... Updated level-end detection.
+=======
+    if(b_level_end.check(b_char.col_rect))
+    {
+        b_char.center(&b_level_end.col_rect);
+        
+>>>>>>> 5cc4fc2... small updates
         // change state to level 2
         change_state(game, new level2_state);
     }
     
+<<<<<<< HEAD
 <<<<<<< HEAD
     // if black cross spring is activated
     if(b_cross_spring.check(w_char.col_rect) && b_cross_spring.check(b_char.col_rect) && b_cross_spring.show)
@@ -505,4 +520,6 @@ void level1_state::interactions(engine* game)
     }
 =======
 >>>>>>> 74e2e9b... levels 1 and 2 now complete!!1
+=======
+>>>>>>> 5cc4fc2... small updates
 }

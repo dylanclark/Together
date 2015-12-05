@@ -162,6 +162,11 @@ void level_slider::select(engine *game)
             game->push_state(new intro_state);
             break;
         case 3:
+            Mix_PlayChannel(-1, game->sound->menu_select_snd, 0);
+            Mix_PlayChannel(-1, game->sound->menu_onset_snd, 0);
+            Mix_FadeOutMusic(200);
+            game->change_state(new level3_state);
+            game->push_state(new intro_state);
             break;
         case 4:
             break;

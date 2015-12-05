@@ -103,7 +103,7 @@ void level2_state::update(engine* game)
     }
     
     // track the player
-    camera->track(&b_char.col_rect, &w_char.col_rect);
+    camera->track(&b_char.col_rect, &b_char.col_rect);
     
     // move that camera!
     camera->move(width, height, game);
@@ -393,9 +393,13 @@ void level2_state::interactions(engine* game)
         
 =======
         b_char.center(&b_level_end.col_rect);
+<<<<<<< HEAD
         w_char.center(&w_level_end.col_rect);
     
 >>>>>>> 250bb44... cross layer, bug fixes, levels 1 and 2,
+=======
+        
+>>>>>>> d0f13a4... leves 3 and 4!
         // change state to level 3
         change_state(game, new level3_state);
     }

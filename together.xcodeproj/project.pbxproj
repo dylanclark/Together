@@ -95,6 +95,7 @@
 		EFFB15E41C0D0747006428DB /* quitmenu_state.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EFFB15E21C0D0747006428DB /* quitmenu_state.cpp */; };
 		EFFB15E71C0D0779006428DB /* quitseq_state.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EFFB15E51C0D0779006428DB /* quitseq_state.cpp */; };
 		FC0CAD691C0F8F1F0082A147 /* level_messages.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FC0CAD671C0F8F1F0082A147 /* level_messages.cpp */; };
+		FC1B50F41C12313F00CD8588 /* level4_state.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FC1B50F21C12313E00CD8588 /* level4_state.cpp */; };
 		FC2C37AB1C1223660040EC98 /* menu_buttons.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FC2C37AA1C1223660040EC98 /* menu_buttons.cpp */; };
 		FC2C37AD1C1223F10040EC98 /* level3_state.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FC2C37AC1C1223F10040EC98 /* level3_state.cpp */; };
 		FC2F5D901C11628C00CCBC3E /* level01_state.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FC2F5D8E1C11628C00CCBC3E /* level01_state.cpp */; };
@@ -207,6 +208,8 @@
 =======
 		FC0CAD671C0F8F1F0082A147 /* level_messages.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = level_messages.cpp; sourceTree = "<group>"; };
 		FC0CAD681C0F8F1F0082A147 /* level_messages.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = level_messages.hpp; sourceTree = "<group>"; };
+		FC1B50F21C12313E00CD8588 /* level4_state.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = level4_state.cpp; sourceTree = "<group>"; };
+		FC1B50F31C12313F00CD8588 /* level4_state.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = level4_state.hpp; sourceTree = "<group>"; };
 		FC2C37AA1C1223660040EC98 /* menu_buttons.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = menu_buttons.cpp; sourceTree = "<group>"; };
 		FC2C37AC1C1223F10040EC98 /* level3_state.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = level3_state.cpp; sourceTree = "<group>"; };
 		FC2F5D8E1C11628C00CCBC3E /* level01_state.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = level01_state.cpp; sourceTree = "<group>"; };
@@ -305,6 +308,7 @@
 			children = (
 				EF27A6A01C0506E800459C32 /* level1_state.hpp */,
 				EF5249521C11F0E800C6F2A6 /* level3_state.hpp */,
+				FC1B50F31C12313F00CD8588 /* level4_state.hpp */,
 				FC2F5D8F1C11628C00CCBC3E /* level01_state.hpp */,
 				FC8D8AE91C081C6200A1C6F7 /* level2_state.hpp */,
 			);
@@ -318,6 +322,7 @@
 				FC8D8AE61C081B9700A1C6F7 /* level2_state.cpp */,
 				FC2C37AC1C1223F10040EC98 /* level3_state.cpp */,
 				FC2F5D8E1C11628C00CCBC3E /* level01_state.cpp */,
+				FC1B50F21C12313E00CD8588 /* level4_state.cpp */,
 			);
 			name = src;
 			sourceTree = "<group>";
@@ -588,7 +593,11 @@
 >>>>>>> 2e8ee63... Implemented movable crates!!!
 =======
 				EFE808741C0E147600E6933A /* optionsmenu_state.cpp in Sources */,
+<<<<<<< HEAD
 >>>>>>> a671362... Implemented main menu, pause menu, and options menu!
+=======
+				FC1B50F41C12313F00CD8588 /* level4_state.cpp in Sources */,
+>>>>>>> d0f13a4... leves 3 and 4!
 				EF27A6A11C0506E800459C32 /* level1_state.cpp in Sources */,
 				EF5295AD1C0BEBEB00178AC7 /* sound.cpp in Sources */,
 				EF5295B31C0C107000178AC7 /* menu.cpp in Sources */,
