@@ -260,7 +260,7 @@ void level6_state::interactions(engine* game)
     
     
     //if black button is activated
-    if(b_button.check(b_char.col_rect))
+    if(b_button.check(b_char.col_rect) && b_button.used == false)
     {
         // used
         b_button.used = true;
