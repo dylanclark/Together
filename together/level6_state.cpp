@@ -6,8 +6,9 @@
 #include <SDL2_ttf/SDL_ttf.h>
 
 // include headers
-#include "level2_state.hpp"
-#include "level3_state.hpp"
+#include "level7_state.hpp"
+#include "level01_state.hpp"
+#include "level6_state.hpp"
 #include "mainmenu_state.hpp"
 #include "characters.hpp"
 #include "tiles.hpp"
@@ -21,7 +22,7 @@
 #include "level_messages.hpp"
 #include "pausemenu_state.hpp"
 
-void level2_state::init(engine* game)
+void level6_state::init(engine* game)
 {
     // load textures
     load_textures(game);
@@ -29,13 +30,13 @@ void level2_state::init(engine* game)
     // initialize objects
     init_objects(game);
     
-    if (game->read_save() < 2)
+    if (game->read_save() < 6)
     {
-        game->save(2);
+        game->save(6);
     }
 }
 
-void level2_state::handle_events(engine *game)
+void level6_state::handle_events(engine *game)
 {
     // event handler
     SDL_Event event;
@@ -57,15 +58,16 @@ void level2_state::handle_events(engine *game)
             Mix_PlayChannel(-1, game->sound->menu_exit_snd, 0);
             game->push_state(new pausemenu_state);
         }
-        
+        // quit if he pressed escape
         w_char.handle_event(event, this, game);
+        
         
     }
     
     shiftable = true;
 }
 
-void level2_state::update(engine* game)
+void level6_state::update(engine* game)
 {
     // clear the window
     SDL_RenderClear(game->rend);
@@ -82,7 +84,7 @@ void level2_state::update(engine* game)
     }
     
     // track the player
-    camera->track(&b_char.col_rect, &b_char.col_rect);
+    camera->track(&b_char.col_rect, &w_char.col_rect);
     
     // move that camera!
     camera->move(width, height, game);
@@ -90,26 +92,27 @@ void level2_state::update(engine* game)
     interactions(game);
 }
 
-void level2_state::draw(engine* game)
+void level6_state::draw(engine* game)
 {
     // draw stuff to the screen!
     for (int i = 0; i < (width * height); i++)
     {
         tileset[i]->render(b_char.status, &camera->display, game, &tile_tex);
     }
-    
     for (int i = 0; i < crates.size(); i++)
     {
         crates[i]->render(b_char.status, &camera->display, game, this);
     }
-    
+
     b_char.render(&camera->display, game);
     b_level_end.render(&camera->display, game);
-
+    w_level_end.render(&camera->display, game);
+    w_char.render(&camera->display, game);
+    b_button.render(&camera->display, game);
     SDL_RenderPresent(game->rend);
 }
 
-void level2_state::cleanup()
+void level6_state::cleanup()
 {
     // iterate over all tiles and delete them all
     for (int i = 0; i < width * height; i++)
@@ -141,22 +144,20 @@ void level2_state::cleanup()
     w_springboard_tex.free();
     b_cross_spring_tex.free();
     w_cross_spring_tex.free();
-    level2_start_tex.free();
-    level2_end_tex.free();
     
 }
 
-void level2_state::pause()
+void level6_state::pause()
 {
     return;
 }
 
-void level2_state::resume()
+void level6_state::resume()
 {
     return;
 }
 
-void level2_state::load_textures(engine* game)
+void level6_state::load_textures(engine* game)
 {
     // LOAD ALL TEXTURES
     if (!b_char_tex.load_tile_sheet("textures/black/b_char.png", game->rend))
@@ -189,22 +190,26 @@ void level2_state::load_textures(engine* game)
         printf("Failed to load  white level end texture!\n");
         return;
     }
-
+    if (!b_button_tex.load_tile_sheet("textures/black/button/b_button.png", game-> rend))
+    {
+        printf("Failed to load  black button texture!\n");
+        return;
+    }
     
     // initialize level
-    width = 27;
-    height = 18;
+    width = 20;
+    height = 20;
     
-    path = "levels/level_02.csv";
+    path = "levels/level_06.csv";
     
     if (!set_tiles(tileset, path, width, height))
     {
-        printf("Failed to load level 2 map!\n");
+        printf("Failed to load level 6 map!\n");
         return;
     }
 }
 
-void level2_state::init_objects(engine* game)
+void level6_state::init_objects(engine* game)
 {
     // initialize black dot
     b_char.status = CHAR_ACTIVE;
@@ -217,23 +222,71 @@ void level2_state::init_objects(engine* game)
     
     // initialize black level end
     b_level_end.tex = b_end_tex;
-    b_level_end.col_rect.x = 1500;
-    b_level_end.col_rect.y = 11 * TILE_WIDTH;
+    b_level_end.col_rect.x = 1100;
+    b_level_end.col_rect.y = 8 * TILE_WIDTH;
+    
+    // initialize white dot
+    w_char.status = CHAR_INACTIVE;
+    w_char.tex = w_char_tex;
+    w_char.col_rect.x = 2 * TILE_WIDTH;
+    w_char.col_rect.y = 9 * TILE_WIDTH;
+    w_char.black = false;
+    
+    // initialize white level end
+    w_level_end.tex = w_end_tex;
+    w_level_end.col_rect.x = 1100;
+    w_level_end.col_rect.y = 9 * TILE_WIDTH;
     
 
-
+    // initialize black button
+    b_button.tex = b_button_tex;
+    b_button.col_rect.x = 800;
+    b_button.col_rect.y = 8 * TILE_WIDTH;
+    b_button.single = true;
+    b_button.direction = UP;
+    
 }
 
-void level2_state::interactions(engine* game)
+void level6_state::interactions(engine* game)
 {
     
     // if both are on level end object
-    if(b_level_end.check(b_char.col_rect))
-    {
-        b_char.center(&b_level_end.col_rect);
+    if(b_level_end.check(b_char.col_rect) && w_level_end.check(w_char.col_rect))
         
-        // change state to level 3
-        change_state(game, new level3_state);
+    {
+        // change state to level 7
+        change_state(game, new level7_state);
     }
     
+    
+    //if black button is activated
+    if(b_button.check(b_char.col_rect))
+    {
+        // used
+        b_button.used = true;
+        
+        // activate
+        b_button.activated = true;
+        
+        // animate
+        if(b_button.status == BUTT_INACTIVE)
+        {
+            b_button.status = (b_button.status + 1) % 4;
+        }
+        
+        // init crate #1
+        crates.push_back(new crate(5 * TILE_WIDTH, 7  * TILE_WIDTH, FOUR_BY_TWO));
+        crates.back()->tex = crate_tex_four_by_two;
+        crates.back()->black = true;
+        
+    }
+    else
+    {
+        b_button.activated = false;
+        
+        if(b_button.status != BUTT_INACTIVE)
+        {
+            b_button.status = (b_button.status + 1) % 4;
+        }
+    }
 }
