@@ -17,6 +17,7 @@
 #include "engine.hpp"
 #include "springboard.hpp"
 #include "level_messages.hpp"
+#include "pausemenu_state.hpp"
 
 void level3_state::init(engine* game)
 {
@@ -26,6 +27,10 @@ void level3_state::init(engine* game)
     // initialize objects
     init_objects(game);
     
+    if (game->read_save() < 3)
+    {
+        game->save(3);
+    }
 }
 
 void level3_state::handle_events(engine *game)
@@ -45,10 +50,13 @@ void level3_state::handle_events(engine *game)
         
         // quit if he pressed escape
         if (!b_char.handle_event(event, this, game))
-            game->change_state(new mainmenu_state);
+        {
+            Mix_PauseMusic();
+            Mix_PlayChannel(-1, game->sound->menu_exit_snd, 0);
+            game->push_state(new pausemenu_state);
+        }
         
-        if (!w_char.handle_event(event, this, game))
-            game->change_state(new mainmenu_state);
+        w_char.handle_event(event, this, game);
         
     }
     

@@ -30,10 +30,6 @@ void level01_state::init(engine* game)
     // initialize objects
     init_objects(game);
     
-    if (game->read_save() < 1)
-    {
-        game->save(1);
-    }
 }
 
 void level01_state::handle_events(engine *game)

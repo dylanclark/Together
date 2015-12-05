@@ -30,7 +30,6 @@
 #include "mainmenu_state.hpp"
 #include "level01_state.hpp"
 
-
 // Let's do this.
 int main(void)
 {
