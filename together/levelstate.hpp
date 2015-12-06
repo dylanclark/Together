@@ -46,9 +46,13 @@ public:
     button w_button;
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 =======
 =======
+=======
+    button b_button2;
+>>>>>>> 0706959... eek!
     springboard w_springboard;
     springboard b_springboard;
 <<<<<<< HEAD

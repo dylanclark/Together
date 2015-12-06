@@ -150,7 +150,7 @@ void springboard::render(SDL_Rect* camera, engine* game)
             frame++;
             
             // sprite sheet clipper
-            SDL_Rect inactivate_clip = {16 * (frame + 8), 0, 16, 16};
+            SDL_Rect inactivate_clip = {16 * (frame + 6), 0, 16, 16};
             
             // render that mofo
 <<<<<<< HEAD

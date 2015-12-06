@@ -110,6 +110,8 @@ void level8_state::draw(engine* game)
     w_char.render(&camera->display, game);
     b_button.render(&camera->display, game);
     w_button.render(&camera->display, game);
+    b_springboard.render(&camera->display, game);
+    w_springboard.render(&camera->display, game);
     SDL_RenderPresent(game->rend);
 }
 
@@ -201,16 +203,25 @@ void level8_state::load_textures(engine* game)
         printf("Failed to load white button texture!\n");
         return;
     }
-    
+    if (!b_springboard_tex.load_tile_sheet("textures/black/spring/b_spring.png", game-> rend))
+    {
+        printf("Failed to load black springboard texture!\n");
+        return;
+    }
+    if (!w_springboard_tex.load_tile_sheet("textures/white/spring/w_spring.png", game-> rend))
+    {
+        printf("Failed to load white springboard texture!\n");
+        return;
+    }
     // initialize level
     width = 26;
-    height = 28;
+    height = 21;
     
     path = "levels/level_08.csv";
     
     if (!set_tiles(tileset, path, width, height))
     {
-        printf("Failed to load level 7 map!\n");
+        printf("Failed to load level 8 map!\n");
         return;
     }
 }
@@ -229,34 +240,37 @@ void level8_state::init_objects(engine* game)
     // initialize black level end
     b_level_end.tex = b_end_tex;
     b_level_end.col_rect.x = 1300;
-    b_level_end.col_rect.y = 20 * TILE_WIDTH;
+    b_level_end.col_rect.y = 16 * TILE_WIDTH;
     
     // initialize white dot
     w_char.status = CHAR_INACTIVE;
     w_char.tex = w_char_tex;
     w_char.col_rect.x = 2 * TILE_WIDTH;
-    w_char.col_rect.y = 12 * TILE_WIDTH;
+    w_char.col_rect.y = 11 * TILE_WIDTH;
     w_char.black = false;
     
     // initialize white level end
     w_level_end.tex = w_end_tex;
     w_level_end.col_rect.x = 1300;
-    w_level_end.col_rect.y = 21 * TILE_WIDTH;
+    w_level_end.col_rect.y = 17 * TILE_WIDTH;
     
     
     // initialize black button
     b_button.tex = b_button_tex;
-    b_button.col_rect.x = 1250;
-    b_button.col_rect.y = 5 * TILE_WIDTH;
+    b_button.col_rect.x = 1080;
+    b_button.col_rect.y = 2 * TILE_WIDTH;
     b_button.single = true;
+    b_button.used = false;
     b_button.direction = UP;
     
-    // initialize black button
+    // initialize white button
     w_button.tex = w_button_tex;
-    w_button.col_rect.x = 900;
-    w_button.col_rect.y = 17.5 * TILE_WIDTH;
+    w_button.col_rect.x = 1240;
+    w_button.col_rect.y = 8 * TILE_WIDTH;
     w_button.single = true;
-    w_button.direction = LEFT;
+    w_button.used = false;
+    w_button.direction = UP;
+    
     
 }
 
@@ -267,8 +281,8 @@ void level8_state::interactions(engine* game)
     if(b_level_end.check(b_char.col_rect) && w_level_end.check(w_char.col_rect))
         
     {
-        // change state to level 5
-        //change_state(game, new level5_state);
+        // change state to main menu
+        change_state(game, new mainmenu_state);
     }
     
     
@@ -288,10 +302,18 @@ void level8_state::interactions(engine* game)
         }
         
         // init crate #1
-        crates.push_back(new crate(5 * TILE_WIDTH, 12 * TILE_WIDTH, FOUR_BY_TWO));
+        crates.push_back(new crate(10 * TILE_WIDTH, 11 * TILE_WIDTH, FOUR_BY_TWO));
         crates.back()->tex = w_crate_tex_four_by_two;
         crates.back()->black = false;
         
+        // initialize black springboard
+        w_springboard.tex = w_springboard_tex;
+        w_springboard.col_rect.x = 2 * TILE_WIDTH;
+        w_springboard.col_rect.y = 11 * TILE_WIDTH;
+        w_springboard.show = true;
+        w_springboard.direction = FLIP_LEFT;
+        w_springboard.x_spring = 4;
+        w_springboard.y_spring = 12;
     }
     else
     {
@@ -317,10 +339,19 @@ void level8_state::interactions(engine* game)
             w_button.status = (w_button.status + 1) % 4;
         }
         
+        // initialize black springboard
+        b_springboard.tex = b_springboard_tex;
+        b_springboard.col_rect.x = 1280;
+        b_springboard.col_rect.y = 7 * TILE_WIDTH;
+        b_springboard.show = true;
+        b_springboard.direction = FLIP_LEFT;
+        b_springboard.x_spring = 0;
+        b_springboard.y_spring = 10;
+        
         // init crate #2
-        crates.push_back(new crate(5 * TILE_WIDTH, 17 * TILE_WIDTH, FOUR_BY_TWO));
-        crates.back()->tex = w_crate_tex_four_by_two;
-        crates.back()->black = false;
+        //crates.push_back(new crate(5 * TILE_WIDTH, 17 * TILE_WIDTH, FOUR_BY_TWO));
+        //crates.back()->tex = w_crate_tex_four_by_two;
+        //crates.back()->black = false;
         
     }
     else
@@ -333,5 +364,56 @@ void level8_state::interactions(engine* game)
         }
     }
     
+    //if black springboard is activated
+    if(b_springboard.check(b_char.col_rect) && b_springboard.show)
+    {
+        //if(b_char.col_rect.y < b_springboard.col_rect.y + 20)
+        {
+            // activate
+            b_springboard.activated = true;
+            
+            if(b_springboard.status == BOARD_INACTIVE)
+            {
+                b_springboard.status = (b_springboard.status + 1) % 4;
+            }
+            
+            b_char.spring(b_springboard.x_spring, b_springboard.y_spring, b_springboard.direction);
+        }
+    }
+    else
+    {
+        b_springboard.activated = false;
+        
+        if(b_springboard.status != BOARD_INACTIVE)
+        {
+            b_springboard.status = (b_springboard.status + 1) % 4;
+        }
+    }
+    
+    //if black springboard is activated
+    if(w_springboard.check(w_char.col_rect) && w_springboard.show)
+    {
+        //if(b_char.col_rect.y < b_springboard.col_rect.y + 20)
+        {
+            // activate
+            w_springboard.activated = true;
+            
+            if(w_springboard.status == BOARD_INACTIVE)
+            {
+                w_springboard.status = (w_springboard.status + 1) % 4;
+            }
+            
+            w_char.spring(w_springboard.x_spring, w_springboard.y_spring, w_springboard.direction);
+        }
+    }
+    else
+    {
+        w_springboard.activated = false;
+        
+        if(w_springboard.status != BOARD_INACTIVE)
+        {
+            w_springboard.status = (w_springboard.status + 1) % 4;
+        }
+    }
     
 }
