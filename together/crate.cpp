@@ -105,8 +105,8 @@ bool crate::check_col(SDL_Rect crate, levelstate* level, vector *repos)
 {
     for (int i = 0; i < level->width * level->height; i++)
     {
-        bool iswall_b = level->tileset[i]->wall_b;
-        bool iswall_w = level->tileset[i]->wall_w;
+        bool iswall_b = (level->tileset[i]->wall_b && !level->tileset[i]->floor_b && !level->tileset[i]->ceiling_b);
+        bool iswall_w = (level->tileset[i]->wall_w && !level->tileset[i]->floor_w && !level->tileset[i]->ceiling_w);
         
         if (iswall_b && black)
         {

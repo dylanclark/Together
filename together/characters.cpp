@@ -544,6 +544,9 @@ bool dot::crate_col(levelstate* level)
                     // push and move the crate
                     if (abs(repos.x) <= abs(repos.y))
                     {
+                        // tell the crate its being pushed
+                        level->crates[i]->pushed = true;
+                        
                         // adjust dot speed
                         if (x_vel > PUSH_VEL || x_vel < -PUSH_VEL)
                             x_vel = (x_vel > 0) ? PUSH_VEL : -PUSH_VEL;
@@ -558,9 +561,6 @@ bool dot::crate_col(levelstate* level)
                         col_rect.x += repos.x;
                         
                         level->shiftable = false;
-                        
-                        // tell the crate its being pushed
-                        level->crates[i]->pushed = true;
                     }
                     // land on crate
                     else
