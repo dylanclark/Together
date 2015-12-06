@@ -513,7 +513,8 @@ bool dot::crate_col(levelstate* level)
             {
                 if (!level->crates[i]->black)
                 {
-                    level->shiftable = tile_col(level->crates[i]->tileset, MAX_BORDER);
+                    level->shiftable = false;
+                    tile_col(level->crates[i]->tileset, MAX_BORDER);
                     
                     return true;
                 }
@@ -571,6 +572,7 @@ bool dot::crate_col(levelstate* level)
             {
                 if (level->crates[i]->black)
                 {
+                    level->shiftable = false;
                     tile_col(level->crates[i]->tileset, MAX_BORDER);
                     
                     return true;
