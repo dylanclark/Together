@@ -43,6 +43,7 @@ public:
     level_end w_level_end;
     button b_button;
     button w_button;
+    button b_button2;
     springboard w_springboard;
     springboard b_springboard;
     springboard w_cross_spring;

@@ -8,7 +8,7 @@
 // include headers
 #include "level1_state.hpp"
 #include "level7_state.hpp"
-#include "level5_state.hpp"
+#include "level8_state.hpp"
 #include "level6_state.hpp"
 #include "level2_state.hpp"
 #include "mainmenu_state.hpp"
@@ -208,7 +208,7 @@ void level1_state::interactions(engine* game)
         b_char.center(&b_level_end.col_rect);
         
         // change state to level 2
-        change_state(game, new level6_state);
+        change_state(game, new level8_state);
     }
     
 }
