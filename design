@@ -15,19 +15,29 @@ http://gamedevgeek.com/tutorials/managing-game-states-in-c/ for help with game s
 Together is a game that relies on SDL Frameworks to 
 
 - Save file.
-- Menu and pause screens
+    Simple file stream mechanics - functions are defined in the "engine" class object (which runs the game) which can write a new value into the save file (just a .txt) or read the current save value. Those allow a user to continue from the highest level they have reached (using the level select to revisit an old level doesn't influence the save file).
+- Menu and pause screens.
+    Each menu button (or menu "slider") is programmed to change the level-state to a new menu, or to push a new level state onto the stack so the previous menu is still running (and accessible) underneath it. The active menu button (the one to be selected with the space bar) is changed with the up and down arrow keys.
 - Options.
-- Quit mechanics.
+    Players can change the music and sound effect volume. These are two "slider" objects which change the active frame if the user presses left or right on their keyboard. Controls screen is currently unimplemented.
 - Switching characters.
+    The black dot interacts with black tiles on a white background. The white character interacts with white tiles on a black background. If the player pressed shift on their keyboard, the other character is selected, and the environment changes its appearance to reflect which character will be interacting with it. Objects like crates may appear as crates while "active" and blend in with the environment when "inactive" to make the two worlds that each character interacts with seem different.
 - Gamepad / Controller support.
-- Restart button.
+    The SDL library includes functions which allow the game to search for a connected joystick on initialization. If a joystick is detected, the game creates an additional controller class which enables controller input and gameplay.
 - Pushable crates.
+    Like I described before, these crates can be moved by one character to change the environment that the other character interacts with. If the colors of the dot and the crate it's colliding with are the same, the character pushes the sides and collides with the top and bottom. If the colors of the character and crate are different, the character only interacts with the tiles the crate has generated (to blend in with the environment) and not the level tiles so the character can "pass through" the crate.
 - Engine / gamestate system.
+    In order to run a game with multiple different levels or "scenes" in it, we implemented a game engine which treats each scene as a "level-state" and stores those level states on a stack data structure. When the engine updates the game, draws to the screen, and handles input, it hands those tasks to the level-state on the top of the stack, and then that level-state updates its own values and draws its own objects. When moving through menus, the base menu always stays in the stack while new ones are opened so that the user can cycle through menus quickly. When the game is being played, the menu states are deallocated, removed from the stack, and the level is placed on the stack so that it's the only level-state on the stack, and the game can run as quickly as possible.
 - Tile drawing.
+    Tiles are drawn differently depending on which character is being controlled - their "active state" is determined based on the "active state" of the character of the same color, and they are animated by clipping the tile texture based on a frame variable defined in the tile's init and update functions.
 - Keyboard input.
-- Level select
-- Music
-- Dynamic Camera
+    The SDL library uses a stack data structure to store each and every keyboard or mouse event registered by the computer. To respond to these inputs, each level state has a "handle_events" functions which delegates certain objects to interpret those events and respond accordingly based on which key is being pressed / lifted or which controller event has occurred.
+- Level select.
+    Reads the save file of the game and allows the player to select any level up until their highest. The slider only has as many "frames" as the save file's value.
+- Music.
+    Simple SDL library music and sound effect functions. A sound player object is defined in the source code and initializes each sound and music file. The sound player is called throughout the program.
+- Dynamic camera
+    The camera creates a rectangle based on the locations of each character so that it is centered between the two, and wide / tall enough to fit them both on the screen. Then the camera determines how far it's own rectangle's width / height / position is from that target rectangle, and it's value's accelerate to match them (that way it's nice and smooth).
 
 - Collision detection.
     The basis of our dots' interactions with the level objects is our collision checker, found in collisions.cpp. This function detects the magnitude of collisions between collision rectangles and allows for logic based on when things are colliding. For example, if colliding in the y-direction with a tile who's floor boolean value is set to true, a dot's y-velocity will be set to 0.
