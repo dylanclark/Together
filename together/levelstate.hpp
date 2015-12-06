@@ -83,6 +83,7 @@ public:
 =======
     texture crate_tex_four_by_two;
     texture w_crate_tex_four_by_two;
+    texture w_platform;
     texture crate_tex_four_by_one;
     texture crate_tex_three_by_two;
     texture crate_tex_two_by_two;
