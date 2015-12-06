@@ -73,6 +73,7 @@ void yes_newgame_button::select(engine* game)
     Mix_PlayChannel(-1, game->sound->menu_onset_snd, 0);
     Mix_FadeOutMusic(200);
     game->save(0);
+    game->pop_state();
     game->change_state(new level1_state);
     game->push_state(new intro_state);
 }

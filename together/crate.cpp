@@ -23,6 +23,9 @@ crate::crate(int x, int y, int type)
     // init pushed flag
     pushed = false;
     
+    // initialize tile generation if that's chill
+    generating = true;
+    
     // determine width and height based on crate type
     switch (type)
     {
@@ -56,7 +59,7 @@ void crate::update()
         // set velocity so that it'll close the gap
         x_vel = sqrt(abs((target_x - col_rect.x))) * ((target_x > col_rect.x) ? 1 : -1);
         
-        // if the gap is small enough, just put the crate there and
+        // if the gap is small enough, just put the crate there
         if (x_vel <= 0.1 && x_vel >= -0.1)
         {
             x_vel = 0;
@@ -75,7 +78,7 @@ void crate::render(int b_status, SDL_Rect* camera, engine* game, levelstate* lev
     SDL_Rect inactive_clip = {64 * 9, 0, 64, 32};
     
     // render based on char status
-    if (b_status == CHAR_ACTIVE)
+    if ((b_status == CHAR_ACTIVE && black) || (b_status == CHAR_INACTIVE && !black))
     {
         tex.render(col_rect.x, col_rect.y, &active_clip, camera, game);
         if (!generating)
@@ -102,15 +105,16 @@ bool crate::check_col(SDL_Rect crate, levelstate* level, vector *repos)
 {
     for (int i = 0; i < level->width * level->height; i++)
     {
-        int type = level->tileset[i]->get_type();
+        bool iswall_b = level->tileset[i]->wall_b;
+        bool iswall_w = level->tileset[i]->wall_w;
         
-        if ((type == B_WALL_L || type == B_WALL_R) && black)
+        if (iswall_b && black)
         {
             check_collision(col_rect, level->tileset[i]->get_col_rect(), repos);
             col_rect.x += repos->x;
             return true;
         }
-        else if ((type == W_WALL_L || type == W_WALL_R) && !black)
+        else if (iswall_w && !black)
         {
             check_collision(col_rect, level->tileset[i]->get_col_rect(), repos);
             col_rect.x += repos->x;
@@ -137,7 +141,8 @@ void crate::create_tiles(int b_status, levelstate* level)
                 int new_type = tile_type_top(level->tileset[j]->get_type());
                 
                 tileset[counter] = new tile(level->tileset[j]->get_col_rect().x, level->tileset[j]->get_col_rect().y, new_type);
-                tileset[counter]->status = (tileset[counter]->get_type() < 15) ? (b_status + 1) % 4 : (b_status + 3) % 4;
+                tileset[counter]->status = (tileset[counter]->get_type() < 15) ? (b_status) % 4 : (b_status + 2) % 4;
+                tileset[counter]->frame = (tileset[counter]->status == TILE_ACTIVE || tileset[counter]->status == TILE_INACTIVATE) ? 0 : TILE_FRAMES - 1;
                 counter++;
                 break;
             }
@@ -154,7 +159,8 @@ void crate::create_tiles(int b_status, levelstate* level)
                 int new_type = tile_type_bottom(level->tileset[j]->get_type());
                 
                 tileset[counter] = new tile(level->tileset[j]->get_col_rect().x, level->tileset[j]->get_col_rect().y, new_type);
-                tileset[counter]->status = (tileset[counter]->get_type() < 15) ? b_status : (b_status + 2) % 4;
+                tileset[counter]->status = (tileset[counter]->get_type() < 15) ? (b_status) % 4 : (b_status + 2) % 4;
+                tileset[counter]->frame = (tileset[counter]->status == TILE_ACTIVE || tileset[counter]->status == TILE_INACTIVATE) ? 0 : TILE_FRAMES - 1;
                 counter++;
                 break;
             }
@@ -171,7 +177,8 @@ void crate::create_tiles(int b_status, levelstate* level)
                 int new_type = tile_type_left(level->tileset[j]->get_type());
                 
                 tileset[counter] = new tile(level->tileset[j]->get_col_rect().x, level->tileset[j]->get_col_rect().y, new_type);
-                tileset[counter]->status = (tileset[counter]->get_type() < 15) ? b_status : (b_status + 2) % 4;
+                tileset[counter]->status = (tileset[counter]->get_type() < 15) ? (b_status) % 4 : (b_status + 2) % 4;
+                tileset[counter]->frame = (tileset[counter]->status == TILE_ACTIVE || tileset[counter]->status == TILE_INACTIVATE) ? 0 : TILE_FRAMES - 1;
                 counter++;
                 break;
             }
@@ -188,7 +195,8 @@ void crate::create_tiles(int b_status, levelstate* level)
                 int new_type = tile_type_right(level->tileset[j]->get_type());
                 
                 tileset[counter] = new tile(level->tileset[j]->get_col_rect().x, level->tileset[j]->get_col_rect().y, new_type);
-                tileset[counter]->status = (tileset[counter]->get_type() < 15) ? b_status : (b_status + 2) % 4;
+                tileset[counter]->status = (tileset[counter]->get_type() < 15) ? (b_status) % 4 : (b_status + 2) % 4;
+                tileset[counter]->frame = (tileset[counter]->status == TILE_ACTIVE || tileset[counter]->status == TILE_INACTIVATE) ? 0 : TILE_FRAMES - 1;
                 counter++;
                 break;
             }
@@ -299,7 +307,7 @@ int crate::tile_type_bottom(int type)
     switch (type)
     {
         case B_BACK:
-            new_type = black ? B_BACK : B_CEILING;
+            new_type = black ? B_BACK : B_FLOOR1;
             break;
         case B_FLOOR1:
         case B_FLOOR2:
@@ -322,10 +330,10 @@ int crate::tile_type_bottom(int type)
             new_type = black ? B_BACK : B_BACK;
             break;
         case B_WALL_L:
-            new_type = black ? B_BACK : B_CEILINGEDGE_L;
+            new_type = black ? B_BACK : B_FLOOREDGE_L;
             break;
         case B_WALL_R:
-            new_type = black ? B_BACK : B_CEILINGEDGE_R;
+            new_type = black ? B_BACK : B_FLOOREDGE_R;
             break;
         case B_CORNER_BL:
             new_type = black ? B_BACK : B_BACK;
@@ -396,12 +404,12 @@ int crate::tile_type_left(int type)
     switch (type)
     {
         case B_BACK:
-            new_type = black ? B_BACK : B_CEILING;
+            new_type = black ? B_BACK : B_WALL_R;
             break;
         case B_FLOOR1:
         case B_FLOOR2:
         case B_FLOOR3:
-            new_type = black ? B_BACK : B_BACK;
+            new_type = black ? B_BACK : B_FLOOREDGE_R;
             break;
         case B_FLOOREDGE_L:
             new_type = black ? B_BACK : B_BACK;
@@ -410,31 +418,31 @@ int crate::tile_type_left(int type)
             new_type = black ? B_BACK : B_BACK;
             break;
         case B_CEILING:
-            new_type = black ? B_BACK : B_BACK;
-            break;
-        case B_CEILINGEDGE_L:
-            new_type = black ? B_BACK : B_BACK;
-            break;
-        case B_CEILINGEDGE_R:
-            new_type = black ? B_BACK : B_BACK;
-            break;
-        case B_WALL_L:
-            new_type = black ? B_BACK : B_CEILINGEDGE_L;
-            break;
-        case B_WALL_R:
             new_type = black ? B_BACK : B_CEILINGEDGE_R;
             break;
-        case B_CORNER_BL:
+        case B_CEILINGEDGE_L:
+            new_type = black ? B_BACK : B_CEILINGEDGE_R;
+            break;
+        case B_CEILINGEDGE_R:
+            new_type = black ? B_BACK : B_CEILINGEDGE_R;
+            break;
+        case B_WALL_L:
+            new_type = black ? B_BACK : B_WALL_R;
+            break;
+        case B_WALL_R:
             new_type = black ? B_BACK : B_BACK;
+            break;
+        case B_CORNER_BL:
+            new_type = black ? B_BACK : B_WALL_R;
             break;
         case B_CORNER_BR:
-            new_type = black ? B_BACK : B_BACK;
+            new_type = black ? B_BACK : B_WALL_R;
             break;
         case B_CORNER_TL:
-            new_type = black ? B_BACK : B_BACK;
+            new_type = black ? B_BACK : B_WALL_R;
             break;
         case B_CORNER_TR:
-            new_type = black ? B_BACK : B_BACK;
+            new_type = black ? B_BACK : B_WALL_R;
             break;
         case W_BACK:
             new_type = black ? W_WALL_R : W_BACK;
@@ -493,7 +501,7 @@ int crate::tile_type_right(int type)
     switch (type)
     {
         case B_BACK:
-            new_type = black ? B_BACK : B_BACK;
+            new_type = black ? B_BACK : B_WALL_L;
             break;
         case B_FLOOR1:
         case B_FLOOR2:
@@ -510,28 +518,28 @@ int crate::tile_type_right(int type)
             new_type = black ? B_BACK : B_CEILINGEDGE_L;
             break;
         case B_CEILINGEDGE_L:
-            new_type = black ? B_BACK : B_BACK;
+            new_type = black ? B_BACK : B_WALL_L;
             break;
         case B_CEILINGEDGE_R:
-            new_type = black ? B_BACK : B_BACK;
+            new_type = black ? B_BACK : B_WALL_L;
             break;
         case B_WALL_L:
-            new_type = black ? B_BACK : B_BACK;
+            new_type = black ? B_BACK : B_WALL_L;
             break;
         case B_WALL_R:
-            new_type = black ? B_BACK : B_BACK;
+            new_type = black ? B_BACK : B_WALL_L;
             break;
         case B_CORNER_BL:
-            new_type = black ? B_BACK : B_BACK;
+            new_type = black ? B_BACK : B_WALL_L;
             break;
         case B_CORNER_BR:
-            new_type = black ? B_BACK : B_BACK;
+            new_type = black ? B_BACK : B_WALL_L;
             break;
         case B_CORNER_TL:
-            new_type = black ? B_BACK : B_BACK;
+            new_type = black ? B_BACK : B_WALL_L;
             break;
         case B_CORNER_TR:
-            new_type = black ? B_BACK : B_BACK;
+            new_type = black ? B_BACK : B_WALL_L;
             break;
         case W_BACK:
             new_type = black ? W_WALL_L : W_BACK;
