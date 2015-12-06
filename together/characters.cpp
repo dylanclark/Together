@@ -232,16 +232,19 @@ void dot::move(levelstate* level)
     if (y_vel < 1.5 * -JUMP_VEL)
         y_vel = 1.5 * -JUMP_VEL;
     
+    // dont move inactive chars
     if (status != CHAR_ACTIVE)
     {
         x_vel = 0;
         y_vel = 0;
     }
     
-    // MOVE THAT FUCKER
+    // move that dot
     col_rect.x += x_vel;
     col_rect.y += y_vel;
     
+    
+    // deal with crate collisions using crate_col
     if (!crate_col(level))
     {
         if (tile_col(level->tileset, level->width * level->height) && level->shiftable == true)
@@ -277,14 +280,18 @@ void dot::move(levelstate* level)
     }
 }
 
+
+// deal with tile collisions
 bool dot::tile_col(tile* tileset[], int size)
 {
     vector repos;
     
     bool shiftable = false;
     
+    // depends on color
     if (black)
     {
+        // for every tile
         for (int i = 0, n = size; i < n; i++)
         {
             // store reposition vector
@@ -293,6 +300,7 @@ bool dot::tile_col(tile* tileset[], int size)
                 // black wall
                 if (tileset[i]->wall_b && !tileset[i]->floor_b && !tileset[i]->ceiling_b)
                 {
+                    // halt
                     col_rect.x += repos.x;
                     x_vel = 0;
                     
@@ -303,11 +311,13 @@ bool dot::tile_col(tile* tileset[], int size)
                 {
                     if (col_rect.y + col_rect.h / 2 >= tileset[i]->get_col_rect().y + tileset[i]->get_col_rect().h / 2)continue;
                     
+                    // halt
                     col_rect.y += repos.y;
                     y_vel = 0;
                     
                     shiftable = true;
                     
+                    // jump?
                     if (up && status == CHAR_ACTIVE)
                     {
                         y_vel -= JUMP_VEL;
@@ -320,7 +330,7 @@ bool dot::tile_col(tile* tileset[], int size)
                     // determine which is smaller, and use that one!
                     if (abs(repos.x) <= abs(repos.y))
                     {
-                        //adjust x pos (lol expos)
+                        //adjust x pos
                         col_rect.x += repos.x;
                         x_vel = 0;
                         
@@ -362,7 +372,7 @@ bool dot::tile_col(tile* tileset[], int size)
                     // determine which is smaller, and use that one!
                     if (abs(repos.x) <= abs(repos.y))
                     {
-                        //adjust x pos (lol expos)
+                        //adjust x pos
                         col_rect.x += repos.x;
                         x_vel = 0;
                         
@@ -394,6 +404,7 @@ bool dot::tile_col(tile* tileset[], int size)
                 // white wall
                 if (tileset[i]->wall_w && !tileset[i]->floor_w && !tileset[i]->ceiling_w)
                 {
+                    // halt
                     col_rect.x += repos.x;
                     x_vel = 0;
                     
@@ -406,11 +417,13 @@ bool dot::tile_col(tile* tileset[], int size)
                     if (col_rect.y + col_rect.h / 2 <= tileset[i]->get_col_rect().y + tileset[i]->get_col_rect().h / 2)
                         continue;
                     
+                    // halt
                     col_rect.y += repos.y;
                     y_vel = 0;
                     
                     shiftable = true;
                     
+                    // jump
                     if (up && status == CHAR_ACTIVE)
                     {
                         y_vel += JUMP_VEL;
@@ -487,6 +500,8 @@ bool dot::tile_col(tile* tileset[], int size)
     return shiftable;
 }
 
+
+// deal with crate collisions
 bool dot::crate_col(levelstate* level)
 {
     vector repos;
@@ -498,6 +513,7 @@ bool dot::crate_col(levelstate* level)
         {
             level->crates[i]->pushed = false;
             
+            // if theres a collision
             if (check_collision(col_rect, level->crates[i]->get_col_rect(), &repos))
             {
                 if (!level->crates[i]->black)
@@ -532,6 +548,7 @@ bool dot::crate_col(levelstate* level)
                     // land on crate
                     else if (y_vel > 0)
                     {
+                        // halt
                         col_rect.y += repos.y;
                         y_vel = 0;
                         
@@ -604,11 +621,13 @@ bool dot::crate_col(levelstate* level)
 
 void dot::render(SDL_Rect* camera, engine* game)
 {
+    // relevant clips
     SDL_Rect active_clip = {0, 0, 16, 16};
     SDL_Rect inactive_clip = {16 * ANIMATION_LENGTH, 0, 16, 16};
     
     switch (status)
     {
+        // different cases render appropriate clips
         case CHAR_ACTIVE:
             tex.render(col_rect.x, col_rect.y, &active_clip, camera, game);
             break;
@@ -623,7 +642,7 @@ void dot::render(SDL_Rect* camera, engine* game)
             // sprite sheet clipper
             SDL_Rect inactivate_clip = {16 * frame, 0, 16, 16};
             
-            // render that mofo
+            // render that
             tex.render(col_rect.x, col_rect.y, &inactivate_clip, camera, game);
             
             // change the status if animation is over!
@@ -642,7 +661,7 @@ void dot::render(SDL_Rect* camera, engine* game)
             // sprite sheet clipper
             SDL_Rect activate_clip = {16 * (frame + 8), 0, 16, 16};
             
-            // render that mofo
+            // render that 
             tex.render(col_rect.x, col_rect.y, &activate_clip, camera, game);
             
             // change the status if animation is over!
@@ -656,14 +675,16 @@ void dot::render(SDL_Rect* camera, engine* game)
     }
 };
 
-
+// spring when sprung
 void dot::spring(int x, int y, int direction)
 { 
-    
+    // become active if not
     status = CHAR_ACTIVE;
     
+    // spring the right way!
     black ? y_vel -= y : y_vel += y;
     
+    // deal with any horizontal springing
     if(direction == FLIP_RIGHT)
     {
         x_vel += x;
@@ -675,6 +696,7 @@ void dot::spring(int x, int y, int direction)
     return;
 }
 
+// center dot on an object
 bool dot::center(SDL_Rect* end_rect)
 {
     // center dot on an object
@@ -690,6 +712,7 @@ bool dot::center(SDL_Rect* end_rect)
     return true;
 }
 
+// return y_vel
 float dot::get_y_vel()
 {
     return y_vel;

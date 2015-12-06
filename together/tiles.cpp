@@ -101,6 +101,8 @@ SDL_Rect tile::get_col_rect()
     return col_rect;
 }
 
+
+// render tile
 void tile::render(int b_status, SDL_Rect* camera, engine* game, texture* tile_tex)
 {
     if (type >= B_BACK && type <= B_CORNER_TR)
@@ -114,6 +116,7 @@ void tile::render(int b_status, SDL_Rect* camera, engine* game, texture* tile_te
     
     switch (status)
     {
+        // animating cases
         case TILE_ACTIVE:
             tile_tex->render_tile(col_rect.x, col_rect.y, &tile_clips[type], &active_clip, camera, game);
             frame = 0;
@@ -136,7 +139,7 @@ void tile::render(int b_status, SDL_Rect* camera, engine* game, texture* tile_te
             // sprite sheet clipper
             SDL_Rect inactivate_clip = {TILE_WIDTH_TEX * frame, 0, TILE_WIDTH_TEX, TILE_WIDTH_TEX};
             
-            // render that mofo
+            // render that
             tile_tex->render_tile(col_rect.x, col_rect.y, &tile_clips[type], &inactivate_clip, camera, game);
             
             // change the status if animation is over!
@@ -161,7 +164,7 @@ void tile::render(int b_status, SDL_Rect* camera, engine* game, texture* tile_te
             // sprite sheet clipper
             SDL_Rect activate_clip = {TILE_WIDTH_TEX * frame, 0, TILE_WIDTH_TEX, TILE_WIDTH_TEX};
             
-            // render that mofo
+            // render that 
             tile_tex->render_tile(col_rect.x, col_rect.y, &tile_clips[type], &activate_clip, camera, game);
             
             // change the status if animation is over!
