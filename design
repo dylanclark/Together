@@ -8,11 +8,11 @@
 ------------
 
 
-Tutorials that influenced our design:
+**Tutorials that influenced our design**
 http://lazyfoo.net/tutorials/SDL/ for SDL tutorials (tiling, collision checking, rendering, etc.)
 http://gamedevgeek.com/tutorials/managing-game-states-in-c/ for help with game state system
 
-Together is a game that relies on SDL Frameworks to 
+Together. is a game that relies on SDL Frameworks to create a window and render objects. We used C++ to take advantage of these SDL Frameworks. It has two characters who interact with objects in their environments to solve puzzles. Here are several high-level descriptions of major design features we implemented:
 
 - Save file.
     Simple file stream mechanics - functions are defined in the "engine" class object (which runs the game) which can write a new value into the save file (just a .txt) or read the current save value. Those allow a user to continue from the highest level they have reached (using the level select to revisit an old level doesn't influence the save file).
@@ -44,7 +44,7 @@ Together is a game that relies on SDL Frameworks to
 - Gravity
     Each time a dot's position is updated in "characters::move," gravity effects it negatively before any other movement is applied.
 - Jumping
-    If touching a floor, a character can jump by having its y-velocity
+    If touching a floor, a character can jump by having its y-velocity increased by a set amount.
 - Levels
     Levels are designed as delimited CSV's with tile numbers associated with different textures and behaviors (defined in tiles.hpp). These are rendered (see Tile Drawing) along with all objects that are necessary on a given level. Their textures, all created in the Pickle Pixel Art App, are loaded via each level state's load_textures function. The objects are all defined as their own classes, and are initialzed in each level state's init_objects function. The attributes of each class are modifieable in this initialization, allowing for things like buttons being set to single-use, springs being set to have x-velocity effects upon springing. After including a render for each object, they'll show up on screen. The level state's interactions function is where we define object interactions (for example, if both dots are on the level-end objects, the game state changes to the next level. If the black dot hits the button on level 6, it creates the crate necessary for completion).
 - Level end.
@@ -56,4 +56,4 @@ Together is a game that relies on SDL Frameworks to
 - Flipping/turning when rendering
     This feature, used for buttons and springs, allows for an easy way to define objects facing different directions (ie a button that faces right when the default texture has the button facing up). It requires the angle_render function found in "textures.cpp" and allows for syntax such as "w_button.direction = RIGHT" to do the necessary flipping and angle changing while rendering this object.
 - Simple animation.
-    This feature is used for object movements (springs springing, buttons pressing) and when the active character changes (tiles, crates, characters animate to change active color). It relies on textures made in Pickle that are many "frames" wide. For example, if the spring animation takes 4 frames, the spring texture is 4 tiles wide, each one the successive frame in the animation. The animation logic (found in source files for anything that animates and all largely the same but sometimes slightly different) relies on 4 "states": Active, Inactivating, Inactive, and Activating. Status of active renders the first tile of the texture, inactive renders the last tile of the texture, and activating and inactivating cyle through the middle tiles of each .png texture before resting on either active or inactive, respectively.
+    This feature is used for object movements (springs springing, buttons pressing) and when the active character changes (tiles, crates, characters animate to change active color). It relies on textures made in Pickle that are many "frames" wide. For example, if the spring animation takes 4 frames, the spring texture is 4 tiles wide, each one the successive frame in the animation. The animation logic (found in source files for anything that animates... all mostly the same but sometimes slightly different) relies on 4 "states": Active, Inactivating, Inactive, and Activating. Status of active renders the first tile of the texture, inactive renders the last tile of the texture, and activating and inactivating cyle through the middle tiles of each .png texture before resting on either active or inactive, respectively.
