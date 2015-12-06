@@ -468,7 +468,7 @@ bool dot::tile_col(tile* tileset[], int size)
                     shiftable = false;
                 }
                 
-                // black ceiling edge
+                // white ceiling edge
                 else if (tileset[i]->ceiling_w && tileset[i]->wall_w)
                 {
                     // determine which is smaller, and use that one!
@@ -480,7 +480,7 @@ bool dot::tile_col(tile* tileset[], int size)
                         
                         shiftable = false;
                     }
-                    else if (y_vel > 0)
+                    else if (y_vel < 0)
                     {
                         // adjust y pos
                         col_rect.y += repos.y;
@@ -514,6 +514,8 @@ bool dot::crate_col(levelstate* level)
                 if (!level->crates[i]->black)
                 {
                     level->shiftable = tile_col(level->crates[i]->tileset, MAX_BORDER);
+                    
+                    return true;
                 }
                 else
                 {
@@ -539,13 +541,18 @@ bool dot::crate_col(levelstate* level)
                         level->crates[i]->pushed = true;
                     }
                     // land on crate
-                    else if (y_vel > 0)
+                    else
                     {
                         // halt
                         col_rect.y += repos.y;
                         y_vel = 0;
                         
                         level->shiftable = true;
+                        
+                        if (col_rect.y > level->crates[i]->get_col_rect().y)
+                        {
+                            y_vel = 1;
+                        }
                         
                         // jump! (if you want)
                         if (up && status == CHAR_ACTIVE)
@@ -592,17 +599,22 @@ bool dot::crate_col(levelstate* level)
                         level->shiftable = false;
                     }
                     // land on crate
-                    else if (y_vel < 0)
+                    else
                     {
                         col_rect.y += repos.y;
                         y_vel = 0;
                         
+                        if (col_rect.y < level->crates[i]->get_col_rect().y)
+                        {
+                            y_vel = -1;
+                        }
+                        
                         level->shiftable = true;
                         
                         // jump! (if you want)
-                        if (up && status == CHAR_ACTIVE)
+                        if (up && status == CHAR_ACTIVE && col_rect.y > level->crates[i]->get_col_rect().y)
                         {
-                            y_vel -= JUMP_VEL;
+                            y_vel += JUMP_VEL;
                         }
                     }
                 }
@@ -671,9 +683,11 @@ void dot::render(SDL_Rect* camera, engine* game)
 
 // spring when sprung
 void dot::spring(int x, int y, int direction)
-{
+{ 
+    // become active if not
     status = CHAR_ACTIVE;
     
+    // spring the right way
     y_vel = 0;
     black ? y_vel -= y * 2 : y_vel += y * 2;
     
