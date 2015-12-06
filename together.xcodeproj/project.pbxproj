@@ -42,6 +42,8 @@
 		FC8A5A3D1C098AC00023A58B /* button.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FC8A5A3B1C098AC00023A58B /* button.cpp */; };
 		FC8D8AE71C081B9700A1C6F7 /* level2_state.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FC8D8AE61C081B9700A1C6F7 /* level2_state.cpp */; };
 		FC8D8AEC1C0825B900A1C6F7 /* level_end.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FC8D8AEA1C0825B900A1C6F7 /* level_end.cpp */; };
+		FC9732601C137DA200BB70B4 /* save in CopyFiles */ = {isa = PBXBuildFile; fileRef = FC97325E1C137DA200BB70B4 /* save */; };
+		FC9732611C137DA200BB70B4 /* sound in CopyFiles */ = {isa = PBXBuildFile; fileRef = FC97325F1C137DA200BB70B4 /* sound */; };
 		FCB126F61C0CCB8B001D7EC8 /* springboard.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FCB126F41C0CCB8B001D7EC8 /* springboard.cpp */; };
 		FCD4DFB31C126476008546AB /* level5_state.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FCD4DFB11C126476008546AB /* level5_state.cpp */; };
 		FCD4DFB61C126A3A008546AB /* level6_state.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FCD4DFB41C126A3A008546AB /* level6_state.cpp */; };
@@ -55,6 +57,8 @@
 			dstPath = "";
 			dstSubfolderSpec = 16;
 			files = (
+				FC9732601C137DA200BB70B4 /* save in CopyFiles */,
+				FC9732611C137DA200BB70B4 /* sound in CopyFiles */,
 				EF8252911BF1214D0003EF9E /* textures in CopyFiles */,
 				EF8252901BF121490003EF9E /* levels in CopyFiles */,
 			);
@@ -86,7 +90,6 @@
 		EF5295AF1C0BF65F00178AC7 /* gamepad.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = gamepad.hpp; sourceTree = "<group>"; };
 		EF5295B11C0C107000178AC7 /* menu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = menu.cpp; sourceTree = "<group>"; };
 		EF5295B21C0C107000178AC7 /* menu.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = menu.hpp; sourceTree = "<group>"; };
-		EF5295B51C0CC3AC00178AC7 /* sound */ = {isa = PBXFileReference; lastKnownFileType = folder; path = sound; sourceTree = "<group>"; };
 		EF68FE801C04003200E2030D /* gamestate.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = gamestate.hpp; sourceTree = "<group>"; };
 		EF69B9121BFA83D400F5DAC2 /* TODO */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = TODO; sourceTree = "<group>"; };
 		EF8252821BF1098A0003EF9E /* SDL2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL2.framework; path = ../../../../../../Library/Frameworks/SDL2.framework; sourceTree = "<group>"; };
@@ -138,12 +141,16 @@
 		FC8D8AE91C081C6200A1C6F7 /* level2_state.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = level2_state.hpp; sourceTree = "<group>"; };
 		FC8D8AEA1C0825B900A1C6F7 /* level_end.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = level_end.cpp; sourceTree = "<group>"; };
 		FC8D8AEB1C0825B900A1C6F7 /* level_end.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = level_end.hpp; sourceTree = "<group>"; };
+		FC97325E1C137DA200BB70B4 /* save */ = {isa = PBXFileReference; lastKnownFileType = folder; path = save; sourceTree = "<group>"; };
+		FC97325F1C137DA200BB70B4 /* sound */ = {isa = PBXFileReference; lastKnownFileType = folder; path = sound; sourceTree = "<group>"; };
 		FCB126F41C0CCB8B001D7EC8 /* springboard.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = springboard.cpp; sourceTree = "<group>"; };
 		FCB126F51C0CCB8B001D7EC8 /* springboard.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = springboard.hpp; sourceTree = "<group>"; };
 		FCD4DFB11C126476008546AB /* level5_state.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = level5_state.cpp; sourceTree = "<group>"; };
 		FCD4DFB21C126476008546AB /* level5_state.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = level5_state.hpp; sourceTree = "<group>"; };
 		FCD4DFB41C126A3A008546AB /* level6_state.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = level6_state.cpp; sourceTree = "<group>"; };
 		FCD4DFB51C126A3A008546AB /* level6_state.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = level6_state.hpp; sourceTree = "<group>"; };
+		FCE892DA1C13979E001C4CB2 /* design */ = {isa = PBXFileReference; lastKnownFileType = text; path = design; sourceTree = "<group>"; };
+		FCE892DB1C13979E001C4CB2 /* documentation */ = {isa = PBXFileReference; lastKnownFileType = text; path = documentation; sourceTree = "<group>"; };
 		FCF21E0B1C12742D008BEE77 /* level7_state.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = level7_state.cpp; sourceTree = "<group>"; };
 		FCF21E0C1C12742D008BEE77 /* level7_state.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = level7_state.hpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -298,13 +305,16 @@
 		EFBCA0B11BED17FB005D56CA = {
 			isa = PBXGroup;
 			children = (
+				FC97325E1C137DA200BB70B4 /* save */,
+				FC97325F1C137DA200BB70B4 /* sound */,
 				EF5295A91C0BE8C000178AC7 /* SDL2_mixer.framework */,
 				EF5295A71C0BE7CB00178AC7 /* SDL2_ttf.framework */,
 				EF8252841BF109940003EF9E /* SDL2_image.framework */,
 				EF8252821BF1098A0003EF9E /* SDL2.framework */,
 				EFBCA0BC1BED17FB005D56CA /* project */,
 				EFBCA0BB1BED17FB005D56CA /* Products */,
-				EF5295B51C0CC3AC00178AC7 /* sound */,
+				FCE892DA1C13979E001C4CB2 /* design */,
+				FCE892DB1C13979E001C4CB2 /* documentation */,
 				EF0808611BF0504300338AB0 /* levels */,
 				EFBCA0CC1BED21BF005D56CA /* textures */,
 				EF5249561C12365600C6F2A6 /* save */,

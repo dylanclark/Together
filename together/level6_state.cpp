@@ -244,6 +244,7 @@ void level6_state::init_objects(engine* game)
     b_button.col_rect.y = 8 * TILE_WIDTH;
     b_button.single = true;
     b_button.direction = UP;
+    b_button.used = false;
     
 }
 
@@ -260,7 +261,7 @@ void level6_state::interactions(engine* game)
     
     
     //if black button is activated
-    if(b_button.check(b_char.col_rect))
+    if(b_button.check(b_char.col_rect) && b_button.used == false)
     {
         // used
         b_button.used = true;

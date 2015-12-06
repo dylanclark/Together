@@ -1,0 +1,49 @@
+
+------------
+ Fraser Weist and Dylan Clark
+
+ Together.
+
+ design.txt.
+------------
+
+
+Tutorials that influenced our design:
+http://lazyfoo.net/tutorials/SDL/ for SDL tutorials (tiling, collision checking, rendering, etc.)
+http://gamedevgeek.com/tutorials/managing-game-states-in-c/ for help with game state system
+
+Together is a game that relies on SDL Frameworks to 
+
+- Save file.
+- Menu and pause screens
+- Options.
+- Quit mechanics.
+- Switching characters.
+- Gamepad / Controller support.
+- Restart button.
+- Pushable crates.
+- Engine / gamestate system.
+- Tile drawing.
+- Keyboard input.
+- Level select
+- Music
+- Dynamic Camera
+
+- Collision detection.
+    The basis of our dots' interactions with the level objects is our collision checker, found in collisions.cpp. This function detects the magnitude of collisions between collision rectangles and allows for logic based on when things are colliding. For example, if colliding in the y-direction with a tile who's floor boolean value is set to true, a dot's y-velocity will be set to 0.
+- Gravity
+    Each time a dot's position is updated in "characters::move," gravity effects it negatively before any other movement is applied.
+- Jumping
+    If touching a floor, a character can jump by having its y-velocity
+- Levels
+    Levels are designed as delimited CSV's with tile numbers associated with different textures and behaviors (defined in tiles.hpp). These are rendered (see Tile Drawing) along with all objects that are necessary on a given level. Their textures, all created in the Pickle Pixel Art App, are loaded via each level state's load_textures function. The objects are all defined as their own classes, and are initialzed in each level state's init_objects function. The attributes of each class are modifieable in this initialization, allowing for things like buttons being set to single-use, springs being set to have x-velocity effects upon springing. After including a render for each object, they'll show up on screen. The level state's interactions function is where we define object interactions (for example, if both dots are on the level-end objects, the game state changes to the next level. If the black dot hits the button on level 6, it creates the crate necessary for completion).
+- Level end.
+    These objects allow for testing for completion of level. If both dots are on level end objects, the game state can change to the next level. Their code can be found in "level_end.cpp"
+- Customizeable springs and cross-layer springs.
+   ("springboard.cpp") Springs can be one-sided springboards that launch a dot regardless of the position of another dot or can be cross-layer springs. Cross layer springs  can be based on velocity, in which case  they spring the springee the same velocity as the springer hitting the spring, or they can be position based, where they spring a set amount but require contact from both dots to work. Springs (both regular springboards and cross-layer springs) have customizeable attributes upon initialization in the level state files such as amount of x_spring and y_spring and horizontal direction of spring.
+- Customizeable buttons.
+    Buttons ("button.cpp")are similarly customizeable in that they can be single or multi use and can be rendered to face any direction. The buttons are used in level state's interactions functions and when pressed can trigger the initialization of an object necessary for level completion (such as initilizing a crate or springboard).
+- Flipping/turning when rendering
+    This feature, used for buttons and springs, allows for an easy way to define objects facing different directions (ie a button that faces right when the default texture has the button facing up). It requires the angle_render function found in "textures.cpp" and allows for syntax such as "w_button.direction = RIGHT" to do the necessary flipping and angle changing while rendering this object.
+- Simple animation.
+    This feature is used for object movements (springs springing, buttons pressing) and when the active character changes (tiles, crates, characters animate to change active color). It relies on textures made in Pickle that are many "frames" wide. For example, if the spring animation takes 4 frames, the spring texture is 4 tiles wide, each one the successive frame in the animation. The animation logic (found in source files for anything that animates and all largely the same but sometimes slightly different) relies on 4 "states": Active, Inactivating, Inactive, and Activating. Status of active renders the first tile of the texture, inactive renders the last tile of the texture, and activating and inactivating cyle through the middle tiles of each .png texture before resting on either active or inactive, respectively.

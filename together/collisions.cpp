@@ -15,7 +15,7 @@ vector::vector()
     y = 0;
 };
 
-// general collision checker
+// general collision checker (thanks SDL tutorial for inspiration!)
 bool check_collision(SDL_Rect a, SDL_Rect b, vector* repos)
 {
     // the sides of the rectangles
@@ -36,7 +36,7 @@ bool check_collision(SDL_Rect a, SDL_Rect b, vector* repos)
     topB = b.y;
     bottomB = b.y + b.h;
     
-    // if any of the sides from A are outside of B
+    // Get the amount of overlap
     if(bottomA < topB)
     {
         repos->x = 0;

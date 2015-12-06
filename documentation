@@ -1,0 +1,17 @@
+
+------------
+ Fraser Weist and Dylan Clark
+
+ Together.
+
+ documentation.txt.
+------------
+
+
+To run this program, the user needs a Mac that can run the updated version of Xcode. Included in the submission is a compressed folder "together". This folder's contains all the source code and support files for the game, as well as the Xcode project.
+
+In addition, there is a compressed folder "Frameworks." This contains the SDL frameworks we used in the implementation of our game and need to be installed in the user's frameworks folder. To do this, unzip the folder to find the four frameworks. If you open a new window in finder and nagivate to "/Library/Frameworks" (Library may be a hidden folder. To access it in this case, within finder, press Command-Shift-G to open the "Go to folder" command. Going to "/Library/Frameworks" will do the trick!) and copy the four frameworks into your Frameworks folder. This will likely require an administrator's password on the computer.
+
+After this has been done successfully, open the project in xcode by opening "together.xcodeproj" found within the "together" folder. Pressing the "Build and Run" button will run the game! Welcome to Together.
+
+Within the game's menus, arrow keys control selection while enter makes selections. Once playing the game, use shift to switch characters (and gravity states!), "R" to restart levels, and space to jump.
