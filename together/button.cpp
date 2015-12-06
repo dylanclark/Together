@@ -49,7 +49,7 @@ bool button::check(SDL_Rect dot_rect)
     return false;
 };
 
-
+// render
 void button::render(SDL_Rect* camera, engine* game)
 {
     // flip
@@ -78,13 +78,16 @@ void button::render(SDL_Rect* camera, engine* game)
             
     }
     
+    // make sure it only animates if not single & used
     if(single && used)
         status = BUTT_ACTIVE;
     
+    // relevant clips
     SDL_Rect inactive_clip = {0, 0, 16, 16};
     SDL_Rect active_clip = {16 * BUTT_ANIMATION_LENGTH, 0, 16, 16};
     
     
+    // render relevant parts
     switch (status)
     {
         case BUTT_INACTIVE:
@@ -103,7 +106,7 @@ void button::render(SDL_Rect* camera, engine* game)
             // sprite sheet clipper
             SDL_Rect activate_clip = {16 * frame, 0, 16, 16};
             
-            // render that mofo
+            // render that 
             tex.angle_render(col_rect.x, col_rect.y, &activate_clip, camera, game, angle, center, flip);
             
             // change the status if animation is over!
@@ -119,10 +122,10 @@ void button::render(SDL_Rect* camera, engine* game)
             // next frame!
             frame++;
             
-            // sprite sheet clipper (LOOK INTO IT)
+            // sprite sheet clipper
             SDL_Rect inactivate_clip = {(16 * (frame + 3)) , 0, 16, 16};
             
-            // render that mofo
+            // render that
             tex.angle_render(col_rect.x, col_rect.y, &inactivate_clip, camera, game, angle, center, flip);
             
             // change the status if animation is over!

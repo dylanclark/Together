@@ -12,19 +12,18 @@ Tutorials that influenced our design:
 http://lazyfoo.net/tutorials/SDL/ for SDL tutorials (tiling, collision checking, rendering, etc.)
 http://gamedevgeek.com/tutorials/managing-game-states-in-c/ for help with game state system
 
-
+Together is a game that relies on SDL Frameworks to 
 
 - Save file.
 - Menu and pause screens
 - Options.
 - Quit mechanics.
-- Switching characters
+- Switching characters.
 - Gamepad / Controller support.
 - Restart button.
 - Pushable crates.
 - Engine / gamestate system.
 - Tile drawing.
-
 - Keyboard input.
 - Level select
 - Music
