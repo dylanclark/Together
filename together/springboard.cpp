@@ -167,7 +167,7 @@ void springboard::cross_spring(dot* springer, dot* springee, int type)
                 status = (status + 1) % 4;
             }
             
-            y_spring = -(springer->get_y_vel());
+            y_spring = -(springer->get_y_vel() / 3);
             
             springee->spring(x_spring, y_spring, direction);
             

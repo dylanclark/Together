@@ -214,6 +214,7 @@ void level5_state::init_objects(engine* game)
     b_char.col_rect.x = 2 * TILE_WIDTH;
     b_char.col_rect.y = 8 * TILE_WIDTH;
     b_char.black = true;
+
     
     camera = new class camera(game->screen_width, game->screen_height);
     
