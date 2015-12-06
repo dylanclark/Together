@@ -272,7 +272,7 @@ void level01_state::init_objects(engine* game)
     b_cross_spring.col_rect.y = 490;
     b_cross_spring.col_rect.h = 120;
     b_cross_spring.show = true;
-    b_cross_spring.y_spring = 8;
+    b_cross_spring.y_spring = 6;
     b_cross_spring.direction = FLIP_RIGHT;
     
     camera = new class camera(game->screen_width, game->screen_height);

@@ -81,7 +81,7 @@
 		EF52494E1C117BE200C6F2A6 /* newgamemenu_state.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = newgamemenu_state.hpp; sourceTree = "<group>"; };
 		EF5249521C11F0E800C6F2A6 /* level3_state.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = level3_state.hpp; sourceTree = "<group>"; };
 		EF5249551C11F0FC00C6F2A6 /* intro_state.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = intro_state.hpp; sourceTree = "<group>"; };
-		EF5295A71C0BE7CB00178AC7 /* SDL2_ttf.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL2_ttf.framework; path = ../../../../../../Library/Frameworks/SDL2_ttf.framework; sourceTree = "<group>"; };
+		EF5295A71C0BE7CB00178AC7 /* SDL2_ttf.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL2_ttf.framework; path = ../../../../../Library/Frameworks/SDL2_ttf.framework; sourceTree = "<group>"; };
 		EF5295A91C0BE8C000178AC7 /* SDL2_mixer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL2_mixer.framework; path = ../../../../../../Library/Frameworks/SDL2_mixer.framework; sourceTree = "<group>"; };
 		EF5295AB1C0BEBEB00178AC7 /* sound.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = sound.cpp; sourceTree = "<group>"; };
 		EF5295AC1C0BEBEB00178AC7 /* sound.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = sound.hpp; sourceTree = "<group>"; };

@@ -244,6 +244,7 @@ void level6_state::init_objects(engine* game)
     b_button.col_rect.y = 8 * TILE_WIDTH;
     b_button.single = true;
     b_button.direction = UP;
+    b_button.used = false;
     
 }
 
