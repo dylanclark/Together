@@ -139,8 +139,13 @@
 		FCD4DFB31C126476008546AB /* level5_state.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FCD4DFB11C126476008546AB /* level5_state.cpp */; };
 		FCD4DFB61C126A3A008546AB /* level6_state.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FCD4DFB41C126A3A008546AB /* level6_state.cpp */; };
 <<<<<<< HEAD
+<<<<<<< HEAD
 >>>>>>> c1192ed... levels 5 and 6!
 =======
+=======
+		FCE892ED1C14197B001C4CB2 /* level8_state.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FCE892EB1C14197B001C4CB2 /* level8_state.cpp */; };
+		FCE892F01C141985001C4CB2 /* level9_state.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FCE892EE1C141985001C4CB2 /* level9_state.cpp */; };
+>>>>>>> a7c3624... level states 8 and 9
 		FCF21E0D1C12742D008BEE77 /* level7_state.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FCF21E0B1C12742D008BEE77 /* level7_state.cpp */; };
 >>>>>>> a55d4b9... a buggy level 7 with white crate issues
 /* End PBXBuildFile section */
@@ -279,7 +284,14 @@
 =======
 		FCE892DA1C13979E001C4CB2 /* design */ = {isa = PBXFileReference; lastKnownFileType = text; path = design; sourceTree = "<group>"; };
 		FCE892DB1C13979E001C4CB2 /* documentation */ = {isa = PBXFileReference; lastKnownFileType = text; path = documentation; sourceTree = "<group>"; };
+<<<<<<< HEAD
 >>>>>>> 6cff3cb... level 5 tile change, design and documentation files
+=======
+		FCE892EB1C14197B001C4CB2 /* level8_state.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = level8_state.cpp; sourceTree = "<group>"; };
+		FCE892EC1C14197B001C4CB2 /* level8_state.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = level8_state.hpp; sourceTree = "<group>"; };
+		FCE892EE1C141985001C4CB2 /* level9_state.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = level9_state.cpp; sourceTree = "<group>"; };
+		FCE892EF1C141985001C4CB2 /* level9_state.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = level9_state.hpp; sourceTree = "<group>"; };
+>>>>>>> a7c3624... level states 8 and 9
 		FCF21E0B1C12742D008BEE77 /* level7_state.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = level7_state.cpp; sourceTree = "<group>"; };
 		FCF21E0C1C12742D008BEE77 /* level7_state.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = level7_state.hpp; sourceTree = "<group>"; };
 >>>>>>> a55d4b9... a buggy level 7 with white crate issues
@@ -348,6 +360,8 @@
 				FCD4DFB51C126A3A008546AB /* level6_state.hpp */,
 				FCF21E0C1C12742D008BEE77 /* level7_state.hpp */,
 				FCD4DFB21C126476008546AB /* level5_state.hpp */,
+				FCE892EF1C141985001C4CB2 /* level9_state.hpp */,
+				FCE892EC1C14197B001C4CB2 /* level8_state.hpp */,
 				EF5249521C11F0E800C6F2A6 /* level3_state.hpp */,
 				FC1B50F31C12313F00CD8588 /* level4_state.hpp */,
 				FC2F5D8F1C11628C00CCBC3E /* level01_state.hpp */,
@@ -367,6 +381,8 @@
 				FC1B50F21C12313E00CD8588 /* level4_state.cpp */,
 				FCF21E0B1C12742D008BEE77 /* level7_state.cpp */,
 				FCD4DFB41C126A3A008546AB /* level6_state.cpp */,
+				FCE892EE1C141985001C4CB2 /* level9_state.cpp */,
+				FCE892EB1C14197B001C4CB2 /* level8_state.cpp */,
 			);
 			name = src;
 			sourceTree = "<group>";
@@ -598,6 +614,7 @@
 				FC2C37AD1C1223F10040EC98 /* level3_state.cpp in Sources */,
 				FC2C37AB1C1223660040EC98 /* menu_buttons.cpp in Sources */,
 				EFBCA0D21BED5031005D56CA /* level_draw.cpp in Sources */,
+				FCE892ED1C14197B001C4CB2 /* level8_state.cpp in Sources */,
 				EFE808711C0D6A2D00E6933A /* pausemenu_state.cpp in Sources */,
 				EFFB15E71C0D0779006428DB /* quitseq_state.cpp in Sources */,
 				EF0CE3B41BEFD8C50080692E /* textures.cpp in Sources */,
@@ -665,7 +682,11 @@
 >>>>>>> b773edd... for the pull
 =======
 				EF52494C1C117BD500C6F2A6 /* levelselectmenu_state.cpp in Sources */,
+<<<<<<< HEAD
 >>>>>>> 74e2e9b... levels 1 and 2 now complete!!1
+=======
+				FCE892F01C141985001C4CB2 /* level9_state.cpp in Sources */,
+>>>>>>> a7c3624... level states 8 and 9
 				EFBCA0FA1BEE8CD2005D56CA /* characters.cpp in Sources */,
 				EFA85F2F1C0675BA001113CA /* mainmenu_state.cpp in Sources */,
 				FC4AE44C1C11F42000B67E46 /* intro_state.cpp in Sources */,

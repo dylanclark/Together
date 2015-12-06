@@ -211,7 +211,7 @@ bool dot::handle_event(SDL_Event &e, levelstate* level, engine* game)
     return true;
 }
 
-void dot::move(levelstate* level)
+void dot::move(levelstate* level, engine* game)
 {
     if (status != CHAR_ACTIVE)
         return;
@@ -259,9 +259,9 @@ void dot::move(levelstate* level)
     
     
     // deal with crate collisions using crate_col
-    if (!crate_col(level))
+    if (!crate_col(level, game))
     {
-        level->shiftable = tile_col(level->tileset, level->width * level->height);
+        level->shiftable = tile_col(level->tileset, level->width * level->height, game);
     }
     
     // check edges
@@ -289,11 +289,11 @@ void dot::move(levelstate* level)
 
 
 // deal with tile collisions
-bool dot::tile_col(tile* tileset[], int size)
+bool dot::tile_col(tile* tileset[], int size, engine* game)
 {
     vector repos;
     
-    bool shiftable = false;
+    bool shiftable;
     
     // depends on color
     if (black)
@@ -328,6 +328,7 @@ bool dot::tile_col(tile* tileset[], int size)
                     if (up && status == CHAR_ACTIVE)
                     {
                         y_vel -= JUMP_VEL;
+                        Mix_PlayChannel(-1, game->sound->level_b_jump_snd, 0);
                         shiftable = false;
                     }
                 }
@@ -358,6 +359,7 @@ bool dot::tile_col(tile* tileset[], int size)
                         if (up && status == CHAR_ACTIVE)
                         {
                             y_vel -= JUMP_VEL;
+                            Mix_PlayChannel(-1, game->sound->level_b_jump_snd, 0);
                             shiftable = false;
                         }
                     }
@@ -389,7 +391,7 @@ bool dot::tile_col(tile* tileset[], int size)
                     {
                         // adjust y pos
                         col_rect.y += repos.y;
-                        y_vel = 1;
+                        y_vel = fabsf(y_vel);
                         
                         shiftable = false;
                     }
@@ -434,6 +436,7 @@ bool dot::tile_col(tile* tileset[], int size)
                     if (up && status == CHAR_ACTIVE)
                     {
                         y_vel += JUMP_VEL;
+                        Mix_PlayChannel(-1, game->sound->level_w_jump_snd, 0);
                         shiftable = false;
                     }
                 }
@@ -465,6 +468,7 @@ bool dot::tile_col(tile* tileset[], int size)
                         if (up && status == CHAR_ACTIVE)
                         {
                             y_vel += JUMP_VEL;
+                            Mix_PlayChannel(-1, game->sound->level_w_jump_snd, 0);
                             shiftable = false;
                         }
                     }
@@ -505,7 +509,7 @@ bool dot::tile_col(tile* tileset[], int size)
                     {
                         // adjust y pos
                         col_rect.y += repos.y;
-                        y_vel = -1;
+                        y_vel = -fabsf(y_vel);
                         
                         shiftable = false;
                     }
@@ -518,7 +522,7 @@ bool dot::tile_col(tile* tileset[], int size)
 
 
 // deal with crate collisions
-bool dot::crate_col(levelstate* level)
+bool dot::crate_col(levelstate* level, engine* game)
 {
     vector repos;
 
@@ -535,7 +539,7 @@ bool dot::crate_col(levelstate* level)
                 if (!level->crates[i]->black)
                 {
                     level->shiftable = false;
-                    tile_col(level->crates[i]->tileset, MAX_BORDER);
+                    tile_col(level->crates[i]->tileset, MAX_BORDER, game);
                     
                     return true;
                 }
@@ -580,6 +584,7 @@ bool dot::crate_col(levelstate* level)
                         if (up && status == CHAR_ACTIVE)
                         {
                             y_vel -= JUMP_VEL;
+                            Mix_PlayChannel(-1, game->sound->level_b_jump_snd, 0);
                         }
                     }
                 }
@@ -594,7 +599,7 @@ bool dot::crate_col(levelstate* level)
                 if (level->crates[i]->black)
                 {
                     level->shiftable = false;
-                    tile_col(level->crates[i]->tileset, MAX_BORDER);
+                    tile_col(level->crates[i]->tileset, MAX_BORDER, game);
                     
                     return true;
                 }
@@ -605,6 +610,11 @@ bool dot::crate_col(levelstate* level)
                     {
                         // tell the crate its being pushed
                         level->crates[i]->pushed = true;
+                        
+                        if (!Mix_Playing(2))
+                        {
+                            Mix_PlayChannel(2, game->sound->level_crate_snd, 0);
+                        }
                         
                         // adjust dot speed
                         if (x_vel > PUSH_VEL || x_vel < -PUSH_VEL)
@@ -638,6 +648,7 @@ bool dot::crate_col(levelstate* level)
                         if (up && status == CHAR_ACTIVE && col_rect.y > level->crates[i]->get_col_rect().y)
                         {
                             y_vel += JUMP_VEL;
+                            Mix_PlayChannel(-1, game->sound->level_w_jump_snd, 0);
                         }
                     }
                 }
@@ -754,7 +765,7 @@ void dot::spring(int x, int y, int direction)
 >>>>>>> 7d81edb... comments
     
     // deal with any horizontal springing
-    if(direction == FLIP_RIGHT)
+    if (direction == FLIP_RIGHT)
     {
         x_vel += x;
     }

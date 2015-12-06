@@ -17,7 +17,7 @@ class intro_state : public gamestate
 {
 public:
     // init and shutdown
-    void init(engine* game) { };
+    void init(engine* game) { Mix_PlayChannel(-1, game->sound->menu_onset_snd, 0); };
     void cleanup() { };
     
     // pause and resume

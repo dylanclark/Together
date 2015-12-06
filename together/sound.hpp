@@ -28,6 +28,8 @@ public:
     Mix_Chunk* menu_exit_snd = nullptr;
     Mix_Chunk* level_crate_snd = nullptr;
     Mix_Chunk* level_switch_snd = nullptr;
+    Mix_Chunk* level_b_jump_snd = nullptr;
+    Mix_Chunk* level_w_jump_snd = nullptr;
 };
 
 #endif /* sound_hpp */

@@ -94,8 +94,15 @@ void level2_state::update(engine* game)
     SDL_RenderClear(game->rend);
     
     // move the square
+<<<<<<< HEAD
     b_char.move(tileset, width, height);
     w_char.move(tileset, width, height);
+=======
+    if (b_char.status == CHAR_ACTIVE)
+        b_char.move(this, game);
+    if (w_char.status == CHAR_ACTIVE)
+        w_char.move(this, game);
+>>>>>>> b57fd21... stuff
     
     for (int i = 0; i < crates.size(); i++)
     {

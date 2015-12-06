@@ -64,9 +64,9 @@ public:
     bool handle_event(SDL_Event &e, levelstate* level, engine* game);
     
     // move the square
-    void move(levelstate* level);
-    bool crate_col(levelstate* level);
-    bool tile_col(tile* tileset[], int size);
+    void move(levelstate* level, engine* game);
+    bool crate_col(levelstate* level, engine* game);
+    bool tile_col(tile* tileset[], int size, engine* game);
     
     // render the square on the screen
     void render(SDL_Rect* camera, engine* game);

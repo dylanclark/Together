@@ -35,7 +35,7 @@ void levelselectmenu_state::init(engine* game)
     
     
     levelselect_menu = new class menu(game->screen_width, game->screen_height, 0);
-    levelselect_menu->size = 4;
+    levelselect_menu->size = 2;
     
     levelselect_menu->sliders.push_back(new class level_slider(true, game->read_save(), false, game->screen_width / 2, game->screen_height / 2 - 45, 480, 80));
     levelselect_menu->sliders[0]->tex = &level_slider;
