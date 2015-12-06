@@ -125,7 +125,7 @@ void tile::render(int b_status, SDL_Rect* camera, engine* game, texture* tile_te
         case TILE_INACTIVATE:
         {
             // start animation (if necessary)
-            if (!animating && frame == 0)
+            if (!animating && frame <= 0)
             {
                 animating = true;
             }
@@ -140,16 +140,17 @@ void tile::render(int b_status, SDL_Rect* camera, engine* game, texture* tile_te
             tile_tex->render_tile(col_rect.x, col_rect.y, &tile_clips[type], &inactivate_clip, camera, game);
             
             // change the status if animation is over!
-            if (frame == TILE_FRAMES - 1)
+            if (frame >= TILE_FRAMES - 1)
             {
                 animating = false;
+                status = TILE_INACTIVE;
             }
             break;
         }
         case TILE_ACTIVATE:
         {
             // start animation (if necessary)
-            if (!animating && frame == TILE_FRAMES - 1)
+            if (!animating && frame >= TILE_FRAMES - 1)
             {
                 animating = true;
                 frame = TILE_FRAMES;
@@ -165,9 +166,10 @@ void tile::render(int b_status, SDL_Rect* camera, engine* game, texture* tile_te
             tile_tex->render_tile(col_rect.x, col_rect.y, &tile_clips[type], &activate_clip, camera, game);
             
             // change the status if animation is over!
-            if (frame == 1)
+            if (frame <= 1)
             {
                 animating = false;
+                status = TILE_ACTIVE;
             }
             break;
         }

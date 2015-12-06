@@ -201,6 +201,8 @@ bool dot::handle_event(SDL_Event &e, levelstate* level, engine* game)
 
 void dot::move(levelstate* level)
 {
+    if (status != CHAR_ACTIVE)
+        return;
     
     // update y velocity with gravity
     black ? y_vel += GRAVITY : y_vel -= GRAVITY;
@@ -244,14 +246,7 @@ void dot::move(levelstate* level)
     
     if (!crate_col(level))
     {
-        if (tile_col(level->tileset, level->width * level->height) && level->shiftable == true)
-            level->shiftable = true;
-        else
-            level->shiftable = false;
-    }
-    else
-    {
-        level->shiftable = false;
+        level->shiftable = tile_col(level->tileset, level->width * level->height);
     }
     
     // check edges
@@ -502,9 +497,7 @@ bool dot::crate_col(levelstate* level)
             {
                 if (!level->crates[i]->black)
                 {
-                    tile_col(level->crates[i]->tileset, MAX_BORDER);
-                    
-                    level->shiftable = true;
+                    level->shiftable = tile_col(level->crates[i]->tileset, MAX_BORDER);
                 }
                 else
                 {
@@ -548,9 +541,10 @@ bool dot::crate_col(levelstate* level)
         }
         else if (!black)
         {
+            level->crates[i]->pushed = false;
+            
             if (check_collision(col_rect, level->crates[i]->get_col_rect(), &repos))
             {
-    
                 if (level->crates[i]->black)
                 {
                     tile_col(level->crates[i]->tileset, MAX_BORDER);
@@ -581,7 +575,7 @@ bool dot::crate_col(levelstate* level)
                         level->shiftable = false;
                     }
                     // land on crate
-                    else if (y_vel > 0)
+                    else if (y_vel < 0)
                     {
                         col_rect.y += repos.y;
                         y_vel = 0;

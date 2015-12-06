@@ -208,7 +208,7 @@ void level1_state::interactions(engine* game)
         b_char.center(&b_level_end.col_rect);
         
         // change state to level 2
-        change_state(game, new level2_state);
+        change_state(game, new level7_state);
     }
     
 }

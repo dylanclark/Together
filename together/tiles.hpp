@@ -82,6 +82,7 @@ public:
     
     // tile status
     int status;
+    int frame;
     
 private:
     // collision rectangle
@@ -89,9 +90,6 @@ private:
     
     // tile type
     int type;
-    
-    // frame of animation
-    int frame;
     
     // animation bool
     bool animating;
