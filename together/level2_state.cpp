@@ -72,9 +72,9 @@ void level2_state::update(engine* game)
     
     // move the square
     if (b_char.status == CHAR_ACTIVE)
-        b_char.move(this);
+        b_char.move(this, game);
     if (w_char.status == CHAR_ACTIVE)
-        w_char.move(this);
+        w_char.move(this, game);
     
     for (int i = 0; i < crates.size(); i++)
     {

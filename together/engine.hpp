@@ -60,9 +60,10 @@ public:
     bool save(int level);
     int read_save();
     
-private:
     // stack of gamestates
     std::vector<gamestate*> states;
+    
+private:
     
     // quit flag
     bool running_flag = true;

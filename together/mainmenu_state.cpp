@@ -108,12 +108,16 @@ void mainmenu_state::resume()
 
 void mainmenu_state::handle_events(engine* game)
 {
+    
     // event handler
     SDL_Event event;
     
     // handle those events, bruh
     while (SDL_PollEvent(&event))
     {
+        if (main_menu->fade_in->timer > 0)
+            continue;
+        
         switch (event.type)
         {
             case SDL_QUIT:

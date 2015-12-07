@@ -10,10 +10,17 @@
 
 void intro_state::update(engine* game)
 {
+    // switch to level if the sound effect is over
     if (Mix_Playing(-1) == 0)
     {
-        Mix_PlayChannel(-1, game->sound->menu_choose_snd, 0);
         game->pop_state();
+        return;
+    }
+    
+    // update the levelstate if the intro state is still active
+    if (game->states.size() > 1)
+    {
+        game->states.rbegin()[1]->update(game);
     }
     
     SDL_RenderClear(game->rend);
