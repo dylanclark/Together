@@ -203,8 +203,8 @@ void level9_state::load_textures(engine* game)
     }
     
     // initialize level
-    width = 26;
-    height = 28;
+    width = 32;
+    height = 30;
     
     path = "levels/level_09.csv";
     

@@ -25,7 +25,7 @@ const int BOARD_ACTIVE = 2;
 const int BOARD_INACTIVATE = 3;
 
 // animation length
-const int BOARD_ANIMATION_LENGTH = 8;
+const int BOARD_ANIMATION_LENGTH = 7;
 
 // direction
 const int FLIP_LEFT = 0;

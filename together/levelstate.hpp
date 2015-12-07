@@ -43,6 +43,7 @@ public:
     level_end w_level_end;
     button b_button;
     button w_button;
+    button b_button2;
     springboard w_springboard;
     springboard b_springboard;
     springboard w_cross_spring;
@@ -65,6 +66,7 @@ public:
     texture w_button_tex;
     texture crate_tex_four_by_two;
     texture w_crate_tex_four_by_two;
+    texture w_platform;
     texture crate_tex_four_by_one;
     texture crate_tex_three_by_two;
     texture crate_tex_two_by_two;
