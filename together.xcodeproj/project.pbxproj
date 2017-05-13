@@ -279,6 +279,7 @@
 		FCD4DFB51C126A3A008546AB /* level6_state.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = level6_state.hpp; sourceTree = "<group>"; };
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 >>>>>>> c1192ed... levels 5 and 6!
 =======
 =======
@@ -287,6 +288,8 @@
 <<<<<<< HEAD
 >>>>>>> 6cff3cb... level 5 tile change, design and documentation files
 =======
+=======
+>>>>>>> a8b6112... got rid of design and documentation docs because they were just for our cs50 submission
 		FCE892EB1C14197B001C4CB2 /* level8_state.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = level8_state.cpp; sourceTree = "<group>"; };
 		FCE892EC1C14197B001C4CB2 /* level8_state.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = level8_state.hpp; sourceTree = "<group>"; };
 		FCE892EE1C141985001C4CB2 /* level9_state.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = level9_state.cpp; sourceTree = "<group>"; };
@@ -494,21 +497,19 @@
 				EF8252841BF109940003EF9E /* SDL2_image.framework */,
 				EF8252821BF1098A0003EF9E /* SDL2.framework */,
 				EFBCA0BC1BED17FB005D56CA /* project */,
-				EFBCA0BB1BED17FB005D56CA /* Products */,
-				FCE892DA1C13979E001C4CB2 /* design */,
-				FCE892DB1C13979E001C4CB2 /* documentation */,
+				EFBCA0BB1BED17FB005D56CA /* products */,
 				EF0808611BF0504300338AB0 /* levels */,
 				EFBCA0CC1BED21BF005D56CA /* textures */,
 				EF5249561C12365600C6F2A6 /* save */,
 			);
 			sourceTree = "<group>";
 		};
-		EFBCA0BB1BED17FB005D56CA /* Products */ = {
+		EFBCA0BB1BED17FB005D56CA /* products */ = {
 			isa = PBXGroup;
 			children = (
 				EFBCA0BA1BED17FB005D56CA /* together */,
 			);
-			name = Products;
+			name = products;
 			sourceTree = "<group>";
 		};
 		EFBCA0BC1BED17FB005D56CA /* project */ = {
@@ -597,7 +598,7 @@
 				en,
 			);
 			mainGroup = EFBCA0B11BED17FB005D56CA;
-			productRefGroup = EFBCA0BB1BED17FB005D56CA /* Products */;
+			productRefGroup = EFBCA0BB1BED17FB005D56CA /* products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
