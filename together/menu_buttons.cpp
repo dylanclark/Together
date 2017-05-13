@@ -1,11 +1,3 @@
-//
-//  menu_buttons.cpp
-//  together
-//
-//  Created by Fraser Weist on 11/30/15.
-//  Copyright © 2015 together. All rights reserved.
-//
-
 // using SDL and standard IO
 #include <stdio.h>
 #include <SDL2/SDL.h>
