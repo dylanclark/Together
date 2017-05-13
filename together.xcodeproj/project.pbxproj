@@ -151,8 +151,6 @@
 		FCD4DFB21C126476008546AB /* level5_state.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = level5_state.hpp; sourceTree = "<group>"; };
 		FCD4DFB41C126A3A008546AB /* level6_state.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = level6_state.cpp; sourceTree = "<group>"; };
 		FCD4DFB51C126A3A008546AB /* level6_state.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = level6_state.hpp; sourceTree = "<group>"; };
-		FCE892DA1C13979E001C4CB2 /* design */ = {isa = PBXFileReference; lastKnownFileType = text; path = design; sourceTree = "<group>"; };
-		FCE892DB1C13979E001C4CB2 /* documentation */ = {isa = PBXFileReference; lastKnownFileType = text; path = documentation; sourceTree = "<group>"; };
 		FCE892EB1C14197B001C4CB2 /* level8_state.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = level8_state.cpp; sourceTree = "<group>"; };
 		FCE892EC1C14197B001C4CB2 /* level8_state.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = level8_state.hpp; sourceTree = "<group>"; };
 		FCE892EE1C141985001C4CB2 /* level9_state.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = level9_state.cpp; sourceTree = "<group>"; };
@@ -323,8 +321,6 @@
 				EF8252821BF1098A0003EF9E /* SDL2.framework */,
 				EFBCA0BC1BED17FB005D56CA /* project */,
 				EFBCA0BB1BED17FB005D56CA /* products */,
-				FCE892DA1C13979E001C4CB2 /* design */,
-				FCE892DB1C13979E001C4CB2 /* documentation */,
 				EF0808611BF0504300338AB0 /* levels */,
 				EFBCA0CC1BED21BF005D56CA /* textures */,
 				EF5249561C12365600C6F2A6 /* save */,
