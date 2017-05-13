@@ -83,9 +83,8 @@
 		EF52494E1C117BE200C6F2A6 /* newgamemenu_state.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = newgamemenu_state.hpp; sourceTree = "<group>"; };
 		EF5249521C11F0E800C6F2A6 /* level3_state.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = level3_state.hpp; sourceTree = "<group>"; };
 		EF5249551C11F0FC00C6F2A6 /* intro_state.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = intro_state.hpp; sourceTree = "<group>"; };
-		EF5249561C12365600C6F2A6 /* save */ = {isa = PBXFileReference; lastKnownFileType = folder; path = save; sourceTree = "<group>"; };
-		EF5295A71C0BE7CB00178AC7 /* SDL2_ttf.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL2_ttf.framework; path = ../../../../../../Library/Frameworks/SDL2_ttf.framework; sourceTree = "<group>"; };
-		EF5295A91C0BE8C000178AC7 /* SDL2_mixer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL2_mixer.framework; path = ../../../../../../Library/Frameworks/SDL2_mixer.framework; sourceTree = "<group>"; };
+		EF5295A71C0BE7CB00178AC7 /* SDL2_ttf.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL2_ttf.framework; path = /Library/Frameworks/SDL2_ttf.framework; sourceTree = "<absolute>"; };
+		EF5295A91C0BE8C000178AC7 /* SDL2_mixer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL2_mixer.framework; path = /Library/Frameworks/SDL2_mixer.framework; sourceTree = "<absolute>"; };
 		EF5295AB1C0BEBEB00178AC7 /* sound.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = sound.cpp; sourceTree = "<group>"; };
 		EF5295AC1C0BEBEB00178AC7 /* sound.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = sound.hpp; sourceTree = "<group>"; };
 		EF5295AE1C0BF65F00178AC7 /* gamepad.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = gamepad.cpp; sourceTree = "<group>"; };
@@ -94,8 +93,8 @@
 		EF5295B21C0C107000178AC7 /* menu.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = menu.hpp; sourceTree = "<group>"; };
 		EF68FE801C04003200E2030D /* gamestate.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = gamestate.hpp; sourceTree = "<group>"; };
 		EF69B9121BFA83D400F5DAC2 /* TODO */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = TODO; sourceTree = "<group>"; };
-		EF8252821BF1098A0003EF9E /* SDL2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL2.framework; path = ../../../../../../Library/Frameworks/SDL2.framework; sourceTree = "<group>"; };
-		EF8252841BF109940003EF9E /* SDL2_image.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL2_image.framework; path = ../../../../../../Library/Frameworks/SDL2_image.framework; sourceTree = "<group>"; };
+		EF8252821BF1098A0003EF9E /* SDL2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL2.framework; path = /Library/Frameworks/SDL2.framework; sourceTree = "<absolute>"; };
+		EF8252841BF109940003EF9E /* SDL2_image.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL2_image.framework; path = /Library/Frameworks/SDL2_image.framework; sourceTree = "<absolute>"; };
 		EF8252921BF3201C0003EF9E /* camera.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = camera.cpp; sourceTree = "<group>"; };
 		EF8252931BF3201C0003EF9E /* camera.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = camera.hpp; sourceTree = "<group>"; };
 		EFA85F2D1C0675BA001113CA /* mainmenu_state.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = mainmenu_state.cpp; sourceTree = "<group>"; };
@@ -174,6 +173,28 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		EF00ABDD1EC7BE4000CE2E38 /* resources */ = {
+			isa = PBXGroup;
+			children = (
+				EFBCA0CC1BED21BF005D56CA /* textures */,
+				EF0808611BF0504300338AB0 /* levels */,
+				FC97325F1C137DA200BB70B4 /* sound */,
+				FC97325E1C137DA200BB70B4 /* save */,
+			);
+			name = resources;
+			sourceTree = "<group>";
+		};
+		EF00ABDE1EC7BE5500CE2E38 /* frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				EF5295A91C0BE8C000178AC7 /* SDL2_mixer.framework */,
+				EF5295A71C0BE7CB00178AC7 /* SDL2_ttf.framework */,
+				EF8252841BF109940003EF9E /* SDL2_image.framework */,
+				EF8252821BF1098A0003EF9E /* SDL2.framework */,
+			);
+			name = frameworks;
+			sourceTree = "<group>";
+		};
 		EF27A6A21C0506F400459C32 /* states */ = {
 			isa = PBXGroup;
 			children = (
@@ -313,17 +334,10 @@
 		EFBCA0B11BED17FB005D56CA = {
 			isa = PBXGroup;
 			children = (
-				FC97325E1C137DA200BB70B4 /* save */,
-				FC97325F1C137DA200BB70B4 /* sound */,
-				EF5295A91C0BE8C000178AC7 /* SDL2_mixer.framework */,
-				EF5295A71C0BE7CB00178AC7 /* SDL2_ttf.framework */,
-				EF8252841BF109940003EF9E /* SDL2_image.framework */,
-				EF8252821BF1098A0003EF9E /* SDL2.framework */,
+				EF00ABDD1EC7BE4000CE2E38 /* resources */,
+				EF00ABDE1EC7BE5500CE2E38 /* frameworks */,
 				EFBCA0BC1BED17FB005D56CA /* project */,
 				EFBCA0BB1BED17FB005D56CA /* products */,
-				EF0808611BF0504300338AB0 /* levels */,
-				EFBCA0CC1BED21BF005D56CA /* textures */,
-				EF5249561C12365600C6F2A6 /* save */,
 			);
 			sourceTree = "<group>";
 		};
