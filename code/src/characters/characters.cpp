@@ -818,5 +818,9 @@ bool dot::center(SDL_Rect* end_rect)
 float dot::get_y_vel()
 {
     return y_vel;
+<<<<<<< HEAD:code/src/characters/characters.cpp
 >>>>>>> 250bb44... cross layer, bug fixes, levels 1 and 2,
 }
+=======
+}
+>>>>>>> 04da4d0... added a dependency file to help for Makefile conversion:together/characters.cpp

@@ -236,4 +236,7 @@ void texture::render_message(SDL_Rect* message, SDL_Rect* clip, SDL_Renderer* re
     // render to the screen
     SDL_RenderCopy(rend, tex, NULL, &render_rect);
 }
+<<<<<<< HEAD:code/src/textures/textures.cpp
 >>>>>>> 250bb44... cross layer, bug fixes, levels 1 and 2,
+=======
+>>>>>>> 04da4d0... added a dependency file to help for Makefile conversion:together/textures.cpp

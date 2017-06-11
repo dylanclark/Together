@@ -33,5 +33,10 @@ void intro_state::handle_events(engine *game)
 
     // handle those events, bruh
     while (SDL_PollEvent(&event)) { };
+<<<<<<< HEAD:code/src/states/intro_state.cpp
 
 }
+=======
+    
+}
+>>>>>>> 04da4d0... added a dependency file to help for Makefile conversion:together/intro_state.cpp

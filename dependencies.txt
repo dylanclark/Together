@@ -1,0 +1,37 @@
+engine: sound gamestate
+button: level_end tiles textures init characters collisions camera
+camera: (characters) (engine->screen-width/height) (level_draw)
+characters: textures tiles level_end camera engine gamepad init collisions crate springboard levelstate
+collisions: (tiles characters)
+crate: tiles characters collision 
+gamepad: none!
+gamestate: engine (levelstate)
+init: none!
+intro_state: menu engine gamestate textures
+level_draw: tiles
+level_end: characters init textures collisions engine camera tiles
+level_messages: characters init textures collisions engine camera tiles level_end
+level1_state: gamestate tiles characters levelstate level1 level7 level8 level6 level2 mainmenu pausemenu characters tiles crate level_end gamestate button engine springboard menu level_messages
+level01_state: gamestate tiles characters levelstate level1 level2 mainmenu pausemenu characters tiles crate level_end gamestate button engine springboard menu level_messages
+level2_state: gamestate tiles characters levelstate level2 level3 mainmenu characters tiles crate level_end gamestate button engine springboard pausemenu level_messages
+3: gamestate tiles characters levelstate level3 level4 mainmenu characters tiles crate level_end gamestate button engine springboard pausemenu level_messages
+4: all of above but level4/5/01 states
+5: all of above but level4/5/6
+6: all of above but level01/6/7
+7: all of above but level01/7/8
+8: all of above but level7/8/9
+9: all of above but level7/8/9
+levelselect_menu: menu engine gamestate textures init quitmenu mainmenu level1 level01 level2 menu_buttons pausemenu optionsmenu  
+levelstate: engine gamestate tiles camera characters level_end button springboard level_messages
+main: engine mainmenu_state
+mainmenu_state: menu engine gamestate textures menu_buttons level1-3_state quitmenu init level01 
+menu_buttons: menu quitmenu level1-8_state mainmenu options newgame intro levelselect  
+menu: textures engine gamepad gamestate
+newgamemenu_state: menu engine gamestate textures quitmenu mainmenu init level1-3 menu_buttons options pausemenu 
+optionsmenu_state: menu engine gamestate textures init quitmenu mainmenu level1-3 menu_buttons pausemenu
+pausemenu_state: menu engine gamestate textures init quitmenu mainmenu menu_buttons level1-3
+quitmenu_state: menu engine gamestate textures mainmenu init level1-3 menu_buttons
+sound: none!
+springboard: level_end tiles camera characters init textures collisions
+textures: characters engine initialization tiles
+tiles: textures engine
