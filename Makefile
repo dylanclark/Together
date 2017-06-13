@@ -65,8 +65,8 @@ $(1)/%.o: %.cpp
 	$(HIDE)$(CC) -c -I$$(INCLUDES) -I/usr/local/include -o $$(subst /,$$(PSEP),$$@) $$(subst /,$$(PSEP),$$<)  $$(sdl2-config --cflags --libs) -MMD
 endef
 
-../build/resources:
-    rsync -rupE resources ../build/
+../build/resources: resources
+	rsync -rupE resources ../build/
 
 # Indicate to make which targets are not files
 .PHONY: all ../build/resources resources clean directories
