@@ -9,15 +9,6 @@
 #include <SDL2/SDL_image.h>
 
 // include header files
-<<<<<<< HEAD:together/springboard.hpp
-#include "characters.hpp"
-#include "initialization.hpp"
-#include "textures.hpp"
-#include "collisions.hpp"
-#include "tiles.hpp"
-#include "camera.hpp"
-#include "button.hpp"
-=======
 #include <characters/characters.hpp>
 #include <engine/init.hpp>
 #include <textures/textures.hpp>
@@ -25,7 +16,6 @@
 #include <levels/tiles.hpp>
 #include <levels/camera.hpp>
 
->>>>>>> 201bf90... gigantic makefile revamp:code/include/objects/springboard.hpp
 
 
 // button status constants
@@ -37,8 +27,6 @@ const int BOARD_INACTIVATE = 3;
 // animation length
 const int BOARD_ANIMATION_LENGTH = 7;
 
-<<<<<<< HEAD
-=======
 // direction
 const int FLIP_LEFT = 0;
 const int FLIP_RIGHT = 1;
@@ -46,7 +34,6 @@ const int FLIP_RIGHT = 1;
 const int LOCATION = 0;
 const int VELOCITY = 1;
 
->>>>>>> 250bb44... cross layer, bug fixes, levels 1 and 2,
 
 class springboard
 {
@@ -68,14 +55,10 @@ public:
 
     // activated or not
     bool activated;
-<<<<<<< HEAD:together/springboard.hpp
-    
-=======
 
     // shown or not
     bool show;
 
->>>>>>> 201bf90... gigantic makefile revamp:code/include/objects/springboard.hpp
     // direction
     int direction;
 
@@ -96,10 +79,6 @@ public:
     SDL_Point* center = NULL;
 
     // flip type
-<<<<<<< HEAD
-    SDL_RendererFlip flip = SDL_FLIP_NONE;
-
-=======
     SDL_RendererFlip flip_type;
 
     // spring velocity
@@ -113,12 +92,7 @@ public:
 
     // cross-layer spring logic
     void cross_spring(dot* springer, dot* springee, int type);
-<<<<<<< HEAD:together/springboard.hpp
->>>>>>> 250bb44... cross layer, bug fixes, levels 1 and 2,
-    
-=======
 
->>>>>>> 201bf90... gigantic makefile revamp:code/include/objects/springboard.hpp
 };
 
 #endif /* springboard_hpp */

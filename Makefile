@@ -1,7 +1,7 @@
 # set project directory one level above the Makefile directory. $(CURDIR) is a
 # GNU make variable containing the path to the current working directory
 PROJDIR := $(realpath $(CURDIR)/..)
-SOURCEDIR := $(realpath $(CURDIR)/code)
+SOURCEDIR := $(PROJDIR)/together/code
 BUILDDIR := $(PROJDIR)/build
 
 # executable name
@@ -65,10 +65,13 @@ $(1)/%.o: %.cpp
 	$(HIDE)$(CC) -c -I$$(INCLUDES) -I/usr/local/include -o $$(subst /,$$(PSEP),$$@) $$(subst /,$$(PSEP),$$<)  $$(sdl2-config --cflags --libs) -MMD
 endef
 
-# Indicate to make which targets are not files
-.PHONY: all clean directories
+../build/resources: resources
+	$(HIDE)rsync -rupE resources ../build/
 
-all: directories $(BUILDDIR)/$(TARGET) ../build/resources
+# Indicate to make which targets are not files
+.PHONY: all ../build/resources resources clean directories
+
+all: directories $(BUILDDIR)/$(TARGET)
 
 $(BUILDDIR)/$(TARGET): $(OBJS)
 	$(HIDE)echo Linking $@
@@ -79,9 +82,6 @@ $(foreach targetdir, $(TARGETDIRS), $(eval $(call generateRules, $(targetdir))))
 
 directories:
 	$(HIDE)$(MKDIR) $(subst /,$(PSEP),$(TARGETDIRS)) $(ERRIGNORE)
-
-../build/resources: resources
-	rsync -rupE resources ../build/
 
 # Remove all objects, dependencies and executable files generated during the build
 clean:

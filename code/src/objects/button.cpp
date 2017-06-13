@@ -28,14 +28,10 @@ button::button()
     col_rect.h = 16;
     col_rect.x = (SCREEN_WIDTH - col_rect.w) / 2;
     col_rect.y = (SCREEN_HEIGHT - col_rect.h) / 2;
-<<<<<<< HEAD
-    
-=======
 
     used = false;
 
     frame = 0;
->>>>>>> 250bb44... cross layer, bug fixes, levels 1 and 2,
 }
 
 // check for button collision
@@ -75,14 +71,10 @@ void button::render(SDL_Rect* camera, engine* game)
             angle = 270.0;
             break;
         }
-<<<<<<< HEAD:together/button.cpp
-            
-=======
         default:
             angle = 0.0;
             break;
 
->>>>>>> 201bf90... gigantic makefile revamp:code/src/objects/button.cpp
     }
 
     // make sure it only animates if not single & used

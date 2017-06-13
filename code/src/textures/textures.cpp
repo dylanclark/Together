@@ -147,23 +147,6 @@ void texture::render_tile(int x, int y, SDL_Rect* type_clip, SDL_Rect* active_cl
     SDL_RenderCopy(game->rend, tex, &clip_rect, &render_rect);
 }
 
-<<<<<<< HEAD
-
-// render things with a given angle
-void texture::angle_render(int x, int y, SDL_Rect* clip, SDL_Rect* camera, SDL_Renderer* rend, double angle, SDL_Point* center, SDL_RendererFlip flip)
-{
-    int render_x = (x - camera->x) / ( (float) camera->w / (float) SCREEN_WIDTH);
-    int render_y = (y - camera->y) / ((float) camera->h / (float) SCREEN_HEIGHT);
-    int render_w = width / ((float) camera->w / (float) SCREEN_WIDTH) + 1;
-    int render_h = height / ((float) camera->h / (float) SCREEN_HEIGHT) + 1;
-    
-    // rendering rectangle
-    SDL_Rect render_rect = {render_x, render_y, render_w, render_h};
-    
-    // render to the screen
-    SDL_RenderCopyEx(rend, tex, clip, &render_rect, angle, center, flip);
-};
-=======
 void texture::render_button(SDL_Rect* button, SDL_Rect* clip, SDL_Renderer* rend)
 {
     // rendering rectangle
@@ -172,9 +155,6 @@ void texture::render_button(SDL_Rect* button, SDL_Rect* clip, SDL_Renderer* rend
     // render to the screen
     SDL_RenderCopy(rend, tex, clip, &render_rect);
 }
-<<<<<<< HEAD
->>>>>>> a671362... Implemented main menu, pause menu, and options menu!
-=======
 
 void texture::angle_render(int x, int y, SDL_Rect *clip, SDL_Rect *camera, engine* game, double angle, SDL_Point *center, SDL_RendererFlip flip)
 {
@@ -189,9 +169,6 @@ void texture::angle_render(int x, int y, SDL_Rect *clip, SDL_Rect *camera, engin
     // render to the screen
     SDL_RenderCopyEx(game->rend, tex, clip, &render_rect, angle, center, flip);
 };
-<<<<<<< HEAD
->>>>>>> 71027e4... Volume / sfx slider adjustment.
-=======
 
 bool texture::load_message(int w, int h, std::string path, SDL_Renderer* rend)
 {
@@ -236,7 +213,3 @@ void texture::render_message(SDL_Rect* message, SDL_Rect* clip, SDL_Renderer* re
     // render to the screen
     SDL_RenderCopy(rend, tex, NULL, &render_rect);
 }
-<<<<<<< HEAD:code/src/textures/textures.cpp
->>>>>>> 250bb44... cross layer, bug fixes, levels 1 and 2,
-=======
->>>>>>> 04da4d0... added a dependency file to help for Makefile conversion:together/textures.cpp

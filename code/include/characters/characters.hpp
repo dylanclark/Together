@@ -82,18 +82,7 @@ public:
 
     // jumps
     int jump;
-<<<<<<< HEAD:together/characters.hpp
-    
-<<<<<<< HEAD
-    // end of level animation
-    void completed(int width, int height, SDL_Rect* end_rect);
-    
-    // spring
-    void spring();
-=======
-=======
 
->>>>>>> 201bf90... gigantic makefile revamp:code/include/characters/characters.hpp
     // spring
     void spring(int x, int y, int direction);
 
@@ -102,7 +91,6 @@ public:
 
     float get_y_vel();
 
->>>>>>> 250bb44... cross layer, bug fixes, levels 1 and 2,
 private:
 
     // velocity variables

@@ -5,33 +5,6 @@
 #include <SDL2/SDL_image.h>
 
 // include header file
-<<<<<<< HEAD:together/characters.cpp
-#include "characters.hpp"
-#include "initialization.hpp"
-#include "textures.hpp"
-#include "collisions.hpp"
-#include "tiles.hpp"
-#include "camera.hpp"
-<<<<<<< HEAD
-#include "level_end.hpp"
-
-=======
-#include "levelstate.hpp"
-#include "crate.hpp"
-<<<<<<< HEAD
-<<<<<<< HEAD
->>>>>>> 2e8ee63... Implemented movable crates!!!
-=======
-#include "springboard.hpp"
-=======
-#include "gamepad.hpp"
-<<<<<<< HEAD
->>>>>>> a671362... Implemented main menu, pause menu, and options menu!
-=======
-#include "springboard.hpp"
->>>>>>> 71027e4... Volume / sfx slider adjustment.
-
-=======
 #include <characters/characters.hpp>
 #include <engine/init.hpp>
 #include <textures/textures.hpp>
@@ -43,12 +16,12 @@
 #include <objects/crate.hpp>
 #include <engine/gamepad.hpp>
 #include <objects/springboard.hpp>
->>>>>>> 201bf90... gigantic makefile revamp:code/src/characters/characters.cpp
 
 // reinitialize character textures
 extern texture b_char_tex;
 extern texture w_char_tex;
->>>>>>> c8cecea... springs!
+extern texture b_end_animate;
+extern texture w_end_animate;
 
 dot::dot()
 {
@@ -497,22 +470,9 @@ bool dot::tile_col(tile* tileset[], int size, engine* game)
 
                     shiftable = false;
                 }
-<<<<<<< HEAD:together/characters.cpp
-                
-<<<<<<< HEAD
-<<<<<<< HEAD
-                // white ceiling edge
-                else if (tiles[i]->ceiling_w && tiles[i]->wall_w)
-=======
-                // black ceiling edge
-=======
-=======
 
->>>>>>> 201bf90... gigantic makefile revamp:code/src/characters/characters.cpp
                 // white ceiling edge
->>>>>>> 37af3db... Design descriptions!
                 else if (tileset[i]->ceiling_w && tileset[i]->wall_w)
->>>>>>> 2e8ee63... Implemented movable crates!!!
                 {
                     // determine which is smaller, and use that one!
                     if (abs(repos.x) <= abs(repos.y))
@@ -733,36 +693,7 @@ void dot::render(SDL_Rect* camera, engine* game)
     }
 };
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-// code for post-level animation (must be followed by level change or will mess shit up!)
-void dot::completed(int width,int height, SDL_Rect* end_rect)
-{
-    // make them both big
-    if(!CHAR_ACTIVE)
-        status = CHAR_ACTIVE;
-    
-    // center dot on level-end object
-    while (col_rect.x < end_rect->x )
-        col_rect.x++;
-    while (col_rect.x > end_rect->x )
-        col_rect.x--;
-    
-    // make it jump (input actual animation here)
-    black ? y_vel -= DOT_VEL : y_vel += DOT_VEL;
-    
-    return;
-}
-
-void dot::spring()
-{
-    status = CHAR_ACTIVE;
-    
-    black ? y_vel -= JUMP_VEL : y_vel += JUMP_VEL;
-    
-    x_vel += DOT_VEL;
-=======
-
+// spring when sprung
 void dot::spring(int x, int y, int direction)
 {
     // become active if not
@@ -771,21 +702,7 @@ void dot::spring(int x, int y, int direction)
     // spring the right way
     y_vel = 0;
     black ? y_vel -= y * 2 : y_vel += y * 2;
-<<<<<<< HEAD:together/characters.cpp
-=======
-// spring when sprung
-void dot::spring(int x, int y, int direction)
-{ 
-    // become active if not
-    status = CHAR_ACTIVE;
-    
-    // spring the right way!
-    black ? y_vel -= y : y_vel += y;
->>>>>>> 7d81edb... comments
-    
-=======
 
->>>>>>> 201bf90... gigantic makefile revamp:code/src/characters/characters.cpp
     // deal with any horizontal springing
     if (direction == FLIP_RIGHT)
     {
@@ -818,9 +735,4 @@ bool dot::center(SDL_Rect* end_rect)
 float dot::get_y_vel()
 {
     return y_vel;
-<<<<<<< HEAD:code/src/characters/characters.cpp
->>>>>>> 250bb44... cross layer, bug fixes, levels 1 and 2,
 }
-=======
-}
->>>>>>> 04da4d0... added a dependency file to help for Makefile conversion:together/characters.cpp

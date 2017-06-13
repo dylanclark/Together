@@ -17,15 +17,10 @@
 #include <objects/springboard.hpp>
 
 // reinitialize textures
-<<<<<<< HEAD
-extern texture b_board;
-extern texture w_board;
-=======
 extern texture b_springboard;
 extern texture w_springboard;
 extern texture b_cross_layer;
 extern texture w_cross_layer;
->>>>>>> 250bb44... cross layer, bug fixes, levels 1 and 2,
 
 // board class
 springboard::springboard()
@@ -35,23 +30,13 @@ springboard::springboard()
     col_rect.h = 60;
     col_rect.x = (SCREEN_WIDTH - col_rect.w) / 2;
     col_rect.y = (SCREEN_HEIGHT - col_rect.h) / 2;
-<<<<<<< HEAD:together/springboard.cpp
-    
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-=======
-=======
 
->>>>>>> 201bf90... gigantic makefile revamp:code/src/objects/springboard.cpp
     // standard initializing traits
->>>>>>> 7d81edb... comments
     show = false;
     angle = 0.0;
     x_spring = SPRING_X_VEL;
     y_spring = SPRING_Y_VEL;
     frame = 0;
->>>>>>> 250bb44... cross layer, bug fixes, levels 1 and 2,
 }
 
 // check for springboard collision
@@ -74,28 +59,16 @@ void springboard::render(SDL_Rect* camera, engine* game)
     // flip
     switch(direction)
     {
-<<<<<<< HEAD
-        case(LEFT):
-            flip = SDL_FLIP_HORIZONTAL;
-=======
         // flip types for SDL_RenderCopyEx in angle_render
         case(FLIP_LEFT):
             flip_type = SDL_FLIP_VERTICAL;
             angle = 180;
             break;
-<<<<<<< HEAD:together/springboard.cpp
->>>>>>> 7d81edb... comments
-            
-        case(RIGHT):
-            flip = SDL_FLIP_NONE;
-            
-=======
 
         case(FLIP_RIGHT):
             flip_type = SDL_FLIP_NONE;
             break;
 
->>>>>>> 201bf90... gigantic makefile revamp:code/src/objects/springboard.cpp
     }
 
     // relavent clips
@@ -107,27 +80,12 @@ void springboard::render(SDL_Rect* camera, engine* game)
     {
         // relevant cases (resetting frame = 0 each time!)
         case BOARD_INACTIVE:
-<<<<<<< HEAD
-<<<<<<< HEAD
-            tex.angle_render(col_rect.x, col_rect.y, &inactive_clip, camera, rend, angle, center, flip);
-            break;
-        case BOARD_ACTIVE:
-            tex.angle_render(col_rect.x, col_rect.y, &active_clip, camera, rend, angle, center, flip);
-=======
-            tex.angle_render(col_rect.x, col_rect.y, &inactive_clip, camera, rend, angle, center, flip_type);
-=======
             tex.angle_render(col_rect.x, col_rect.y, &inactive_clip, camera, game, angle, center, flip_type);
->>>>>>> 4ff27ea... Finished dynamic camera! (finally)
             frame = 0;
             break;
         case BOARD_ACTIVE:
             tex.angle_render(col_rect.x, col_rect.y, &active_clip, camera, game, angle, center, flip_type);
-<<<<<<< HEAD
-            frame = 0; // do this elsewhere!
->>>>>>> 250bb44... cross layer, bug fixes, levels 1 and 2,
-=======
             frame = 0;
->>>>>>> 7d81edb... comments
             break;
         case BOARD_ACTIVATE:
         {
@@ -136,25 +94,10 @@ void springboard::render(SDL_Rect* camera, engine* game)
 
             // sprite sheet clipper
             SDL_Rect activate_clip = {16 * frame, 0, 16, 16};
-<<<<<<< HEAD:together/springboard.cpp
-            
-<<<<<<< HEAD
-            // render that mofo
-<<<<<<< HEAD
-            tex.angle_render(col_rect.x, col_rect.y, &activate_clip, camera, rend, angle, center, flip);
-=======
-=======
-            // render that 
->>>>>>> 7d81edb... comments
-            tex.angle_render(col_rect.x, col_rect.y, &activate_clip, camera, game, angle, center, flip_type);
->>>>>>> 4ff27ea... Finished dynamic camera! (finally)
-            
-=======
 
             // render that
             tex.angle_render(col_rect.x, col_rect.y, &activate_clip, camera, game, angle, center, flip_type);
 
->>>>>>> 201bf90... gigantic makefile revamp:code/src/objects/springboard.cpp
             // change the status if animation is over!
             if (frame == BOARD_ANIMATION_LENGTH - 1)
             {
@@ -172,11 +115,7 @@ void springboard::render(SDL_Rect* camera, engine* game)
             SDL_Rect inactivate_clip = {16 * (frame + 6), 0, 16, 16};
 
             // render that mofo
-<<<<<<< HEAD
-            tex.angle_render(col_rect.x, col_rect.y, &inactivate_clip, camera, rend, angle, center, flip);
-=======
             tex.angle_render(col_rect.x, col_rect.y, &inactivate_clip, camera, game, angle, center, flip_type);
->>>>>>> 4ff27ea... Finished dynamic camera! (finally)
 
             // change the status if animation is over!
             if (frame == BOARD_ANIMATION_LENGTH - 1)
