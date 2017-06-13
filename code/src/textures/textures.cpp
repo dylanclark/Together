@@ -148,6 +148,7 @@ void texture::render_tile(int x, int y, SDL_Rect* type_clip, SDL_Rect* active_cl
 }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 // render things with a given angle
 void texture::angle_render(int x, int y, SDL_Rect* clip, SDL_Rect* camera, SDL_Renderer* rend, double angle, SDL_Point* center, SDL_RendererFlip flip)
@@ -164,6 +165,8 @@ void texture::angle_render(int x, int y, SDL_Rect* clip, SDL_Rect* camera, SDL_R
     SDL_RenderCopyEx(rend, tex, clip, &render_rect, angle, center, flip);
 };
 =======
+=======
+>>>>>>> ec65ad696ba84fae2cc740a44722ec668b7193ca
 void texture::render_button(SDL_Rect* button, SDL_Rect* clip, SDL_Renderer* rend)
 {
     // rendering rectangle
@@ -173,8 +176,11 @@ void texture::render_button(SDL_Rect* button, SDL_Rect* clip, SDL_Renderer* rend
     SDL_RenderCopy(rend, tex, clip, &render_rect);
 }
 <<<<<<< HEAD
+<<<<<<< HEAD
 >>>>>>> a671362... Implemented main menu, pause menu, and options menu!
 =======
+=======
+>>>>>>> ec65ad696ba84fae2cc740a44722ec668b7193ca
 
 void texture::angle_render(int x, int y, SDL_Rect *clip, SDL_Rect *camera, engine* game, double angle, SDL_Point *center, SDL_RendererFlip flip)
 {
@@ -190,8 +196,11 @@ void texture::angle_render(int x, int y, SDL_Rect *clip, SDL_Rect *camera, engin
     SDL_RenderCopyEx(game->rend, tex, clip, &render_rect, angle, center, flip);
 };
 <<<<<<< HEAD
+<<<<<<< HEAD
 >>>>>>> 71027e4... Volume / sfx slider adjustment.
 =======
+=======
+>>>>>>> ec65ad696ba84fae2cc740a44722ec668b7193ca
 
 bool texture::load_message(int w, int h, std::string path, SDL_Renderer* rend)
 {
@@ -236,7 +245,10 @@ void texture::render_message(SDL_Rect* message, SDL_Rect* clip, SDL_Renderer* re
     // render to the screen
     SDL_RenderCopy(rend, tex, NULL, &render_rect);
 }
+<<<<<<< HEAD
 <<<<<<< HEAD:code/src/textures/textures.cpp
 >>>>>>> 250bb44... cross layer, bug fixes, levels 1 and 2,
 =======
 >>>>>>> 04da4d0... added a dependency file to help for Makefile conversion:together/textures.cpp
+=======
+>>>>>>> ec65ad696ba84fae2cc740a44722ec668b7193ca

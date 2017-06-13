@@ -12,6 +12,7 @@
 #include <SDL2/SDL_image.h>
 
 // include all headers
+<<<<<<< HEAD
 <<<<<<< HEAD:together/main.cpp
 #include "tiles.hpp"
 <<<<<<< HEAD
@@ -34,11 +35,16 @@
 #include "mainmenu_state.hpp"
 #include "level01_state.hpp"
 =======
+=======
+>>>>>>> ec65ad696ba84fae2cc740a44722ec668b7193ca
 #include <engine/init.hpp>
 #include <engine/engine.hpp>
 #include <engine/gamestate.hpp>
 #include <states/mainmenu_state.hpp>
+<<<<<<< HEAD
 >>>>>>> 201bf90... gigantic makefile revamp:code/src/main/main.cpp
+=======
+>>>>>>> ec65ad696ba84fae2cc740a44722ec668b7193ca
 
 // Let's do this.
 int main(void)

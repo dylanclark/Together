@@ -6,6 +6,7 @@
 #include <SDL2/SDL_ttf.h>
 
 // include headers
+<<<<<<< HEAD
 <<<<<<< HEAD:together/level1_state.cpp
 #include "level1_state.hpp"
 #include "level7_state.hpp"
@@ -25,6 +26,8 @@
 #include "menu.hpp"
 #include "level_messages.hpp"
 =======
+=======
+>>>>>>> ec65ad696ba84fae2cc740a44722ec668b7193ca
 #include <states/level1_state.hpp>
 #include <states/level7_state.hpp>
 #include <states/level8_state.hpp>
@@ -42,6 +45,7 @@
 #include <objects/springboard.hpp>
 #include <menus/menu.hpp>
 #include <levels/level_messages.hpp>
+<<<<<<< HEAD
 >>>>>>> 201bf90... gigantic makefile revamp:code/src/states/level1_state.cpp
 
 level1_state level1_state::level1_state_inst;
@@ -177,11 +181,17 @@ void level1_state::init(engine* game)
 =======
 =======
 >>>>>>> 71027e4... Volume / sfx slider adjustment.
+=======
+
+void level1_state::init(engine* game)
+{
+>>>>>>> ec65ad696ba84fae2cc740a44722ec668b7193ca
     // load textures
     load_textures(game);
 
     // initialize objects
     init_objects(game);
+<<<<<<< HEAD
 <<<<<<< HEAD:together/level1_state.cpp
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -199,16 +209,22 @@ void level1_state::init(engine* game)
 =======
 
 >>>>>>> 201bf90... gigantic makefile revamp:code/src/states/level1_state.cpp
+=======
+
+>>>>>>> ec65ad696ba84fae2cc740a44722ec668b7193ca
     if (game->read_save() < 1)
     {
         game->save(1);
     }
+<<<<<<< HEAD
 <<<<<<< HEAD
 >>>>>>> f939236... New level files and updated menu system.
 =======
 >>>>>>> 74e2e9b... levels 1 and 2 now complete!!1
 =======
 >>>>>>> 5cc4fc2... small updates
+=======
+>>>>>>> ec65ad696ba84fae2cc740a44722ec668b7193ca
 }
 
 void level1_state::handle_events(engine *game)
@@ -278,6 +294,7 @@ void level1_state::draw(engine* game)
     {
         crates[i]->render(b_char.status, &camera->display, game, this);
     }
+<<<<<<< HEAD
 <<<<<<< HEAD:together/level1_state.cpp
     
 <<<<<<< HEAD
@@ -307,6 +324,11 @@ void level1_state::draw(engine* game)
 >>>>>>> 4ff27ea... Finished dynamic camera! (finally)
 =======
 >>>>>>> 74e2e9b... levels 1 and 2 now complete!!1
+=======
+
+    b_char.render(&camera->display, game);
+    b_level_end.render(&camera->display, game);
+>>>>>>> ec65ad696ba84fae2cc740a44722ec668b7193ca
     SDL_RenderPresent(game->rend);
 }
 
@@ -334,6 +356,7 @@ void level1_state::cleanup()
     // free all textures
     b_char_tex.free();
     w_char_tex.free();
+<<<<<<< HEAD
 <<<<<<< HEAD:together/level1_state.cpp
 <<<<<<< HEAD
     b_button_tex.free();
@@ -365,6 +388,9 @@ void level1_state::cleanup()
 =======
 
 >>>>>>> 201bf90... gigantic makefile revamp:code/src/states/level1_state.cpp
+=======
+
+>>>>>>> ec65ad696ba84fae2cc740a44722ec668b7193ca
 }
 
 void level1_state::pause()
@@ -395,6 +421,7 @@ void level1_state::load_textures(engine* game)
         printf("Failed to load black level end texter!\n");
         return;
     }
+<<<<<<< HEAD
 <<<<<<< HEAD:together/level1_state.cpp
 <<<<<<< HEAD
     if (!crate_tex_four_by_two.load_object(TILE_WIDTH * 4, TILE_WIDTH * 2, "textures/black/crates/b_crate.png", game->rend))
@@ -451,6 +478,9 @@ void level1_state::load_textures(engine* game)
 =======
 
 >>>>>>> 201bf90... gigantic makefile revamp:code/src/states/level1_state.cpp
+=======
+
+>>>>>>> ec65ad696ba84fae2cc740a44722ec668b7193ca
     // initialize level
     width = 26;
     height = 17;
@@ -481,6 +511,7 @@ void level1_state::init_objects(engine* game)
 
 
     camera = new class camera(game->screen_width, game->screen_height);
+<<<<<<< HEAD
 <<<<<<< HEAD:together/level1_state.cpp
     
 <<<<<<< HEAD
@@ -505,11 +536,15 @@ void level1_state::init_objects(engine* game)
 =======
 
 >>>>>>> 201bf90... gigantic makefile revamp:code/src/states/level1_state.cpp
+=======
+
+>>>>>>> ec65ad696ba84fae2cc740a44722ec668b7193ca
 }
 
 void level1_state::interactions(engine* game)
 {
     // if both are on level end object
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
     if ((b_level_end.check(b_char.col_rect)) && (w_level_end.check(w_char.col_rect)))
@@ -565,10 +600,18 @@ void level1_state::interactions(engine* game)
 =======
 >>>>>>> 5cc4fc2... small updates
 =======
+=======
+    if(b_level_end.check(b_char.col_rect))
+    {
+        b_char.center(&b_level_end.col_rect);
+>>>>>>> ec65ad696ba84fae2cc740a44722ec668b7193ca
 
         // change state to level 2
         change_state(game, new level2_state);
     }
 
+<<<<<<< HEAD
 >>>>>>> 201bf90... gigantic makefile revamp:code/src/states/level1_state.cpp
+=======
+>>>>>>> ec65ad696ba84fae2cc740a44722ec668b7193ca
 }

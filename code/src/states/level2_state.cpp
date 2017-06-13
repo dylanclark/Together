@@ -6,6 +6,7 @@
 #include <SDL2/SDL_ttf.h>
 
 // include headers
+<<<<<<< HEAD
 <<<<<<< HEAD:together/level2_state.cpp
 #include "level2_state.hpp"
 #include "level3_state.hpp"
@@ -32,6 +33,8 @@
 #include "pausemenu_state.hpp"
 >>>>>>> 0c27592... updated menu systems
 =======
+=======
+>>>>>>> ec65ad696ba84fae2cc740a44722ec668b7193ca
 #include <states/level2_state.hpp>
 #include <states/level3_state.hpp>
 #include <states/mainmenu_state.hpp>
@@ -46,7 +49,10 @@
 #include <states/pausemenu_state.hpp>
 #include <levels/level_messages.hpp>
 #include <states/pausemenu_state.hpp>
+<<<<<<< HEAD
 >>>>>>> 201bf90... gigantic makefile revamp:code/src/states/level2_state.cpp
+=======
+>>>>>>> ec65ad696ba84fae2cc740a44722ec668b7193ca
 
 void level2_state::init(engine* game)
 {
@@ -79,18 +85,22 @@ void level2_state::handle_events(engine *game)
 
         // quit if he pressed escape
 <<<<<<< HEAD
+<<<<<<< HEAD
         if (!b_char.handle_event(event))
             game->quit();
         
         if (!w_char.handle_event(event))
             game->quit();
 =======
+=======
+>>>>>>> ec65ad696ba84fae2cc740a44722ec668b7193ca
         if (!b_char.handle_event(event, this, game))
         {
             Mix_PauseMusic();
             Mix_PlayChannel(-1, game->sound->menu_exit_snd, 0);
             game->push_state(new pausemenu_state);
         }
+<<<<<<< HEAD
 <<<<<<< HEAD:together/level2_state.cpp
         
 <<<<<<< HEAD
@@ -106,6 +116,11 @@ void level2_state::handle_events(engine *game)
         w_char.handle_event(event, this, game);
 
 >>>>>>> 201bf90... gigantic makefile revamp:code/src/states/level2_state.cpp
+=======
+
+        w_char.handle_event(event, this, game);
+
+>>>>>>> ec65ad696ba84fae2cc740a44722ec668b7193ca
     }
 
     shiftable = true;
@@ -118,19 +133,26 @@ void level2_state::update(engine* game)
 
     // move the square
 <<<<<<< HEAD
+<<<<<<< HEAD
     b_char.move(tileset, width, height);
     w_char.move(tileset, width, height);
 =======
+=======
+>>>>>>> ec65ad696ba84fae2cc740a44722ec668b7193ca
     if (b_char.status == CHAR_ACTIVE)
         b_char.move(this, game);
     if (w_char.status == CHAR_ACTIVE)
         w_char.move(this, game);
+<<<<<<< HEAD
 <<<<<<< HEAD:together/level2_state.cpp
 >>>>>>> b57fd21... stuff
     
 =======
 
 >>>>>>> 201bf90... gigantic makefile revamp:code/src/states/level2_state.cpp
+=======
+
+>>>>>>> ec65ad696ba84fae2cc740a44722ec668b7193ca
     for (int i = 0; i < crates.size(); i++)
     {
         crates[i]->update();
@@ -152,6 +174,7 @@ void level2_state::draw(engine* game)
     {
         tileset[i]->render(b_char.status, &camera->display, game, &tile_tex);
     }
+<<<<<<< HEAD
 <<<<<<< HEAD:together/level2_state.cpp
     
 <<<<<<< HEAD
@@ -173,10 +196,14 @@ void level2_state::draw(engine* game)
 =======
 
 >>>>>>> 201bf90... gigantic makefile revamp:code/src/states/level2_state.cpp
+=======
+
+>>>>>>> ec65ad696ba84fae2cc740a44722ec668b7193ca
     for (int i = 0; i < crates.size(); i++)
     {
         crates[i]->render(b_char.status, &camera->display, game, this);
     }
+<<<<<<< HEAD
 <<<<<<< HEAD:together/level2_state.cpp
     
 <<<<<<< HEAD
@@ -216,6 +243,12 @@ void level2_state::draw(engine* game)
 >>>>>>> 74e2e9b... levels 1 and 2 now complete!!1
 
 >>>>>>> 250bb44... cross layer, bug fixes, levels 1 and 2,
+=======
+
+    b_char.render(&camera->display, game);
+    b_level_end.render(&camera->display, game);
+
+>>>>>>> ec65ad696ba84fae2cc740a44722ec668b7193ca
     SDL_RenderPresent(game->rend);
 }
 
@@ -249,18 +282,25 @@ void level2_state::cleanup()
     w_button_tex.free();
     b_springboard_tex.free();
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
+=======
+>>>>>>> ec65ad696ba84fae2cc740a44722ec668b7193ca
     w_springboard_tex.free();
     b_cross_spring_tex.free();
     w_cross_spring_tex.free();
     level2_start_tex.free();
     level2_end_tex.free();
+<<<<<<< HEAD
 <<<<<<< HEAD:together/level2_state.cpp
 >>>>>>> 250bb44... cross layer, bug fixes, levels 1 and 2,
     
 =======
 
 >>>>>>> 201bf90... gigantic makefile revamp:code/src/states/level2_state.cpp
+=======
+
+>>>>>>> ec65ad696ba84fae2cc740a44722ec668b7193ca
 }
 
 void level2_state::pause()
@@ -306,6 +346,7 @@ void level2_state::load_textures(engine* game)
         printf("Failed to load  white level end texture!\n");
         return;
     }
+<<<<<<< HEAD
 <<<<<<< HEAD
     if(!b_button_tex.load_tile_sheet("textures/black/button/b_button.png", game->rend))
     {
@@ -353,6 +394,10 @@ void level2_state::load_textures(engine* game)
 =======
 
 >>>>>>> 201bf90... gigantic makefile revamp:code/src/states/level2_state.cpp
+=======
+
+
+>>>>>>> ec65ad696ba84fae2cc740a44722ec668b7193ca
     // initialize level
     width = 27;
     height = 18;
@@ -376,6 +421,7 @@ void level2_state::init_objects(engine* game)
     b_char.black = true;
 
     camera = new class camera(game->screen_width, game->screen_height);
+<<<<<<< HEAD
 <<<<<<< HEAD:together/level2_state.cpp
     
 <<<<<<< HEAD
@@ -424,6 +470,9 @@ void level2_state::init_objects(engine* game)
 =======
 
 >>>>>>> 201bf90... gigantic makefile revamp:code/src/states/level2_state.cpp
+=======
+
+>>>>>>> ec65ad696ba84fae2cc740a44722ec668b7193ca
     // initialize black level end
     b_level_end.tex = b_end_tex;
     b_level_end.col_rect.x = 1500;
@@ -431,11 +480,15 @@ void level2_state::init_objects(engine* game)
 
 
 
+<<<<<<< HEAD
 >>>>>>> 74e2e9b... levels 1 and 2 now complete!!1
+=======
+>>>>>>> ec65ad696ba84fae2cc740a44722ec668b7193ca
 }
 
 void level2_state::interactions(engine* game)
 {
+<<<<<<< HEAD
 <<<<<<< HEAD:together/level2_state.cpp
 =======
 
@@ -600,10 +653,20 @@ void level2_state::interactions(engine* game)
 =======
 >>>>>>> 74e2e9b... levels 1 and 2 now complete!!1
 =======
+=======
+
+    // if both are on level end object
+    if(b_level_end.check(b_char.col_rect))
+    {
+        b_char.center(&b_level_end.col_rect);
+>>>>>>> ec65ad696ba84fae2cc740a44722ec668b7193ca
 
         // change state to level 3
         change_state(game, new level3_state);
     }
 
+<<<<<<< HEAD
 >>>>>>> 201bf90... gigantic makefile revamp:code/src/states/level2_state.cpp
+=======
+>>>>>>> ec65ad696ba84fae2cc740a44722ec668b7193ca
 }

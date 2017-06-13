@@ -18,14 +18,20 @@
 
 // reinitialize textures
 <<<<<<< HEAD
+<<<<<<< HEAD
 extern texture b_board;
 extern texture w_board;
 =======
+=======
+>>>>>>> ec65ad696ba84fae2cc740a44722ec668b7193ca
 extern texture b_springboard;
 extern texture w_springboard;
 extern texture b_cross_layer;
 extern texture w_cross_layer;
+<<<<<<< HEAD
 >>>>>>> 250bb44... cross layer, bug fixes, levels 1 and 2,
+=======
+>>>>>>> ec65ad696ba84fae2cc740a44722ec668b7193ca
 
 // board class
 springboard::springboard()
@@ -35,6 +41,7 @@ springboard::springboard()
     col_rect.h = 60;
     col_rect.x = (SCREEN_WIDTH - col_rect.w) / 2;
     col_rect.y = (SCREEN_HEIGHT - col_rect.h) / 2;
+<<<<<<< HEAD
 <<<<<<< HEAD:together/springboard.cpp
     
 <<<<<<< HEAD
@@ -46,12 +53,19 @@ springboard::springboard()
 >>>>>>> 201bf90... gigantic makefile revamp:code/src/objects/springboard.cpp
     // standard initializing traits
 >>>>>>> 7d81edb... comments
+=======
+
+    // standard initializing traits
+>>>>>>> ec65ad696ba84fae2cc740a44722ec668b7193ca
     show = false;
     angle = 0.0;
     x_spring = SPRING_X_VEL;
     y_spring = SPRING_Y_VEL;
     frame = 0;
+<<<<<<< HEAD
 >>>>>>> 250bb44... cross layer, bug fixes, levels 1 and 2,
+=======
+>>>>>>> ec65ad696ba84fae2cc740a44722ec668b7193ca
 }
 
 // check for springboard collision
@@ -75,14 +89,18 @@ void springboard::render(SDL_Rect* camera, engine* game)
     switch(direction)
     {
 <<<<<<< HEAD
+<<<<<<< HEAD
         case(LEFT):
             flip = SDL_FLIP_HORIZONTAL;
 =======
+=======
+>>>>>>> ec65ad696ba84fae2cc740a44722ec668b7193ca
         // flip types for SDL_RenderCopyEx in angle_render
         case(FLIP_LEFT):
             flip_type = SDL_FLIP_VERTICAL;
             angle = 180;
             break;
+<<<<<<< HEAD
 <<<<<<< HEAD:together/springboard.cpp
 >>>>>>> 7d81edb... comments
             
@@ -90,12 +108,17 @@ void springboard::render(SDL_Rect* camera, engine* game)
             flip = SDL_FLIP_NONE;
             
 =======
+=======
+>>>>>>> ec65ad696ba84fae2cc740a44722ec668b7193ca
 
         case(FLIP_RIGHT):
             flip_type = SDL_FLIP_NONE;
             break;
 
+<<<<<<< HEAD
 >>>>>>> 201bf90... gigantic makefile revamp:code/src/objects/springboard.cpp
+=======
+>>>>>>> ec65ad696ba84fae2cc740a44722ec668b7193ca
     }
 
     // relavent clips
@@ -109,6 +132,7 @@ void springboard::render(SDL_Rect* camera, engine* game)
         case BOARD_INACTIVE:
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
             tex.angle_render(col_rect.x, col_rect.y, &inactive_clip, camera, rend, angle, center, flip);
             break;
         case BOARD_ACTIVE:
@@ -118,16 +142,23 @@ void springboard::render(SDL_Rect* camera, engine* game)
 =======
             tex.angle_render(col_rect.x, col_rect.y, &inactive_clip, camera, game, angle, center, flip_type);
 >>>>>>> 4ff27ea... Finished dynamic camera! (finally)
+=======
+            tex.angle_render(col_rect.x, col_rect.y, &inactive_clip, camera, game, angle, center, flip_type);
+>>>>>>> ec65ad696ba84fae2cc740a44722ec668b7193ca
             frame = 0;
             break;
         case BOARD_ACTIVE:
             tex.angle_render(col_rect.x, col_rect.y, &active_clip, camera, game, angle, center, flip_type);
+<<<<<<< HEAD
 <<<<<<< HEAD
             frame = 0; // do this elsewhere!
 >>>>>>> 250bb44... cross layer, bug fixes, levels 1 and 2,
 =======
             frame = 0;
 >>>>>>> 7d81edb... comments
+=======
+            frame = 0;
+>>>>>>> ec65ad696ba84fae2cc740a44722ec668b7193ca
             break;
         case BOARD_ACTIVATE:
         {
@@ -136,6 +167,7 @@ void springboard::render(SDL_Rect* camera, engine* game)
 
             // sprite sheet clipper
             SDL_Rect activate_clip = {16 * frame, 0, 16, 16};
+<<<<<<< HEAD
 <<<<<<< HEAD:together/springboard.cpp
             
 <<<<<<< HEAD
@@ -150,11 +182,16 @@ void springboard::render(SDL_Rect* camera, engine* game)
 >>>>>>> 4ff27ea... Finished dynamic camera! (finally)
             
 =======
+=======
+>>>>>>> ec65ad696ba84fae2cc740a44722ec668b7193ca
 
             // render that
             tex.angle_render(col_rect.x, col_rect.y, &activate_clip, camera, game, angle, center, flip_type);
 
+<<<<<<< HEAD
 >>>>>>> 201bf90... gigantic makefile revamp:code/src/objects/springboard.cpp
+=======
+>>>>>>> ec65ad696ba84fae2cc740a44722ec668b7193ca
             // change the status if animation is over!
             if (frame == BOARD_ANIMATION_LENGTH - 1)
             {
@@ -173,10 +210,14 @@ void springboard::render(SDL_Rect* camera, engine* game)
 
             // render that mofo
 <<<<<<< HEAD
+<<<<<<< HEAD
             tex.angle_render(col_rect.x, col_rect.y, &inactivate_clip, camera, rend, angle, center, flip);
 =======
             tex.angle_render(col_rect.x, col_rect.y, &inactivate_clip, camera, game, angle, center, flip_type);
 >>>>>>> 4ff27ea... Finished dynamic camera! (finally)
+=======
+            tex.angle_render(col_rect.x, col_rect.y, &inactivate_clip, camera, game, angle, center, flip_type);
+>>>>>>> ec65ad696ba84fae2cc740a44722ec668b7193ca
 
             // change the status if animation is over!
             if (frame == BOARD_ANIMATION_LENGTH - 1)

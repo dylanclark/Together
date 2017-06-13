@@ -44,6 +44,7 @@ public:
 
     // set alpha
     void set_alpha (Uint8 alpha);
+<<<<<<< HEAD
 <<<<<<< HEAD:together/textures.hpp
     
 <<<<<<< HEAD
@@ -74,13 +75,18 @@ public:
 >>>>>>> a671362... Implemented main menu, pause menu, and options menu!
     
 =======
+=======
+>>>>>>> ec65ad696ba84fae2cc740a44722ec668b7193ca
 
 
     // return width and height
     int get_width() {return width;}
     int get_height() {return height;}
 
+<<<<<<< HEAD
 >>>>>>> 201bf90... gigantic makefile revamp:code/include/textures/textures.hpp
+=======
+>>>>>>> ec65ad696ba84fae2cc740a44722ec668b7193ca
     // load level messages
     bool load_message(int w, int h, std::string path, SDL_Renderer* rend);
     void render_message(SDL_Rect* message, SDL_Rect* clip, SDL_Renderer* rend);

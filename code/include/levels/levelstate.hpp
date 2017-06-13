@@ -37,17 +37,22 @@ public:
     // characters
     dot b_char;
     dot w_char;
+<<<<<<< HEAD
 <<<<<<< HEAD:together/levelstate.hpp
     
 <<<<<<< HEAD
 =======
 
 >>>>>>> 201bf90... gigantic makefile revamp:code/include/levels/levelstate.hpp
+=======
+
+>>>>>>> ec65ad696ba84fae2cc740a44722ec668b7193ca
     // objects
     level_end b_level_end;
     level_end w_level_end;
     button b_button;
     button w_button;
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -62,12 +67,18 @@ public:
 <<<<<<< HEAD
 >>>>>>> c8cecea... springs!
 =======
+=======
+    button b_button2;
+    springboard w_springboard;
+    springboard b_springboard;
+>>>>>>> ec65ad696ba84fae2cc740a44722ec668b7193ca
     springboard w_cross_spring;
     springboard b_cross_spring;
     level_message level1_end;
     level_message level2_end;
     level_message level1_start;
     level_message level2_start;
+<<<<<<< HEAD
 <<<<<<< HEAD:together/levelstate.hpp
 >>>>>>> 250bb44... cross layer, bug fixes, levels 1 and 2,
     
@@ -77,27 +88,39 @@ public:
 >>>>>>> 2e8ee63... Implemented movable crates!!!
     
 =======
+=======
+>>>>>>> ec65ad696ba84fae2cc740a44722ec668b7193ca
 
     // shift bool
     bool shiftable;
 
+<<<<<<< HEAD
 >>>>>>> 201bf90... gigantic makefile revamp:code/include/levels/levelstate.hpp
+=======
+>>>>>>> ec65ad696ba84fae2cc740a44722ec668b7193ca
     // textures
     texture b_char_tex;
     texture w_char_tex;
     texture tile_tex;
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> ec65ad696ba84fae2cc740a44722ec668b7193ca
     texture b_end_tex;
     texture w_end_tex;
     texture b_button_tex;
     texture w_button_tex;
+<<<<<<< HEAD
 =======
+=======
+>>>>>>> ec65ad696ba84fae2cc740a44722ec668b7193ca
     texture crate_tex_four_by_two;
     texture w_crate_tex_four_by_two;
     texture w_platform;
     texture crate_tex_four_by_one;
     texture crate_tex_three_by_two;
     texture crate_tex_two_by_two;
+<<<<<<< HEAD
 <<<<<<< HEAD
 >>>>>>> 2e8ee63... Implemented movable crates!!!
 =======
@@ -106,6 +129,10 @@ public:
 <<<<<<< HEAD
 >>>>>>> c8cecea... springs!
 =======
+=======
+    texture b_springboard_tex;
+    texture w_springboard_tex;
+>>>>>>> ec65ad696ba84fae2cc740a44722ec668b7193ca
     texture w_end_animate;
     texture b_end_animate;
     texture b_cross_spring_tex;
@@ -114,12 +141,16 @@ public:
     texture level1_start_tex;
     texture level2_end_tex;
     texture level2_start_tex;
+<<<<<<< HEAD
 <<<<<<< HEAD:together/levelstate.hpp
 >>>>>>> 250bb44... cross layer, bug fixes, levels 1 and 2,
     
 =======
 
 >>>>>>> 201bf90... gigantic makefile revamp:code/include/levels/levelstate.hpp
+=======
+
+>>>>>>> ec65ad696ba84fae2cc740a44722ec668b7193ca
     // tileset
     tile* tileset[MAX_SIZE];
 

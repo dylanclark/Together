@@ -34,6 +34,7 @@ void intro_state::handle_events(engine *game)
     // handle those events, bruh
     while (SDL_PollEvent(&event)) { };
 <<<<<<< HEAD
+<<<<<<< HEAD
 <<<<<<< HEAD:code/src/states/intro_state.cpp
 
 }
@@ -45,3 +46,7 @@ void intro_state::handle_events(engine *game)
 
 }
 >>>>>>> d9ca289... readded conflicting files
+=======
+
+}
+>>>>>>> ec65ad696ba84fae2cc740a44722ec668b7193ca

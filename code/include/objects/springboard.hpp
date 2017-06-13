@@ -9,6 +9,7 @@
 #include <SDL2/SDL_image.h>
 
 // include header files
+<<<<<<< HEAD
 <<<<<<< HEAD:together/springboard.hpp
 #include "characters.hpp"
 #include "initialization.hpp"
@@ -18,6 +19,8 @@
 #include "camera.hpp"
 #include "button.hpp"
 =======
+=======
+>>>>>>> ec65ad696ba84fae2cc740a44722ec668b7193ca
 #include <characters/characters.hpp>
 #include <engine/init.hpp>
 #include <textures/textures.hpp>
@@ -25,7 +28,10 @@
 #include <levels/tiles.hpp>
 #include <levels/camera.hpp>
 
+<<<<<<< HEAD
 >>>>>>> 201bf90... gigantic makefile revamp:code/include/objects/springboard.hpp
+=======
+>>>>>>> ec65ad696ba84fae2cc740a44722ec668b7193ca
 
 
 // button status constants
@@ -38,7 +44,10 @@ const int BOARD_INACTIVATE = 3;
 const int BOARD_ANIMATION_LENGTH = 7;
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
+=======
+>>>>>>> ec65ad696ba84fae2cc740a44722ec668b7193ca
 // direction
 const int FLIP_LEFT = 0;
 const int FLIP_RIGHT = 1;
@@ -46,7 +55,10 @@ const int FLIP_RIGHT = 1;
 const int LOCATION = 0;
 const int VELOCITY = 1;
 
+<<<<<<< HEAD
 >>>>>>> 250bb44... cross layer, bug fixes, levels 1 and 2,
+=======
+>>>>>>> ec65ad696ba84fae2cc740a44722ec668b7193ca
 
 class springboard
 {
@@ -68,14 +80,20 @@ public:
 
     // activated or not
     bool activated;
+<<<<<<< HEAD
 <<<<<<< HEAD:together/springboard.hpp
     
 =======
+=======
+>>>>>>> ec65ad696ba84fae2cc740a44722ec668b7193ca
 
     // shown or not
     bool show;
 
+<<<<<<< HEAD
 >>>>>>> 201bf90... gigantic makefile revamp:code/include/objects/springboard.hpp
+=======
+>>>>>>> ec65ad696ba84fae2cc740a44722ec668b7193ca
     // direction
     int direction;
 
@@ -97,9 +115,12 @@ public:
 
     // flip type
 <<<<<<< HEAD
+<<<<<<< HEAD
     SDL_RendererFlip flip = SDL_FLIP_NONE;
 
 =======
+=======
+>>>>>>> ec65ad696ba84fae2cc740a44722ec668b7193ca
     SDL_RendererFlip flip_type;
 
     // spring velocity
@@ -113,12 +134,16 @@ public:
 
     // cross-layer spring logic
     void cross_spring(dot* springer, dot* springee, int type);
+<<<<<<< HEAD
 <<<<<<< HEAD:together/springboard.hpp
 >>>>>>> 250bb44... cross layer, bug fixes, levels 1 and 2,
     
 =======
 
 >>>>>>> 201bf90... gigantic makefile revamp:code/include/objects/springboard.hpp
+=======
+
+>>>>>>> ec65ad696ba84fae2cc740a44722ec668b7193ca
 };
 
 #endif /* springboard_hpp */

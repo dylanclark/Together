@@ -227,9 +227,12 @@ bool set_tiles(tile* tiles[], std::string map_path, int level_w, int level_h)
 }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 void close_tiles(tile* tiles[])
 {
     
 }
 >>>>>>> 2e8ee63... Implemented movable crates!!!
+=======
+>>>>>>> ec65ad696ba84fae2cc740a44722ec668b7193ca

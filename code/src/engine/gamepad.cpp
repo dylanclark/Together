@@ -46,6 +46,7 @@ controller::~controller()
     SDL_JoystickClose(joystick);
     SDL_GameControllerClose(gamepad);
 <<<<<<< HEAD
+<<<<<<< HEAD
 <<<<<<< HEAD:code/src/engine/gamepad.cpp
     joystick = NULL;
 }
@@ -57,3 +58,7 @@ controller::~controller()
     joystick = NULL;
 }
 >>>>>>> d9ca289... readded conflicting files
+=======
+    joystick = NULL;
+}
+>>>>>>> ec65ad696ba84fae2cc740a44722ec668b7193ca

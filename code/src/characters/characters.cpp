@@ -5,6 +5,7 @@
 #include <SDL2/SDL_image.h>
 
 // include header file
+<<<<<<< HEAD
 <<<<<<< HEAD:together/characters.cpp
 #include "characters.hpp"
 #include "initialization.hpp"
@@ -32,6 +33,8 @@
 >>>>>>> 71027e4... Volume / sfx slider adjustment.
 
 =======
+=======
+>>>>>>> ec65ad696ba84fae2cc740a44722ec668b7193ca
 #include <characters/characters.hpp>
 #include <engine/init.hpp>
 #include <textures/textures.hpp>
@@ -43,12 +46,20 @@
 #include <objects/crate.hpp>
 #include <engine/gamepad.hpp>
 #include <objects/springboard.hpp>
+<<<<<<< HEAD
 >>>>>>> 201bf90... gigantic makefile revamp:code/src/characters/characters.cpp
+=======
+>>>>>>> ec65ad696ba84fae2cc740a44722ec668b7193ca
 
 // reinitialize character textures
 extern texture b_char_tex;
 extern texture w_char_tex;
+<<<<<<< HEAD
 >>>>>>> c8cecea... springs!
+=======
+extern texture b_end_animate;
+extern texture w_end_animate;
+>>>>>>> ec65ad696ba84fae2cc740a44722ec668b7193ca
 
 dot::dot()
 {
@@ -497,6 +508,7 @@ bool dot::tile_col(tile* tileset[], int size, engine* game)
 
                     shiftable = false;
                 }
+<<<<<<< HEAD
 <<<<<<< HEAD:together/characters.cpp
                 
 <<<<<<< HEAD
@@ -513,6 +525,11 @@ bool dot::tile_col(tile* tileset[], int size, engine* game)
 >>>>>>> 37af3db... Design descriptions!
                 else if (tileset[i]->ceiling_w && tileset[i]->wall_w)
 >>>>>>> 2e8ee63... Implemented movable crates!!!
+=======
+
+                // white ceiling edge
+                else if (tileset[i]->ceiling_w && tileset[i]->wall_w)
+>>>>>>> ec65ad696ba84fae2cc740a44722ec668b7193ca
                 {
                     // determine which is smaller, and use that one!
                     if (abs(repos.x) <= abs(repos.y))
@@ -735,6 +752,7 @@ void dot::render(SDL_Rect* camera, engine* game)
 
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 // code for post-level animation (must be followed by level change or will mess shit up!)
 void dot::completed(int width,int height, SDL_Rect* end_rect)
 {
@@ -763,6 +781,9 @@ void dot::spring()
     x_vel += DOT_VEL;
 =======
 
+=======
+// spring when sprung
+>>>>>>> ec65ad696ba84fae2cc740a44722ec668b7193ca
 void dot::spring(int x, int y, int direction)
 {
     // become active if not
@@ -771,6 +792,7 @@ void dot::spring(int x, int y, int direction)
     // spring the right way
     y_vel = 0;
     black ? y_vel -= y * 2 : y_vel += y * 2;
+<<<<<<< HEAD
 <<<<<<< HEAD:together/characters.cpp
 =======
 // spring when sprung
@@ -786,6 +808,9 @@ void dot::spring(int x, int y, int direction)
 =======
 
 >>>>>>> 201bf90... gigantic makefile revamp:code/src/characters/characters.cpp
+=======
+
+>>>>>>> ec65ad696ba84fae2cc740a44722ec668b7193ca
     // deal with any horizontal springing
     if (direction == FLIP_RIGHT)
     {
@@ -818,9 +843,13 @@ bool dot::center(SDL_Rect* end_rect)
 float dot::get_y_vel()
 {
     return y_vel;
+<<<<<<< HEAD
 <<<<<<< HEAD:code/src/characters/characters.cpp
 >>>>>>> 250bb44... cross layer, bug fixes, levels 1 and 2,
 }
 =======
 }
 >>>>>>> 04da4d0... added a dependency file to help for Makefile conversion:together/characters.cpp
+=======
+}
+>>>>>>> ec65ad696ba84fae2cc740a44722ec668b7193ca

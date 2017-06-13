@@ -82,6 +82,7 @@ public:
 
     // jumps
     int jump;
+<<<<<<< HEAD
 <<<<<<< HEAD:together/characters.hpp
     
 <<<<<<< HEAD
@@ -94,6 +95,9 @@ public:
 =======
 
 >>>>>>> 201bf90... gigantic makefile revamp:code/include/characters/characters.hpp
+=======
+
+>>>>>>> ec65ad696ba84fae2cc740a44722ec668b7193ca
     // spring
     void spring(int x, int y, int direction);
 
@@ -102,7 +106,10 @@ public:
 
     float get_y_vel();
 
+<<<<<<< HEAD
 >>>>>>> 250bb44... cross layer, bug fixes, levels 1 and 2,
+=======
+>>>>>>> ec65ad696ba84fae2cc740a44722ec668b7193ca
 private:
 
     // velocity variables
