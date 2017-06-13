@@ -45,6 +45,7 @@ controller::~controller()
 {
     SDL_JoystickClose(joystick);
     SDL_GameControllerClose(gamepad);
+<<<<<<< HEAD
 <<<<<<< HEAD:code/src/engine/gamepad.cpp
     joystick = NULL;
 }
@@ -52,3 +53,7 @@ controller::~controller()
     joystick = nullptr;
 }
 >>>>>>> 04da4d0... added a dependency file to help for Makefile conversion:together/gamepad.cpp
+=======
+    joystick = NULL;
+}
+>>>>>>> d9ca289... readded conflicting files
