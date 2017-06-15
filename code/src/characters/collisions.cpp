@@ -7,14 +7,14 @@
 // include header
 #include <char.hpp>
 
-vector::vector()
+Vector::Vector()
 {
     x = 0;
     y = 0;
 };
 
 // general collision checker (thanks SDL tutorial for inspiration!)
-bool check_collision(SDL_Rect a, SDL_Rect b, vector* repos)
+bool check_collision(SDL_Rect a, SDL_Rect b, Vector* repos)
 {
     // the sides of the rectangles
     int leftA, leftB;
