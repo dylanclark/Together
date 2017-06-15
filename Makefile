@@ -28,7 +28,7 @@ SOURCES = $(foreach dir,$(SOURCEDIRS),$(wildcard $(dir)/*.cpp))
 OBJS := $(subst $(SOURCEDIR),$(BUILDDIR),$(subst /src/,/object-files/,$(SOURCES:.cpp=.o)))
 
 # Name the compiler
-CC = gcc
+CC = g++
 
 # compiler flags
 CFLAGS = -lstdc++ -lSDL2 -lSDL2_image -lSDL2_mixer
@@ -62,7 +62,7 @@ endif
 define generateRules
 $(1)/%.o: %.cpp
 	@echo Building $$@
-	$(HIDE)$(CC) -c -I$$(INCLUDES) -I/usr/local/include -o $$(subst /,$$(PSEP),$$@) $$(subst /,$$(PSEP),$$<)  $$(sdl2-config --cflags --libs) -MMD
+	$(HIDE)$(CC) -c -I$$(INCLUDES) -I/usr/local/include -o $$(subst /,$$(PSEP),$$@) $$(subst /,$$(PSEP),$$<) -MMD
 endef
 
 
@@ -74,7 +74,7 @@ all: directories $(BUILDDIR)/$(TARGET) ../build/resources
 
 $(BUILDDIR)/$(TARGET): $(OBJS)
 	$(HIDE)echo Linking $@
-	$(HIDE)$(CC) $(CFLAGS) $(OBJS) -o $@
+	$(HIDE)$(CC)  $(OBJS) -o $@ $(CFLAGS)
 
 # Generate rules
 $(foreach targetdir, $(TARGETDIRS), $(eval $(call generateRules, $(targetdir))))
