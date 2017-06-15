@@ -30,7 +30,7 @@ public:
 
     PauseMenuState() { };
 
-    Menu* pause_menu = NULL;
+    Menu* pause_menu;
 
     Texture ResumeButton;
     Texture LevelSelectButton;

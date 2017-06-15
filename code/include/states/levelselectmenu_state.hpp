@@ -30,7 +30,7 @@ public:
 
     LevelSelectMenuState() { };
 
-    Menu* levelselect_menu = NULL;
+    Menu* levelselect_menu;
 
     Texture level_slider;
     Texture back_button;

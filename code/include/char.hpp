@@ -12,14 +12,19 @@
 #include <engine.hpp>
 #include <tiles.hpp>
 
-// dot status constants
-const int CHAR_ACTIVE = 0;
-const int CHAR_INACTIVATE = 1;
-const int CHAR_INACTIVE = 2;
-const int CHAR_ACTIVATE = 3;
+#define DOT_VEL 12
+#define JUMP_VEL 18
+#define DOT_ACC 1
+#define GRAVITY 0.6
+#define PUSH_VEL 3
+#define ANIMATION_LENGTH 8
 
-// animation length
-const int ANIMATION_LENGTH = 8;
+typedef enum _char_status {
+    CHAR_ACTIVE = 0,
+    CHAR_INACTIVATE,
+    CHAR_INACTIVE,
+    CHAR_ACTIVATE
+} char_status;
 
 class Levelstate;
 
@@ -27,29 +32,16 @@ class Levelstate;
 class Dot
 {
 public:
-    static const int DOT_W = TILE_WIDTH;
-    static const int DOT_H = TILE_WIDTH;
-    const float DOT_VEL = 12;
-    const float JUMP_VEL = 18;
-    const float DOT_ACC = DOT_VEL / 12;
-    const float GRAVITY = JUMP_VEL / 26;
-    const float PUSH_VEL = DOT_VEL / 4;
-    bool up, down, left, right;
-    Controller* controller;
     int status;
-    bool color;
     int frame;
+    bool black;
 
     Dot(int x, int y, bool is_black, Texture* texture);
     bool handle_event(SDL_Event &e, Levelstate* level, Engine* game);
     void move(Levelstate* level, Engine* game);
-    bool crate_col(Levelstate* level, Engine* game);
-    bool tile_col(Tile* tileset[], int size, Engine* game);
     void render(SDL_Rect* camera, Engine* game);
 
     SDL_Rect col_rect;
-    Texture* tex;
-    bool black;
     int jump;
 
     void spring(int x, int y, int direction);
@@ -58,6 +50,12 @@ public:
 
 private:
     float x_vel, y_vel;
+    Controller* controller;
+    bool up, down, left, right;
+    Texture* tex;
+
+    bool crate_col(Levelstate* level, Engine* game);
+    bool tile_col(Tile* tileset[], int size, Engine* game);
 };
 
 class Vector

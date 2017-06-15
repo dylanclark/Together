@@ -13,8 +13,6 @@
 #include <tiles.hpp>
 
 // reinitialize character textures
-extern Texture b_char_tex;
-extern Texture w_char_tex;
 extern Texture b_end_animate;
 extern Texture w_end_animate;
 
@@ -47,8 +45,8 @@ Dot::Dot(int x, int y, bool is_black, Texture* texture)
     frame = 0;
 
     // initialize collision rectangle
-    col_rect.w = DOT_W;
-    col_rect.h = DOT_H;
+    col_rect.w = TILE_WIDTH;
+    col_rect.h = TILE_WIDTH;
     col_rect.x = x*TILE_WIDTH;
     col_rect.y = y*TILE_WIDTH;
 }
@@ -93,6 +91,8 @@ bool Dot::handle_event(SDL_Event &e, Levelstate* level, Engine* game)
                 case SDL_SCANCODE_ESCAPE:
                     return false;
                     break;
+                default:
+                    break;
             }
             break;
         case SDL_KEYUP:
@@ -115,6 +115,8 @@ bool Dot::handle_event(SDL_Event &e, Levelstate* level, Engine* game)
                 case SDL_SCANCODE_D:
                     right = false;
                     break;
+                default:
+                    break;
             }
             break;
         case SDL_JOYAXISMOTION:
@@ -123,13 +125,13 @@ bool Dot::handle_event(SDL_Event &e, Levelstate* level, Engine* game)
                 switch (e.jaxis.axis)
                 {
                     case 0:
-                        if (e.jaxis.value > controller->DEAD_ZONE)
+                        if (e.jaxis.value > DEAD_ZONE)
                         {
                             right = true;
                             left = false;
                             break;
                         }
-                        else if (e.jaxis.value < -(controller->DEAD_ZONE))
+                        else if (e.jaxis.value < -(DEAD_ZONE))
                         {
                             left = true;
                             right = false;
@@ -143,12 +145,12 @@ bool Dot::handle_event(SDL_Event &e, Levelstate* level, Engine* game)
                         }
                         break;
                     case 1:
-                        if (e.jaxis.value > controller->DEAD_ZONE)
+                        if (e.jaxis.value > DEAD_ZONE)
                         {
                             down = true;
                             break;
                         }
-                        else if (e.jaxis.value < -(controller->DEAD_ZONE))
+                        else if (e.jaxis.value < -(DEAD_ZONE))
                         {
                             // up = true;
                             break;

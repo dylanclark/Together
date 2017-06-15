@@ -16,6 +16,9 @@
 class Level1State : public Gamestate, public Levelstate
 {
 public:
+    Level1State() { };
+
+private:
     // init and shutdown
     void init(Engine* game);
     void cleanup();
@@ -28,8 +31,6 @@ public:
     void handle_events(Engine* games);
     void update(Engine* game);
     void draw(Engine* game);
-
-    Level1State() { };
 
     // load textures
     void load_textures(Engine* game);

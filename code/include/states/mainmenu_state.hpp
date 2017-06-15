@@ -30,7 +30,7 @@ public:
 
     MainMenuState() { };
 
-    Menu* main_menu = NULL;
+    Menu* main_menu;
 
     Texture fade_in_tex;
     Texture title;

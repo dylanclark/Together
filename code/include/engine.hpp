@@ -12,8 +12,8 @@
 #include <sound.hpp>
 
 // screen dimensions!
-const int SCREEN_WIDTH = 1080;
-const int SCREEN_HEIGHT = 720;
+#define SCREEN_WIDTH 1080
+#define SCREEN_HEIGHT 720
 
 class Gamestate;
 
@@ -51,7 +51,7 @@ public:
     std::vector<Gamestate*> states;
 
 private:
-    bool running_flag = true;
+    bool running_flag;
 
 };
 
@@ -76,6 +76,8 @@ public:
     Gamestate() { };
 };
 
+#define DEAD_ZONE 8000
+
 class Controller
 {
 public:
@@ -84,8 +86,6 @@ public:
 
     SDL_Joystick* joystick;
     SDL_GameController* gamepad;
-
-    const int DEAD_ZONE = 8000;
 };
 
 #endif /* engine_hpp */

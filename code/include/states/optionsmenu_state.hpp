@@ -30,7 +30,7 @@ public:
 
     OptionsMenuState() { };
 
-    Menu* options_menu = NULL;
+    Menu* options_menu;
 
     Texture volume_slider;
     Texture sfx_slider;

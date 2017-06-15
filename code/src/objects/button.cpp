@@ -26,6 +26,8 @@ Button::Button()
     col_rect.y = (SCREEN_HEIGHT - col_rect.h) / 2;
 
     used = false;
+    angle = 0.0;
+    flip = SDL_FLIP_NONE;
 
     frame = 0;
 }

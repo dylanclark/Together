@@ -13,42 +13,48 @@
 #include <char.hpp>
 #include <engine.hpp>
 
-// button status constants
-const int BUTT_INACTIVE = 0;
-const int BUTT_ACTIVATE = 1;
-const int BUTT_ACTIVE = 2;
-const int BUTT_INACTIVATE = 3;
+typedef enum _buttonstatus {
+    BUTT_INACTIVE = 0,
+    BUTT_ACTIVATE = 1,
+    BUTT_ACTIVE = 2,
+    BUTT_INACTIVATE = 3
+} buttonstatus;
 
-// animation length
-const int BUTT_ANIMATION_LENGTH = 4;
+#define BUTT_ANIMATION_LENGTH 4
 
-// direction constants
-const int UP = 0;
-const int RIGHT = 1;
-const int DOWN = 2;
-const int LEFT = 3;
+typedef enum _directions {
+    UP = 0,
+    RIGHT = 1,
+    DOWN = 2,
+    LEFT = 3
+} directions;
 
-// crate types
-const int FOUR_BY_TWO = 0;
-const int FOUR_BY_ONE = 1;
-const int TWO_BY_TWO = 2;
-const int THREE_BY_TWO = 3;
+typedef enum _cratetype {
+    FOUR_BY_TWO = 0,
+    FOUR_BY_ONE = 1,
+    TWO_BY_TWO = 2,
+    THREE_BY_TWO = 3
+} cratetype;
 
 // max number of tiles that this crate will need to render
-const int MAX_BORDER = 12;
+#define MAX_BORDER 12
 
-// button status constants
-const int BOARD_INACTIVE = 0;
-const int BOARD_ACTIVATE = 1;
-const int BOARD_ACTIVE = 2;
-const int BOARD_INACTIVATE = 3;
+typedef enum _springstatus {
+    BOARD_INACTIVE = 0,
+    BOARD_ACTIVATE = 1,
+    BOARD_ACTIVE = 2,
+    BOARD_INACTIVATE = 3
+} springstatus;
 
-// animation length
-const int BOARD_ANIMATION_LENGTH = 7;
+#define BOARD_ANIMATION_LENGTH 7
+#define SPRING_X_VEL 0
+#define SPRING_Y_VEL 10
 
 // direction
-const int FLIP_LEFT = 0;
-const int FLIP_RIGHT = 1;
+typedef enum _flipdir {
+    FLIP_LEFT = 0,
+    FLIP_RIGHT = 1
+} flipdir;
 
 const int LOCATION = 0;
 const int VELOCITY = 1;
@@ -60,9 +66,9 @@ public:
 
     void render(SDL_Rect* camera, Engine* game);
 
-    double angle = 0.0;
-    SDL_Point* center = NULL;
-    SDL_RendererFlip flip = SDL_FLIP_NONE;
+    double angle;
+    SDL_Point* center;
+    SDL_RendererFlip flip;
     SDL_Rect col_rect;
 
     Texture tex;
@@ -75,7 +81,6 @@ public:
     int direction;
     int status;
     int frame;
-
 };
 
 class Crate
@@ -126,15 +131,12 @@ public:
     // type. can be LOCATION for defualt jumping or VELOCITY for jumping the
     // abount of the dot doing the springing
     int type;
-    double angle = 0.0;
-    SDL_Point* center = NULL;
+    double angle;
+    SDL_Point* center;
     SDL_RendererFlip flip_type;
 
     float x_spring;
     float y_spring;
-
-    const float SPRING_X_VEL = 0;
-    const float SPRING_Y_VEL = 10;
 
     // cross-layer spring logic
     void cross_spring(Dot* springer, Dot* springee, int type);

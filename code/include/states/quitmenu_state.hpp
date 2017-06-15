@@ -30,7 +30,7 @@ public:
 
     QuitMenuState() { };
 
-    Menu* quit_menu = NULL;
+    Menu* quit_menu;
 
     Texture quit_title;
     Texture yes_button;

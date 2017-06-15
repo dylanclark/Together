@@ -180,6 +180,8 @@ bool Menu::handle_event(SDL_Event& e, Engine* game)
                 case SDL_SCANCODE_ESCAPE:
                     return false;
                     break;
+                default:
+                    break;
             }
             break;
         case SDL_KEYUP:
@@ -200,6 +202,8 @@ bool Menu::handle_event(SDL_Event& e, Engine* game)
                 case SDL_SCANCODE_RIGHT:
                     right_up = true;
                     right = false;
+                    break;
+                default:
                     break;
             }
             break;

@@ -30,7 +30,7 @@ public:
 
     NewGameMenuState() { };
 
-    Menu* newgame_menu = NULL;
+    Menu* newgame_menu;
 
     Texture newgame_title;
     Texture yes_button;
