@@ -59,16 +59,10 @@ const int TILE_FRAMES = 10;
 class tile
 {
 public:
-    // initialize the tile
     tile(int x, int y, int tile_type);
 
-    // render the tile on the screen
     void render(int b_status, SDL_Rect* camera, engine* game, texture* tile_tex);
-
-    // get the tile type
     int get_type();
-
-    // get the collision rectangle
     SDL_Rect get_col_rect();
 
     // edges and floors
@@ -81,13 +75,8 @@ public:
     int frame;
 
 private:
-    // collision rectangle
     SDL_Rect col_rect;
-
-    // tile type
     int type;
-
-    // animation bool
     bool animating;
 };
 

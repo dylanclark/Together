@@ -11,10 +11,7 @@
 class sound_player
 {
 public:
-    // init
     sound_player();
-
-    // dealloc
     ~sound_player();
 
     // all music

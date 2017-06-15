@@ -55,46 +55,24 @@ const int VELOCITY = 1;
 class button
 {
 public:
-    // initialize traits
     button();
 
-    // render the item on the screen
     void render(SDL_Rect* camera, engine* game);
 
-    // angle to flip
     double angle = 0.0;
-
-    // flip axis point
     SDL_Point* center = NULL;
-
-    // flip type
     SDL_RendererFlip flip = SDL_FLIP_NONE;
-
-    // collision rectangle
     SDL_Rect col_rect;
 
-    // texture
     texture tex;
 
-    // check for collision with dot
     bool check(SDL_Rect dot_rect);
 
-    // activated or not
     bool activated;
-
-    // single use
     bool single;
-
-    // used
     bool used;
-
-    // direction
     int direction;
-
-    // animation status
     int status;
-
-    // frame of animation
     int frame;
 
 };
@@ -102,46 +80,28 @@ public:
 class crate
 {
 public:
-    // velocity
     float x_vel;
-
-    // for collision detection
     SDL_Rect get_col_rect() { return col_rect; };
-
-    // check for wall collisions
     bool check_col(SDL_Rect crate, levelstate* level, vector* repos);
-
-    // update function (aligns crate with tile-grid)
     void update();
-
-    // render function
     void render(int b_status, SDL_Rect* camera, engine* game, levelstate* level);
 
-    // crate texture
     texture tex;
-
-    // type
     int crate_type;
     bool black;
-
-    // pushed flag
     bool pushed;
 
-    // initializer
     crate(int x, int y, int type);
 
-    // tileset
     tile* tileset[MAX_BORDER];
     void create_tiles(int b_status, levelstate* level);
     bool generating;
 
-    // determine which tiletype to render
     int tile_type_top(int type);
     int tile_type_bottom(int type);
     int tile_type_left(int type);
     int tile_type_right(int type);
 
-    // collision rectangle
     SDL_Rect col_rect;
 };
 

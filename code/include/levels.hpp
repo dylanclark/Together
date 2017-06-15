@@ -26,47 +26,31 @@ const float CAM_ACC = 2;
 class camera
 {
 public:
-    // the actual rectangle that is the camera's viewport
     SDL_Rect display;
-
-    // the location information (included to aid in smooth camera)
     SDL_Rect location;
 
-    // velocities for each changing feature of the rectangle
     float x_vel;
     float y_vel;
     float w_vel;
     float h_vel;
 
-    // initialize
     camera(int w, int h);
 
-    // track a character
     void track(SDL_Rect* b_char, SDL_Rect* w_char);
-
-    // move the camera location
     void move(int level_w, int level_h, engine* game);
-
-    // update camera display
     void update(void);
 };
 
 class level_end
 {
 public:
-    // initialize traits
     level_end();
 
-    // render the item on the screen
     void render(SDL_Rect* camera, engine* game);
 
-    // collision rectangle
     SDL_Rect col_rect;
-
-    // texture
     texture tex;
 
-    // check for collision with dot
     bool check(SDL_Rect dot_rect);
 };
 
@@ -90,14 +74,11 @@ public:
     // tile dimensions of level
     int width;
     int height;
+    bool shiftable;
 
-    // constructor
     levelstate() { };
 
-    // camera
     camera* camera;
-
-    // characters
     dot b_char;
     dot w_char;
 
@@ -115,9 +96,6 @@ public:
     level_message level2_end;
     level_message level1_start;
     level_message level2_start;
-
-    // shift bool
-    bool shiftable;
 
     // textures
     texture b_char_tex;
