@@ -69,7 +69,7 @@ bool Engine::init()
         printf("could not hide cursor: %s\n", SDL_GetError());
     }
 
-    sound = new sound_player;
+    sound = new SoundPlayer;
 
     // clear the window
     SDL_RenderClear(rend);
