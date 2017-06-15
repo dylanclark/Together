@@ -6,15 +6,14 @@
 
 // include header file
 #include <characters/characters.hpp>
-#include <engine/init.hpp>
+#include <engine.hpp>
 #include <textures/textures.hpp>
 #include <characters/collisions.hpp>
 #include <levels/tiles.hpp>
-#include <levels/camera.hpp>
 #include <levels/level_end.hpp>
 #include <levels/levelstate.hpp>
 #include <objects/crate.hpp>
-#include <engine/gamepad.hpp>
+#include <engine.hpp>
 #include <objects/springboard.hpp>
 
 // reinitialize character textures

@@ -6,12 +6,11 @@
 
 // include header
 #include <levels/level_end.hpp>
-#include <characters/characters.hpp>
-#include <engine/init.hpp>
+#include <engine.hpp>
+#include <engine.hpp>
 #include <textures/textures.hpp>
 #include <characters/collisions.hpp>
 #include <levels/tiles.hpp>
-#include <levels/camera.hpp>
 
 // reinitialize textures
 extern texture b_level_end;

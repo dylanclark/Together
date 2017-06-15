@@ -9,8 +9,8 @@
 #include <SDL2/SDL_ttf.h>
 
 // include headers
-#include <engine/engine.hpp>
-#include <engine/gamestate.hpp>
+#include <engine.hpp>
+#include <engine.hpp>
 #include <levels/tiles.hpp>
 #include <characters/characters.hpp>
 #include <levels/camera.hpp>
@@ -18,6 +18,7 @@
 #include <objects/button.hpp>
 #include <objects/springboard.hpp>
 #include <levels/level_messages.hpp>
+#include <levels/level_draw.hpp>
 
 class crate;
 

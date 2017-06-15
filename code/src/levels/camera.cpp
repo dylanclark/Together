@@ -5,11 +5,8 @@
 
 // include header files
 #include <levels/camera.hpp>
-#include <characters/characters.hpp>
-#include <engine/init.hpp>
-#include <levels/level_draw.hpp>
-#include <engine/gamestate.hpp>
-#include <levels/levelstate.hpp>
+#include <engine.hpp>
+#include <levels/tiles.hpp>
 
 camera::camera(int w, int h)
 {

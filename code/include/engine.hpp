@@ -14,6 +14,10 @@
 // include headers
 #include <sound/sound.hpp>
 
+// screen dimensions!
+const int SCREEN_WIDTH = 1080;
+const int SCREEN_HEIGHT = 720;
+
 class gamestate;
 
 class engine
@@ -66,8 +70,53 @@ public:
 private:
 
     // quit flag
-    bool running_flag;
+    bool running_flag = true;
 
+};
+
+class gamestate
+{
+public:
+    // init and cleanup
+    virtual void init(engine* game) = 0;
+    virtual void cleanup() = 0;
+
+    // pause and resume
+    virtual void pause() = 0;
+    virtual void resume() = 0;
+
+    // handling control of screen
+    virtual void handle_events(engine* game) = 0;
+    virtual void update(engine* game) = 0;
+    virtual void draw(engine* game) = 0;
+
+    // changing states
+    void change_state(engine* game, gamestate* state)
+    {
+        game->change_state(state);
+    }
+
+    // create class
+    gamestate() { };
+};
+
+class controller
+{
+public:
+    // init
+    controller();
+
+    // dealloc
+    ~controller();
+
+    // joystick
+    SDL_Joystick* joystick;
+
+    // gamepad
+    SDL_GameController* gamepad;
+
+    // dead zone constant
+    const int DEAD_ZONE = 8000;
 };
 
 #endif /* engine_hpp */

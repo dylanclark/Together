@@ -9,7 +9,7 @@
 #include <SDL2/SDL_ttf.h>
 
 // include headers
-#include <engine/gamestate.hpp>
+#include <engine.hpp>
 #include <characters/characters.hpp>
 #include <levels/tiles.hpp>
 #include <levels/levelstate.hpp>

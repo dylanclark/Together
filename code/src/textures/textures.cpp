@@ -7,9 +7,8 @@
 
 // include header file
 #include <textures/textures.hpp>
-#include <characters/characters.hpp>
 #include <levels/tiles.hpp>
-#include <engine/init.hpp>
+#include <engine.hpp>
 
 // initialize
 texture::texture()

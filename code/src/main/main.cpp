@@ -12,9 +12,7 @@
 #include <SDL2/SDL_image.h>
 
 // include all headers
-#include <engine/init.hpp>
-#include <engine/engine.hpp>
-#include <engine/gamestate.hpp>
+#include <engine.hpp>
 #include <states/mainmenu_state.hpp>
 
 // Let's do this.
@@ -26,7 +24,7 @@ int main(void)
     // initialize screen
     game.init();
 
-    // initialize game state (to level 1, but eventually to main menu)
+    // initialize game state to main menu
     game.change_state(new mainmenu_state);
 
     // run game

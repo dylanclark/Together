@@ -9,8 +9,8 @@
 
 // include headers
 #include <menus/menu.hpp>
-#include <engine/engine.hpp>
-#include <engine/gamestate.hpp>
+#include <engine.hpp>
+#include <engine.hpp>
 #include <textures/textures.hpp>
 
 class levelselectmenu_state : public gamestate

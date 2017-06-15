@@ -14,9 +14,9 @@
 #include <levels/tiles.hpp>
 #include <objects/crate.hpp>
 #include <levels/level_end.hpp>
-#include <engine/gamestate.hpp>
+#include <engine.hpp>
 #include <objects/button.hpp>
-#include <engine/engine.hpp>
+#include <engine.hpp>
 #include <objects/springboard.hpp>
 #include <states/pausemenu_state.hpp>
 #include <levels/level_messages.hpp>

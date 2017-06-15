@@ -11,9 +11,8 @@
 
 // include headers
 #include <textures/textures.hpp>
-#include <engine/engine.hpp>
-#include <engine/gamepad.hpp>
-#include <engine/gamestate.hpp>
+#include <engine.hpp>
+#include <engine.hpp>
 
 // maximum menu size
 const int MAX_BUTTONS = 4;

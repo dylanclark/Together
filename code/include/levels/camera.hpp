@@ -7,11 +7,7 @@
 #include <stdio.h>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
-
-// include character header file for dot class
-#include <characters/characters.hpp>
-#include <engine/engine.hpp>
-#include <levels/level_draw.hpp>
+#include <engine.hpp>
 
 class levelstate;
 

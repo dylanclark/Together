@@ -3,14 +3,12 @@
 #define level_messages_hpp
 
 #include <stdio.h>
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
 
 // include header files
-#include <characters/characters.hpp>
-#include <engine/init.hpp>
+#include <engine.hpp>
 #include <textures/textures.hpp>
-#include <characters/collisions.hpp>
-#include <levels/tiles.hpp>
-#include <levels/camera.hpp>
 
 class level_message
 {

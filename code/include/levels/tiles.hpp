@@ -9,7 +9,7 @@
 
 // include headers
 #include <textures/textures.hpp>
-#include <engine/engine.hpp>
+#include <engine.hpp>
 
 // tile dimensions!
 const int TILE_WIDTH = 60;

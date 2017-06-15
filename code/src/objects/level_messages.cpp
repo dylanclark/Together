@@ -5,13 +5,8 @@
 #include <SDL2/SDL_image.h>
 
 // include header
-#include <levels/level_end.hpp>
-#include <characters/characters.hpp>
-#include <engine/init.hpp>
 #include <textures/textures.hpp>
 #include <characters/collisions.hpp>
-#include <levels/tiles.hpp>
-#include <levels/camera.hpp>
 #include <levels/level_messages.hpp>
 
 // reinitialize textures

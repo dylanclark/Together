@@ -10,13 +10,7 @@
 
 // include header files
 #include <characters/characters.hpp>
-#include <engine/init.hpp>
 #include <textures/textures.hpp>
-#include <characters/collisions.hpp>
-#include <levels/tiles.hpp>
-#include <levels/camera.hpp>
-
-
 
 // button status constants
 const int BOARD_INACTIVE = 0;

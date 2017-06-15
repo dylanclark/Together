@@ -3,11 +3,10 @@
 #include <iostream>
 #include <stdio.h>
 #include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
 #include <SDL2/SDL_mixer.h>
 
 // include headers
-#include <sound/sound.hpp>
+#include <sound.hpp>
 
 sound_player::sound_player()
 {

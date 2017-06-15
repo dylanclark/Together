@@ -5,7 +5,7 @@
 #include <SDL2/SDL_image.h>
 
 // include headers
-#include <engine/gamepad.hpp>
+#include <engine.hpp>
 
 controller::controller()
 {

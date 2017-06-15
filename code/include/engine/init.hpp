@@ -7,8 +7,5 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 
-// screen dimensions!
-const int SCREEN_WIDTH = 1080;
-const int SCREEN_HEIGHT = 720;
 
 #endif /* initialization_hpp */

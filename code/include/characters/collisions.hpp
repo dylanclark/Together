@@ -8,9 +8,6 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 
-// include header files
-#include <levels/tiles.hpp>
-
 class vector
 {
 public:

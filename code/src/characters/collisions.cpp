@@ -6,8 +6,6 @@
 
 // include header
 #include <characters/collisions.hpp>
-#include <levels/tiles.hpp>
-#include <characters/characters.hpp>
 
 vector::vector()
 {

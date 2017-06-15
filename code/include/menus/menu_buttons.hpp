@@ -9,6 +9,7 @@
 
 // include button header
 #include <menus/menu.hpp>
+#include <engine.hpp>
 
 class new_game_button : public menu_button
 {

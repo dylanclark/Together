@@ -9,8 +9,8 @@
 #include <iostream>
 
 // include headers
-#include <engine/engine.hpp>
-#include <engine/gamestate.hpp>
+#include <engine.hpp>
+#include <engine.hpp>
 
 bool engine::init()
 {

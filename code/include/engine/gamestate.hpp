@@ -11,7 +11,7 @@
 class engine;
 
 // include engine header
-#include <engine/engine.hpp>
+#include <engine.hpp>
 
 class gamestate
 {
