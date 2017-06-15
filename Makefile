@@ -61,7 +61,7 @@ endif
 # Define the function that will generate each rule
 define generateRules
 $(1)/%.o: %.cpp
-	@echo Building $$@
+	@echo Building $$(subst $$(SOURCEDIR)/src/,,$$<)
 	$(HIDE)$(CC) -c -I$$(INCLUDES) -I/usr/local/include -o $$(subst /,$$(PSEP),$$@) $$(subst /,$$(PSEP),$$<) -MMD
 endef
 
@@ -73,7 +73,7 @@ endef
 all: directories $(BUILDDIR)/$(TARGET) ../build/resources
 
 $(BUILDDIR)/$(TARGET): $(OBJS)
-	$(HIDE)echo Linking $@
+	$(HIDE)echo Linking $(subst $(BUILDDIR)/,build/,$@)
 	$(HIDE)$(CC) $(OBJS) -o $@ $(CFLAGS)
 
 # Generate rules
