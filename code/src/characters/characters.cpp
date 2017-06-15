@@ -297,7 +297,7 @@ bool Dot::tile_col(Tile* tileset[], int size, Engine* game)
                 // black floor
                 else if (tileset[i]->floor_b && !tileset[i]->wall_b)
                 {
-                    if (col_rect.y + col_rect.h / 2 >= tileset[i]->get_col_rect().y + tileset[i]->get_col_rect().h / 2)continue;
+                    if (col_rect.y + col_rect.h / 2 >= tileset[i]->get_col_rect().y + tileset[i]->get_col_rect().h / 2) continue;
 
                     // halt
                     col_rect.y += repos.y;

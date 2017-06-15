@@ -74,7 +74,7 @@ all: directories $(BUILDDIR)/$(TARGET) ../build/resources
 
 $(BUILDDIR)/$(TARGET): $(OBJS)
 	$(HIDE)echo Linking $@
-	$(HIDE)$(CC)  $(OBJS) -o $@ $(CFLAGS)
+	$(HIDE)$(CC) $(OBJS) -o $@ $(CFLAGS)
 
 # Generate rules
 $(foreach targetdir, $(TARGETDIRS), $(eval $(call generateRules, $(targetdir))))
