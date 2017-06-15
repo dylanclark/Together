@@ -4,8 +4,8 @@
 #include <SDL2/SDL_image.h>
 
 // include header file
-#include <levels/tiles.hpp>
-#include <textures/textures.hpp>
+#include <levels.hpp>
+#include <textures.hpp>
 
 // external variables
 extern texture tile_tex;

@@ -6,10 +6,9 @@
 #include <cmath>
 
 // include headers
-#include <objects/crate.hpp>
-#include <levels/tiles.hpp>
-#include <characters/characters.hpp>
-#include <characters/collisions.hpp>
+#include <objects.hpp>
+#include <levels.hpp>
+#include <char.hpp>
 
 crate::crate(int x, int y, int type)
 {

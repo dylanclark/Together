@@ -8,10 +8,9 @@
 #include <SDL2/SDL_image.h>
 
 // include headers
-#include <menus/menu.hpp>
+#include <menu.hpp>
 #include <engine.hpp>
-#include <engine.hpp>
-#include <textures/textures.hpp>
+#include <textures.hpp>
 
 class quitmenu_state : public gamestate
 {

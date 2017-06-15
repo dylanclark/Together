@@ -5,12 +5,11 @@
 #include <SDL2/SDL_image.h>
 
 // include header
-#include <levels/level_end.hpp>
+#include <levels.hpp>
 #include <engine.hpp>
-#include <engine.hpp>
-#include <textures/textures.hpp>
-#include <characters/collisions.hpp>
-#include <levels/tiles.hpp>
+#include <textures.hpp>
+#include <char.hpp>
+#include <levels.hpp>
 
 // reinitialize textures
 extern texture b_level_end;

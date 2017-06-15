@@ -10,16 +10,9 @@
 #include <states/level6_state.hpp>
 #include <states/level5_state.hpp>
 #include <states/mainmenu_state.hpp>
-#include <characters/characters.hpp>
-#include <levels/tiles.hpp>
-#include <objects/crate.hpp>
-#include <levels/level_end.hpp>
+#include <char.hpp>
+#include <levels.hpp>
 #include <engine.hpp>
-#include <objects/button.hpp>
-#include <engine.hpp>
-#include <objects/springboard.hpp>
-#include <states/pausemenu_state.hpp>
-#include <levels/level_messages.hpp>
 #include <states/pausemenu_state.hpp>
 
 void level5_state::init(engine* game)

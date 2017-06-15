@@ -5,16 +5,11 @@
 #include <SDL2/SDL_image.h>
 
 // include header file
-#include <characters/characters.hpp>
+#include <char.hpp>
 #include <engine.hpp>
-#include <textures/textures.hpp>
-#include <characters/collisions.hpp>
-#include <levels/tiles.hpp>
-#include <levels/level_end.hpp>
-#include <levels/levelstate.hpp>
-#include <objects/crate.hpp>
-#include <engine.hpp>
-#include <objects/springboard.hpp>
+#include <textures.hpp>
+#include <levels.hpp>
+#include <objects.hpp>
 
 // reinitialize character textures
 extern texture b_char_tex;

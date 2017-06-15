@@ -8,9 +8,9 @@
 
 // include header
 #include <engine.hpp>
-#include <textures/textures.hpp>
-#include <characters/collisions.hpp>
-#include <objects/button.hpp>
+#include <textures.hpp>
+#include <char.hpp>
+#include <objects.hpp>
 
 // reinitialize textures
 extern texture b_button;

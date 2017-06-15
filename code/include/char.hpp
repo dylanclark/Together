@@ -8,11 +8,9 @@
 #include <SDL2/SDL_image.h>
 
 // include header files
-#include <textures/textures.hpp>
-#include <levels/tiles.hpp>
-#include <levels/camera.hpp>
+#include <textures.hpp>
 #include <engine.hpp>
-#include <engine.hpp>
+#include <tiles.hpp>
 
 // dot status constants
 const int CHAR_ACTIVE = 0;

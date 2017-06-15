@@ -8,8 +8,7 @@
 #include <SDL2/SDL_image.h>
 
 // include header
-#include <levels/level_draw.hpp>
-#include <levels/tiles.hpp>
+#include <levels.hpp>
 
 // tile clipper
 SDL_Rect tile_clips[TOTAL_TILES];

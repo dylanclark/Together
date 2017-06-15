@@ -5,7 +5,7 @@
 #include <SDL2/SDL_image.h>
 
 // include header
-#include <characters/collisions.hpp>
+#include <char.hpp>
 
 vector::vector()
 {

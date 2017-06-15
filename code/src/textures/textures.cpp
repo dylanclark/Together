@@ -6,8 +6,8 @@
 #include <SDL2/SDL_image.h>
 
 // include header file
-#include <textures/textures.hpp>
-#include <levels/tiles.hpp>
+#include <textures.hpp>
+#include <levels.hpp>
 #include <engine.hpp>
 
 // initialize

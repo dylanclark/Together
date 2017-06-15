@@ -4,9 +4,8 @@
 #include <SDL2/SDL_image.h>
 
 // include header files
-#include <levels/camera.hpp>
+#include <levels.hpp>
 #include <engine.hpp>
-#include <levels/tiles.hpp>
 
 camera::camera(int w, int h)
 {

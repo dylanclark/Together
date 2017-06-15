@@ -6,8 +6,8 @@
 #include <SDL2/SDL_mixer.h>
 
 // include headers
-#include <menus/menu.hpp>
-#include <textures/textures.hpp>
+#include <menu.hpp>
+#include <textures.hpp>
 
 menu_button::menu_button(bool select, int x, int y, int w, int h)
 {

@@ -9,11 +9,9 @@
 #include <states/quitmenu_state.hpp>
 #include <states/mainmenu_state.hpp>
 #include <engine.hpp>
-#include <menus/menu.hpp>
-#include <engine.hpp>
+#include <menu.hpp>
 #include <states/level1_state.hpp>
 #include <states/level2_state.hpp>
-#include <menus/menu_buttons.hpp>
 #include <states/newgamemenu_state.hpp>
 
 void newgamemenu_state::init(engine* game)

@@ -10,7 +10,6 @@
 
 // include headers
 #include <engine.hpp>
-#include <engine.hpp>
 
 bool engine::init()
 {

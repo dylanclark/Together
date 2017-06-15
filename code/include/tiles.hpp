@@ -1,15 +1,11 @@
 
-#ifndef tile_def_hpp
-#define tile_def_hpp
+#ifndef tiles_hpp
+#define tiles_hpp
 
-// using SDL and standard IO
+#include <iostream>
 #include <stdio.h>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
-
-// include headers
-#include <textures/textures.hpp>
-#include <engine.hpp>
 
 // tile dimensions!
 const int TILE_WIDTH = 60;
@@ -95,4 +91,10 @@ private:
     bool animating;
 };
 
-#endif /* tile_def_hpp */
+// draw the tilemap
+bool set_tiles(tile* tiles[], std::string path, int level_w, int level_h);
+
+// close the tilemap
+void close_tiles(tile* tiles[]);
+
+#endif /* tiles_hpp */

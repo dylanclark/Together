@@ -7,12 +7,11 @@
 
 
 // include header
-#include <characters/characters.hpp>
+#include <char.hpp>
 #include <engine.hpp>
-#include <textures/textures.hpp>
-#include <characters/collisions.hpp>
-#include <levels/tiles.hpp>
-#include <objects/springboard.hpp>
+#include <textures.hpp>
+#include <levels.hpp>
+#include <objects.hpp>
 
 // reinitialize textures
 extern texture b_springboard;

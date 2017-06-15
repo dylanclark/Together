@@ -5,9 +5,9 @@
 #include <SDL2/SDL_image.h>
 
 // include header
-#include <textures/textures.hpp>
-#include <characters/collisions.hpp>
-#include <levels/level_messages.hpp>
+#include <textures.hpp>
+#include <char.hpp>
+#include <levels.hpp>
 
 // reinitialize textures
 extern texture level_1_start;

@@ -12,7 +12,7 @@
 #include <fstream>
 
 // include headers
-#include <sound/sound.hpp>
+#include <sound.hpp>
 
 // screen dimensions!
 const int SCREEN_WIDTH = 1080;

@@ -6,21 +6,16 @@
 #include <SDL2/SDL_ttf.h>
 
 // include headers
+#include <states/level01_state.hpp>
 #include <states/level1_state.hpp>
 #include <states/level2_state.hpp>
 #include <states/mainmenu_state.hpp>
 #include <states/pausemenu_state.hpp>
-#include <characters/characters.hpp>
-#include <levels/tiles.hpp>
-#include <objects/crate.hpp>
-#include <levels/level_end.hpp>
+#include <char.hpp>
+#include <levels.hpp>
+#include <objects.hpp>
 #include <engine.hpp>
-#include <objects/button.hpp>
-#include <engine.hpp>
-#include <objects/springboard.hpp>
-#include <menus/menu.hpp>
-#include <levels/level_messages.hpp>
-#include <states/level01_state.hpp>
+#include <menu.hpp>
 
 void level01_state::init(engine* game)
 {

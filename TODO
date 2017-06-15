@@ -4,5 +4,4 @@ TO-DO LIST
 	- change all class names to be in CamelCase
 	- change all function names to be in underscore_lowercase
 	- change all variables to be in underscore_lowercase
-	- remove all redundant #includes (there are a lot)
 	- python script for generating level tilings

@@ -10,9 +10,8 @@
 
 // include headers
 #include <engine.hpp>
-#include <characters/characters.hpp>
-#include <levels/tiles.hpp>
-#include <levels/levelstate.hpp>
+#include <char.hpp>
+#include <levels.hpp>
 
 class level7_state : public gamestate, public levelstate
 {

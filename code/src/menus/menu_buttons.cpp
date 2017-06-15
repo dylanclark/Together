@@ -4,7 +4,7 @@
 #include <SDL2/SDL_image.h>
 
 // include headers
-#include <menus/menu_buttons.hpp>
+#include <menu.hpp>
 #include <states/quitmenu_state.hpp>
 #include <states/level1_state.hpp>
 #include <states/level2_state.hpp>
@@ -14,7 +14,6 @@
 #include <states/level6_state.hpp>
 #include <states/level7_state.hpp>
 #include <states/level8_state.hpp>
-#include <menus/menu.hpp>
 #include <states/mainmenu_state.hpp>
 #include <states/optionsmenu_state.hpp>
 #include <states/newgamemenu_state.hpp>
