@@ -1,6 +1,41 @@
 
 TO-DO LIST
 
-	- change all function names to be in underscore_lowercase
-	- change all variables to be in underscore_lowercase
+LOGISTICS:
 	- python script for generating level tilings
+	- make class variables private, expose them with methods
+	- private methods for dots, camera, etc. -> instead of level "moving" and "tracking", just have the level "update" the object, and have the public update functions for each object use private methods for specific things like tracking and stuff
+	- general object class, each level can then have a list of objects
+	- convert fields to pointers in level-states, as with Camera.
+	- more private things!!! just update, draw, and such should be public. and get_col_rect()
+	- maybe there's a way to void passing the engine around everywhere?
+	- change initialization functions for Dot and things like it: should take arguments (x, y, etc.) and initialize traits
+	- remove all initializations in headers. if you want standardized values, then just set them in the allocation function and adjust them
+later. it's basically the same thing
+
+GAMEPLAY:
+	- more objects: waterfall? decorative objects, like grass/insects/flowers/what else?
+	- water? perhaps a gray tiles that both dots can swim in: something like this:
+
+				|------------------------------------------------																					|
+				|								|								 |							|																					|
+				|			water			|								 |							|											--------------------|
+				|								|								 |							|											|				|						|
+o				|								|								 |							|						^					|				|	water			|
+-------------------------								 |							|				---------			--------------------|
+o																				 |		water			|				|				|													|
+																				 |							|				|				|													|
+																				 |							|				---------													|
+																				 |							|																					|
+																				 |							|																					|
+																				 |--------------------------------------------------------|
+
+	- should this game be level-by-level or more open world?
+	- perhaps a world-map with level selection?
+	- perhaps a world-map with a few doorways that lead to sets of levels!
+	- better dynamic camera. it still doesn't really zoom properly
+	- variable blocks - switches change them instantly from black to white. easy!
+	- each of the level sets should have a gimmick:
+			+ water
+			+ blocks that are only active (appear) if the right dot is standing on them.
+			+ ...and more!

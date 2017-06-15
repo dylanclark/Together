@@ -71,8 +71,6 @@ void Level1State::update(Engine* game)
     // move the square
     if (b_char.status == CHAR_ACTIVE)
         b_char.move(this, game);
-    if (w_char.status == CHAR_ACTIVE)
-        w_char.move(this, game);
 
     for (int i = 0; i < crates.size(); i++)
     {
@@ -189,10 +187,7 @@ void Level1State::init_objects(Engine* game)
     b_level_end.col_rect.x = 1360;
     b_level_end.col_rect.y = 720;
 
-
-
     camera = new class Camera(game->screen_width, game->screen_height);
-
 }
 
 void Level1State::interactions(Engine* game)
