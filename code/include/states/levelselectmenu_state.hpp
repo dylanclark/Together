@@ -12,11 +12,11 @@
 #include <engine.hpp>
 #include <textures.hpp>
 
-class levelselectmenu_state : public gamestate
+class LevelSelectMenuState : public Gamestate
 {
 public:
     // init and shutdown
-    void init(engine* game);
+    void init(Engine* game);
     void cleanup();
 
     // pause and resume
@@ -24,16 +24,16 @@ public:
     void resume();
 
     // handling control of screen
-    void handle_events(engine* game);
-    void update(engine* game);
-    void draw(engine* game);
+    void handle_events(Engine* game);
+    void update(Engine* game);
+    void draw(Engine* game);
 
-    levelselectmenu_state() { };
+    LevelSelectMenuState() { };
 
-    menu* levelselect_menu = NULL;
+    Menu* levelselect_menu = NULL;
 
-    texture level_slider;
-    texture back_button;
+    Texture level_slider;
+    Texture back_button;
 };
 
 

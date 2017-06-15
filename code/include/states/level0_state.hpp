@@ -1,6 +1,6 @@
 
-#ifndef level01_state_hpp
-#define level01_state_hpp
+#ifndef level0_state_hpp
+#define level0_state_hpp
 
 // using SDL and standard IO
 #include <stdio.h>
@@ -13,11 +13,11 @@
 #include <char.hpp>
 #include <levels.hpp>
 
-class level01_state : public gamestate, public levelstate
+class Level0State : public Gamestate, public Levelstate
 {
 public:
     // init and shutdown
-    void init(engine* game);
+    void init(Engine* game);
     void cleanup();
 
     // pause and resume
@@ -25,20 +25,20 @@ public:
     void resume();
 
     // handling control of screen
-    void handle_events(engine* games);
-    void update(engine* game);
-    void draw(engine* game);
+    void handle_events(Engine* games);
+    void update(Engine* game);
+    void draw(Engine* game);
 
-    level01_state() { };
+    Level0State() { };
 
     // load textures
-    void load_textures(engine* game);
+    void load_textures(Engine* game);
 
     // init objects
-    void init_objects(engine* game);
+    void init_objects(Engine* game);
 
     // object interactions
-    void interactions(engine* game);
+    void interactions(Engine* game);
 };
 
-#endif /* level01_state_hpp */
+#endif /* level0_state_hpp */

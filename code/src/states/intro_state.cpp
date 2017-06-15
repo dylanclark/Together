@@ -8,7 +8,7 @@
 // include headers
 #include <states/intro_state.hpp>
 
-void intro_state::update(engine* game)
+void IntroState::update(Engine* game)
 {
     // switch to level if the sound effect is over
     if (Mix_Playing(-1) == 0)
@@ -26,7 +26,7 @@ void intro_state::update(engine* game)
     SDL_RenderClear(game->rend);
 }
 
-void intro_state::handle_events(engine *game)
+void IntroState::handle_events(Engine* game)
 {
     // event handler
     SDL_Event event;

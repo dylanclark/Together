@@ -7,7 +7,7 @@
 
 // include headers
 #include <states/level7_state.hpp>
-#include <states/level01_state.hpp>
+#include <states/level0_state.hpp>
 #include <states/level6_state.hpp>
 #include <states/mainmenu_state.hpp>
 #include <char.hpp>
@@ -16,7 +16,7 @@
 #include <engine.hpp>
 #include <states/pausemenu_state.hpp>
 
-void level6_state::init(engine* game)
+void Level6State::init(Engine* game)
 {
     // load textures
     load_textures(game);
@@ -30,7 +30,7 @@ void level6_state::init(engine* game)
     }
 }
 
-void level6_state::handle_events(engine *game)
+void Level6State::handle_events(Engine* game)
 {
     // event handler
     SDL_Event event;
@@ -50,7 +50,7 @@ void level6_state::handle_events(engine *game)
         {
             Mix_PauseMusic();
             Mix_PlayChannel(-1, game->sound->menu_exit_snd, 0);
-            game->push_state(new pausemenu_state);
+            game->push_state(new PauseMenuState);
         }
         // quit if he pressed escape
         w_char.handle_event(event, this, game);
@@ -61,7 +61,7 @@ void level6_state::handle_events(engine *game)
     shiftable = true;
 }
 
-void level6_state::update(engine* game)
+void Level6State::update(Engine* game)
 {
     // clear the window
     SDL_RenderClear(game->rend);
@@ -86,7 +86,7 @@ void level6_state::update(engine* game)
     interactions(game);
 }
 
-void level6_state::draw(engine* game)
+void Level6State::draw(Engine* game)
 {
     // draw stuff to the screen!
     for (int i = 0; i < (width * height); i++)
@@ -106,7 +106,7 @@ void level6_state::draw(engine* game)
     SDL_RenderPresent(game->rend);
 }
 
-void level6_state::cleanup()
+void Level6State::cleanup()
 {
     // iterate over all tiles and delete them all
     for (int i = 0; i < width * height; i++)
@@ -141,17 +141,17 @@ void level6_state::cleanup()
 
 }
 
-void level6_state::pause()
+void Level6State::pause()
 {
     return;
 }
 
-void level6_state::resume()
+void Level6State::resume()
 {
     return;
 }
 
-void level6_state::load_textures(engine* game)
+void Level6State::load_textures(Engine* game)
 {
     // LOAD ALL TEXTURES
     if (!b_char_tex.load_tile_sheet("resources/textures/black/b_char.png", game->rend))
@@ -203,7 +203,7 @@ void level6_state::load_textures(engine* game)
     }
 }
 
-void level6_state::init_objects(engine* game)
+void Level6State::init_objects(Engine* game)
 {
     // initialize black dot
     b_char.status = CHAR_ACTIVE;
@@ -212,7 +212,7 @@ void level6_state::init_objects(engine* game)
     b_char.col_rect.y = 8 * TILE_WIDTH;
     b_char.black = true;
 
-    camera = new class camera(game->screen_width, game->screen_height);
+    camera = new class Camera(game->screen_width, game->screen_height);
 
     // initialize black level end
     b_level_end.tex = b_end_tex;
@@ -242,7 +242,7 @@ void level6_state::init_objects(engine* game)
 
 }
 
-void level6_state::interactions(engine* game)
+void Level6State::interactions(Engine* game)
 {
 
     // if both are on level end object
@@ -250,7 +250,7 @@ void level6_state::interactions(engine* game)
 
     {
         // change state to level 7
-        change_state(game, new level7_state);
+        change_state(game, new Level7State);
     }
 
 
@@ -270,7 +270,7 @@ void level6_state::interactions(engine* game)
         }
 
         // init crate #1
-        crates.push_back(new crate(5 * TILE_WIDTH, 7  * TILE_WIDTH, FOUR_BY_TWO));
+        crates.push_back(new Crate(5 * TILE_WIDTH, 7  * TILE_WIDTH, FOUR_BY_TWO));
         crates.back()->tex = crate_tex_four_by_two;
         crates.back()->black = true;
 

@@ -6,7 +6,7 @@
 #include <SDL2/SDL_ttf.h>
 
 // include headers
-#include <states/level01_state.hpp>
+#include <states/level0_state.hpp>
 #include <states/level1_state.hpp>
 #include <states/level2_state.hpp>
 #include <states/mainmenu_state.hpp>
@@ -17,7 +17,7 @@
 #include <engine.hpp>
 #include <menu.hpp>
 
-void level01_state::init(engine* game)
+void Level0State::init(Engine* game)
 {
     // load textures
     load_textures(game);
@@ -27,7 +27,7 @@ void level01_state::init(engine* game)
 
 }
 
-void level01_state::handle_events(engine *game)
+void Level0State::handle_events(Engine* game)
 {
     // event handler
     SDL_Event event;
@@ -47,7 +47,7 @@ void level01_state::handle_events(engine *game)
         {
             Mix_PauseMusic();
             Mix_PlayChannel(-1, game->sound->menu_exit_snd, 0);
-            game->push_state(new pausemenu_state);
+            game->push_state(new PauseMenuState);
         }
 
         w_char.handle_event(event, this, game);
@@ -57,7 +57,7 @@ void level01_state::handle_events(engine *game)
     shiftable = true;
 }
 
-void level01_state::update(engine* game)
+void Level0State::update(Engine* game)
 {
     // clear the window
     SDL_RenderClear(game->rend);
@@ -82,7 +82,7 @@ void level01_state::update(engine* game)
     interactions(game);
 }
 
-void level01_state::draw(engine* game)
+void Level0State::draw(Engine* game)
 {
     // draw stuff to the screen!
     for (int i = 0; i < (width * height); i++)
@@ -108,7 +108,7 @@ void level01_state::draw(engine* game)
     SDL_RenderPresent(game->rend);
 }
 
-void level01_state::cleanup()
+void Level0State::cleanup()
 {
     // iterate over all tiles and delete them all
     for (int i = 0; i < width * height; i++)
@@ -147,17 +147,17 @@ void level01_state::cleanup()
 
 }
 
-void level01_state::pause()
+void Level0State::pause()
 {
     return;
 }
 
-void level01_state::resume()
+void Level0State::resume()
 {
     return;
 }
 
-void level01_state::load_textures(engine* game)
+void Level0State::load_textures(Engine* game)
 {
     // LOAD ALL TEXTURES
     if (!b_char_tex.load_tile_sheet("resources/textures/black/b_char.png", game->rend))
@@ -239,7 +239,7 @@ void level01_state::load_textures(engine* game)
     }
 }
 
-void level01_state::init_objects(engine* game)
+void Level0State::init_objects(Engine* game)
 {
     // initialize black dot
     b_char.status = CHAR_ACTIVE;
@@ -266,10 +266,10 @@ void level01_state::init_objects(engine* game)
     b_cross_spring.y_spring = 6;
     b_cross_spring.direction = FLIP_RIGHT;
 
-    camera = new class camera(game->screen_width, game->screen_height);
+    camera = new class Camera(game->screen_width, game->screen_height);
 
     // init crate #1
-    crates.push_back(new crate(5 * TILE_WIDTH, 7  * TILE_WIDTH, FOUR_BY_TWO));
+    crates.push_back(new Crate(5 * TILE_WIDTH, 7  * TILE_WIDTH, FOUR_BY_TWO));
     crates.back()->tex = crate_tex_four_by_two;
     crates.back()->black = true;
 
@@ -309,7 +309,7 @@ void level01_state::init_objects(engine* game)
 
 }
 
-void level01_state::interactions(engine* game)
+void Level0State::interactions(Engine* game)
 {
     // if both are on level end object
     if(b_level_end.check(b_char.col_rect) && w_level_end.check(w_char.col_rect))
@@ -318,7 +318,7 @@ void level01_state::interactions(engine* game)
         w_char.center(&w_level_end.col_rect);
 
         // change state to level 2
-        change_state(game, new level01_state);
+        change_state(game, new Level0State);
     }
 
     //if black cross spring is activated

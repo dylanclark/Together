@@ -7,7 +7,7 @@
 #include <levels.hpp>
 #include <engine.hpp>
 
-camera::camera(int w, int h)
+Camera::Camera(int w, int h)
 {
     // initialize velocities
     x_vel = 0;
@@ -22,7 +22,7 @@ camera::camera(int w, int h)
     display.h = h;
 };
 
-void camera::move(int level_w, int level_h, engine* game)
+void Camera::move(int level_w, int level_h, Engine* game)
 {
     // update positions
     location.x += x_vel;
@@ -116,7 +116,7 @@ void camera::move(int level_w, int level_h, engine* game)
     update();
 }
 
-void camera::update()
+void Camera::update()
 {
     display.x = location.x - location.w / 2;
     display.y = location.y - location.h / 2;
@@ -124,7 +124,7 @@ void camera::update()
     display.h = location.h;
 }
 
-void camera::track(SDL_Rect* b_char, SDL_Rect* w_char)
+void Camera::track(SDL_Rect* b_char, SDL_Rect* w_char)
 {
     // these will be for our ideal camera position (x and y are centered)
     int min_x;

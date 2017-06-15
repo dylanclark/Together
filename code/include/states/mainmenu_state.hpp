@@ -1,6 +1,6 @@
 
-#ifndef mainmenu_state_hpp
-#define mainmenu_state_hpp
+#ifndef MainMenuState_hpp
+#define MainMenuState_hpp
 
 // using SDL and standard IO
 #include <stdio.h>
@@ -12,11 +12,11 @@
 #include <engine.hpp>
 #include <textures.hpp>
 
-class mainmenu_state : public gamestate
+class MainMenuState : public Gamestate
 {
 public:
     // init and shutdown
-    void init(engine* game);
+    void init(Engine* game);
     void cleanup();
 
     // pause and resume
@@ -24,20 +24,20 @@ public:
     void resume();
 
     // handling control of screen
-    void handle_events(engine* game);
-    void update(engine* game);
-    void draw(engine* game);
+    void handle_events(Engine* game);
+    void update(Engine* game);
+    void draw(Engine* game);
 
-    mainmenu_state() { };
+    MainMenuState() { };
 
-    menu* main_menu = NULL;
+    Menu* main_menu = NULL;
 
-    texture fade_in_tex;
-    texture title;
-    texture new_game_button;
-    texture continue_button;
-    texture options_button;
-    texture quit_button;
+    Texture fade_in_tex;
+    Texture title;
+    Texture new_game_button;
+    Texture continue_button;
+    Texture OptionsButton;
+    Texture quit_button;
 };
 
-#endif /* mainmenu_state_hpp */
+#endif /* MainMenuState_hpp */

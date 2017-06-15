@@ -1,6 +1,6 @@
 
-#ifndef optionsmenu_state_hpp
-#define optionsmenu_state_hpp
+#ifndef OptionsMenuState_hpp
+#define OptionsMenuState_hpp
 
 // using SDL and standard IO
 #include <stdio.h>
@@ -12,11 +12,11 @@
 #include <engine.hpp>
 #include <textures.hpp>
 
-class optionsmenu_state : public gamestate
+class OptionsMenuState : public Gamestate
 {
 public:
     // init and shutdown
-    void init(engine* game);
+    void init(Engine* game);
     void cleanup();
 
     // pause and resume
@@ -24,18 +24,18 @@ public:
     void resume();
 
     // handling control of screen
-    void handle_events(engine* game);
-    void update(engine* game);
-    void draw(engine* game);
+    void handle_events(Engine* game);
+    void update(Engine* game);
+    void draw(Engine* game);
 
-    optionsmenu_state() { };
+    OptionsMenuState() { };
 
-    menu* options_menu = NULL;
+    Menu* options_menu = NULL;
 
-    texture volume_slider;
-    texture sfx_slider;
-    texture controls_button;
-    texture back_button;
+    Texture volume_slider;
+    Texture sfx_slider;
+    Texture controls_button;
+    Texture back_button;
 };
 
-#endif /* optionsmenu_state_hpp */
+#endif /* OptionsMenuState_hpp */

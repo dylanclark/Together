@@ -21,10 +21,10 @@ const int CHAR_ACTIVATE = 3;
 // animation length
 const int ANIMATION_LENGTH = 8;
 
-class levelstate;
+class Levelstate;
 
 // dot class definition
-class dot
+class Dot
 {
 public:
     static const int DOT_W = TILE_WIDTH;
@@ -35,20 +35,20 @@ public:
     const float GRAVITY = JUMP_VEL / 26;
     const float PUSH_VEL = DOT_VEL / 4;
     bool up, down, left, right;
-    controller* controller;
+    Controller* controller;
     int status;
     bool color;
     int frame;
 
-    dot();
-    bool handle_event(SDL_Event &e, levelstate* level, engine* game);
-    void move(levelstate* level, engine* game);
-    bool crate_col(levelstate* level, engine* game);
-    bool tile_col(tile* tileset[], int size, engine* game);
-    void render(SDL_Rect* camera, engine* game);
+    Dot();
+    bool handle_event(SDL_Event &e, Levelstate* level, Engine* game);
+    void move(Levelstate* level, Engine* game);
+    bool crate_col(Levelstate* level, Engine* game);
+    bool tile_col(Tile* tileset[], int size, Engine* game);
+    void render(SDL_Rect* camera, Engine* game);
 
     SDL_Rect col_rect;
-    texture tex;
+    Texture tex;
     bool black;
     int jump;
 
@@ -60,17 +60,17 @@ private:
     float x_vel, y_vel;
 };
 
-class vector
+class Vector
 {
 public:
     // init
-    vector();
+    Vector();
 
     // coords
     int x;
     int y;
 };
 
-bool check_collision(SDL_Rect a, SDL_Rect b, vector* overlap);
+bool check_collision(SDL_Rect a, SDL_Rect b, Vector* overlap);
 
 #endif /* char_hpp */

@@ -16,7 +16,7 @@
 #include <states/pausemenu_state.hpp>
 #include <states/optionsmenu_state.hpp>
 
-void optionsmenu_state::init(engine* game)
+void OptionsMenuState::init(Engine* game)
 {
     if (!volume_slider.load_object(128, 16, "resources/textures/menu/volume.png", game->rend))
     {
@@ -43,25 +43,25 @@ void optionsmenu_state::init(engine* game)
     }
 
 
-    options_menu = new class menu(game->screen_width, game->screen_height, 0);
+    options_menu = new class Menu(game->screen_width, game->screen_height, 0);
     options_menu->size = 4;
 
-    options_menu->sliders.push_back(new class volume_slider(true, 5, true, game->screen_width / 2, game->screen_height / 2 - 135, 640, 80));
+    options_menu->sliders.push_back(new class VolumeSlider(true, 5, true, game->screen_width / 2, game->screen_height / 2 - 135, 640, 80));
     options_menu->sliders[0]->tex = &volume_slider;
 
-    options_menu->sliders.push_back(new class sfx_slider(true, 5, true, game->screen_width / 2, game->screen_height / 2 - 45, 640, 80));
+    options_menu->sliders.push_back(new class SfxSlider(true, 5, true, game->screen_width / 2, game->screen_height / 2 - 45, 640, 80));
     options_menu->sliders[1]->tex = &sfx_slider;
 
-    options_menu->buttons.push_back(new class controls_button(true, game->screen_width / 2, game->screen_height / 2 + 45, 480, 80));
+    options_menu->buttons.push_back(new class ControlsButton(true, game->screen_width / 2, game->screen_height / 2 + 45, 480, 80));
     options_menu->buttons[0]->tex = &controls_button;
 
-    options_menu->buttons.push_back(new class back_button(true, game->screen_width / 2, game->screen_height / 2 + 135, 320, 80));
+    options_menu->buttons.push_back(new class BackButton(true, game->screen_width / 2, game->screen_height / 2 + 135, 320, 80));
     options_menu->buttons[1]->tex = &back_button;
 
 
 }
 
-void optionsmenu_state::cleanup()
+void OptionsMenuState::cleanup()
 {
     free(options_menu);
 
@@ -71,17 +71,17 @@ void optionsmenu_state::cleanup()
     back_button.free();
 }
 
-void optionsmenu_state::pause()
+void OptionsMenuState::pause()
 {
 
 }
 
-void optionsmenu_state::resume()
+void OptionsMenuState::resume()
 {
 
 }
 
-void optionsmenu_state::handle_events(engine* game)
+void OptionsMenuState::handle_events(Engine* game)
 {
     // event handler
     SDL_Event event;
@@ -105,7 +105,7 @@ void optionsmenu_state::handle_events(engine* game)
     }
 }
 
-void optionsmenu_state::update(engine* game)
+void OptionsMenuState::update(Engine* game)
 {
     // clear the window
     SDL_RenderClear(game->rend);
@@ -141,7 +141,7 @@ void optionsmenu_state::update(engine* game)
     }
 }
 
-void optionsmenu_state::draw(engine* game)
+void OptionsMenuState::draw(Engine* game)
 {
     for (int i = 0; i < options_menu->sliders.size(); i++)
     {

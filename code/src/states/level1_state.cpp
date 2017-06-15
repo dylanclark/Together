@@ -19,7 +19,7 @@
 #include <objects.hpp>
 #include <menu.hpp>
 
-void level1_state::init(engine* game)
+void Level1State::init(Engine* game)
 {
     // load textures
     load_textures(game);
@@ -33,7 +33,7 @@ void level1_state::init(engine* game)
     }
 }
 
-void level1_state::handle_events(engine *game)
+void Level1State::handle_events(Engine* game)
 {
     // event handler
     SDL_Event event;
@@ -53,7 +53,7 @@ void level1_state::handle_events(engine *game)
         {
             Mix_PauseMusic();
             Mix_PlayChannel(-1, game->sound->menu_exit_snd, 0);
-            game->push_state(new pausemenu_state);
+            game->push_state(new PauseMenuState);
         }
 
         w_char.handle_event(event, this, game);
@@ -63,7 +63,7 @@ void level1_state::handle_events(engine *game)
     shiftable = true;
 }
 
-void level1_state::update(engine* game)
+void Level1State::update(Engine* game)
 {
     // clear the window
     SDL_RenderClear(game->rend);
@@ -88,7 +88,7 @@ void level1_state::update(engine* game)
     interactions(game);
 }
 
-void level1_state::draw(engine* game)
+void Level1State::draw(Engine* game)
 {
     // draw stuff to the screen!
     for (int i = 0; i < (width * height); i++)
@@ -106,7 +106,7 @@ void level1_state::draw(engine* game)
     SDL_RenderPresent(game->rend);
 }
 
-void level1_state::cleanup()
+void Level1State::cleanup()
 {
     // iterate over all tiles and delete them all
     for (int i = 0; i < width * height; i++)
@@ -133,17 +133,17 @@ void level1_state::cleanup()
 
 }
 
-void level1_state::pause()
+void Level1State::pause()
 {
     return;
 }
 
-void level1_state::resume()
+void Level1State::resume()
 {
     return;
 }
 
-void level1_state::load_textures(engine* game)
+void Level1State::load_textures(Engine* game)
 {
     // LOAD ALL TEXTURES
     if (!b_char_tex.load_tile_sheet("resources/textures/black/b_char.png", game->rend))
@@ -175,7 +175,7 @@ void level1_state::load_textures(engine* game)
     }
 }
 
-void level1_state::init_objects(engine* game)
+void Level1State::init_objects(Engine* game)
 {
     // initialize black dot
     b_char.status = CHAR_ACTIVE;
@@ -191,11 +191,11 @@ void level1_state::init_objects(engine* game)
 
 
 
-    camera = new class camera(game->screen_width, game->screen_height);
+    camera = new class Camera(game->screen_width, game->screen_height);
 
 }
 
-void level1_state::interactions(engine* game)
+void Level1State::interactions(Engine* game)
 {
     // if both are on level end object
     if(b_level_end.check(b_char.col_rect))
@@ -203,7 +203,7 @@ void level1_state::interactions(engine* game)
         b_char.center(&b_level_end.col_rect);
 
         // change state to level 2
-        change_state(game, new level2_state);
+        change_state(game, new Level2State);
     }
 
 }

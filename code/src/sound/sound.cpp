@@ -8,7 +8,7 @@
 // include headers
 #include <sound.hpp>
 
-sound_player::sound_player()
+SoundPlayer::SoundPlayer()
 {
     // initialize all music
     menu_music = Mix_LoadMUS("resources/audio/music/menu.wav");
@@ -28,7 +28,7 @@ sound_player::sound_player()
     level_w_jump_snd = Mix_LoadWAV("resources/audio/fx/level/w_jump.wav");
 }
 
-sound_player::~sound_player()
+SoundPlayer::~SoundPlayer()
 {
     // free all music
     Mix_FreeMusic(menu_music);

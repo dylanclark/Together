@@ -15,7 +15,7 @@
 #include <objects.hpp>
 #include <states/pausemenu_state.hpp>
 
-void level2_state::init(engine* game)
+void Level2State::init(Engine* game)
 {
     // load textures
     load_textures(game);
@@ -29,7 +29,7 @@ void level2_state::init(engine* game)
     }
 }
 
-void level2_state::handle_events(engine *game)
+void Level2State::handle_events(Engine* game)
 {
     // event handler
     SDL_Event event;
@@ -49,7 +49,7 @@ void level2_state::handle_events(engine *game)
         {
             Mix_PauseMusic();
             Mix_PlayChannel(-1, game->sound->menu_exit_snd, 0);
-            game->push_state(new pausemenu_state);
+            game->push_state(new PauseMenuState);
         }
 
         w_char.handle_event(event, this, game);
@@ -59,7 +59,7 @@ void level2_state::handle_events(engine *game)
     shiftable = true;
 }
 
-void level2_state::update(engine* game)
+void Level2State::update(Engine* game)
 {
     // clear the window
     SDL_RenderClear(game->rend);
@@ -84,7 +84,7 @@ void level2_state::update(engine* game)
     interactions(game);
 }
 
-void level2_state::draw(engine* game)
+void Level2State::draw(Engine* game)
 {
     // draw stuff to the screen!
     for (int i = 0; i < (width * height); i++)
@@ -103,7 +103,7 @@ void level2_state::draw(engine* game)
     SDL_RenderPresent(game->rend);
 }
 
-void level2_state::cleanup()
+void Level2State::cleanup()
 {
     // iterate over all tiles and delete them all
     for (int i = 0; i < width * height; i++)
@@ -140,17 +140,17 @@ void level2_state::cleanup()
 
 }
 
-void level2_state::pause()
+void Level2State::pause()
 {
     return;
 }
 
-void level2_state::resume()
+void Level2State::resume()
 {
     return;
 }
 
-void level2_state::load_textures(engine* game)
+void Level2State::load_textures(Engine* game)
 {
     // LOAD ALL TEXTURES
     if (!b_char_tex.load_tile_sheet("resources/textures/black/b_char.png", game->rend))
@@ -198,7 +198,7 @@ void level2_state::load_textures(engine* game)
     }
 }
 
-void level2_state::init_objects(engine* game)
+void Level2State::init_objects(Engine* game)
 {
     // initialize black dot
     b_char.status = CHAR_ACTIVE;
@@ -207,7 +207,7 @@ void level2_state::init_objects(engine* game)
     b_char.col_rect.y = 8 * TILE_WIDTH;
     b_char.black = true;
 
-    camera = new class camera(game->screen_width, game->screen_height);
+    camera = new class Camera(game->screen_width, game->screen_height);
 
     // initialize black level end
     b_level_end.tex = b_end_tex;
@@ -218,7 +218,7 @@ void level2_state::init_objects(engine* game)
 
 }
 
-void level2_state::interactions(engine* game)
+void Level2State::interactions(Engine* game)
 {
 
     // if both are on level end object
@@ -227,7 +227,7 @@ void level2_state::interactions(engine* game)
         b_char.center(&b_level_end.col_rect);
 
         // change state to level 3
-        change_state(game, new level3_state);
+        change_state(game, new Level3State);
     }
 
 }

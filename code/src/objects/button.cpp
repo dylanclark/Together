@@ -13,11 +13,11 @@
 #include <objects.hpp>
 
 // reinitialize textures
-extern texture b_button;
-extern texture w_button;
+extern Texture b_button;
+extern Texture w_button;
 
 // button class
-button::button()
+Button::Button()
 {
     // initialize collision rectangle
     col_rect.w = 16;
@@ -31,9 +31,9 @@ button::button()
 }
 
 // check for button collision
-bool button::check(SDL_Rect dot_rect)
+bool Button::check(SDL_Rect dot_rect)
 {
-    vector repos;
+    Vector repos;
     if(check_collision(col_rect, dot_rect, &repos))
     {
         return true;
@@ -42,7 +42,7 @@ bool button::check(SDL_Rect dot_rect)
 };
 
 // render
-void button::render(SDL_Rect* camera, engine* game)
+void Button::render(SDL_Rect* camera, Engine* game)
 {
     // flip
     switch(direction)

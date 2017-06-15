@@ -9,7 +9,7 @@
 #include <menu.hpp>
 #include <textures.hpp>
 
-menu_button::menu_button(bool select, int x, int y, int w, int h)
+MenuButton::MenuButton(bool select, int x, int y, int w, int h)
 {
     selected = select;
 
@@ -19,7 +19,7 @@ menu_button::menu_button(bool select, int x, int y, int w, int h)
     rect.h = h;
 }
 
-void menu_button::render(SDL_Renderer* rend)
+void MenuButton::render(SDL_Renderer* rend)
 {
     // determine which chunk of the texture to render
     SDL_Rect active_clip = {tex->get_width(), 0, tex->get_width(), tex->get_height()};
@@ -36,7 +36,7 @@ void menu_button::render(SDL_Renderer* rend)
     }
 }
 
-menu_slider::menu_slider(bool select, int length, bool perm, int x, int y, int w, int h)
+MenuSlider::MenuSlider(bool select, int length, bool perm, int x, int y, int w, int h)
 {
     selected = select;
     frames = length;
@@ -49,12 +49,12 @@ menu_slider::menu_slider(bool select, int length, bool perm, int x, int y, int w
     rect.h = h;
 }
 
-menu_slider::~menu_slider()
+MenuSlider::~MenuSlider()
 {
 
 }
 
-void menu_slider::render(SDL_Renderer* rend)
+void MenuSlider::render(SDL_Renderer* rend)
 {
     // determine which chunk of the texture to render
     SDL_Rect active_clip = {tex->get_width() * (cur_frame * 2 + 1), 0, tex->get_width(), tex->get_height()};
@@ -71,7 +71,7 @@ void menu_slider::render(SDL_Renderer* rend)
     }
 }
 
-title::title(int x, int y, int w, int h)
+Title::Title(int x, int y, int w, int h)
 {
     rect.x = x;
     rect.y = y;
@@ -79,14 +79,14 @@ title::title(int x, int y, int w, int h)
     rect.h = h;
 }
 
-void title::render(SDL_Renderer* rend)
+void Title::render(SDL_Renderer* rend)
 {
     SDL_Rect active_clip = {0, 0, tex->get_width(), tex->get_height()};
 
     tex->render_button(&rect, &active_clip, rend);
 }
 
-fade_in::fade_in(int w, int h, int time)
+FadeIn::FadeIn(int w, int h, int time)
 {
     rect.x = 0;
     rect.y = 0;
@@ -97,12 +97,12 @@ fade_in::fade_in(int w, int h, int time)
     timer = time;
 }
 
-fade_in::~fade_in()
+FadeIn::~FadeIn()
 {
     tex->free();
 }
 
-void fade_in::render(SDL_Renderer* rend)
+void FadeIn::render(SDL_Renderer* rend)
 {
     SDL_Rect clip = {0, 0, tex->get_width(), tex->get_height()};
     SDL_Rect render_rect = {rect.x + rect.w / 2, rect.y + rect.h / 2, rect.w, rect.h};
@@ -110,7 +110,7 @@ void fade_in::render(SDL_Renderer* rend)
     tex->render_button(&render_rect, &clip, rend);
 }
 
-void fade_in::update()
+void FadeIn::update()
 {
     timer -= 1;
 
@@ -125,14 +125,14 @@ void fade_in::update()
     tex->set_alpha(alpha);
 }
 
-menu::menu(int w, int h, int timer)
+Menu::Menu(int w, int h, int timer)
 {
     selector = 0;
 
-    controller = new class controller;
+    controller = new class Controller;
 
     fade_in = NULL;
-    fade_in = new class fade_in(w, h, timer);
+    fade_in = new class FadeIn(w, h, timer);
 
     up = false;
     down = false;
@@ -145,7 +145,7 @@ menu::menu(int w, int h, int timer)
     left_up = true;
 }
 
-bool menu::handle_event(SDL_Event& e, engine* game)
+bool Menu::handle_event(SDL_Event& e, Engine* game)
 {
 
 
@@ -258,7 +258,7 @@ bool menu::handle_event(SDL_Event& e, engine* game)
     return true;
 }
 
-void menu::update(engine* game)
+void Menu::update(Engine* game)
 {
     if (up && up_up)
     {

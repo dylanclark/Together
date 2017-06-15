@@ -11,7 +11,7 @@
 #include <engine.hpp>
 
 // initialize
-texture::texture()
+Texture::Texture()
 {
     tex = NULL;
     width = 0;
@@ -19,12 +19,12 @@ texture::texture()
 };
 
 // deallocate
-texture::~texture()
+Texture::~Texture()
 {
     free();
 };
 
-bool texture::load_object(int w, int h, std::string path, SDL_Renderer* rend)
+bool Texture::load_object(int w, int h, std::string path, SDL_Renderer* rend)
 {
     // ditch the last texture
     free();
@@ -59,7 +59,7 @@ bool texture::load_object(int w, int h, std::string path, SDL_Renderer* rend)
     return true;
 };
 
-bool texture::load_tile_sheet(std::string path, SDL_Renderer* rend)
+bool Texture::load_tile_sheet(std::string path, SDL_Renderer* rend)
 {
     // ditch the last texture
     free();
@@ -94,17 +94,17 @@ bool texture::load_tile_sheet(std::string path, SDL_Renderer* rend)
     return true;
 };
 
-void texture::set_blend_mode(SDL_BlendMode blending)
+void Texture::set_blend_mode(SDL_BlendMode blending)
 {
     SDL_SetTextureBlendMode(tex, blending);
 }
 
-void texture::set_alpha(Uint8 alpha)
+void Texture::set_alpha(Uint8 alpha)
 {
     SDL_SetTextureAlphaMod(tex, alpha);
 }
 
-void texture::free()
+void Texture::free()
 {
     // deallocate the texture if it exists
     if (tex != NULL)
@@ -116,7 +116,7 @@ void texture::free()
     }
 }
 
-void texture::render(int x, int y, SDL_Rect* clip, SDL_Rect* camera, engine* game)
+void Texture::render(int x, int y, SDL_Rect* clip, SDL_Rect* camera, Engine* game)
 {
     int render_x = (x - camera->x) / ( (float) camera->w / (float) game->screen_width);
     int render_y = (y - camera->y) / ((float) camera->h / (float) game->screen_height);
@@ -130,7 +130,7 @@ void texture::render(int x, int y, SDL_Rect* clip, SDL_Rect* camera, engine* gam
     SDL_RenderCopy(game->rend, tex, clip, &render_rect);
 }
 
-void texture::render_tile(int x, int y, SDL_Rect* type_clip, SDL_Rect* active_clip, SDL_Rect* camera, engine* game)
+void Texture::render_tile(int x, int y, SDL_Rect* type_clip, SDL_Rect* active_clip, SDL_Rect* camera, Engine* game)
 {
     int render_x = (x - camera->x) / ((float) camera->w / (float) game->screen_width);
     int render_y = (y - camera->y) / ((float) camera->h / (float) game->screen_height);
@@ -146,7 +146,7 @@ void texture::render_tile(int x, int y, SDL_Rect* type_clip, SDL_Rect* active_cl
     SDL_RenderCopy(game->rend, tex, &clip_rect, &render_rect);
 }
 
-void texture::render_button(SDL_Rect* button, SDL_Rect* clip, SDL_Renderer* rend)
+void Texture::render_button(SDL_Rect* button, SDL_Rect* clip, SDL_Renderer* rend)
 {
     // rendering rectangle
     SDL_Rect render_rect = {button->x - button->w / 2, button->y - button->h / 2, button->w, button->h};
@@ -155,7 +155,7 @@ void texture::render_button(SDL_Rect* button, SDL_Rect* clip, SDL_Renderer* rend
     SDL_RenderCopy(rend, tex, clip, &render_rect);
 }
 
-void texture::angle_render(int x, int y, SDL_Rect *clip, SDL_Rect *camera, engine* game, double angle, SDL_Point *center, SDL_RendererFlip flip)
+void Texture::angle_render(int x, int y, SDL_Rect *clip, SDL_Rect *camera, Engine* game, double angle, SDL_Point *center, SDL_RendererFlip flip)
 {
     int render_x = (x - camera->x) / ( (float) camera->w / (float) game->screen_width);
     int render_y = (y - camera->y) / ((float) camera->h / (float) game->screen_height);
@@ -169,7 +169,7 @@ void texture::angle_render(int x, int y, SDL_Rect *clip, SDL_Rect *camera, engin
     SDL_RenderCopyEx(game->rend, tex, clip, &render_rect, angle, center, flip);
 };
 
-bool texture::load_message(int w, int h, std::string path, SDL_Renderer* rend)
+bool Texture::load_message(int w, int h, std::string path, SDL_Renderer* rend)
 {
         // ditch the last texture
         free();
@@ -204,7 +204,7 @@ bool texture::load_message(int w, int h, std::string path, SDL_Renderer* rend)
         return true;
 };
 
-void texture::render_message(SDL_Rect* message, SDL_Rect* clip, SDL_Renderer* rend)
+void Texture::render_message(SDL_Rect* message, SDL_Rect* clip, SDL_Renderer* rend)
 {
     // rendering rectangle
     SDL_Rect render_rect = {message->x, message->y, message->w, message->h};

@@ -22,13 +22,13 @@
 
 // BUTTONS
 
-void new_game_button::select(engine* game)
+void NewGameButton::select(Engine* game)
 {
     Mix_PlayChannel(-1, game->sound->menu_select_snd, 0);
-    game->push_state(new newgamemenu_state);
+    game->push_state(new NewGameMenuState);
 }
 
-void continue_button::select(engine* game)
+void ContinueButton::select(Engine* game)
 {
     int level = game->read_save();
     switch (level)
@@ -38,43 +38,43 @@ void continue_button::select(engine* game)
             break;
         case 1:
             Mix_PlayChannel(-1, game->sound->menu_select_snd, 0);
-            game->change_state(new level1_state);
-            game->push_state(new intro_state);
+            game->change_state(new Level1State);
+            game->push_state(new IntroState);
             break;
         case 2:
             Mix_PlayChannel(-1, game->sound->menu_select_snd, 0);
-            game->change_state(new level2_state);
-            game->push_state(new intro_state);
+            game->change_state(new Level2State);
+            game->push_state(new IntroState);
             break;
         case 3:
             Mix_PlayChannel(-1, game->sound->menu_select_snd, 0);
-            game->change_state(new level3_state);
-            game->push_state(new intro_state);
+            game->change_state(new Level3State);
+            game->push_state(new IntroState);
             break;
         case 4:
             Mix_PlayChannel(-1, game->sound->menu_select_snd, 0);
-            game->change_state(new level4_state);
-            game->push_state(new intro_state);
+            game->change_state(new Level4State);
+            game->push_state(new IntroState);
             break;
         case 5:
             Mix_PlayChannel(-1, game->sound->menu_select_snd, 0);
-            game->change_state(new level5_state);
-            game->push_state(new intro_state);
+            game->change_state(new Level5State);
+            game->push_state(new IntroState);
             break;
         case 6:
             Mix_PlayChannel(-1, game->sound->menu_select_snd, 0);
-            game->change_state(new level6_state);
-            game->push_state(new intro_state);
+            game->change_state(new Level6State);
+            game->push_state(new IntroState);
             break;
         case 7:
             Mix_PlayChannel(-1, game->sound->menu_select_snd, 0);
-            game->change_state(new level7_state);
-            game->push_state(new intro_state);
+            game->change_state(new Level7State);
+            game->push_state(new IntroState);
             break;
         case 8:
             Mix_PlayChannel(-1, game->sound->menu_select_snd, 0);
-            game->change_state(new level8_state);
-            game->push_state(new intro_state);
+            game->change_state(new Level8State);
+            game->push_state(new IntroState);
             break;
         case -1:
             Mix_PlayChannel(-1, game->sound->menu_exit_snd, 0);
@@ -82,65 +82,65 @@ void continue_button::select(engine* game)
     }
 }
 
-void options_button::select(engine* game)
+void OptionsButton::select(Engine* game)
 {
     Mix_PlayChannel(-1, game->sound->menu_select_snd, 0);
-    game->push_state(new optionsmenu_state);
+    game->push_state(new OptionsMenuState);
 }
 
-void yes_quit_button::select(engine* game)
+void YesQuitButton::select(Engine* game)
 {
     game->quit();
 }
 
-void yes_newgame_button::select(engine* game)
+void YesNewGameButton::select(Engine* game)
 {
     Mix_PlayChannel(-1, game->sound->menu_select_snd, 0);
     Mix_FadeOutMusic(200);
     game->save(0);
     game->pop_state();
-    game->change_state(new level1_state);
-    game->push_state(new intro_state);
+    game->change_state(new Level1State);
+    game->push_state(new IntroState);
 }
 
-void no_button::select(engine* game)
+void NoButton::select(Engine* game)
 {
     Mix_PlayChannel(-1, game->sound->menu_exit_snd, 0);
     game->pop_state();
 }
 
-void quit_button::select(engine* game)
+void QuitButton::select(Engine* game)
 {
     Mix_PlayChannel(-1, game->sound->menu_exit_snd, 0);
-    game->push_state(new quitmenu_state);
+    game->push_state(new QuitMenuState);
 }
 
-void resume_button::select(engine* game)
+void ResumeButton::select(Engine* game)
 {
     Mix_ResumeMusic();
     Mix_PlayChannel(-1, game->sound->menu_select_snd, 0);
     game->pop_state();
 }
 
-void level_select_button::select(engine* game)
+void LevelSelectButton::select(Engine* game)
 {
     Mix_PlayChannel(-1, game->sound->menu_select_snd, 0);
-    game->push_state(new levelselectmenu_state);
+    game->push_state(new LevelSelectMenuState);
 }
 
-void save_and_quit_button::select(engine* game)
+void SaveAndQuitButton::select(Engine* game)
 {
     Mix_PlayChannel(-1, game->sound->menu_exit_snd, 0);
-    game->change_state(new mainmenu_state);
+    game->change_state(new MainMenuState);
 }
 
-void controls_button::select(engine* game)
+void ControlsButton::select(Engine* game)
 {
     Mix_PlayChannel(-1, game->sound->menu_select_snd, 0);
     game->pop_state();
 }
 
-void back_button::select(engine* game)
+void BackButton::select(Engine* game)
 {
     Mix_PlayChannel(-1, game->sound->menu_exit_snd, 0);
     game->pop_state();
@@ -149,77 +149,77 @@ void back_button::select(engine* game)
 // SLIDERS
 
 
-volume_slider::volume_slider(bool selected, int length, bool permanent, int x, int y, int w, int h) : menu_slider(selected, length, permanent, x, y, w, h)
+VolumeSlider::VolumeSlider(bool selected, int length, bool permanent, int x, int y, int w, int h) : MenuSlider(selected, length, permanent, x, y, w, h)
 {
     cur_frame = frames - ((float) Mix_VolumeMusic(-1) / (float) MIX_MAX_VOLUME) * ((float) length - 1) - 1;
 }
 
-void volume_slider::select(engine *game)
+void VolumeSlider::select(Engine* game)
 {
     Mix_VolumeMusic((((float) frames - (float) cur_frame - 1) / (float) frames) * (float) MIX_MAX_VOLUME);
 }
 
-sfx_slider::sfx_slider(bool selected, int length, bool permanent, int x, int y, int w, int h) : menu_slider(selected, length, permanent, x, y, w, h)
+SfxSlider::SfxSlider(bool selected, int length, bool permanent, int x, int y, int w, int h) : MenuSlider(selected, length, permanent, x, y, w, h)
 {
     cur_frame = frames - ((float) Mix_Volume(-1, -1) / (float) MIX_MAX_VOLUME) * ((float) length - 1) - 1;
 }
 
-void sfx_slider::select(engine *game)
+void SfxSlider::select(Engine* game)
 {
     Mix_Volume(-1, (((float) frames - (float) cur_frame - 1) / (float) frames) * (float) MIX_MAX_VOLUME);
 }
 
-void level_slider::select(engine *game)
+void LevelSlider::select(Engine* game)
 {
     switch (cur_frame + 1)
     {
         case 1:
             Mix_PlayChannel(-1, game->sound->menu_select_snd, 0);
             Mix_FadeOutMusic(200);
-            game->change_state(new level1_state);
-            game->push_state(new intro_state);
+            game->change_state(new Level1State);
+            game->push_state(new IntroState);
             break;
         case 2:
             Mix_PlayChannel(-1, game->sound->menu_select_snd, 0);
             Mix_FadeOutMusic(200);
-            game->change_state(new level2_state);
-            game->push_state(new intro_state);
+            game->change_state(new Level2State);
+            game->push_state(new IntroState);
             break;
         case 3:
             Mix_PlayChannel(-1, game->sound->menu_select_snd, 0);
             Mix_FadeOutMusic(200);
-            game->change_state(new level3_state);
-            game->push_state(new intro_state);
+            game->change_state(new Level3State);
+            game->push_state(new IntroState);
             break;
         case 4:
             Mix_PlayChannel(-1, game->sound->menu_select_snd, 0);
             Mix_FadeOutMusic(200);
-            game->change_state(new level4_state);
-            game->push_state(new intro_state);
+            game->change_state(new Level4State);
+            game->push_state(new IntroState);
             break;
         case 5:
             Mix_PlayChannel(-1, game->sound->menu_select_snd, 0);
             Mix_FadeOutMusic(200);
-            game->change_state(new level5_state);
-            game->push_state(new intro_state);
+            game->change_state(new Level5State);
+            game->push_state(new IntroState);
             break;
         case 6:
             Mix_PlayChannel(-1, game->sound->menu_select_snd, 0);
             Mix_FadeOutMusic(200);
-            game->change_state(new level6_state);
-            game->push_state(new intro_state);
+            game->change_state(new Level6State);
+            game->push_state(new IntroState);
             break;
         case 7:
             Mix_PlayChannel(-1, game->sound->menu_select_snd, 0);
             Mix_FadeOutMusic(200);
-            game->change_state(new level7_state);
-            game->push_state(new intro_state);
+            game->change_state(new Level7State);
+            game->push_state(new IntroState);
             break;
         case 8:
             Mix_PlayChannel(-1, game->sound->menu_select_snd, 0);
             Mix_FadeOutMusic(200);
-            game->change_state(new level8_state);
-            game->push_state(new intro_state);
+            game->change_state(new Level8State);
+            game->push_state(new IntroState);
             break;
     }
 }

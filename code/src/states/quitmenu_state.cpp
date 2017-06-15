@@ -14,7 +14,7 @@
 #include <states/level2_state.hpp>
 #include <states/level3_state.hpp>
 
-void quitmenu_state::init(engine* game)
+void QuitMenuState::init(Engine* game)
 {
     if (!quit_title.load_object(128, 16, "resources/textures/menu/quit_title.png", game->rend))
     {
@@ -35,20 +35,20 @@ void quitmenu_state::init(engine* game)
     }
 
 
-    quit_menu = new class menu(game->screen_width, game->screen_height, 0);
+    quit_menu = new class Menu(game->screen_width, game->screen_height, 0);
     quit_menu->size = 2;
 
-    quit_menu->menu_title = new class title (game->screen_width / 2,  game->screen_height / 3, 640, 80);
+    quit_menu->menu_title = new class Title (game->screen_width / 2,  game->screen_height / 3, 640, 80);
     quit_menu->menu_title->tex = &quit_title;
 
-    quit_menu->buttons.push_back(new class yes_quit_button(true, game->screen_width / 2, game->screen_height / 2, 160, 80));
+    quit_menu->buttons.push_back(new class YesQuitButton(true, game->screen_width / 2, game->screen_height / 2, 160, 80));
     quit_menu->buttons[0]->tex = &yes_button;
 
-    quit_menu->buttons.push_back(new class no_button(true, game->screen_width / 2, game->screen_height / 2 + 90, 160, 80));
+    quit_menu->buttons.push_back(new class NoButton(true, game->screen_width / 2, game->screen_height / 2 + 90, 160, 80));
     quit_menu->buttons[1]->tex = &no_button;
 }
 
-void quitmenu_state::cleanup()
+void QuitMenuState::cleanup()
 {
     free(quit_menu);
 
@@ -57,17 +57,17 @@ void quitmenu_state::cleanup()
     no_button.free();
 }
 
-void quitmenu_state::pause()
+void QuitMenuState::pause()
 {
 
 }
 
-void quitmenu_state::resume()
+void QuitMenuState::resume()
 {
 
 }
 
-void quitmenu_state::handle_events(engine* game)
+void QuitMenuState::handle_events(Engine* game)
 {
     // event handler
     SDL_Event event;
@@ -89,7 +89,7 @@ void quitmenu_state::handle_events(engine* game)
     }
 }
 
-void quitmenu_state::update(engine* game)
+void QuitMenuState::update(Engine* game)
 {
     // clear the window
     SDL_RenderClear(game->rend);
@@ -110,7 +110,7 @@ void quitmenu_state::update(engine* game)
     }
 }
 
-void quitmenu_state::draw(engine* game)
+void QuitMenuState::draw(Engine* game)
 {
     for (int i = 0; i < quit_menu->buttons.size(); i++)
     {

@@ -13,11 +13,11 @@
 #include <char.hpp>
 #include <levels.hpp>
 
-class level7_state : public gamestate, public levelstate
+class Level7State : public Gamestate, public Levelstate
 {
 public:
     // init and shutdown
-    void init(engine* game);
+    void init(Engine* game);
     void cleanup();
 
     // pause and resume
@@ -25,20 +25,20 @@ public:
     void resume();
 
     // handling control of screen
-    void handle_events(engine* game);
-    void update(engine* game);
-    void draw(engine* game);
+    void handle_events(Engine* game);
+    void update(Engine* game);
+    void draw(Engine* game);
 
-    level7_state() { };
+    Level7State() { };
 
     // load textures
-    void load_textures(engine* game);
+    void load_textures(Engine* game);
 
     // init objects
-    void init_objects(engine* game);
+    void init_objects(Engine* game);
 
     // object interactions
-    void interactions(engine* game);
+    void interactions(Engine* game);
 };
 
 #endif /* level7_state_hpp */

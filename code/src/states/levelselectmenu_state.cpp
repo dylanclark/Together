@@ -11,13 +11,13 @@
 #include <engine.hpp>
 #include <menu.hpp>
 #include <states/level1_state.hpp>
-#include <states/level01_state.hpp>
+#include <states/level0_state.hpp>
 #include <states/level2_state.hpp>
 #include <states/pausemenu_state.hpp>
 #include <states/optionsmenu_state.hpp>
 #include <states/levelselectmenu_state.hpp>
 
-void levelselectmenu_state::init(engine* game)
+void LevelSelectMenuState::init(Engine* game)
 {
     if (!level_slider.load_object(96, 16, "resources/textures/menu/level_slider.png", game->rend))
     {
@@ -32,19 +32,19 @@ void levelselectmenu_state::init(engine* game)
     }
 
 
-    levelselect_menu = new class menu(game->screen_width, game->screen_height, 0);
+    levelselect_menu = new class Menu(game->screen_width, game->screen_height, 0);
     levelselect_menu->size = 2;
 
-    levelselect_menu->sliders.push_back(new class level_slider(true, game->read_save(), false, game->screen_width / 2, game->screen_height / 2 - 45, 480, 80));
+    levelselect_menu->sliders.push_back(new class LevelSlider(true, game->read_save(), false, game->screen_width / 2, game->screen_height / 2 - 45, 480, 80));
     levelselect_menu->sliders[0]->tex = &level_slider;
 
-    levelselect_menu->buttons.push_back(new class back_button(true, game->screen_width / 2, game->screen_height / 2 + 45, 320, 80));
+    levelselect_menu->buttons.push_back(new class BackButton(true, game->screen_width / 2, game->screen_height / 2 + 45, 320, 80));
     levelselect_menu->buttons[0]->tex = &back_button;
 
 
 }
 
-void levelselectmenu_state::cleanup()
+void LevelSelectMenuState::cleanup()
 {
     free(levelselect_menu);
 
@@ -52,17 +52,17 @@ void levelselectmenu_state::cleanup()
     back_button.free();
 }
 
-void levelselectmenu_state::pause()
+void LevelSelectMenuState::pause()
 {
 
 }
 
-void levelselectmenu_state::resume()
+void LevelSelectMenuState::resume()
 {
 
 }
 
-void levelselectmenu_state::handle_events(engine* game)
+void LevelSelectMenuState::handle_events(Engine* game)
 {
     // event handler
     SDL_Event event;
@@ -86,7 +86,7 @@ void levelselectmenu_state::handle_events(engine* game)
     }
 }
 
-void levelselectmenu_state::update(engine* game)
+void LevelSelectMenuState::update(Engine* game)
 {
     // clear the window
     SDL_RenderClear(game->rend);
@@ -122,7 +122,7 @@ void levelselectmenu_state::update(engine* game)
     }
 }
 
-void levelselectmenu_state::draw(engine* game)
+void LevelSelectMenuState::draw(Engine* game)
 {
     for (int i = 0; i < levelselect_menu->sliders.size(); i++)
     {

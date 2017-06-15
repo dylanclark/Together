@@ -7,7 +7,7 @@
 
 // include headers
 #include <states/level7_state.hpp>
-#include <states/level01_state.hpp>
+#include <states/level0_state.hpp>
 #include <states/level8_state.hpp>
 #include <states/mainmenu_state.hpp>
 #include <char.hpp>
@@ -16,7 +16,7 @@
 #include <engine.hpp>
 #include <states/pausemenu_state.hpp>
 
-void level7_state::init(engine* game)
+void Level7State::init(Engine* game)
 {
     // load textures
     load_textures(game);
@@ -30,7 +30,7 @@ void level7_state::init(engine* game)
     }
 }
 
-void level7_state::handle_events(engine *game)
+void Level7State::handle_events(Engine* game)
 {
     // event handler
     SDL_Event event;
@@ -50,7 +50,7 @@ void level7_state::handle_events(engine *game)
         {
             Mix_PauseMusic();
             Mix_PlayChannel(-1, game->sound->menu_exit_snd, 0);
-            game->push_state(new pausemenu_state);
+            game->push_state(new PauseMenuState);
         }
         // quit if he pressed escape
         w_char.handle_event(event, this, game);
@@ -61,7 +61,7 @@ void level7_state::handle_events(engine *game)
     shiftable = true;
 }
 
-void level7_state::update(engine* game)
+void Level7State::update(Engine* game)
 {
     // clear the window
     SDL_RenderClear(game->rend);
@@ -86,7 +86,7 @@ void level7_state::update(engine* game)
     interactions(game);
 }
 
-void level7_state::draw(engine* game)
+void Level7State::draw(Engine* game)
 {
     // draw stuff to the screen!
     for (int i = 0; i < (width * height); i++)
@@ -107,7 +107,7 @@ void level7_state::draw(engine* game)
     SDL_RenderPresent(game->rend);
 }
 
-void level7_state::cleanup()
+void Level7State::cleanup()
 {
     // iterate over all tiles and delete them all
     for (int i = 0; i < width * height; i++)
@@ -142,17 +142,17 @@ void level7_state::cleanup()
 
 }
 
-void level7_state::pause()
+void Level7State::pause()
 {
     return;
 }
 
-void level7_state::resume()
+void Level7State::resume()
 {
     return;
 }
 
-void level7_state::load_textures(engine* game)
+void Level7State::load_textures(Engine* game)
 {
     // LOAD ALL TEXTURES
     if (!b_char_tex.load_tile_sheet("resources/textures/black/b_char.png", game->rend))
@@ -209,7 +209,7 @@ void level7_state::load_textures(engine* game)
     }
 }
 
-void level7_state::init_objects(engine* game)
+void Level7State::init_objects(Engine* game)
 {
     // initialize black dot
     b_char.status = CHAR_ACTIVE;
@@ -218,7 +218,7 @@ void level7_state::init_objects(engine* game)
     b_char.col_rect.y = 9 * TILE_WIDTH;
     b_char.black = true;
 
-    camera = new class camera(game->screen_width, game->screen_height);
+    camera = new class Camera(game->screen_width, game->screen_height);
 
     // initialize black level end
     b_level_end.tex = b_end_tex;
@@ -254,7 +254,7 @@ void level7_state::init_objects(engine* game)
 
 }
 
-void level7_state::interactions(engine* game)
+void Level7State::interactions(Engine* game)
 {
 
     // if both are on level end object
@@ -262,7 +262,7 @@ void level7_state::interactions(engine* game)
 
     {
         // change state to level 8
-        change_state(game, new level8_state);
+        change_state(game, new Level8State);
     }
 
 
@@ -282,7 +282,7 @@ void level7_state::interactions(engine* game)
         }
 
         // init crate #1
-        crates.push_back(new crate(5 * TILE_WIDTH, 12 * TILE_WIDTH, FOUR_BY_TWO));
+        crates.push_back(new Crate(5 * TILE_WIDTH, 12 * TILE_WIDTH, FOUR_BY_TWO));
         crates.back()->tex = w_crate_tex_four_by_two;
         crates.back()->black = false;
 
@@ -312,7 +312,7 @@ void level7_state::interactions(engine* game)
         }
 
         // init crate #2
-        crates.push_back(new crate(5 * TILE_WIDTH, 17 * TILE_WIDTH, FOUR_BY_TWO));
+        crates.push_back(new Crate(5 * TILE_WIDTH, 17 * TILE_WIDTH, FOUR_BY_TWO));
         crates.back()->tex = w_crate_tex_four_by_two;
         crates.back()->black = false;
 

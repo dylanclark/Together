@@ -11,7 +11,7 @@
 // include headers
 #include <engine.hpp>
 
-bool engine::init()
+bool Engine::init()
 {
     bool success = true;
 
@@ -98,7 +98,7 @@ bool engine::init()
     return success;
 }
 
-void engine::cleanup()
+void Engine::cleanup()
 {
     // clean up!
     free(sound);
@@ -110,7 +110,7 @@ void engine::cleanup()
     SDL_Quit();
 }
 
-void engine::change_state(gamestate* state)
+void Engine::change_state(Gamestate* state)
 {
     if (!states.empty())
     {
@@ -122,7 +122,7 @@ void engine::change_state(gamestate* state)
     states.back()->init(this);
 }
 
-void engine::push_state(gamestate* state)
+void Engine::push_state(Gamestate* state)
 {
     if (!states.empty())
     {
@@ -133,34 +133,34 @@ void engine::push_state(gamestate* state)
     states.back()->init(this);
 }
 
-void engine::pop_state()
+void Engine::pop_state()
 {
     states.back()->cleanup();
     states.pop_back();
 }
 
-void engine::restart_state()
+void Engine::restart_state()
 {
     states.back()->cleanup();
     states.back()->init(this);
 }
 
-void engine::handle_events()
+void Engine::handle_events()
 {
     states.back()->handle_events(this);
 }
 
-void engine::update()
+void Engine::update()
 {
     states.back()->update(this);
 }
 
-void engine::draw()
+void Engine::draw()
 {
     states.back()->draw(this);
 }
 
-bool engine::save(int level)
+bool Engine::save(int level)
 {
     bool success = true;
 
@@ -177,7 +177,7 @@ bool engine::save(int level)
     return success;
 }
 
-int engine::read_save()
+int Engine::read_save()
 {
     int to_return = -1;
 

@@ -19,13 +19,13 @@
 int main(void)
 {
     // create engine
-    engine game;
+    Engine game;
 
     // initialize screen
     game.init();
 
     // initialize game state to main menu
-    game.change_state(new mainmenu_state);
+    game.change_state(new MainMenuState);
 
     // run game
     while (game.running())

@@ -10,18 +10,18 @@
 #include <levels.hpp>
 
 // reinitialize textures
-extern texture level_1_start;
-extern texture level_1_end;
-extern texture level_2_start;
-extern texture level_2_end;
+extern Texture level_1_start;
+extern Texture level_1_end;
+extern Texture level_2_start;
+extern Texture level_2_end;
 
-level_message::level_message()
+LevelMessage::LevelMessage()
 {
 
 };
 
 // level messagse class
-void level_message::send_message(int type, engine* game)
+void LevelMessage::send_message(int type, Engine* game)
 {
     switch (type)
     {
@@ -49,7 +49,7 @@ void level_message::send_message(int type, engine* game)
 }
 
 // draw on screen
-void level_message::render(SDL_Rect* camera, SDL_Renderer* rend)
+void LevelMessage::render(SDL_Rect* camera, SDL_Renderer* rend)
 {
     SDL_Rect active_clip = {0, 0, 128, 16};
 

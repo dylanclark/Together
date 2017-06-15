@@ -15,17 +15,17 @@
 // maximum menu size
 const int MAX_BUTTONS = 4;
 
-class menu;
+class Menu;
 
-class fade_in
+class FadeIn
 {
 public:
 
-    fade_in(int w, int h, int time);
-    ~fade_in();
+    FadeIn(int w, int h, int time);
+    ~FadeIn();
 
     SDL_Rect rect;
-    texture* tex;
+    Texture* tex;
     Uint8 alpha;
 
     int timer;
@@ -34,25 +34,25 @@ public:
     void update();
 };
 
-class menu_button
+class MenuButton
 {
 public:
-    menu_button(bool selected, int x, int y, int w, int h);
-    ~menu_button();
+    MenuButton(bool selected, int x, int y, int w, int h);
+    ~MenuButton();
 
     bool selected;
     SDL_Rect rect;
-    texture* tex;
+    Texture* tex;
 
     void render(SDL_Renderer* rend);
-    virtual void select(engine* game) = 0;
+    virtual void select(Engine* game) = 0;
 };
 
-class menu_slider
+class MenuSlider
 {
 public:
-    menu_slider(bool selected, int length, bool permanent, int x, int y, int w, int h);
-    ~menu_slider();
+    MenuSlider(bool selected, int length, bool permanent, int x, int y, int w, int h);
+    ~MenuSlider();
 
     bool selected;
     int frames;
@@ -60,154 +60,154 @@ public:
     bool permanent;
 
     SDL_Rect rect;
-    texture* tex;
+    Texture* tex;
 
     void render(SDL_Renderer* rend);
-    virtual void select(engine* game) = 0;
+    virtual void select(Engine* game) = 0;
 };
 
-class title
+class Title
 {
 public:
-    title(int x, int y, int w, int h);
-    ~title();
+    Title(int x, int y, int w, int h);
+    ~Title();
 
     SDL_Rect rect;
-    texture* tex;
+    Texture* tex;
 
     void render(SDL_Renderer* rend);
 };
 
-class menu
+class Menu
 {
 public:
-    menu(int w, int h, int timer);
-    ~menu();
+    Menu(int w, int h, int timer);
+    ~Menu();
 
     int selector;
-    controller* controller;
+    Controller* controller;
 
     bool up, down, left, right;
     bool up_up, down_up, left_up, right_up;
 
-    void update(engine* game);
+    void update(Engine* game);
 
-    title* menu_title;
+    Title* menu_title;
 
-    std::vector <menu_button*> buttons;
-    std::vector <menu_slider*> sliders;
+    std::vector <MenuButton*> buttons;
+    std::vector <MenuSlider*> sliders;
 
-    fade_in* fade_in = NULL;
+    FadeIn* fade_in;
     int size;
 
-    bool handle_event(SDL_Event &e, engine* game);
+    bool handle_event(SDL_Event &e, Engine* game);
 };
 
-class new_game_button : public menu_button
+class NewGameButton : public MenuButton
 {
 public:
-    new_game_button(bool selected, int x, int y, int w, int h) : menu_button(selected,x,y,w,h) { };
-    void select(engine* game);
+    NewGameButton(bool selected, int x, int y, int w, int h) : MenuButton(selected,x,y,w,h) { };
+    void select(Engine* game);
 };
 
-class continue_button : public menu_button
+class ContinueButton : public MenuButton
 {
 public:
-    continue_button(bool selected, int x, int y, int w, int h) : menu_button(selected,x,y,w,h) { };
-    void select(engine* game);
+    ContinueButton(bool selected, int x, int y, int w, int h) : MenuButton(selected,x,y,w,h) { };
+    void select(Engine* game);
 };
 
-class options_button : public menu_button
+class OptionsButton : public MenuButton
 {
 public:
-    options_button(bool selected, int x, int y, int w, int h) : menu_button(selected,x,y,w,h) { };
-    void select(engine* game);
+    OptionsButton(bool selected, int x, int y, int w, int h) : MenuButton(selected,x,y,w,h) { };
+    void select(Engine* game);
 };
 
-class quit_button : public menu_button
+class QuitButton : public MenuButton
 {
 public:
-    quit_button(bool selected, int x, int y, int w, int h) : menu_button(selected,x,y,w,h) { };
-    void select(engine* game);
+    QuitButton(bool selected, int x, int y, int w, int h) : MenuButton(selected,x,y,w,h) { };
+    void select(Engine* game);
 };
 
-class yes_quit_button : public menu_button
+class YesQuitButton : public MenuButton
 {
 public:
-    yes_quit_button(bool selected, int x, int y, int w, int h) : menu_button(selected,x,y,w,h) { };
-    void select(engine* game);
+    YesQuitButton(bool selected, int x, int y, int w, int h) : MenuButton(selected,x,y,w,h) { };
+    void select(Engine* game);
 };
 
-class yes_newgame_button : public menu_button
+class YesNewGameButton : public MenuButton
 {
 public:
-    yes_newgame_button(bool selected, int x, int y, int w, int h) : menu_button(selected,x,y,w,h) { };
-    void select(engine* game);
+    YesNewGameButton(bool selected, int x, int y, int w, int h) : MenuButton(selected,x,y,w,h) { };
+    void select(Engine* game);
 };
 
-class no_button : public menu_button
+class NoButton : public MenuButton
 {
 public:
-    no_button(bool selected, int x, int y, int w, int h) : menu_button(selected,x,y,w,h) { };
-    void select(engine* game);
+    NoButton(bool selected, int x, int y, int w, int h) : MenuButton(selected,x,y,w,h) { };
+    void select(Engine* game);
 };
 
-class resume_button : public menu_button
+class ResumeButton : public MenuButton
 {
 public:
-    resume_button(bool selected, int x, int y, int w, int h) : menu_button(selected,x,y,w,h) { };
-    void select(engine* game);
+    ResumeButton(bool selected, int x, int y, int w, int h) : MenuButton(selected,x,y,w,h) { };
+    void select(Engine* game);
 };
 
-class level_select_button : public menu_button
+class LevelSelectButton : public MenuButton
 {
 public:
-    level_select_button(bool selected, int x, int y, int w, int h) : menu_button(selected,x,y,w,h) { };
-    void select(engine* game);
+    LevelSelectButton(bool selected, int x, int y, int w, int h) : MenuButton(selected,x,y,w,h) { };
+    void select(Engine* game);
 };
 
-class save_and_quit_button : public menu_button
+class SaveAndQuitButton : public MenuButton
 {
 public:
-    save_and_quit_button(bool selected, int x, int y, int w, int h) : menu_button(selected,x,y,w,h) { };
-    void select(engine* game);
+    SaveAndQuitButton(bool selected, int x, int y, int w, int h) : MenuButton(selected,x,y,w,h) { };
+    void select(Engine* game);
 };
 
-class controls_button : public menu_button
+class ControlsButton : public MenuButton
 {
 public:
-    controls_button(bool selected, int x, int y, int w, int h) : menu_button(selected,x,y,w,h) { };
-    void select(engine* game);
+    ControlsButton(bool selected, int x, int y, int w, int h) : MenuButton(selected,x,y,w,h) { };
+    void select(Engine* game);
 };
 
-class back_button : public menu_button
+class BackButton : public MenuButton
 {
 public:
-    back_button(bool selected, int x, int y, int w, int h) : menu_button(selected,x,y,w,h) { };
-    void select(engine* game);
+    BackButton(bool selected, int x, int y, int w, int h) : MenuButton(selected,x,y,w,h) { };
+    void select(Engine* game);
 };
 
 // SLIDERS
 
-class volume_slider : public menu_slider
+class VolumeSlider : public MenuSlider
 {
 public:
-    volume_slider(bool selected, int length, bool permanent, int x, int y, int w, int h);
-    void select(engine* game);
+    VolumeSlider(bool selected, int length, bool permanent, int x, int y, int w, int h);
+    void select(Engine* game);
 };
 
-class sfx_slider : public menu_slider
+class SfxSlider : public MenuSlider
 {
 public:
-    sfx_slider(bool selected, int length, bool permanent, int x, int y, int w, int h);
-    void select(engine* game);
+    SfxSlider(bool selected, int length, bool permanent, int x, int y, int w, int h);
+    void select(Engine* game);
 };
 
-class level_slider : public menu_slider
+class LevelSlider : public MenuSlider
 {
 public:
-    level_slider(bool selected, int length, bool permanent, int x, int y, int w, int h) : menu_slider(selected, length, permanent, x, y, w, h) { };
-    void select(engine* game);
+    LevelSlider(bool selected, int length, bool permanent, int x, int y, int w, int h) : MenuSlider(selected, length, permanent, x, y, w, h) { };
+    void select(Engine* game);
 };
 
 #endif /* menu_hpp */

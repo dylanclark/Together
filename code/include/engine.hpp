@@ -15,16 +15,16 @@
 const int SCREEN_WIDTH = 1080;
 const int SCREEN_HEIGHT = 720;
 
-class gamestate;
+class Gamestate;
 
-class engine
+class Engine
 {
 public:
     bool init();
     void cleanup();
 
-    void change_state(gamestate* state);
-    void push_state(gamestate* state);
+    void change_state(Gamestate* state);
+    void push_state(Gamestate* state);
     void pop_state();
     void restart_state();
 
@@ -41,45 +41,46 @@ public:
 
     SDL_Window* win;
     SDL_Renderer* rend;
-    sound_player* sound;
+    SoundPlayer* sound;
 
     std::ofstream save_file;
     std::ifstream save_reader;
     bool save(int level);
     int read_save();
 
+    std::vector<Gamestate*> states;
+
 private:
-    std::vector<gamestate*> states;
     bool running_flag = true;
 
 };
 
-class gamestate
+class Gamestate
 {
 public:
-    virtual void init(engine* game) = 0;
+    virtual void init(Engine* game) = 0;
     virtual void cleanup() = 0;
 
     virtual void pause() = 0;
     virtual void resume() = 0;
 
-    virtual void handle_events(engine* game) = 0;
-    virtual void update(engine* game) = 0;
-    virtual void draw(engine* game) = 0;
+    virtual void handle_events(Engine* game) = 0;
+    virtual void update(Engine* game) = 0;
+    virtual void draw(Engine* game) = 0;
 
-    void change_state(engine* game, gamestate* state)
+    void change_state(Engine* game, Gamestate* state)
     {
         game->change_state(state);
     }
 
-    gamestate() { };
+    Gamestate() { };
 };
 
-class controller
+class Controller
 {
 public:
-    controller();
-    ~controller();
+    Controller();
+    ~Controller();
 
     SDL_Joystick* joystick;
     SDL_GameController* gamepad;

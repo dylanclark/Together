@@ -1,6 +1,6 @@
 
-#ifndef intro_state_hpp
-#define intro_state_hpp
+#ifndef IntroState_hpp
+#define IntroState_hpp
 
 // using SDL and standard IO
 #include <stdio.h>
@@ -12,11 +12,11 @@
 #include <engine.hpp>
 #include <textures.hpp>
 
-class intro_state : public gamestate
+class IntroState : public Gamestate
 {
 public:
     // init and shutdown
-    void init(engine* game) { Mix_PlayChannel(-1, game->sound->menu_onset_snd, 0); };
+    void init(Engine* game) { Mix_PlayChannel(-1, game->sound->menu_onset_snd, 0); };
     void cleanup() { };
 
     // pause and resume
@@ -24,9 +24,9 @@ public:
     void resume() { };
 
     // handling control of screen
-    void handle_events(engine* game);
-    void update(engine* game);
-    void draw(engine* game) { SDL_RenderPresent(game->rend); } ;
+    void handle_events(Engine* game);
+    void update(Engine* game);
+    void draw(Engine* game) { SDL_RenderPresent(game->rend); } ;
 };
 
-#endif /* intro_state_hpp */
+#endif /* IntroState_hpp */

@@ -7,7 +7,7 @@
 // include headers
 #include <engine.hpp>
 
-controller::controller()
+Controller::Controller()
 {
     // check for joystick
     if (SDL_NumJoysticks() < 1)
@@ -41,7 +41,7 @@ controller::controller()
 
 }
 
-controller::~controller()
+Controller::~Controller()
 {
     SDL_JoystickClose(joystick);
     SDL_GameControllerClose(gamepad);

@@ -23,7 +23,7 @@ const int MAX_CRATES = 10;
 const float SPEED = 14;
 const float CAM_ACC = 2;
 
-class camera
+class Camera
 {
 public:
     SDL_Rect display;
@@ -34,41 +34,41 @@ public:
     float w_vel;
     float h_vel;
 
-    camera(int w, int h);
+    Camera(int w, int h);
 
     void track(SDL_Rect* b_char, SDL_Rect* w_char);
-    void move(int level_w, int level_h, engine* game);
+    void move(int level_w, int level_h, Engine* game);
     void update(void);
 };
 
-class level_end
+class LevelEnd
 {
 public:
-    level_end();
+    LevelEnd();
 
-    void render(SDL_Rect* camera, engine* game);
+    void render(SDL_Rect* camera, Engine* game);
 
     SDL_Rect col_rect;
-    texture tex;
+    Texture tex;
 
     bool check(SDL_Rect dot_rect);
 };
 
-class level_message
+class LevelMessage
 {
 public:
-    level_message();
-    void send_message(int type, engine* game);
+    LevelMessage();
+    void send_message(int type, Engine* game);
     void render(SDL_Rect* camera, SDL_Renderer* rend);
     SDL_Rect col_rect;
-    texture tex;
+    Texture tex;
     int type;
 };
 
-class crate;
-class tile;
+class Crate;
+class Tile;
 
-class levelstate
+class Levelstate
 {
 public:
     // tile dimensions of level
@@ -76,62 +76,60 @@ public:
     int height;
     bool shiftable;
 
-    levelstate() { };
+    Levelstate() { };
 
-    camera* camera;
-    dot b_char;
-    dot w_char;
+    Camera* camera;
+    Dot b_char;
+    Dot w_char;
 
     // objects
-    level_end b_level_end;
-    level_end w_level_end;
-    button b_button;
-    button w_button;
-    button b_button2;
-    springboard w_springboard;
-    springboard b_springboard;
-    springboard w_cross_spring;
-    springboard b_cross_spring;
-    level_message level1_end;
-    level_message level2_end;
-    level_message level1_start;
-    level_message level2_start;
+    LevelEnd b_level_end;
+    LevelEnd w_level_end;
+    Button b_button;
+    Button w_button;
+    Button b_button2;
+    Springboard w_springboard;
+    Springboard b_springboard;
+    Springboard w_cross_spring;
+    Springboard b_cross_spring;
+    LevelMessage level1_end;
+    LevelMessage level2_end;
+    LevelMessage level1_start;
+    LevelMessage level2_start;
 
     // textures
-    texture b_char_tex;
-    texture w_char_tex;
-    texture tile_tex;
-    texture b_end_tex;
-    texture w_end_tex;
-    texture b_button_tex;
-    texture w_button_tex;
-    texture crate_tex_four_by_two;
-    texture w_crate_tex_four_by_two;
-    texture w_platform;
-    texture crate_tex_four_by_one;
-    texture crate_tex_three_by_two;
-    texture crate_tex_two_by_two;
-    texture b_springboard_tex;
-    texture w_springboard_tex;
-    texture w_end_animate;
-    texture b_end_animate;
-    texture b_cross_spring_tex;
-    texture w_cross_spring_tex;
-    texture level1_end_tex;
-    texture level1_start_tex;
-    texture level2_end_tex;
-    texture level2_start_tex;
+    Texture b_char_tex;
+    Texture w_char_tex;
+    Texture tile_tex;
+    Texture b_end_tex;
+    Texture w_end_tex;
+    Texture b_button_tex;
+    Texture w_button_tex;
+    Texture crate_tex_four_by_two;
+    Texture w_crate_tex_four_by_two;
+    Texture w_platform;
+    Texture crate_tex_four_by_one;
+    Texture crate_tex_three_by_two;
+    Texture crate_tex_two_by_two;
+    Texture b_springboard_tex;
+    Texture w_springboard_tex;
+    Texture w_end_animate;
+    Texture b_end_animate;
+    Texture b_cross_spring_tex;
+    Texture w_cross_spring_tex;
+    Texture level1_end_tex;
+    Texture level1_start_tex;
+    Texture level2_end_tex;
+    Texture level2_start_tex;
 
     // tileset
-    tile* tileset[MAX_SIZE];
+    Tile* tileset[MAX_SIZE];
 
     // crate array
-    std::vector<crate*> crates;
+    std::vector<Crate*> crates;
 
     // level file path
     std::string path;
 };
-
-
 
 #endif /* levels_hpp */

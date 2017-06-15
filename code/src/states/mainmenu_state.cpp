@@ -13,9 +13,9 @@
 #include <states/level2_state.hpp>
 #include <states/level3_state.hpp>
 #include <states/quitmenu_state.hpp>
-#include <states/level01_state.hpp>
+#include <states/level0_state.hpp>
 
-void mainmenu_state::init(engine* game)
+void MainMenuState::init(Engine* game)
 {
     if (!fade_in_tex.load_object(16, 16, "resources/textures/white/background/white_back.png", game->rend))
     {
@@ -43,7 +43,7 @@ void mainmenu_state::init(engine* game)
         printf("Failed to load continue button texture!\n");
         return;
     }
-    if (!options_button.load_object(64, 16, "resources/textures/menu/options.png", game->rend))
+    if (!OptionsButton.load_object(64, 16, "resources/textures/menu/options.png", game->rend))
     {
         printf("Failed to load options button texture!\n");
         return;
@@ -55,22 +55,22 @@ void mainmenu_state::init(engine* game)
     }
 
 
-    main_menu = new class menu(game->screen_width, game->screen_height, 100);
+    main_menu = new class Menu(game->screen_width, game->screen_height, 100);
     main_menu->size = 4;
 
-    main_menu->menu_title = new class title (game->screen_width / 2,  game->screen_height / 4, 1600, 200);
+    main_menu->menu_title = new class Title (game->screen_width / 2,  game->screen_height / 4, 1600, 200);
     main_menu->menu_title->tex = &title;
 
-    main_menu->buttons.push_back(new class new_game_button(true, game->screen_width / 2, game->screen_height / 2 - 40, 480, 80));
+    main_menu->buttons.push_back(new class NewGameButton(true, game->screen_width / 2, game->screen_height / 2 - 40, 480, 80));
     main_menu->buttons[0]->tex = &new_game_button;
 
-    main_menu->buttons.push_back(new class continue_button(true, game->screen_width / 2, game->screen_height / 2 + 50, 480, 80));
+    main_menu->buttons.push_back(new class ContinueButton(true, game->screen_width / 2, game->screen_height / 2 + 50, 480, 80));
     main_menu->buttons[1]->tex = &continue_button;
 
-    main_menu->buttons.push_back(new class options_button(true, game->screen_width / 2, game->screen_height / 2 + 140, 320, 80));
-    main_menu->buttons[2]->tex = &options_button;
+    main_menu->buttons.push_back(new class OptionsButton(true, game->screen_width / 2, game->screen_height / 2 + 140, 320, 80));
+    main_menu->buttons[2]->tex = &OptionsButton;
 
-    main_menu->buttons.push_back(new class quit_button(true, game->screen_width / 2, game->screen_height / 2 + 230, 160, 80));
+    main_menu->buttons.push_back(new class QuitButton(true, game->screen_width / 2, game->screen_height / 2 + 230, 160, 80));
     main_menu->buttons[3]->tex = &quit_button;
 
     main_menu->fade_in->tex = &fade_in_tex;
@@ -80,7 +80,7 @@ void mainmenu_state::init(engine* game)
 
 }
 
-void mainmenu_state::cleanup()
+void MainMenuState::cleanup()
 {
     free(main_menu);
 
@@ -89,22 +89,22 @@ void mainmenu_state::cleanup()
 
     new_game_button.free();
     continue_button.free();
-    options_button.free();
+    OptionsButton.free();
     quit_button.free();
 }
 
-void mainmenu_state::pause()
+void MainMenuState::pause()
 {
     printf("paused menu\n");
     main_menu->fade_in->alpha = 0;
 }
 
-void mainmenu_state::resume()
+void MainMenuState::resume()
 {
     printf("paused menu\n");
 }
 
-void mainmenu_state::handle_events(engine* game)
+void MainMenuState::handle_events(Engine* game)
 {
 
     // event handler
@@ -130,7 +130,7 @@ void mainmenu_state::handle_events(engine* game)
     }
 }
 
-void mainmenu_state::update(engine* game)
+void MainMenuState::update(Engine* game)
 {
     // clear the window
     SDL_RenderClear(game->rend);
@@ -152,7 +152,7 @@ void mainmenu_state::update(engine* game)
     }
 }
 
-void mainmenu_state::draw(engine* game)
+void MainMenuState::draw(Engine* game)
 {
     for (int i = 0; i < main_menu->buttons.size(); i++)
     {

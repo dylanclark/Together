@@ -14,13 +14,13 @@
 #include <objects.hpp>
 
 // reinitialize textures
-extern texture b_springboard;
-extern texture w_springboard;
-extern texture b_cross_layer;
-extern texture w_cross_layer;
+extern Texture b_springboard;
+extern Texture w_springboard;
+extern Texture b_cross_layer;
+extern Texture w_cross_layer;
 
 // board class
-springboard::springboard()
+Springboard::Springboard()
 {
     // initialize collision rectangle
     col_rect.w = 60;
@@ -37,9 +37,9 @@ springboard::springboard()
 }
 
 // check for springboard collision
-bool springboard::check(SDL_Rect dot_rect)
+bool Springboard::check(SDL_Rect dot_rect)
 {
-    vector repos;
+    Vector repos;
     if(check_collision(col_rect, dot_rect, &repos))
     {
         if (abs(repos.x) > 20 && abs(repos.y) > 50)
@@ -51,7 +51,7 @@ bool springboard::check(SDL_Rect dot_rect)
 };
 
 // render sprinboard
-void springboard::render(SDL_Rect* camera, engine* game)
+void Springboard::render(SDL_Rect* camera, Engine* game)
 {
     // flip
     switch(direction)
@@ -126,7 +126,7 @@ void springboard::render(SDL_Rect* camera, engine* game)
 };
 
 // cross spring logic
-void springboard::cross_spring(dot* springer, dot* springee, int type)
+void Springboard::cross_spring(Dot* springer, Dot* springee, int type)
 {
     activated = true;
     // if VELOCITY or POSITION spring

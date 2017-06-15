@@ -56,12 +56,12 @@ const int TOTAL_TILES = 30;
 const int TILE_FRAMES = 10;
 
 // class definition
-class tile
+class Tile
 {
 public:
-    tile(int x, int y, int tile_type);
+    Tile(int x, int y, int tile_type);
 
-    void render(int b_status, SDL_Rect* camera, engine* game, texture* tile_tex);
+    void render(int b_status, SDL_Rect* camera, Engine* game, Texture* tile_tex);
     int get_type();
     SDL_Rect get_col_rect();
 
@@ -81,9 +81,9 @@ private:
 };
 
 // draw the tilemap
-bool set_tiles(tile* tiles[], std::string path, int level_w, int level_h);
+bool set_tiles(Tile* tiles[], std::string path, int level_w, int level_h);
 
 // close the tilemap
-void close_tiles(tile* tiles[]);
+void close_tiles(Tile* tiles[]);
 
 #endif /* tiles_hpp */

@@ -8,10 +8,10 @@
 #include <textures.hpp>
 
 // external variables
-extern texture tile_tex;
+extern Texture tile_tex;
 extern SDL_Rect tile_clips[];
 
-tile::tile(int x, int y, int tile_type)
+Tile::Tile(int x, int y, int tile_type)
 {
     // set position
     col_rect.x = x;
@@ -89,20 +89,20 @@ tile::tile(int x, int y, int tile_type)
 }
 
 // collision rectangle accessor
-int tile::get_type()
+int Tile::get_type()
 {
     return type;
 }
 
 // collision rectangle accessor
-SDL_Rect tile::get_col_rect()
+SDL_Rect Tile::get_col_rect()
 {
     return col_rect;
 }
 
 
 // render tile
-void tile::render(int b_status, SDL_Rect* camera, engine* game, texture* tile_tex)
+void Tile::render(int b_status, SDL_Rect* camera, Engine* game, Texture* tile_tex)
 {
     if (type >= B_BACK && type <= B_CORNER_TR)
         status = b_status;

@@ -14,7 +14,7 @@
 #include <states/level2_state.hpp>
 #include <states/newgamemenu_state.hpp>
 
-void newgamemenu_state::init(engine* game)
+void NewGameMenuState::init(Engine* game)
 {
     if (!newgame_title.load_object(256, 32, "resources/textures/menu/new_game_title.png", game->rend))
     {
@@ -35,20 +35,20 @@ void newgamemenu_state::init(engine* game)
     }
 
 
-    newgame_menu = new class menu(game->screen_width, game->screen_height, 0);
+    newgame_menu = new class Menu(game->screen_width, game->screen_height, 0);
     newgame_menu->size = 2;
 
-    newgame_menu->menu_title = new class title (game->screen_width / 2,  game->screen_height / 3, 1280, 160);
+    newgame_menu->menu_title = new class Title (game->screen_width / 2,  game->screen_height / 3, 1280, 160);
     newgame_menu->menu_title->tex = &newgame_title;
 
-    newgame_menu->buttons.push_back(new class yes_newgame_button(true, game->screen_width / 2, game->screen_height / 2, 160, 80));
+    newgame_menu->buttons.push_back(new class YesNewGameButton(true, game->screen_width / 2, game->screen_height / 2, 160, 80));
     newgame_menu->buttons[0]->tex = &yes_button;
 
-    newgame_menu->buttons.push_back(new class no_button(true, game->screen_width / 2, game->screen_height / 2 + 90, 160, 80));
+    newgame_menu->buttons.push_back(new class NoButton(true, game->screen_width / 2, game->screen_height / 2 + 90, 160, 80));
     newgame_menu->buttons[1]->tex = &no_button;
 }
 
-void newgamemenu_state::cleanup()
+void NewGameMenuState::cleanup()
 {
     free(newgame_menu);
 
@@ -57,17 +57,17 @@ void newgamemenu_state::cleanup()
     no_button.free();
 }
 
-void newgamemenu_state::pause()
+void NewGameMenuState::pause()
 {
 
 }
 
-void newgamemenu_state::resume()
+void NewGameMenuState::resume()
 {
 
 }
 
-void newgamemenu_state::handle_events(engine* game)
+void NewGameMenuState::handle_events(Engine* game)
 {
     // event handler
     SDL_Event event;
@@ -89,7 +89,7 @@ void newgamemenu_state::handle_events(engine* game)
     }
 }
 
-void newgamemenu_state::update(engine* game)
+void NewGameMenuState::update(Engine* game)
 {
     // clear the window
     SDL_RenderClear(game->rend);
@@ -110,7 +110,7 @@ void newgamemenu_state::update(engine* game)
     }
 }
 
-void newgamemenu_state::draw(engine* game)
+void NewGameMenuState::draw(Engine* game)
 {
     for (int i = 0; i < newgame_menu->buttons.size(); i++)
     {

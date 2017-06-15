@@ -12,11 +12,11 @@
 #include <levels.hpp>
 
 // reinitialize textures
-extern texture b_level_end;
-extern texture w_level_end;
+extern Texture b_level_end;
+extern Texture w_level_end;
 
 // level end class
-level_end::level_end()
+LevelEnd::LevelEnd()
 {
     // initialize collision rectangle
     col_rect.w = TILE_WIDTH;
@@ -27,16 +27,16 @@ level_end::level_end()
 }
 
 // draw on screen
-void level_end::render(SDL_Rect* camera, engine* game)
+void LevelEnd::render(SDL_Rect* camera, Engine* game)
 {
     SDL_Rect active_clip = {0, 0, 16, 16};
     tex.render(col_rect.x, col_rect.y, &active_clip, camera, game);
 };
 
 // check for level end collision
-bool level_end::check(SDL_Rect dot_rect)
+bool LevelEnd::check(SDL_Rect dot_rect)
 {
-    vector repos;
+    Vector repos;
     if(check_collision(col_rect, dot_rect, &repos))
     {
         if (abs(repos.x) > 40 && abs(repos.y) > 40)

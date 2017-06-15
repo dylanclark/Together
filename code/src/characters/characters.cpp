@@ -12,12 +12,12 @@
 #include <objects.hpp>
 
 // reinitialize character textures
-extern texture b_char_tex;
-extern texture w_char_tex;
-extern texture b_end_animate;
-extern texture w_end_animate;
+extern Texture b_char_tex;
+extern Texture w_char_tex;
+extern Texture b_end_animate;
+extern Texture w_end_animate;
 
-dot::dot()
+Dot::Dot()
 {
     // initialize velocity
     x_vel = 0;
@@ -30,7 +30,7 @@ dot::dot()
     left = false;
 
     // initiliaze gamepad
-    controller = new class controller;
+    controller = new class Controller;
 
     // initialize active
     status = TILE_ACTIVE;
@@ -45,7 +45,7 @@ dot::dot()
     col_rect.y = (SCREEN_HEIGHT - col_rect.h) / 2;
 }
 
-bool dot::handle_event(SDL_Event &e, levelstate* level, engine* game)
+bool Dot::handle_event(SDL_Event &e, Levelstate* level, Engine* game)
 {
     // handle those events, duder
     switch (e.type)
@@ -192,7 +192,7 @@ bool dot::handle_event(SDL_Event &e, levelstate* level, engine* game)
     return true;
 }
 
-void dot::move(levelstate* level, engine* game)
+void Dot::move(Levelstate* level, Engine* game)
 {
     if (status != CHAR_ACTIVE)
         return;
@@ -234,7 +234,7 @@ void dot::move(levelstate* level, engine* game)
         y_vel = 0;
     }
 
-    // move that dot
+    // move that Dot
     col_rect.x += x_vel;
     col_rect.y += y_vel;
 
@@ -270,9 +270,9 @@ void dot::move(levelstate* level, engine* game)
 
 
 // deal with tile collisions
-bool dot::tile_col(tile* tileset[], int size, engine* game)
+bool Dot::tile_col(Tile* tileset[], int size, Engine* game)
 {
-    vector repos;
+    Vector repos;
 
     bool shiftable;
 
@@ -494,9 +494,9 @@ bool dot::tile_col(tile* tileset[], int size, engine* game)
 
 
 // deal with crate collisions
-bool dot::crate_col(levelstate* level, engine* game)
+bool Dot::crate_col(Levelstate* level, Engine* game)
 {
-    vector repos;
+    Vector repos;
 
     // check all crates
     for (int i = 0; i < level->crates.size(); i++)
@@ -523,7 +523,7 @@ bool dot::crate_col(levelstate* level, engine* game)
                         // tell the crate its being pushed
                         level->crates[i]->pushed = true;
 
-                        // adjust dot speed
+                        // adjust Dot speed
                         if (x_vel > PUSH_VEL || x_vel < -PUSH_VEL)
                             x_vel = (x_vel > 0) ? PUSH_VEL : -PUSH_VEL;
 
@@ -532,7 +532,7 @@ bool dot::crate_col(levelstate* level, engine* game)
                         level->crates[i]->check_col(level->crates[i]->get_col_rect(), level, &repos);
                         level->crates[i]->x_vel = 0;
 
-                        // correct dot position
+                        // correct Dot position
                         check_collision(col_rect, level->crates[i]->get_col_rect(), &repos);
                         col_rect.x += repos.x;
 
@@ -588,7 +588,7 @@ bool dot::crate_col(levelstate* level, engine* game)
                             Mix_PlayChannel(2, game->sound->level_crate_snd, 0);
                         }
 
-                        // adjust dot speed
+                        // adjust Dot speed
                         if (x_vel > PUSH_VEL || x_vel < -PUSH_VEL)
                             x_vel = (x_vel > 0) ? PUSH_VEL : -PUSH_VEL;
 
@@ -597,7 +597,7 @@ bool dot::crate_col(levelstate* level, engine* game)
                         level->crates[i]->x_vel = 0;
                         level->crates[i]->check_col(level->crates[i]->get_col_rect(), level, &repos);
 
-                        // correct dot position
+                        // correct Dot position
                         check_collision(col_rect, level->crates[i]->get_col_rect(), &repos);
                         col_rect.x += repos.x;
 
@@ -631,7 +631,7 @@ bool dot::crate_col(levelstate* level, engine* game)
     return false;
 }
 
-void dot::render(SDL_Rect* camera, engine* game)
+void Dot::render(SDL_Rect* camera, Engine* game)
 {
     // relevant clips
     SDL_Rect active_clip = {0, 0, 16, 16};
@@ -688,7 +688,7 @@ void dot::render(SDL_Rect* camera, engine* game)
 };
 
 // spring when sprung
-void dot::spring(int x, int y, int direction)
+void Dot::spring(int x, int y, int direction)
 {
     // become active if not
     status = CHAR_ACTIVE;
@@ -709,10 +709,10 @@ void dot::spring(int x, int y, int direction)
     return;
 }
 
-// center dot on an object
-bool dot::center(SDL_Rect* end_rect)
+// center Dot on an object
+bool Dot::center(SDL_Rect* end_rect)
 {
-    // center dot on an object
+    // center Dot on an object
     while (col_rect.x < end_rect->x )
         col_rect.x++;
     while (col_rect.x > end_rect->x )
@@ -726,7 +726,7 @@ bool dot::center(SDL_Rect* end_rect)
 }
 
 // return y_vel
-float dot::get_y_vel()
+float Dot::get_y_vel()
 {
     return y_vel;
 }

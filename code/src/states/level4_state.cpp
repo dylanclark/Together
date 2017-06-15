@@ -7,7 +7,7 @@
 
 // include headers
 #include <states/level4_state.hpp>
-#include <states/level01_state.hpp>
+#include <states/level0_state.hpp>
 #include <states/level5_state.hpp>
 #include <states/mainmenu_state.hpp>
 #include <char.hpp>
@@ -16,7 +16,7 @@
 #include <engine.hpp>
 #include <states/pausemenu_state.hpp>
 
-void level4_state::init(engine* game)
+void Level4State::init(Engine* game)
 {
     // load textures
     load_textures(game);
@@ -30,7 +30,7 @@ void level4_state::init(engine* game)
     }
 }
 
-void level4_state::handle_events(engine *game)
+void Level4State::handle_events(Engine* game)
 {
     // event handler
     SDL_Event event;
@@ -50,7 +50,7 @@ void level4_state::handle_events(engine *game)
         {
             Mix_PauseMusic();
             Mix_PlayChannel(-1, game->sound->menu_exit_snd, 0);
-            game->push_state(new pausemenu_state);
+            game->push_state(new PauseMenuState);
         }
         // quit if he pressed escape
         w_char.handle_event(event, this, game);
@@ -61,7 +61,7 @@ void level4_state::handle_events(engine *game)
     shiftable = true;
 }
 
-void level4_state::update(engine* game)
+void Level4State::update(Engine* game)
 {
     // clear the window
     SDL_RenderClear(game->rend);
@@ -91,7 +91,7 @@ void level4_state::update(engine* game)
     interactions(game);
 }
 
-void level4_state::draw(engine* game)
+void Level4State::draw(Engine* game)
 {
     // draw stuff to the screen!
     for (int i = 0; i < (width * height); i++)
@@ -112,7 +112,7 @@ void level4_state::draw(engine* game)
     SDL_RenderPresent(game->rend);
 }
 
-void level4_state::cleanup()
+void Level4State::cleanup()
 {
     // iterate over all tiles and delete them all
     for (int i = 0; i < width * height; i++)
@@ -147,17 +147,17 @@ void level4_state::cleanup()
 
 }
 
-void level4_state::pause()
+void Level4State::pause()
 {
     return;
 }
 
-void level4_state::resume()
+void Level4State::resume()
 {
     return;
 }
 
-void level4_state::load_textures(engine* game)
+void Level4State::load_textures(Engine* game)
 {
     // LOAD ALL TEXTURES
     if (!b_char_tex.load_tile_sheet("resources/textures/black/b_char.png", game->rend))
@@ -205,7 +205,7 @@ void level4_state::load_textures(engine* game)
     }
 }
 
-void level4_state::init_objects(engine* game)
+void Level4State::init_objects(Engine* game)
 {
     // initialize black dot
     b_char.status = CHAR_ACTIVE;
@@ -214,7 +214,7 @@ void level4_state::init_objects(engine* game)
     b_char.col_rect.y = 8 * TILE_WIDTH;
     b_char.black = true;
 
-    camera = new class camera(game->screen_width, game->screen_height);
+    camera = new class Camera(game->screen_width, game->screen_height);
 
     // initialize black level end
     b_level_end.tex = b_end_tex;
@@ -225,7 +225,7 @@ void level4_state::init_objects(engine* game)
 
 }
 
-void level4_state::interactions(engine* game)
+void Level4State::interactions(Engine* game)
 {
 
     // if both are on level end object (making sure it hasnt been activate
@@ -255,6 +255,6 @@ void level4_state::interactions(engine* game)
     {
 
         // change state to level 5
-        change_state(game, new level5_state);
+        change_state(game, new Level5State);
     }
 }

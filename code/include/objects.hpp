@@ -11,6 +11,7 @@
 // include header files
 #include <textures.hpp>
 #include <char.hpp>
+#include <engine.hpp>
 
 // button status constants
 const int BUTT_INACTIVE = 0;
@@ -52,19 +53,19 @@ const int FLIP_RIGHT = 1;
 const int LOCATION = 0;
 const int VELOCITY = 1;
 
-class button
+class Button
 {
 public:
-    button();
+    Button();
 
-    void render(SDL_Rect* camera, engine* game);
+    void render(SDL_Rect* camera, Engine* game);
 
     double angle = 0.0;
     SDL_Point* center = NULL;
     SDL_RendererFlip flip = SDL_FLIP_NONE;
     SDL_Rect col_rect;
 
-    texture tex;
+    Texture tex;
 
     bool check(SDL_Rect dot_rect);
 
@@ -77,24 +78,24 @@ public:
 
 };
 
-class crate
+class Crate
 {
 public:
     float x_vel;
     SDL_Rect get_col_rect() { return col_rect; };
-    bool check_col(SDL_Rect crate, levelstate* level, vector* repos);
+    bool check_col(SDL_Rect crate, Levelstate* level, Vector* repos);
     void update();
-    void render(int b_status, SDL_Rect* camera, engine* game, levelstate* level);
+    void render(int b_status, SDL_Rect* camera, Engine* game, Levelstate* level);
 
-    texture tex;
+    Texture tex;
     int crate_type;
     bool black;
     bool pushed;
 
-    crate(int x, int y, int type);
+    Crate(int x, int y, int type);
 
-    tile* tileset[MAX_BORDER];
-    void create_tiles(int b_status, levelstate* level);
+    Tile* tileset[MAX_BORDER];
+    void create_tiles(int b_status, Levelstate* level);
     bool generating;
 
     int tile_type_top(int type);
@@ -105,14 +106,14 @@ public:
     SDL_Rect col_rect;
 };
 
-class springboard
+class Springboard
 {
 public:
-    springboard();
+    Springboard();
 
-    void render(SDL_Rect* camera, engine* game);
+    void render(SDL_Rect* camera, Engine* game);
     SDL_Rect col_rect;
-    texture tex;
+    Texture tex;
 
     bool check(SDL_Rect dot_rect);
 
@@ -136,7 +137,7 @@ public:
     const float SPRING_Y_VEL = 10;
 
     // cross-layer spring logic
-    void cross_spring(dot* springer, dot* springee, int type);
+    void cross_spring(Dot* springer, Dot* springee, int type);
 
 };
 

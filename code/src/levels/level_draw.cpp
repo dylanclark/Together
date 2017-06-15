@@ -13,7 +13,7 @@
 // tile clipper
 SDL_Rect tile_clips[TOTAL_TILES];
 
-bool set_tiles(tile* tiles[], std::string map_path, int level_w, int level_h)
+bool set_tiles(Tile* tiles[], std::string map_path, int level_w, int level_h)
 {
     // success flag
     bool success = true;
@@ -21,7 +21,7 @@ bool set_tiles(tile* tiles[], std::string map_path, int level_w, int level_h)
     // tile offsets
     int x = 0, y = 0;
 
-    std::ifstream map(map_path);
+    std::ifstream map(map_path.c_str());
 
     if (!map.is_open())
     {
@@ -45,7 +45,7 @@ bool set_tiles(tile* tiles[], std::string map_path, int level_w, int level_h)
 
             if ((type >= 0) && (type < TOTAL_TILES))
             {
-                tiles[i] = new tile(x, y, type);
+                tiles[i] = new Tile(x, y, type);
             }
             else
             {

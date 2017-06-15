@@ -10,19 +10,12 @@
 #include <levels.hpp>
 #include <char.hpp>
 
-crate::crate(int x, int y, int type)
+Crate::Crate(int x, int y, int type)
 {
-    // init position
     col_rect.x = x;
     col_rect.y = y;
-
-    // init type
     crate_type = type;
-
-    // init pushed flag
     pushed = false;
-
-    // initialize tile generation if that's chill
     generating = true;
 
     // determine width and height based on crate type
@@ -47,7 +40,7 @@ crate::crate(int x, int y, int type)
     }
 }
 
-void crate::update()
+void Crate::update()
 {
     // only update if the crate isn't being pushed
     if (!pushed)
@@ -70,7 +63,7 @@ void crate::update()
     col_rect.x += x_vel;
 }
 
-void crate::render(int b_status, SDL_Rect* camera, engine* game, levelstate* level)
+void Crate::render(int b_status, SDL_Rect* camera, Engine* game, Levelstate* level)
 {
     // determine which chunk of the texture to render
     SDL_Rect active_clip = {0, 0, 64, 32};
@@ -100,7 +93,7 @@ void crate::render(int b_status, SDL_Rect* camera, engine* game, levelstate* lev
     }
 }
 
-bool crate::check_col(SDL_Rect crate, levelstate* level, vector *repos)
+bool Crate::check_col(SDL_Rect crate, Levelstate* level, Vector* repos)
 {
     for (int i = 0; i < level->width * level->height; i++)
     {
@@ -124,9 +117,9 @@ bool crate::check_col(SDL_Rect crate, levelstate* level, vector *repos)
     return false;
 }
 
-void crate::create_tiles(int b_status, levelstate* level)
+void Crate::create_tiles(int b_status, Levelstate* level)
 {
-    vector repos;
+    Vector repos;
     int counter = 0;
 
     // top of crate
@@ -139,7 +132,7 @@ void crate::create_tiles(int b_status, levelstate* level)
             {
                 int new_type = tile_type_top(level->tileset[j]->get_type());
 
-                tileset[counter] = new tile(level->tileset[j]->get_col_rect().x, level->tileset[j]->get_col_rect().y, new_type);
+                tileset[counter] = new Tile(level->tileset[j]->get_col_rect().x, level->tileset[j]->get_col_rect().y, new_type);
                 tileset[counter]->status = (tileset[counter]->get_type() < 15) ? (b_status) % 4 : (b_status + 2) % 4;
                 tileset[counter]->frame = (tileset[counter]->status == TILE_ACTIVE || tileset[counter]->status == TILE_INACTIVATE) ? 0 : TILE_FRAMES - 1;
                 counter++;
@@ -157,7 +150,7 @@ void crate::create_tiles(int b_status, levelstate* level)
             {
                 int new_type = tile_type_bottom(level->tileset[j]->get_type());
 
-                tileset[counter] = new tile(level->tileset[j]->get_col_rect().x, level->tileset[j]->get_col_rect().y, new_type);
+                tileset[counter] = new Tile(level->tileset[j]->get_col_rect().x, level->tileset[j]->get_col_rect().y, new_type);
                 tileset[counter]->status = (tileset[counter]->get_type() < 15) ? (b_status) % 4 : (b_status + 2) % 4;
                 tileset[counter]->frame = (tileset[counter]->status == TILE_ACTIVE || tileset[counter]->status == TILE_INACTIVATE) ? 0 : TILE_FRAMES - 1;
                 counter++;
@@ -175,7 +168,7 @@ void crate::create_tiles(int b_status, levelstate* level)
             {
                 int new_type = tile_type_left(level->tileset[j]->get_type());
 
-                tileset[counter] = new tile(level->tileset[j]->get_col_rect().x, level->tileset[j]->get_col_rect().y, new_type);
+                tileset[counter] = new Tile(level->tileset[j]->get_col_rect().x, level->tileset[j]->get_col_rect().y, new_type);
                 tileset[counter]->status = (tileset[counter]->get_type() < 15) ? (b_status) % 4 : (b_status + 2) % 4;
                 tileset[counter]->frame = (tileset[counter]->status == TILE_ACTIVE || tileset[counter]->status == TILE_INACTIVATE) ? 0 : TILE_FRAMES - 1;
                 counter++;
@@ -193,7 +186,7 @@ void crate::create_tiles(int b_status, levelstate* level)
             {
                 int new_type = tile_type_right(level->tileset[j]->get_type());
 
-                tileset[counter] = new tile(level->tileset[j]->get_col_rect().x, level->tileset[j]->get_col_rect().y, new_type);
+                tileset[counter] = new Tile(level->tileset[j]->get_col_rect().x, level->tileset[j]->get_col_rect().y, new_type);
                 tileset[counter]->status = (tileset[counter]->get_type() < 15) ? (b_status) % 4 : (b_status + 2) % 4;
                 tileset[counter]->frame = (tileset[counter]->status == TILE_ACTIVE || tileset[counter]->status == TILE_INACTIVATE) ? 0 : TILE_FRAMES - 1;
                 counter++;
@@ -203,7 +196,7 @@ void crate::create_tiles(int b_status, levelstate* level)
     }
 }
 
-int crate::tile_type_top(int type)
+int Crate::tile_type_top(int type)
 {
     int new_type = black ? W_BACK : B_BACK;
 
@@ -299,7 +292,7 @@ int crate::tile_type_top(int type)
     return new_type;
 }
 
-int crate::tile_type_bottom(int type)
+int Crate::tile_type_bottom(int type)
 {
     int new_type = black ? W_BACK : B_BACK;
 
@@ -396,7 +389,7 @@ int crate::tile_type_bottom(int type)
 }
 
 // left side tile determinant
-int crate::tile_type_left(int type)
+int Crate::tile_type_left(int type)
 {
     int new_type = black ? W_BACK : B_BACK;
 
@@ -493,7 +486,7 @@ int crate::tile_type_left(int type)
 }
 
 // right side tile determinant
-int crate::tile_type_right(int type)
+int Crate::tile_type_right(int type)
 {
     int new_type = black ? W_BACK : B_BACK;
 

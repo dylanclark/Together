@@ -8,11 +8,11 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_mixer.h>
 
-class sound_player
+class SoundPlayer
 {
 public:
-    sound_player();
-    ~sound_player();
+    SoundPlayer();
+    ~SoundPlayer();
 
     // all music
     Mix_Music* menu_music;

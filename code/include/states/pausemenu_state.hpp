@@ -12,11 +12,11 @@
 #include <engine.hpp>
 #include <textures.hpp>
 
-class pausemenu_state : public gamestate
+class PauseMenuState : public Gamestate
 {
 public:
     // init and shutdown
-    void init(engine* game);
+    void init(Engine* game);
     void cleanup();
 
     // pause and resume
@@ -24,18 +24,18 @@ public:
     void resume();
 
     // handling control of screen
-    void handle_events(engine* game);
-    void update(engine* game);
-    void draw(engine* game);
+    void handle_events(Engine* game);
+    void update(Engine* game);
+    void draw(Engine* game);
 
-    pausemenu_state() { };
+    PauseMenuState() { };
 
-    menu* pause_menu = NULL;
+    Menu* pause_menu = NULL;
 
-    texture resume_button;
-    texture level_select_button;
-    texture options_button;
-    texture save_and_quit_button;
+    Texture ResumeButton;
+    Texture LevelSelectButton;
+    Texture OptionsButton;
+    Texture SaveAndQuitButton;
 };
 
 #endif /* pausemenu_state_hpp */
