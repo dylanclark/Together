@@ -22,6 +22,12 @@ Camera::Camera(int w, int h)
     display.h = h;
 };
 
+SDL_Rect*
+Camera::get_display()
+{
+    return &display;
+}
+
 void Camera::move(int level_w, int level_h, Engine* game)
 {
     // update positions
@@ -112,16 +118,16 @@ void Camera::move(int level_w, int level_h, Engine* game)
         location.w = ((float) location.h / (float) game->screen_height) * game->screen_width;
     }
 
-    // change the actual positions based on this origin
-    update();
-}
-
-void Camera::update()
-{
     display.x = location.x - location.w / 2;
     display.y = location.y - location.h / 2;
     display.w = location.w;
     display.h = location.h;
+}
+
+void Camera::update(SDL_Rect* b_char, SDL_Rect* w_char, int level_w, int level_h, Engine* game)
+{
+    track(b_char, w_char);
+    move(level_w, level_h, game);
 }
 
 void Camera::track(SDL_Rect* b_char, SDL_Rect* w_char)

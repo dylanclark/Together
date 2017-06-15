@@ -21,6 +21,9 @@ void Level4State::init(Engine* game)
     // load textures
     load_textures(game);
 
+    b_char = NULL;
+    w_char = NULL;
+
     // initialize objects
     init_objects(game);
 
@@ -46,16 +49,15 @@ void Level4State::handle_events(Engine* game)
         }
 
         // quit if he pressed escape
-        if (!b_char.handle_event(event, this, game))
+        if (!b_char->handle_event(event, this, game))
         {
             Mix_PauseMusic();
             Mix_PlayChannel(-1, game->sound->menu_exit_snd, 0);
             game->push_state(new PauseMenuState);
         }
-        // quit if he pressed escape
-        w_char.handle_event(event, this, game);
-
-
+        if (w_char != NULL) {
+            w_char->handle_event(event, this, game);
+        }
     }
 
     shiftable = true;
@@ -67,10 +69,13 @@ void Level4State::update(Engine* game)
     SDL_RenderClear(game->rend);
 
     // move the square
-    if (b_char.status == CHAR_ACTIVE)
-        b_char.move(this, game);
-    if (w_char.status == CHAR_ACTIVE)
-        w_char.move(this, game);
+    if (b_char->status == CHAR_ACTIVE)
+        b_char->move(this, game);
+    if (w_char != NULL) {
+        if (w_char->status == CHAR_ACTIVE) {
+            w_char->move(this, game);
+        }
+    }
 
     for (int i = 0; i < crates.size(); i++)
     {
@@ -78,36 +83,37 @@ void Level4State::update(Engine* game)
     }
 
     // if white is active
-    if(w_char.col_rect.y > 9 * TILE_WIDTH)
-        // track both
-        camera->track(&b_char.col_rect, &w_char.col_rect);
-    else
-        // track the black player
-        camera->track(&b_char.col_rect, &b_char.col_rect);
-
-    // move that camera!
-    camera->move(width, height, game);
+    if(w_char != NULL) {
+        camera->update(&b_char->col_rect, &w_char->col_rect, width, height, game);
+    }
+    else {
+        camera->update(&b_char->col_rect, &b_char->col_rect, width, height, game);
+    }
 
     interactions(game);
 }
 
 void Level4State::draw(Engine* game)
 {
+    SDL_Rect* cam_rect = camera->get_display();
+
     // draw stuff to the screen!
     for (int i = 0; i < (width * height); i++)
     {
-        tileset[i]->render(b_char.status, &camera->display, game, &tile_tex);
+        tileset[i]->render(b_char->status, cam_rect, game, &tile_tex);
     }
 
     for (int i = 0; i < crates.size(); i++)
     {
-        crates[i]->render(b_char.status, &camera->display, game, this);
+        crates[i]->render(b_char->status, cam_rect, game, this);
     }
 
-    b_char.render(&camera->display, game);
-    b_level_end.render(&camera->display, game);
-    w_level_end.render(&camera->display, game);
-    w_char.render(&camera->display, game);
+    b_char->render(cam_rect, game);
+    b_level_end.render(cam_rect, game);
+    w_level_end.render(cam_rect, game);
+    if (w_char != NULL) {
+        w_char->render(cam_rect, game);
+    }
 
     SDL_RenderPresent(game->rend);
 }
@@ -208,12 +214,7 @@ void Level4State::load_textures(Engine* game)
 void Level4State::init_objects(Engine* game)
 {
     // initialize black dot
-    b_char.status = CHAR_ACTIVE;
-    b_char.tex = b_char_tex;
-    b_char.col_rect.x = 2 * TILE_WIDTH;
-    b_char.col_rect.y = 8 * TILE_WIDTH;
-    b_char.black = true;
-
+    b_char = new class Dot(2, 8, true, &b_char_tex);
     camera = new class Camera(game->screen_width, game->screen_height);
 
     // initialize black level end
@@ -221,25 +222,18 @@ void Level4State::init_objects(Engine* game)
     b_level_end.col_rect.x = 920;
     b_level_end.col_rect.y = 8 * TILE_WIDTH;
 
-
-
 }
 
 void Level4State::interactions(Engine* game)
 {
-
     // if both are on level end object (making sure it hasnt been activate
     // to change level ends already
-    if(b_level_end.check(b_char.col_rect) && (w_level_end.col_rect.x != 1700))
+    if(b_level_end.check(b_char->col_rect) && (w_level_end.col_rect.x != 1700))
     {
-        //b_char.center(&b_level_end.col_rect);
+        //b_char->center(&b_level_end.col_rect);
 
         // initialize white dot
-        w_char.status = CHAR_INACTIVE;
-        w_char.tex = w_char_tex;
-        w_char.col_rect.x = 920;
-        w_char.col_rect.y = 9 * TILE_WIDTH;
-        w_char.black = false;
+        w_char = new class Dot(15, 9, false, &w_char_tex);
 
         b_level_end.col_rect.x = 1700;
         b_level_end.col_rect.y = 13 * TILE_WIDTH;
@@ -250,11 +244,9 @@ void Level4State::interactions(Engine* game)
         w_level_end.col_rect.y = 14 * TILE_WIDTH;
     }
 
-    if(b_level_end.check(b_char.col_rect) && w_level_end.check(w_char.col_rect))
-
-    {
-
-        // change state to level 5
-        change_state(game, new Level5State);
+    if (w_char != NULL) {
+        if(b_level_end.check(b_char->col_rect) && w_level_end.check(w_char->col_rect)) {
+            change_state(game, new Level5State);
+        }
     }
 }

@@ -46,14 +46,14 @@ void Level6State::handle_events(Engine* game)
         }
 
         // quit if he pressed escape
-        if (!b_char.handle_event(event, this, game))
+        if (!b_char->handle_event(event, this, game))
         {
             Mix_PauseMusic();
             Mix_PlayChannel(-1, game->sound->menu_exit_snd, 0);
             game->push_state(new PauseMenuState);
         }
         // quit if he pressed escape
-        w_char.handle_event(event, this, game);
+        w_char->handle_event(event, this, game);
 
 
     }
@@ -67,42 +67,40 @@ void Level6State::update(Engine* game)
     SDL_RenderClear(game->rend);
 
     // move the square
-    if (b_char.status == CHAR_ACTIVE)
-        b_char.move(this, game);
-    if (w_char.status == CHAR_ACTIVE)
-        w_char.move(this, game);
+    if (b_char->status == CHAR_ACTIVE)
+        b_char->move(this, game);
+    if (w_char->status == CHAR_ACTIVE)
+        w_char->move(this, game);
 
     for (int i = 0; i < crates.size(); i++)
     {
         crates[i]->update();
     }
 
-    // track the player
-    camera->track(&b_char.col_rect, &w_char.col_rect);
-
-    // move that camera!
-    camera->move(width, height, game);
+    camera->update(&b_char->col_rect, &w_char->col_rect, width, height, game);
 
     interactions(game);
 }
 
 void Level6State::draw(Engine* game)
 {
+    SDL_Rect* cam_rect = camera->get_display();
+
     // draw stuff to the screen!
     for (int i = 0; i < (width * height); i++)
     {
-        tileset[i]->render(b_char.status, &camera->display, game, &tile_tex);
+        tileset[i]->render(b_char->status, cam_rect, game, &tile_tex);
     }
     for (int i = 0; i < crates.size(); i++)
     {
-        crates[i]->render(b_char.status, &camera->display, game, this);
+        crates[i]->render(b_char->status, cam_rect, game, this);
     }
 
-    b_char.render(&camera->display, game);
-    b_level_end.render(&camera->display, game);
-    w_level_end.render(&camera->display, game);
-    w_char.render(&camera->display, game);
-    b_button.render(&camera->display, game);
+    b_char->render(cam_rect, game);
+    b_level_end.render(cam_rect, game);
+    w_level_end.render(cam_rect, game);
+    w_char->render(cam_rect, game);
+    b_button.render(cam_rect, game);
     SDL_RenderPresent(game->rend);
 }
 
@@ -205,12 +203,8 @@ void Level6State::load_textures(Engine* game)
 
 void Level6State::init_objects(Engine* game)
 {
-    // initialize black dot
-    b_char.status = CHAR_ACTIVE;
-    b_char.tex = b_char_tex;
-    b_char.col_rect.x = 2 * TILE_WIDTH;
-    b_char.col_rect.y = 8 * TILE_WIDTH;
-    b_char.black = true;
+    b_char = new class Dot(2, 8, true, &b_char_tex);
+    w_char = new class Dot(2, 9, false, &w_char_tex);
 
     camera = new class Camera(game->screen_width, game->screen_height);
 
@@ -219,18 +213,10 @@ void Level6State::init_objects(Engine* game)
     b_level_end.col_rect.x = 1100;
     b_level_end.col_rect.y = 8 * TILE_WIDTH;
 
-    // initialize white dot
-    w_char.status = CHAR_INACTIVE;
-    w_char.tex = w_char_tex;
-    w_char.col_rect.x = 2 * TILE_WIDTH;
-    w_char.col_rect.y = 9 * TILE_WIDTH;
-    w_char.black = false;
-
     // initialize white level end
     w_level_end.tex = w_end_tex;
     w_level_end.col_rect.x = 1100;
     w_level_end.col_rect.y = 9 * TILE_WIDTH;
-
 
     // initialize black button
     b_button.tex = b_button_tex;
@@ -246,7 +232,7 @@ void Level6State::interactions(Engine* game)
 {
 
     // if both are on level end object
-    if(b_level_end.check(b_char.col_rect) && w_level_end.check(w_char.col_rect))
+    if(b_level_end.check(b_char->col_rect) && w_level_end.check(w_char->col_rect))
 
     {
         // change state to level 7
@@ -255,7 +241,7 @@ void Level6State::interactions(Engine* game)
 
 
     //if black button is activated
-    if(b_button.check(b_char.col_rect) && b_button.used == false)
+    if(b_button.check(b_char->col_rect) && b_button.used == false)
     {
         // used
         b_button.used = true;

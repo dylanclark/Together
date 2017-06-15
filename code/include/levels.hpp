@@ -26,19 +26,19 @@ const float CAM_ACC = 2;
 class Camera
 {
 public:
+    Camera(int w, int h);
+    void update(SDL_Rect* b_char, SDL_Rect* w_char, int level_w, int level_h, Engine* game);
+    SDL_Rect* get_display();
+
+private:
     SDL_Rect display;
     SDL_Rect location;
-
     float x_vel;
     float y_vel;
     float w_vel;
     float h_vel;
-
-    Camera(int w, int h);
-
     void track(SDL_Rect* b_char, SDL_Rect* w_char);
     void move(int level_w, int level_h, Engine* game);
-    void update(void);
 };
 
 class LevelEnd
@@ -76,11 +76,9 @@ public:
     int height;
     bool shiftable;
 
-    Levelstate() { };
-
     Camera* camera;
-    Dot b_char;
-    Dot w_char;
+    Dot* b_char;
+    Dot* w_char;
 
     // objects
     LevelEnd b_level_end;

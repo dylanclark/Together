@@ -10,6 +10,7 @@
 #include <textures.hpp>
 #include <levels.hpp>
 #include <objects.hpp>
+#include <tiles.hpp>
 
 // reinitialize character textures
 extern Texture b_char_tex;
@@ -17,7 +18,7 @@ extern Texture w_char_tex;
 extern Texture b_end_animate;
 extern Texture w_end_animate;
 
-Dot::Dot()
+Dot::Dot(int x, int y, bool is_black, Texture* texture)
 {
     // initialize velocity
     x_vel = 0;
@@ -32,8 +33,15 @@ Dot::Dot()
     // initiliaze gamepad
     controller = new class Controller;
 
-    // initialize active
-    status = TILE_ACTIVE;
+    black = is_black;
+    if (black) {
+        status = CHAR_ACTIVE;
+    }
+    else {
+        status = CHAR_INACTIVE;
+    }
+
+    tex = texture;
 
     // initialize animation
     frame = 0;
@@ -41,8 +49,8 @@ Dot::Dot()
     // initialize collision rectangle
     col_rect.w = DOT_W;
     col_rect.h = DOT_H;
-    col_rect.x = (SCREEN_WIDTH - col_rect.w) / 2;
-    col_rect.y = (SCREEN_HEIGHT - col_rect.h) / 2;
+    col_rect.x = x*TILE_WIDTH;
+    col_rect.y = y*TILE_WIDTH;
 }
 
 bool Dot::handle_event(SDL_Event &e, Levelstate* level, Engine* game)
@@ -641,10 +649,10 @@ void Dot::render(SDL_Rect* camera, Engine* game)
     {
         // different cases render appropriate clips
         case CHAR_ACTIVE:
-            tex.render(col_rect.x, col_rect.y, &active_clip, camera, game);
+            tex->render(col_rect.x, col_rect.y, &active_clip, camera, game);
             break;
         case CHAR_INACTIVE:
-            tex.render(col_rect.x, col_rect.y, &inactive_clip, camera, game);
+            tex->render(col_rect.x, col_rect.y, &inactive_clip, camera, game);
             break;
         case CHAR_INACTIVATE:
         {
@@ -655,7 +663,7 @@ void Dot::render(SDL_Rect* camera, Engine* game)
             SDL_Rect inactivate_clip = {16 * frame, 0, 16, 16};
 
             // render that
-            tex.render(col_rect.x, col_rect.y, &inactivate_clip, camera, game);
+            tex->render(col_rect.x, col_rect.y, &inactivate_clip, camera, game);
 
             // change the status if animation is over!
             if (frame == ANIMATION_LENGTH - 1)
@@ -674,7 +682,7 @@ void Dot::render(SDL_Rect* camera, Engine* game)
             SDL_Rect activate_clip = {16 * (frame + 8), 0, 16, 16};
 
             // render that
-            tex.render(col_rect.x, col_rect.y, &activate_clip, camera, game);
+            tex->render(col_rect.x, col_rect.y, &activate_clip, camera, game);
 
             // change the status if animation is over!
             if (frame == ANIMATION_LENGTH - 1)

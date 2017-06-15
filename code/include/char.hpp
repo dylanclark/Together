@@ -40,7 +40,7 @@ public:
     bool color;
     int frame;
 
-    Dot();
+    Dot(int x, int y, bool is_black, Texture* texture);
     bool handle_event(SDL_Event &e, Levelstate* level, Engine* game);
     void move(Levelstate* level, Engine* game);
     bool crate_col(Levelstate* level, Engine* game);
@@ -48,7 +48,7 @@ public:
     void render(SDL_Rect* camera, Engine* game);
 
     SDL_Rect col_rect;
-    Texture tex;
+    Texture* tex;
     bool black;
     int jump;
 

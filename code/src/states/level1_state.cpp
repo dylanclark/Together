@@ -49,15 +49,12 @@ void Level1State::handle_events(Engine* game)
         }
 
         // quit if he pressed escape
-        if (!b_char.handle_event(event, this, game))
+        if (!b_char->handle_event(event, this, game))
         {
             Mix_PauseMusic();
             Mix_PlayChannel(-1, game->sound->menu_exit_snd, 0);
             game->push_state(new PauseMenuState);
         }
-
-        w_char.handle_event(event, this, game);
-
     }
 
     shiftable = true;
@@ -69,38 +66,36 @@ void Level1State::update(Engine* game)
     SDL_RenderClear(game->rend);
 
     // move the square
-    if (b_char.status == CHAR_ACTIVE)
-        b_char.move(this, game);
+    if (b_char->status == CHAR_ACTIVE)
+        b_char->move(this, game);
 
     for (int i = 0; i < crates.size(); i++)
     {
         crates[i]->update();
     }
 
-    // track the player
-    camera->track(&b_char.col_rect, &b_char.col_rect);
-
-    // move that camera!
-    camera->move(width, height, game);
+    camera->update(&b_char->col_rect, &b_char->col_rect, width, height, game);
 
     interactions(game);
 }
 
 void Level1State::draw(Engine* game)
 {
+    SDL_Rect* cam_rect = camera->get_display();
+
     // draw stuff to the screen!
     for (int i = 0; i < (width * height); i++)
     {
-        tileset[i]->render(b_char.status, &camera->display, game, &tile_tex);
+        tileset[i]->render(b_char->status, cam_rect, game, &tile_tex);
     }
 
     for (int i = 0; i < crates.size(); i++)
     {
-        crates[i]->render(b_char.status, &camera->display, game, this);
+        crates[i]->render(b_char->status, cam_rect, game, this);
     }
 
-    b_char.render(&camera->display, game);
-    b_level_end.render(&camera->display, game);
+    b_char->render(cam_rect, game);
+    b_level_end.render(cam_rect, game);
     SDL_RenderPresent(game->rend);
 }
 
@@ -176,11 +171,7 @@ void Level1State::load_textures(Engine* game)
 void Level1State::init_objects(Engine* game)
 {
     // initialize black dot
-    b_char.status = CHAR_ACTIVE;
-    b_char.tex = b_char_tex;
-    b_char.col_rect.x = 2 * TILE_WIDTH;
-    b_char.col_rect.y = 4 * TILE_WIDTH;
-    b_char.black = true;
+    b_char = new class Dot(2, 4, true, &b_char_tex);
 
     // initialize black level end
     b_level_end.tex = b_end_tex;
@@ -193,9 +184,9 @@ void Level1State::init_objects(Engine* game)
 void Level1State::interactions(Engine* game)
 {
     // if both are on level end object
-    if(b_level_end.check(b_char.col_rect))
+    if(b_level_end.check(b_char->col_rect))
     {
-        b_char.center(&b_level_end.col_rect);
+        b_char->center(&b_level_end.col_rect);
 
         // change state to level 2
         change_state(game, new Level2State);
