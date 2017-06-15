@@ -16,7 +16,6 @@
 class Level1State : public Gamestate, public Levelstate
 {
 public:
-    Level1State() { };
 
 private:
     // init and shutdown

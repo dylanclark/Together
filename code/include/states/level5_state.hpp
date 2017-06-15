@@ -29,8 +29,6 @@ public:
     void update(Engine* game);
     void draw(Engine* game);
 
-    Level5State() { };
-
     // load textures
     void load_textures(Engine* game);
 
