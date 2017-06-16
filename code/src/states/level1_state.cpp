@@ -74,7 +74,7 @@ void Level1State::update(Engine* game)
         crates[i]->update();
     }
 
-    camera->update(&b_char->col_rect, &b_char->col_rect, width, height, game);
+    camera->update(&b_char->col_rect, &b_char->col_rect);
 
     interactions(game);
 }
@@ -168,7 +168,8 @@ void Level1State::init_objects(Engine* game)
     b_level_end.col_rect.x = 1360;
     b_level_end.col_rect.y = 720;
 
-    camera = new class Camera(game->screen_width, game->screen_height);
+    camera = new class Camera(game->screen_width, game->screen_height, width * TILE_WIDTH, height * TILE_WIDTH);
+
 }
 
 void Level1State::interactions(Engine* game)

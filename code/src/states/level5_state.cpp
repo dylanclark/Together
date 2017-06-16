@@ -76,7 +76,7 @@ void Level5State::update(Engine* game)
         crates[i]->update();
     }
 
-    camera->update(&b_char->col_rect, &w_char->col_rect, width, height, game);
+    camera->update(&b_char->col_rect, &w_char->col_rect);
 
     interactions(game);
 }
@@ -191,8 +191,7 @@ void Level5State::init_objects(Engine* game)
 {
     b_char = new class Dot(2, 8, true, &b_char_tex);
     w_char = new class Dot(2, 9, false, &w_char_tex);
-
-    camera = new class Camera(game->screen_width, game->screen_height);
+    camera = new class Camera(game->screen_width, game->screen_height, width * TILE_WIDTH, height * TILE_WIDTH);
 
     // initialize black level end
     b_level_end.tex = b_end_tex;

@@ -84,10 +84,10 @@ void Level4State::update(Engine* game)
 
     // if white is active
     if(w_char != NULL) {
-        camera->update(&b_char->col_rect, &w_char->col_rect, width, height, game);
+        camera->update(&b_char->col_rect, &w_char->col_rect);
     }
     else {
-        camera->update(&b_char->col_rect, &b_char->col_rect, width, height, game);
+        camera->update(&b_char->col_rect, &b_char->col_rect);
     }
 
     interactions(game);
@@ -205,7 +205,7 @@ void Level4State::init_objects(Engine* game)
 {
     // initialize black dot
     b_char = new class Dot(2, 8, true, &b_char_tex);
-    camera = new class Camera(game->screen_width, game->screen_height);
+    camera = new class Camera(game->screen_width, game->screen_height, width * TILE_WIDTH, height * TILE_WIDTH);
 
     // initialize black level end
     b_level_end.tex = b_end_tex;

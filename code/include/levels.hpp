@@ -26,19 +26,21 @@ const float CAM_ACC = 2;
 class Camera
 {
 public:
-    Camera(int w, int h);
-    void update(SDL_Rect* b_char, SDL_Rect* w_char, int level_w, int level_h, Engine* game);
+    Camera(int scr_w, int scr_h, int lev_w, int lev_h);
+    void update(SDL_Rect* b_char, SDL_Rect* w_char);
     SDL_Rect* get_display();
 
 private:
     SDL_Rect display;
     SDL_Rect location;
+    int level_w, level_h;
+    int screen_w, screen_h;
     float x_vel;
     float y_vel;
     float w_vel;
     float h_vel;
     void track(SDL_Rect* b_char, SDL_Rect* w_char);
-    void move(int level_w, int level_h, Engine* game);
+    void move();
 };
 
 class LevelEnd

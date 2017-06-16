@@ -7,7 +7,7 @@
 #include <levels.hpp>
 #include <engine.hpp>
 
-Camera::Camera(int w, int h)
+Camera::Camera(int scr_w, int scr_h, int lev_w, int lev_h)
 {
     // initialize velocities
     x_vel = 0;
@@ -18,8 +18,14 @@ Camera::Camera(int w, int h)
     // initialize rectangle
     display.x = 0;
     display.y = 0;
-    display.w = w;
-    display.h = h;
+    display.w = scr_w;
+    display.h = scr_h;
+
+    // level / screen dimensions
+    level_w = lev_w;
+    level_h = lev_h;
+    screen_w = scr_w;
+    screen_h = scr_h;
 };
 
 SDL_Rect*
@@ -28,7 +34,7 @@ Camera::get_display()
     return &display;
 }
 
-void Camera::move(int level_w, int level_h, Engine* game)
+void Camera::move()
 {
     // update positions
     location.x += x_vel;
@@ -36,143 +42,146 @@ void Camera::move(int level_w, int level_h, Engine* game)
     location.w += w_vel;
     location.h += h_vel;
 
-    // don't shrink too small
-    if (location.h < game->screen_height)
-    {
-        location.h = game->screen_height;
-        h_vel = 0;
-    }
-    if (location.w < game->screen_width)
-    {
-        location.w = game->screen_width;
-        w_vel = 0;
-    }
-
-
-    // don't get too big (max dimensions)
-    if (location.w > game->screen_width * 2 || location.h > game->screen_height * 2)
-    {
-        location.w = game->screen_width * 2;
-        location.h = game->screen_height * 2;
-    }
-
     // don't get too big (level dimensions)
-    if (location.w > level_w * TILE_WIDTH)
-    {
-        location.w = level_w * TILE_WIDTH;
+    if (location.w > level_w) {
+        location.w = level_w;
     }
-    if (location.h > level_h * TILE_WIDTH)
-    {
-        location.h = level_h * TILE_WIDTH;
-    }
-
-
-    if (location.x - location.w / 2 < 1)
-    {
-        location.x = location.w / 2;
-        x_vel = 0;
-    }
-    if (location.x + location.w / 2 + 1 > level_w * TILE_WIDTH)
-    {
-        if (location.w > level_w * TILE_WIDTH - 1)
-        {
-            location.w = level_w * TILE_WIDTH - 1;
-            location.x = (level_w * TILE_WIDTH - 1) / 2;
-            x_vel = 0;
-            w_vel = 0;
-        }
-        else
-        {
-            location.x = (level_w * TILE_WIDTH - 1) - location.w / 2;
-            x_vel = 0;
-        }
-    }
-    if (location.y - location.h / 2 < 1)
-    {
-        location.y = location.h / 2;
-        y_vel = 0;
-    }
-    if (location.y + location.h / 2 + 1 > level_h * TILE_WIDTH)
-    {
-        if (location.h > level_h * TILE_WIDTH - 1)
-        {
-            location.h = level_h * TILE_WIDTH - 1;
-            location.y = (level_h * TILE_WIDTH - 1) / 2;
-            y_vel = 0;
-            h_vel = 0;
-        }
-        else
-        {
-            location.y = (level_h * TILE_WIDTH - 1) - location.h / 2;
-            y_vel = 0;
-        }
+    if (location.h > level_h) {
+        location.h = level_h;
     }
 
     // keep correct aspect ratio
-    if ((float) location.w / (float) game->screen_width < (float) location.h / (float) game->screen_height)
-    {
-        location.h = ((float) location.w / (float) game->screen_width) * game->screen_height;
+    if ((float) location.w / (float) screen_w > (float) location.h / (float) screen_h) {
+        location.h = ((float) location.w / (float) screen_w) * screen_h;
     }
-    if ((float) location.w / (float) game->screen_width > (float) location.h / (float) game->screen_height)
-    {
-        location.w = ((float) location.h / (float) game->screen_height) * game->screen_width;
+    if ((float) location.w / (float) screen_w < (float) location.h / (float) screen_h) {
+        location.w = ((float) location.h / (float) screen_h) * screen_w;
     }
 
-    display.x = location.x - location.w / 2;
-    display.y = location.y - location.h / 2;
+    if (location.w > level_w) {
+        location.w = level_w;
+        location.h = location.h = ((float) location.w / (float) screen_w) * screen_h;
+    }
+    if (location.h > level_h) {
+        location.h = level_h;
+        location.w = ((float) location.h / (float) screen_h) * screen_w;
+    }
+
+    // update the proper SDL_Rect
+    display.x = location.x - location.w / 2.0;
+    display.y = location.y - location.h / 2.0;
     display.w = location.w;
     display.h = location.h;
+
+    // final corrections
+    if (display.x < 0) {
+        display.x = 0;
+    }
+    if (display.x + display.w > level_w) {
+        display.x = level_w - display.w;
+    }
+    if (display.y < 0) {
+        display.y = 0;
+    }
+    if (display.y + display.h > level_h) {
+        display.y = level_h - display.h;
+    }
 }
 
-void Camera::update(SDL_Rect* b_char, SDL_Rect* w_char, int level_w, int level_h, Engine* game)
+void Camera::update(SDL_Rect* b_char, SDL_Rect* w_char)
 {
     track(b_char, w_char);
-    move(level_w, level_h, game);
+    move();
 }
 
 void Camera::track(SDL_Rect* b_char, SDL_Rect* w_char)
 {
     // these will be for our ideal camera position (x and y are centered)
-    int min_x;
-    int max_x;
-    int min_y;
-    int max_y;
+    float min_x;
+    float max_x;
+    float min_y;
+    float max_y;
 
-    // x bounds
-    if (b_char->x >= w_char->x)
-    {
-        max_x = b_char->x + b_char->w / 2;
-        min_x = w_char->x + w_char->w / 2;
+    // x pos between characters
+    if (b_char->x >= w_char->x) {
+        max_x = b_char->x + b_char->w / 2.0;
+        min_x = w_char->x + w_char->w / 2.0;
     }
-    else if (b_char->x < w_char->x)
-    {
-        max_x = w_char->x + w_char->w / 2;
-        min_x = b_char->x + b_char->w / 2;
+    else {
+        max_x = w_char->x + w_char->w / 2.0;
+        min_x = b_char->x + b_char->w / 2.0;
     }
-    // y bounds
-    if (b_char->y >= w_char->y)
-    {
-        max_y = b_char->y + b_char->h / 2;
-        min_y = w_char->y + w_char->h / 2;
+
+    // y pos between characters
+    if (b_char->y >= w_char->y) {
+        max_y = b_char->y + b_char->h / 2.0;
+        min_y = w_char->y + w_char->h / 2.0;
     }
-    else if (b_char->y < w_char->y)
-    {
-        max_y = w_char->y + w_char->h / 2;
-        min_y = b_char->y + b_char->h / 2;
+    else {
+        max_y = w_char->y + w_char->h / 2.0;
+        min_y = b_char->y + b_char->h / 2.0;
+    }
+
+    // x pos bounds
+    if (max_x > level_w - BUFFER) {
+        max_x = level_w - BUFFER;
+    }
+    if (min_x < BUFFER) {
+        min_x = BUFFER;
+    }
+
+    // y pos bounds
+    if (max_y > level_h - BUFFER) {
+        max_y = level_h - BUFFER;
+    }
+    if (min_y < BUFFER) {
+        min_y = BUFFER;
     }
 
     // ideal camera position
     SDL_Rect target_rect;
-    target_rect.x = (min_x + max_x) / 2;
-    target_rect.y = (min_y + max_y) / 2;
-    target_rect.w = max_x - min_x + BUFFER * 2;
-    target_rect.h = max_y - min_y + BUFFER * 2;
+    target_rect.x = (min_x + max_x) / 2.0;
+    target_rect.y = (min_y + max_y) / 2.0;
+    target_rect.w = max_x - min_x + BUFFER * 2.0;
+    target_rect.h = max_y - min_y + BUFFER * 2.0;
+
+    // don't shrink too small
+    if (target_rect.h < screen_h) {
+        target_rect.h = screen_h;
+    }
+    if (target_rect.w < screen_w) {
+        target_rect.w = screen_w;
+    }
+
+    // don't get too big (level dimensions)
+    if (target_rect.w > level_w) {
+        target_rect.w = level_w;
+    }
+    if (target_rect.h > level_h) {
+        target_rect.h = level_h;
+    }
+
+    // x bounds
+    if (target_rect.x - target_rect.w / 2.0 < 0.0) {
+        target_rect.x = target_rect.w / 2.0;
+    }
+    if (target_rect.x + target_rect.w / 2.0 > level_w) {
+        target_rect.x = (level_w) - target_rect.w / 2.0;
+    }
+
+    // y bounds
+    if (target_rect.y - target_rect.h / 2.0 < 0.0) {
+        target_rect.y = target_rect.h / 2.0;
+    }
+    if (target_rect.y + target_rect.h / 2.0 > level_h) {
+        target_rect.y = (level_h) - target_rect.h / 2.0;
+    }
 
     // update speeds!
-    x_vel = CAM_ACC * ((float) target_rect.x - (float) location.x) / 20;
-    y_vel = CAM_ACC * ((float) target_rect.y - (float) location.y) / 20;
-    w_vel = CAM_ACC * ((float) target_rect.w - (float) location.w) / 20;
-    h_vel = CAM_ACC * ((float) target_rect.h - (float) location.h) / 20;
+    x_vel = CAM_ACC * ((float) target_rect.x - (float) location.x) / 20.0;
+    y_vel = CAM_ACC * ((float) target_rect.y - (float) location.y) / 20.0;
+    w_vel = CAM_ACC * ((float) target_rect.w - (float) location.w) / 20.0;
+    h_vel = CAM_ACC * ((float) target_rect.h - (float) location.h) / 20.0;
 }
 
 

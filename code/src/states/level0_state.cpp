@@ -71,7 +71,7 @@ void Level0State::update(Engine* game)
         crates[i]->update();
     }
 
-    camera->update(&b_char->col_rect, &b_char->col_rect, width, height, game);
+    camera->update(&b_char->col_rect, &b_char->col_rect);
 
     interactions(game);
 }
@@ -244,7 +244,7 @@ void Level0State::init_objects(Engine* game)
     b_cross_spring.y_spring = 6;
     b_cross_spring.direction = FLIP_RIGHT;
 
-    camera = new class Camera(game->screen_width, game->screen_height);
+    camera = new class Camera(game->screen_width, game->screen_height, width * TILE_WIDTH, height * TILE_WIDTH);
 
     // init crate #1
     crates.push_back(new Crate(5 * TILE_WIDTH, 7  * TILE_WIDTH, FOUR_BY_TWO));
