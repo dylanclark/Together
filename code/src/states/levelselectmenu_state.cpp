@@ -10,9 +10,9 @@
 #include <states/mainmenu_state.hpp>
 #include <engine.hpp>
 #include <menu.hpp>
-#include <states/level1_state.hpp>
-#include <states/level0_state.hpp>
-#include <states/level2_state.hpp>
+#include <states/levelstate.hpp>
+#include <states/levelstate.hpp>
+#include <states/levelstate.hpp>
 #include <states/pausemenu_state.hpp>
 #include <states/optionsmenu_state.hpp>
 #include <states/levelselectmenu_state.hpp>
@@ -50,16 +50,6 @@ void LevelSelectMenuState::cleanup()
 
     level_slider.free();
     back_button.free();
-}
-
-void LevelSelectMenuState::pause()
-{
-
-}
-
-void LevelSelectMenuState::resume()
-{
-
 }
 
 void LevelSelectMenuState::handle_events(Engine* game)

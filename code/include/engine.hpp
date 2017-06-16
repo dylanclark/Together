@@ -61,9 +61,6 @@ public:
     virtual void init(Engine* game) = 0;
     virtual void cleanup() = 0;
 
-    virtual void pause() = 0;
-    virtual void resume() = 0;
-
     virtual void handle_events(Engine* game) = 0;
     virtual void update(Engine* game) = 0;
     virtual void draw(Engine* game) = 0;
@@ -72,8 +69,6 @@ public:
     {
         game->change_state(state);
     }
-
-    Gamestate() { };
 };
 
 #define DEAD_ZONE 8000

@@ -12,7 +12,6 @@ Controller::Controller()
     // check for joystick
     if (SDL_NumJoysticks() < 1)
     {
-        printf("warning: no joysticks connected!\n");
         return;
     }
 

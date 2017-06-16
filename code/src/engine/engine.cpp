@@ -65,10 +65,7 @@ bool Engine::init()
         success = false;
     }
 
-    if (SDL_ShowCursor(SDL_DISABLE) != 0)
-    {
-        printf("could not hide cursor: %s\n", SDL_GetError());
-    }
+    SDL_ShowCursor(SDL_DISABLE);
 
     sound = new SoundPlayer;
 
@@ -125,11 +122,6 @@ void Engine::change_state(Gamestate* state)
 
 void Engine::push_state(Gamestate* state)
 {
-    if (!states.empty())
-    {
-        states.back()->pause();
-    }
-
     states.push_back(state);
     states.back()->init(this);
 }

@@ -10,9 +10,9 @@
 #include <states/mainmenu_state.hpp>
 #include <engine.hpp>
 #include <menu.hpp>
-#include <states/level1_state.hpp>
-#include <states/level2_state.hpp>
-#include <states/level3_state.hpp>
+#include <states/levelstate.hpp>
+#include <states/levelstate.hpp>
+#include <states/levelstate.hpp>
 
 void QuitMenuState::init(Engine* game)
 {
@@ -55,16 +55,6 @@ void QuitMenuState::cleanup()
     quit_title.free();
     yes_button.free();
     no_button.free();
-}
-
-void QuitMenuState::pause()
-{
-
-}
-
-void QuitMenuState::resume()
-{
-
 }
 
 void QuitMenuState::handle_events(Engine* game)

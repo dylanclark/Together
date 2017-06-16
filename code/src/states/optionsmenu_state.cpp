@@ -10,9 +10,7 @@
 #include <states/mainmenu_state.hpp>
 #include <engine.hpp>
 #include <menu.hpp>
-#include <states/level1_state.hpp>
-#include <states/level3_state.hpp>
-#include <states/level2_state.hpp>
+#include <states/levelstate.hpp>
 #include <states/pausemenu_state.hpp>
 #include <states/optionsmenu_state.hpp>
 
@@ -69,16 +67,6 @@ void OptionsMenuState::cleanup()
     sfx_slider.free();
     controls_button.free();
     back_button.free();
-}
-
-void OptionsMenuState::pause()
-{
-
-}
-
-void OptionsMenuState::resume()
-{
-
 }
 
 void OptionsMenuState::handle_events(Engine* game)
