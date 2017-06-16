@@ -13,16 +13,12 @@
 #include <char.hpp>
 #include <levels.hpp>
 
-class Level6State : public Gamestate, public Levelstate
+class Level6State : public Levelstate
 {
 public:
     // init and shutdown
     void init(Engine* game);
     void cleanup();
-
-    // pause and resume
-    void pause();
-    void resume();
 
     // handling control of screen
     void handle_events(Engine* game);

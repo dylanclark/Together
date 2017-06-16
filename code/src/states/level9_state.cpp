@@ -140,16 +140,6 @@ void Level9State::cleanup()
 
 }
 
-void Level9State::pause()
-{
-    return;
-}
-
-void Level9State::resume()
-{
-    return;
-}
-
 void Level9State::load_textures(Engine* game)
 {
     // LOAD ALL TEXTURES

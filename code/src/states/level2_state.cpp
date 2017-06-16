@@ -133,16 +133,6 @@ void Level2State::cleanup()
 
 }
 
-void Level2State::pause()
-{
-    return;
-}
-
-void Level2State::resume()
-{
-    return;
-}
-
 void Level2State::load_textures(Engine* game)
 {
     // LOAD ALL TEXTURES

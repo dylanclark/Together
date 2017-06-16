@@ -10,22 +10,18 @@
 Controller::Controller()
 {
     // check for joystick
-    if (SDL_NumJoysticks() < 1)
-    {
-        printf("warning: no joysticks connected!\n");
+    if (SDL_NumJoysticks() < 1) {
         return;
     }
 
     // init joystick
     joystick = SDL_JoystickOpen(0);
-    if (joystick == NULL)
-    {
+    if (joystick == NULL) {
         printf("Warning: Unable to open controller! SDL_Error: %s\n", SDL_GetError());
     }
 
     // init gamepad
-    for (int i = 0; i < SDL_NumJoysticks(); i++)
-    {
+    for (int i = 0; i < SDL_NumJoysticks(); i++) {
         if (SDL_IsGameController(i))
         {
             gamepad = SDL_GameControllerOpen(i);
@@ -33,12 +29,9 @@ Controller::Controller()
         }
     }
     gamepad = SDL_GameControllerOpen(0);
-    if (gamepad == NULL)
-    {
+    if (gamepad == NULL) {
         printf("Warning: Unable to open controller: SDL_Error: %s\n", SDL_GetError());
     }
-
-
 }
 
 Controller::~Controller()

@@ -68,7 +68,7 @@ public:
 class Crate;
 class Tile;
 
-class Levelstate
+class Levelstate : public Gamestate
 {
 public:
     // tile dimensions of level

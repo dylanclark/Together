@@ -153,16 +153,6 @@ void Level4State::cleanup()
 
 }
 
-void Level4State::pause()
-{
-    return;
-}
-
-void Level4State::resume()
-{
-    return;
-}
-
 void Level4State::load_textures(Engine* game)
 {
     // LOAD ALL TEXTURES

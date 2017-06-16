@@ -142,16 +142,6 @@ void Level8State::cleanup()
 
 }
 
-void Level8State::pause()
-{
-    return;
-}
-
-void Level8State::resume()
-{
-    return;
-}
-
 void Level8State::load_textures(Engine* game)
 {
     // LOAD ALL TEXTURES

@@ -65,10 +65,7 @@ bool Engine::init()
         success = false;
     }
 
-    if (SDL_ShowCursor(SDL_DISABLE) != 0)
-    {
-        printf("could not hide cursor: %s\n", SDL_GetError());
-    }
+    SDL_ShowCursor(SDL_DISABLE);
 
     sound = new SoundPlayer;
 
@@ -80,19 +77,16 @@ bool Engine::init()
 
     // initialize PNG loading
     int img_flags = IMG_INIT_PNG;
-    if(!(IMG_Init(img_flags) & img_flags))
-    {
+    if(!(IMG_Init(img_flags) & img_flags)) {
         printf( "SDL_image could not initialize! SDL_image Error: %s\n", IMG_GetError() );
         success = false;
     }
 
 
-    if (save_file.fail())
-    {
+    if (save_file.fail()) {
         printf("error opening save_file\n");
     }
-    if (save_file.fail())
-    {
+    if (save_file.fail()) {
         printf("error opening save reader\n");
     }
 
@@ -113,8 +107,7 @@ void Engine::cleanup()
 
 void Engine::change_state(Gamestate* state)
 {
-    if (!states.empty())
-    {
+    if (!states.empty()) {
         states.back()->cleanup();
         states.pop_back();
     }
@@ -125,11 +118,6 @@ void Engine::change_state(Gamestate* state)
 
 void Engine::push_state(Gamestate* state)
 {
-    if (!states.empty())
-    {
-        states.back()->pause();
-    }
-
     states.push_back(state);
     states.back()->init(this);
 }
@@ -169,8 +157,7 @@ bool Engine::save(int level)
     save_file << level;
     save_file.close();
 
-    if (!save_file)
-    {
+    if (!save_file) {
         printf("error saving!\n");
         success = false;
     }
@@ -186,8 +173,7 @@ int Engine::read_save()
     save_reader >> to_return;
     save_reader.close();
 
-    if (!save_reader)
-    {
+    if (!save_reader) {
         printf("error reading save!\n");
     }
 
