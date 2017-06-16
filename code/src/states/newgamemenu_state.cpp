@@ -10,7 +10,8 @@
 #include <states/mainmenu_state.hpp>
 #include <engine.hpp>
 #include <menu.hpp>
-#include <states/levelstate.hpp>
+#include <states/level1_state.hpp>
+#include <states/level2_state.hpp>
 #include <states/newgamemenu_state.hpp>
 
 void NewGameMenuState::init(Engine* game)
@@ -54,6 +55,16 @@ void NewGameMenuState::cleanup()
     newgame_title.free();
     yes_button.free();
     no_button.free();
+}
+
+void NewGameMenuState::pause()
+{
+
+}
+
+void NewGameMenuState::resume()
+{
+
 }
 
 void NewGameMenuState::handle_events(Engine* game)

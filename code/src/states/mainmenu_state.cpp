@@ -9,9 +9,11 @@
 #include <states/mainmenu_state.hpp>
 #include <engine.hpp>
 #include <menu.hpp>
-#include <states/levelstate.hpp>
+#include <states/level1_state.hpp>
+#include <states/level2_state.hpp>
+#include <states/level3_state.hpp>
 #include <states/quitmenu_state.hpp>
-#include <states/levelstate.hpp>
+#include <states/level0_state.hpp>
 
 void MainMenuState::init(Engine* game)
 {
@@ -91,8 +93,20 @@ void MainMenuState::cleanup()
     quit_button.free();
 }
 
+void MainMenuState::pause()
+{
+    printf("paused menu\n");
+    main_menu->fade_in->alpha = 0;
+}
+
+void MainMenuState::resume()
+{
+    printf("paused menu\n");
+}
+
 void MainMenuState::handle_events(Engine* game)
 {
+
     // event handler
     SDL_Event event;
 

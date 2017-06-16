@@ -1,18 +1,19 @@
 
-#ifndef levelselectmenu_state_hpp
-#define levelselectmenu_state_hpp
+#ifndef Level6State_hpp
+#define Level6State_hpp
 
 // using SDL and standard IO
 #include <stdio.h>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
+#include <SDL2/SDL_ttf.h>
 
 // include headers
-#include <menu.hpp>
 #include <engine.hpp>
-#include <textures.hpp>
+#include <char.hpp>
+#include <levels.hpp>
 
-class LevelSelectMenuState : public Gamestate
+class Level6State : public Gamestate, public Levelstate
 {
 public:
     // init and shutdown
@@ -28,13 +29,14 @@ public:
     void update(Engine* game);
     void draw(Engine* game);
 
-    LevelSelectMenuState() { };
+    // load textures
+    void load_textures(Engine* game);
 
-    Menu* levelselect_menu;
+    // init objects
+    void init_objects(Engine* game);
 
-    Texture level_slider;
-    Texture back_button;
+    // object interactions
+    void interactions(Engine* game);
 };
 
-
-#endif /* levelselectmenu_state_hpp */
+#endif /* Level6State_hpp */

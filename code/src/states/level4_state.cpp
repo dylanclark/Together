@@ -6,7 +6,9 @@
 #include <SDL2/SDL_ttf.h>
 
 // include headers
-#include <states/levelstate.hpp>
+#include <states/level4_state.hpp>
+#include <states/level0_state.hpp>
+#include <states/level5_state.hpp>
 #include <states/mainmenu_state.hpp>
 #include <char.hpp>
 #include <levels.hpp>
@@ -57,6 +59,7 @@ void Level4State::handle_events(Engine* game)
             w_char->handle_event(event, this, game);
         }
     }
+
     shiftable = true;
 }
 
@@ -148,6 +151,16 @@ void Level4State::cleanup()
     b_cross_spring_tex.free();
     w_cross_spring_tex.free();
 
+}
+
+void Level4State::pause()
+{
+    return;
+}
+
+void Level4State::resume()
+{
+    return;
 }
 
 void Level4State::load_textures(Engine* game)

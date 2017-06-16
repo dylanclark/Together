@@ -10,9 +10,9 @@
 #include <states/mainmenu_state.hpp>
 #include <engine.hpp>
 #include <menu.hpp>
-#include <states/levelstate.hpp>
-#include <states/levelstate.hpp>
-#include <states/levelstate.hpp>
+#include <states/level3_state.hpp>
+#include <states/level1_state.hpp>
+#include <states/level2_state.hpp>
 #include <states/pausemenu_state.hpp>
 
 void PauseMenuState::init(Engine* game)
@@ -67,6 +67,16 @@ void PauseMenuState::cleanup()
     LevelSelectButton.free();
     OptionsButton.free();
     SaveAndQuitButton.free();
+}
+
+void PauseMenuState::pause()
+{
+
+}
+
+void PauseMenuState::resume()
+{
+
 }
 
 void PauseMenuState::handle_events(Engine* game)

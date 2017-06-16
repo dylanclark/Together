@@ -19,6 +19,10 @@ public:
     void init(Engine* game);
     void cleanup();
 
+    // pause and resume
+    void pause();
+    void resume();
+
     // handling control of screen
     void handle_events(Engine* game);
     void update(Engine* game);

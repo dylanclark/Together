@@ -6,7 +6,9 @@
 #include <SDL2/SDL_ttf.h>
 
 // include headers
-#include <states/levelstate.hpp>
+#include <states/level7_state.hpp>
+#include <states/level9_state.hpp>
+#include <states/level8_state.hpp>
 #include <states/mainmenu_state.hpp>
 #include <char.hpp>
 #include <objects.hpp>
@@ -136,6 +138,16 @@ void Level9State::cleanup()
     b_cross_spring_tex.free();
     w_cross_spring_tex.free();
 
+}
+
+void Level9State::pause()
+{
+    return;
+}
+
+void Level9State::resume()
+{
+    return;
 }
 
 void Level9State::load_textures(Engine* game)

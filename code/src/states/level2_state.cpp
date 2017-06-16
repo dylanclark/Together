@@ -6,7 +6,8 @@
 #include <SDL2/SDL_ttf.h>
 
 // include headers
-#include <states/levelstate.hpp>
+#include <states/level2_state.hpp>
+#include <states/level3_state.hpp>
 #include <states/mainmenu_state.hpp>
 #include <char.hpp>
 #include <levels.hpp>
@@ -130,6 +131,16 @@ void Level2State::cleanup()
     level2_start_tex.free();
     level2_end_tex.free();
 
+}
+
+void Level2State::pause()
+{
+    return;
+}
+
+void Level2State::resume()
+{
+    return;
 }
 
 void Level2State::load_textures(Engine* game)

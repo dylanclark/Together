@@ -13,6 +13,7 @@
 // initialize
 Texture::Texture()
 {
+    tex = NULL;
     width = 0;
     height = 0;
 };

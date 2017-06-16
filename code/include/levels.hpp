@@ -68,20 +68,9 @@ public:
 class Crate;
 class Tile;
 
-class Levelstate : public Gamestate
+class Levelstate
 {
 public:
-    virtual void init(Engine* game) = 0;
-    virtual void cleanup() = 0;
-
-    virtual void handle_events(Engine* game) = 0;
-    virtual void update(Engine* game) = 0;
-    virtual void draw(Engine* game) = 0;
-
-    virtual void load_textures(Engine* game) = 0;
-    virtual void init_objects(Engine* game) = 0;
-    virtual void interactions(Engine* game) = 0;
-
     // tile dimensions of level
     int width;
     int height;
