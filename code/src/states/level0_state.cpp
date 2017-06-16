@@ -6,9 +6,9 @@
 #include <SDL2/SDL_ttf.h>
 
 // include headers
-#include <states/level0_state.hpp>
-#include <states/level1_state.hpp>
-#include <states/level2_state.hpp>
+#include <states/levelstate.hpp>
+#include <states/levelstate.hpp>
+#include <states/levelstate.hpp>
 #include <states/mainmenu_state.hpp>
 #include <states/pausemenu_state.hpp>
 #include <char.hpp>

@@ -10,8 +10,8 @@
 #include <states/mainmenu_state.hpp>
 #include <engine.hpp>
 #include <menu.hpp>
-#include <states/level1_state.hpp>
-#include <states/level2_state.hpp>
+#include <states/levelstate.hpp>
+#include <states/levelstate.hpp>
 #include <states/newgamemenu_state.hpp>
 
 void NewGameMenuState::init(Engine* game)
