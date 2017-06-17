@@ -227,11 +227,11 @@ void Level0State::load_textures(Engine* game)
 
 void Level0State::init_objects(Engine* game)
 {
-    // initialize black dot
     b_char = new class Dot(2, 8, true, &b_char_tex);
-
-    // initialize white dot
     w_char = new class Dot(2, 9, false, &w_char_tex);
+    camera = new class Camera(game->screen_width, game->screen_height,
+                              width * TILE_WIDTH, height * TILE_WIDTH,
+                              &b_char->col_rect, &b_char->col_rect);
 
 
     // initialize black cross - layer spring, a variant of springboard
@@ -244,7 +244,6 @@ void Level0State::init_objects(Engine* game)
     b_cross_spring.y_spring = 6;
     b_cross_spring.direction = FLIP_RIGHT;
 
-    camera = new class Camera(game->screen_width, game->screen_height, width * TILE_WIDTH, height * TILE_WIDTH);
 
     // init crate #1
     crates.push_back(new Crate(5 * TILE_WIDTH, 7  * TILE_WIDTH, FOUR_BY_TWO));

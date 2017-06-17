@@ -13,21 +13,23 @@
 #include <tiles.hpp>
 
 // camera edge buffer
-const float BUFFER = 400;
+static const float BUFFER = 250;
 
 // max level size
-const int MAX_SIZE = 50 * 50;
-const int MAX_CRATES = 10;
+static const int MAX_SIZE = 50 * 50;
+static const int MAX_CRATES = 10;
 
 // speed constants
-const float SPEED = 14;
-const float CAM_ACC = 2;
+static const float SPEED = 14;
+static const float CAM_ACC = 2;
 
 class Camera
 {
 public:
-    Camera(int scr_w, int scr_h, int lev_w, int lev_h);
-    void update(SDL_Rect* b_char, SDL_Rect* w_char);
+    Camera (int scr_w, int scr_h,
+            int lev_w, int lev_h,
+            SDL_Rect* b_char, SDL_Rect* w_char);
+    void update (SDL_Rect* b_char, SDL_Rect* w_char);
     SDL_Rect* get_display();
 
 private:
@@ -39,8 +41,9 @@ private:
     float y_vel;
     float w_vel;
     float h_vel;
-    void track(SDL_Rect* b_char, SDL_Rect* w_char);
-    void move();
+    void track (SDL_Rect* b_char, SDL_Rect* w_char);
+    void move ();
+    SDL_Rect get_target (SDL_Rect* b_char, SDL_Rect* w_char);
 };
 
 class LevelEnd

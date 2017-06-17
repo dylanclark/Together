@@ -161,14 +161,16 @@ void Level1State::load_textures(Engine* game)
 void Level1State::init_objects(Engine* game)
 {
     // initialize black dot
-    b_char = new class Dot(2, 4, true, &b_char_tex);
+    b_char = new class Dot(2, 7, true, &b_char_tex);
+    camera = new class Camera(game->screen_width, game->screen_height,
+                              width * TILE_WIDTH, height * TILE_WIDTH,
+                              &b_char->col_rect, &b_char->col_rect);
 
     // initialize black level end
     b_level_end.tex = b_end_tex;
     b_level_end.col_rect.x = 1360;
     b_level_end.col_rect.y = 720;
 
-    camera = new class Camera(game->screen_width, game->screen_height, width * TILE_WIDTH, height * TILE_WIDTH);
 
 }
 

@@ -7,7 +7,7 @@
 #include <levels.hpp>
 #include <engine.hpp>
 
-Camera::Camera(int scr_w, int scr_h, int lev_w, int lev_h)
+Camera::Camera(int scr_w, int scr_h, int lev_w, int lev_h, SDL_Rect* char1, SDL_Rect* char2)
 {
     // initialize velocities
     x_vel = 0;
@@ -15,23 +15,37 @@ Camera::Camera(int scr_w, int scr_h, int lev_w, int lev_h)
     w_vel = 0;
     h_vel = 0;
 
-    // initialize rectangle
-    display.x = 0;
-    display.y = 0;
-    display.w = scr_w;
-    display.h = scr_h;
-
     // level / screen dimensions
     level_w = lev_w;
     level_h = lev_h;
     screen_w = scr_w;
     screen_h = scr_h;
+
+    // we want to start by tracking the chars
+    SDL_Rect target = get_target(char1, char2);
+
+    // initialize rectangle
+    location = target;
+
+    // update the proper SDL_Rect
+    display.x = location.x - location.w / 2.0;
+    display.y = location.y - location.h / 2.0;
+    display.w = location.w;
+    display.h = location.h;
+
+
 };
 
 SDL_Rect*
 Camera::get_display()
 {
     return &display;
+}
+
+void Camera::update(SDL_Rect* b_char, SDL_Rect* w_char)
+{
+    track(b_char, w_char);
+    move();
 }
 
 void Camera::move()
@@ -88,13 +102,18 @@ void Camera::move()
     }
 }
 
-void Camera::update(SDL_Rect* b_char, SDL_Rect* w_char)
+void Camera::track(SDL_Rect* char1, SDL_Rect* char2)
 {
-    track(b_char, w_char);
-    move();
+    SDL_Rect target = get_target(char1, char2);
+
+    // update speeds!
+    x_vel = CAM_ACC * ((float) target.x - (float) location.x) / 20.0;
+    y_vel = CAM_ACC * ((float) target.y - (float) location.y) / 20.0;
+    w_vel = CAM_ACC * ((float) target.w - (float) location.w) / 20.0;
+    h_vel = CAM_ACC * ((float) target.h - (float) location.h) / 20.0;
 }
 
-void Camera::track(SDL_Rect* b_char, SDL_Rect* w_char)
+SDL_Rect Camera::get_target(SDL_Rect* char1, SDL_Rect* char2)
 {
     // these will be for our ideal camera position (x and y are centered)
     float min_x;
@@ -103,23 +122,23 @@ void Camera::track(SDL_Rect* b_char, SDL_Rect* w_char)
     float max_y;
 
     // x pos between characters
-    if (b_char->x >= w_char->x) {
-        max_x = b_char->x + b_char->w / 2.0;
-        min_x = w_char->x + w_char->w / 2.0;
+    if (char1->x >= char2->x) {
+        max_x = char1->x + char1->w / 2.0;
+        min_x = char2->x + char2->w / 2.0;
     }
     else {
-        max_x = w_char->x + w_char->w / 2.0;
-        min_x = b_char->x + b_char->w / 2.0;
+        max_x = char2->x + char2->w / 2.0;
+        min_x = char1->x + char1->w / 2.0;
     }
 
     // y pos between characters
-    if (b_char->y >= w_char->y) {
-        max_y = b_char->y + b_char->h / 2.0;
-        min_y = w_char->y + w_char->h / 2.0;
+    if (char1->y >= char2->y) {
+        max_y = char1->y + char1->h / 2.0;
+        min_y = char2->y + char2->h / 2.0;
     }
     else {
-        max_y = w_char->y + w_char->h / 2.0;
-        min_y = b_char->y + b_char->h / 2.0;
+        max_y = char2->y + char2->h / 2.0;
+        min_y = char1->y + char1->h / 2.0;
     }
 
     // x pos bounds
@@ -177,11 +196,5 @@ void Camera::track(SDL_Rect* b_char, SDL_Rect* w_char)
         target_rect.y = (level_h) - target_rect.h / 2.0;
     }
 
-    // update speeds!
-    x_vel = CAM_ACC * ((float) target_rect.x - (float) location.x) / 20.0;
-    y_vel = CAM_ACC * ((float) target_rect.y - (float) location.y) / 20.0;
-    w_vel = CAM_ACC * ((float) target_rect.w - (float) location.w) / 20.0;
-    h_vel = CAM_ACC * ((float) target_rect.h - (float) location.h) / 20.0;
+    return target_rect;
 }
-
-

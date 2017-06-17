@@ -19,8 +19,7 @@ Crate::Crate(int x, int y, int type)
     generating = true;
 
     // determine width and height based on crate type
-    switch (type)
-    {
+    switch (type) {
         case FOUR_BY_TWO:
             col_rect.w = 4 * TILE_WIDTH;
             col_rect.h = 2 * TILE_WIDTH;

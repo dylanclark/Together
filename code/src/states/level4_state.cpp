@@ -204,8 +204,10 @@ void Level4State::load_textures(Engine* game)
 void Level4State::init_objects(Engine* game)
 {
     // initialize black dot
-    b_char = new class Dot(2, 8, true, &b_char_tex);
-    camera = new class Camera(game->screen_width, game->screen_height, width * TILE_WIDTH, height * TILE_WIDTH);
+    b_char = new class Dot(2, 13, true, &b_char_tex);
+    camera = new class Camera(game->screen_width, game->screen_height,
+                              width * TILE_WIDTH, height * TILE_WIDTH,
+                              &b_char->col_rect, &b_char->col_rect);
 
     // initialize black level end
     b_level_end.tex = b_end_tex;

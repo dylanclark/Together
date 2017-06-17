@@ -18,14 +18,10 @@
 
 void Level7State::init(Engine* game)
 {
-    // load textures
     load_textures(game);
-
-    // initialize objects
     init_objects(game);
 
-    if (game->read_save() < 7)
-    {
+    if (game->read_save() < 7) {
         game->save(7);
     }
 }
@@ -36,28 +32,21 @@ void Level7State::handle_events(Engine* game)
     SDL_Event event;
 
     // handle those events, bruh
-    while (SDL_PollEvent(&event))
-    {
-        switch (event.type)
-        {
+    while (SDL_PollEvent(&event)) {
+        switch (event.type) {
             case SDL_QUIT:
                 game->quit();
                 break;
         }
 
         // quit if he pressed escape
-        if (!b_char->handle_event(event, this, game))
-        {
+        if (!b_char->handle_event(event, this, game)) {
             Mix_PauseMusic();
             Mix_PlayChannel(-1, game->sound->menu_exit_snd, 0);
             game->push_state(new PauseMenuState);
         }
-        // quit if he pressed escape
         w_char->handle_event(event, this, game);
-
-
     }
-
     shiftable = true;
 }
 
@@ -67,13 +56,14 @@ void Level7State::update(Engine* game)
     SDL_RenderClear(game->rend);
 
     // move the square
-    if (b_char->status == CHAR_ACTIVE)
+    if (b_char->status == CHAR_ACTIVE) {
         b_char->move(this, game);
-    if (w_char->status == CHAR_ACTIVE)
+    }
+    if (w_char->status == CHAR_ACTIVE) {
         w_char->move(this, game);
+    }
 
-    for (int i = 0; i < crates.size(); i++)
-    {
+    for (int i = 0; i < crates.size(); i++) {
         crates[i]->update();
     }
 
@@ -87,12 +77,10 @@ void Level7State::draw(Engine* game)
     SDL_Rect* cam_rect = camera->get_display();
 
     // draw stuff to the screen!
-    for (int i = 0; i < (width * height); i++)
-    {
+    for (int i = 0; i < (width * height); i++) {
         tileset[i]->render(b_char->status, cam_rect, game, &tile_tex);
     }
-    for (int i = 0; i < crates.size(); i++)
-    {
+    for (int i = 0; i < crates.size(); i++) {
         crates[i]->render(b_char->status, cam_rect, game, this);
     }
 
@@ -108,19 +96,15 @@ void Level7State::draw(Engine* game)
 void Level7State::cleanup()
 {
     // iterate over all tiles and delete them all
-    for (int i = 0; i < width * height; i++)
-    {
-        if (tileset[i] != NULL)
-        {
+    for (int i = 0; i < width * height; i++) {
+        if (tileset[i] != NULL) {
             delete tileset[i];
             tileset[i] = NULL;
         }
     }
 
-    for (int i = 0; i < crates.size(); i++)
-    {
-        if (crates[i] != NULL)
-        {
+    for (int i = 0; i < crates.size(); i++) {
+        if (crates[i] != NULL) {
             delete crates[i];
             crates.pop_back();
         }
@@ -143,43 +127,35 @@ void Level7State::cleanup()
 void Level7State::load_textures(Engine* game)
 {
     // LOAD ALL TEXTURES
-    if (!b_char_tex.load_tile_sheet("resources/textures/black/b_char.png", game->rend))
-    {
+    if (!b_char_tex.load_tile_sheet("resources/textures/black/b_char.png", game->rend)) {
         printf("Failed to load black dot texture!\n");
         return;
     }
-    if (!w_char_tex.load_tile_sheet("resources/textures/white/w_char.png", game->rend))
-    {
+    if (!w_char_tex.load_tile_sheet("resources/textures/white/w_char.png", game->rend)) {
         printf("Failed to load white dot texture!\n");
         return;
     }
-    if (!tile_tex.load_tile_sheet("resources/textures/tile_sheet.png", game->rend))
-    {
+    if (!tile_tex.load_tile_sheet("resources/textures/tile_sheet.png", game->rend)) {
         printf("Failed to load tile sheet texture!\n");
         return;
     }
-    if (!b_end_tex.load_tile_sheet("resources/textures/black/level_end/black_end.png", game->rend))
-    {
+    if (!b_end_tex.load_tile_sheet("resources/textures/black/level_end/black_end.png", game->rend)) {
         printf("Failed to load black level end texter!\n");
         return;
     }
-    if (!w_crate_tex_four_by_two.load_object(TILE_WIDTH * 4, TILE_WIDTH * 2, "resources/textures/white/crates/w_crate.png", game->rend))
-    {
+    if (!w_crate_tex_four_by_two.load_object(TILE_WIDTH * 4, TILE_WIDTH * 2, "resources/textures/white/crates/w_crate.png", game->rend)) {
         printf("Failed to load white crate (4x2) texture!\n");
         return;
     }
-    if (!w_end_tex.load_tile_sheet("resources/textures/white/level_end/white_end.png", game->rend))
-    {
+    if (!w_end_tex.load_tile_sheet("resources/textures/white/level_end/white_end.png", game->rend)) {
         printf("Failed to load  white level end texture!\n");
         return;
     }
-    if (!b_button_tex.load_tile_sheet("resources/textures/black/button/b_button.png", game-> rend))
-    {
+    if (!b_button_tex.load_tile_sheet("resources/textures/black/button/b_button.png", game->rend)) {
         printf("Failed to load  black button texture!\n");
         return;
     }
-    if (!w_button_tex.load_tile_sheet("resources/textures/white/button/w_button.png", game-> rend))
-    {
+    if (!w_button_tex.load_tile_sheet("resources/textures/white/button/w_button.png", game->rend)) {
         printf("Failed to load white button texture!\n");
         return;
     }
@@ -199,9 +175,11 @@ void Level7State::load_textures(Engine* game)
 
 void Level7State::init_objects(Engine* game)
 {
-    b_char = new class Dot(2, 9, true, &b_char_tex);
+    b_char = new class Dot(2, 11, true, &b_char_tex);
     w_char = new class Dot(2, 12, false, &w_char_tex);
-    camera = new class Camera(game->screen_width, game->screen_height, width * TILE_WIDTH, height * TILE_WIDTH);
+    camera = new class Camera(game->screen_width, game->screen_height,
+                              width * TILE_WIDTH, height * TILE_WIDTH,
+                              &b_char->col_rect, &w_char->col_rect);
 
     // initialize black level end
     b_level_end.tex = b_end_tex;
@@ -233,7 +211,6 @@ void Level7State::init_objects(Engine* game)
 
 void Level7State::interactions(Engine* game)
 {
-
     // if both are on level end object
     if(b_level_end.check(b_char->col_rect) && w_level_end.check(w_char->col_rect))
 
@@ -303,6 +280,4 @@ void Level7State::interactions(Engine* game)
             w_button.status = (w_button.status + 1) % 4;
         }
     }
-
-
 }
