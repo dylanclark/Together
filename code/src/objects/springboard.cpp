@@ -25,8 +25,8 @@ Springboard::Springboard()
     // initialize collision rectangle
     col_rect.w = 60;
     col_rect.h = 60;
-    col_rect.x = (SCREEN_WIDTH - col_rect.w) / 2;
-    col_rect.y = (SCREEN_HEIGHT - col_rect.h) / 2;
+    col_rect.x = 0;
+    col_rect.y = 0;
 
     // standard initializing traits
     show = false;
@@ -125,75 +125,71 @@ void Springboard::render(SDL_Rect* camera, Engine* game)
     }
 };
 
-// cross spring logic
-void Springboard::cross_spring(Dot* springer, Dot* springee, int type)
-{
-    activated = true;
-    // if VELOCITY or POSITION spring
-    if(type == VELOCITY)
-    {
-        // if there is a y velocity (cant be stationary)
-        if(springer->get_y_vel() < 0)
-        {
-            // animate
-            if(status == BOARD_INACTIVE)
-            {
-                status = (status + 1) % 4;
-            }
+// // cross spring logic
+// void Springboard::cross_spring(Dot* springer, Dot* springee, int type)
+// {
+//     activated = true;
+//     // if VELOCITY or POSITION spring
+//     if(type == VELOCITY)
+//     {
+//         // if there is a y velocity (cant be stationary)
+//         if(springer->get_y_vel() < 0)
+//         {
+//             // animate
+//             if(status == BOARD_INACTIVE)
+//             {
+//                 status = (status + 1) % 4;
+//             }
 
-            // get spring amount
-            y_spring = -(springer->get_y_vel() / 3);
+//             // get spring amount
+//             y_spring = -(springer->get_y_vel() / 3);
 
-            // spring
-            springee->spring(x_spring, y_spring, direction);
+//             // spring
+//             springee->spring(x_spring, y_spring, direction);
 
-            // animate
-            if(springer->status == CHAR_ACTIVE)
-            {
-                springer->status = CHAR_INACTIVATE;
-            }
+//             // animate
+//             if(springer->status == CHAR_ACTIVE)
+//             {
+//                 springer->status = CHAR_INACTIVATE;
+//             }
 
-            // make sure dot goes to right spot
-            if(springee->black)
-            {
-                while(springer->col_rect.y > (col_rect.y + 50))
-                    springer->col_rect.y--;
-            }
-            else
-            {
-                while(springer->col_rect.y < (col_rect.y - 50))
-                    springer->col_rect.y++;
-            }
-        }
-    }
-    else
-    {
-        // animate
-        if(status == BOARD_INACTIVE)
-        {
-            status = (status + 1) % 4;
-        }
+//             // make sure dot goes to right spot
+//             if(springee->black)
+//             {
+//                 while(springer->col_rect.y > (col_rect.y + 50))
+//                     springer->col_rect.y--;
+//             }
+//             else
+//             {
+//                 while(springer->col_rect.y < (col_rect.y - 50))
+//                     springer->col_rect.y++;
+//             }
+//         }
+//     }
+//     else
+//     {
+//         // animate
+//         if (status == BOARD_INACTIVE) {
+//             status = (status + 1) % 4;
+//         }
 
-        // spring
-        springee->spring(x_spring, y_spring, direction);
+//         // spring
+//         springee->spring(x_spring, y_spring, direction);
 
 
-        // animate
-        if(springer->status == CHAR_ACTIVE)
-        {
-            springer->status = CHAR_INACTIVATE;
-        }
+//         // animate
+//         if (springer->status == CHAR_ACTIVE) {
+//             springer->status = CHAR_INACTIVATE;
+//         }
 
-        // make sure in right spot
-        if(springee->black)
-        {
-            while(springer->col_rect.y > (col_rect.y + 50))
-                springer->col_rect.y--;
-        }
-        else
-        {
-            while(springer->col_rect.y < (col_rect.y - 50))
-                springer->col_rect.y++;
-        }
-    }
-}
+//         // make sure in right spot
+//         if (springee->black) {
+//             while(springer->col_rect.y > (col_rect.y + 50))
+//                 springer->col_rect.y--;
+//         }
+//         else {
+//             while(springer->col_rect.y < (col_rect.y - 50))
+//                 springer->col_rect.y++;
+//         }
+//     }
+// }

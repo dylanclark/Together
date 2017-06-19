@@ -13,21 +13,6 @@
 #include <char.hpp>
 #include <levels.hpp>
 
-class Level0State : public Levelstate
-{
-public:
-    void init(Engine* game);
-    void cleanup();
-
-    void handle_events(Engine* game);
-    void update(Engine* game);
-    void draw(Engine* game);
-
-    void load_textures(Engine* game);
-    void init_objects(Engine* game);
-    void interactions(Engine* game);
-};
-
 class Level1State : public Levelstate
 {
 public:

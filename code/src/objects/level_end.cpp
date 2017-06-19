@@ -21,8 +21,8 @@ LevelEnd::LevelEnd()
     // initialize collision rectangle
     col_rect.w = TILE_WIDTH;
     col_rect.h = TILE_WIDTH;
-    col_rect.x = (SCREEN_WIDTH - col_rect.w) / 2;
-    col_rect.y = (SCREEN_HEIGHT - col_rect.h) / 2;
+    col_rect.x = 0;
+    col_rect.y = 0;
 
 }
 

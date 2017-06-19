@@ -10,12 +10,12 @@
 #include <states/levelstate.hpp>
 #include <states/mainmenu_state.hpp>
 #include <char.hpp>
-#include <objects.hpp>
 #include <levels.hpp>
 #include <engine.hpp>
+#include <objects.hpp>
 #include <states/pausemenu_state.hpp>
 
-void Level3State::init(Engine* game)
+void Level2State::init(Engine* game)
 {
     // load textures
     load_textures(game);
@@ -23,13 +23,13 @@ void Level3State::init(Engine* game)
     // initialize objects
     init_objects(game);
 
-    if (game->read_save() < 3)
+    if (game->read_save() < 2)
     {
-        game->save(3);
+        game->save(2);
     }
 }
 
-void Level3State::handle_events(Engine* game)
+void Level2State::handle_events(Engine* game)
 {
     // event handler
     SDL_Event event;
@@ -51,13 +51,12 @@ void Level3State::handle_events(Engine* game)
             Mix_PlayChannel(-1, game->sound->menu_exit_snd, 0);
             game->push_state(new PauseMenuState);
         }
-
     }
 
     shiftable = true;
 }
 
-void Level3State::update(Engine* game)
+void Level2State::update(Engine* game)
 {
     // clear the window
     SDL_RenderClear(game->rend);
@@ -71,12 +70,12 @@ void Level3State::update(Engine* game)
         crates[i]->update();
     }
 
-    camera->update(&b_char->col_rect, &b_char->col_rect);
+    camera->update(b_char->get_rect(), b_char->get_rect());
 
     interactions(game);
 }
 
-void Level3State::draw(Engine* game)
+void Level2State::draw(Engine* game)
 {
     SDL_Rect* cam_rect = camera->get_display();
 
@@ -97,7 +96,7 @@ void Level3State::draw(Engine* game)
     SDL_RenderPresent(game->rend);
 }
 
-void Level3State::cleanup()
+void Level2State::cleanup()
 {
     // iterate over all tiles and delete them all
     for (int i = 0; i < width * height; i++)
@@ -134,17 +133,12 @@ void Level3State::cleanup()
 
 }
 
-void Level3State::load_textures(Engine* game)
+void Level2State::load_textures(Engine* game)
 {
     // LOAD ALL TEXTURES
     if (!b_char_tex.load_tile_sheet("resources/textures/black/b_char.png", game->rend))
     {
         printf("Failed to load black dot texture!\n");
-        return;
-    }
-    if (!w_char_tex.load_tile_sheet("resources/textures/white/w_char.png", game->rend))
-    {
-        printf("Failed to load white dot texture!\n");
         return;
     }
     if (!tile_tex.load_tile_sheet("resources/textures/tile_sheet.png", game->rend))
@@ -157,11 +151,6 @@ void Level3State::load_textures(Engine* game)
         printf("Failed to load black level end texter!\n");
         return;
     }
-    if (!crate_tex_four_by_two.load_object(TILE_WIDTH * 4, TILE_WIDTH * 2, "resources/textures/black/crates/b_crate.png", game->rend))
-    {
-        printf("Failed to load crate (4x2) texture!\n");
-        return;
-    }
     if (!w_end_tex.load_tile_sheet("resources/textures/white/level_end/white_end.png", game->rend))
     {
         printf("Failed to load  white level end texture!\n");
@@ -170,45 +159,42 @@ void Level3State::load_textures(Engine* game)
 
 
     // initialize level
-    width = 24;
+    width = 27;
     height = 18;
 
-    path = "resources/level-files/level_03.csv";
+    path = "resources/level-files/level_02.csv";
 
     if (!set_tiles(tileset, path, width, height))
     {
-        printf("Failed to load level 3 map!\n");
+        printf("Failed to load level 2 map!\n");
         return;
     }
 }
 
-void Level3State::init_objects(Engine* game)
+void Level2State::init_objects(Engine* game)
 {
     // initialize black dot
-    b_char = new class Dot(2, 8, true, &b_char_tex);
+    b_char = new class Dot(2, 11, true, &b_char_tex);
     camera = new class Camera(game->screen_width, game->screen_height,
                               width * TILE_WIDTH, height * TILE_WIDTH,
-                              &b_char->col_rect, &b_char->col_rect);
+                              b_char->get_rect(), b_char->get_rect());
 
     // initialize black level end
     b_level_end.tex = b_end_tex;
-    b_level_end.col_rect.x = 1300;
-    b_level_end.col_rect.y = 8 * TILE_WIDTH;
+    b_level_end.col_rect.x = 1500;
+    b_level_end.col_rect.y = 11 * TILE_WIDTH;
 
 
 
 }
 
-void Level3State::interactions(Engine* game)
+void Level2State::interactions(Engine* game)
 {
 
     // if both are on level end object
-    if(b_level_end.check(b_char->col_rect))
-    {
+    if (b_level_end.check(b_char->get_rect())) {
         b_char->center(&b_level_end.col_rect);
-
-        // change state to level 3
-        change_state(game, new Level4State);
+        change_state(game, new Level3State);
     }
 
 }

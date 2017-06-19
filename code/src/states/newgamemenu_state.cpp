@@ -16,20 +16,17 @@
 
 void NewGameMenuState::init(Engine* game)
 {
-    if (!newgame_title.load_object(256, 32, "resources/textures/menu/new_game_title.png", game->rend))
-    {
+    if (!newgame_title.load_object(256, 32, "resources/textures/menu/new_game_title.png", game->rend)) {
         printf("Failed to load quit title object!\n");
         return;
     }
 
-    if (!yes_button.load_object(32, 16, "resources/textures/menu/yes.png", game->rend))
-    {
+    if (!yes_button.load_object(32, 16, "resources/textures/menu/yes.png", game->rend)) {
         printf("Failed to load yes button texture!\n");
         return;
     }
 
-    if (!no_button.load_object(32, 16, "resources/textures/menu/no.png", game->rend))
-    {
+    if (!no_button.load_object(32, 16, "resources/textures/menu/no.png", game->rend)) {
         printf("Failed to load no button texture!\n");
         return;
     }

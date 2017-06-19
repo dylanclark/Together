@@ -22,8 +22,8 @@ Button::Button()
     // initialize collision rectangle
     col_rect.w = 16;
     col_rect.h = 16;
-    col_rect.x = (SCREEN_WIDTH - col_rect.w) / 2;
-    col_rect.y = (SCREEN_HEIGHT - col_rect.h) / 2;
+    col_rect.x = 0;
+    col_rect.y = 0;
 
     used = false;
     angle = 0.0;
@@ -47,32 +47,22 @@ bool Button::check(SDL_Rect dot_rect)
 void Button::render(SDL_Rect* camera, Engine* game)
 {
     // flip
-    switch(direction)
-    {
+    switch(direction) {
         case(UP):
-        {
             angle = 0.0;
             break;
-        }
         case(DOWN):
-        {
             angle = 180.0;
             break;
-        }
         case(RIGHT):
-        {
             angle = 90.0;
             break;
-        }
         case (LEFT):
-        {
             angle = 270.0;
             break;
-        }
         default:
             angle = 0.0;
             break;
-
     }
 
     // make sure it only animates if not single & used

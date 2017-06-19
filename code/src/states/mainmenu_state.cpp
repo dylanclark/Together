@@ -10,8 +10,6 @@
 #include <engine.hpp>
 #include <menu.hpp>
 #include <states/levelstate.hpp>
-#include <states/levelstate.hpp>
-#include <states/levelstate.hpp>
 #include <states/quitmenu_state.hpp>
 #include <states/levelstate.hpp>
 

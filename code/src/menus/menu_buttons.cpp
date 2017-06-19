@@ -7,13 +7,6 @@
 #include <menu.hpp>
 #include <states/quitmenu_state.hpp>
 #include <states/levelstate.hpp>
-#include <states/levelstate.hpp>
-#include <states/levelstate.hpp>
-#include <states/levelstate.hpp>
-#include <states/levelstate.hpp>
-#include <states/levelstate.hpp>
-#include <states/levelstate.hpp>
-#include <states/levelstate.hpp>
 #include <states/mainmenu_state.hpp>
 #include <states/optionsmenu_state.hpp>
 #include <states/newgamemenu_state.hpp>

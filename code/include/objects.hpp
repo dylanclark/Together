@@ -20,7 +20,7 @@ typedef enum _buttonstatus {
     BUTT_INACTIVATE = 3
 } buttonstatus;
 
-#define BUTT_ANIMATION_LENGTH 4
+static const int BUTT_ANIMATION_LENGTH = 4;
 
 typedef enum _directions {
     UP = 0,
@@ -37,7 +37,7 @@ typedef enum _cratetype {
 } cratetype;
 
 // max number of tiles that this crate will need to render
-#define MAX_BORDER 12
+static const int MAX_BORDER = 12;
 
 typedef enum _springstatus {
     BOARD_INACTIVE = 0,
@@ -46,9 +46,9 @@ typedef enum _springstatus {
     BOARD_INACTIVATE = 3
 } springstatus;
 
-#define BOARD_ANIMATION_LENGTH 7
-#define SPRING_X_VEL 0
-#define SPRING_Y_VEL 10
+static const int BOARD_ANIMATION_LENGTH = 7;
+static const int SPRING_X_VEL = 0;
+static const int SPRING_Y_VEL = 10;
 
 // direction
 typedef enum _flipdir {
@@ -56,8 +56,8 @@ typedef enum _flipdir {
     FLIP_RIGHT = 1
 } flipdir;
 
-const int LOCATION = 0;
-const int VELOCITY = 1;
+static const int LOCATION = 0;
+static const int VELOCITY = 1;
 
 class Button
 {
@@ -138,8 +138,8 @@ public:
     float x_spring;
     float y_spring;
 
-    // cross-layer spring logic
-    void cross_spring(Dot* springer, Dot* springee, int type);
+    // // cross-layer spring logic
+    // void cross_spring(Dot* springer, Dot* springee, int type);
 
 };
 

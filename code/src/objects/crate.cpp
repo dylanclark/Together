@@ -51,8 +51,7 @@ void Crate::update()
         x_vel = sqrt(abs((target_x - col_rect.x))) * ((target_x > col_rect.x) ? 1 : -1);
 
         // if the gap is small enough, just put the crate there
-        if (x_vel <= 0.1 && x_vel >= -0.1)
-        {
+        if (x_vel <= 0.1 && x_vel >= -0.1) {
             x_vel = 0;
             col_rect.x = floor(((float) col_rect.x / TILE_WIDTH) + 0.5) * TILE_WIDTH;
         }

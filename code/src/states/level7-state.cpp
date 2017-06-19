@@ -67,7 +67,7 @@ void Level7State::update(Engine* game)
         crates[i]->update();
     }
 
-    camera->update(&b_char->col_rect, &w_char->col_rect);
+    camera->update(b_char->get_rect(), w_char->get_rect());
 
     interactions(game);
 }
@@ -179,7 +179,7 @@ void Level7State::init_objects(Engine* game)
     w_char = new class Dot(2, 12, false, &w_char_tex);
     camera = new class Camera(game->screen_width, game->screen_height,
                               width * TILE_WIDTH, height * TILE_WIDTH,
-                              &b_char->col_rect, &w_char->col_rect);
+                              b_char->get_rect(), w_char->get_rect());
 
     // initialize black level end
     b_level_end.tex = b_end_tex;
@@ -212,26 +212,17 @@ void Level7State::init_objects(Engine* game)
 void Level7State::interactions(Engine* game)
 {
     // if both are on level end object
-    if(b_level_end.check(b_char->col_rect) && w_level_end.check(w_char->col_rect))
-
-    {
-        // change state to level 8
+    if (b_level_end.check(b_char->get_rect()) && w_level_end.check(w_char->get_rect())) {
         change_state(game, new Level8State);
     }
 
-
-    //if black button is activated
-    if(b_button.check(b_char->col_rect) && b_button.used == false)
-    {
-        // used
+    // if black button is activated
+    if (b_button.check(b_char->get_rect()) && b_button.used == false) {
         b_button.used = true;
-
-        // activate
         b_button.activated = true;
 
         // animate
-        if(b_button.status == BUTT_INACTIVE)
-        {
+        if(b_button.status == BUTT_INACTIVE) {
             b_button.status = (b_button.status + 1) % 4;
         }
 
@@ -239,20 +230,16 @@ void Level7State::interactions(Engine* game)
         crates.push_back(new Crate(5 * TILE_WIDTH, 12 * TILE_WIDTH, FOUR_BY_TWO));
         crates.back()->tex = w_crate_tex_four_by_two;
         crates.back()->black = false;
-
     }
-    else
-    {
+    else {
         b_button.activated = false;
 
-        if(b_button.status != BUTT_INACTIVE)
-        {
+        if (b_button.status != BUTT_INACTIVE) {
             b_button.status = (b_button.status + 1) % 4;
         }
     }
     //if white button is activated
-    if(w_button.check(w_char->col_rect) && w_button.used == false)
-    {
+    if (w_button.check(w_char->get_rect()) && w_button.used == false) {
         // used
         w_button.used = true;
 
@@ -260,8 +247,7 @@ void Level7State::interactions(Engine* game)
         w_button.activated = true;
 
         // animate
-        if(w_button.status == BUTT_INACTIVE)
-        {
+        if (w_button.status == BUTT_INACTIVE) {
             w_button.status = (w_button.status + 1) % 4;
         }
 
@@ -271,12 +257,10 @@ void Level7State::interactions(Engine* game)
         crates.back()->black = false;
 
     }
-    else
-    {
+    else {
         w_button.activated = false;
 
-        if(w_button.status != BUTT_INACTIVE)
-        {
+        if (w_button.status != BUTT_INACTIVE) {
             w_button.status = (w_button.status + 1) % 4;
         }
     }

@@ -287,17 +287,13 @@ bool Dot::tile_col(Tile* tileset[], int size, Engine* game)
     bool shiftable;
 
     // depends on color
-    if (black)
-    {
+    if (black) {
         // for every tile
-        for (int i = 0, n = size; i < n; i++)
-        {
+        for (int i = 0, n = size; i < n; i++) {
             // store reposition vector
-            if (check_collision(col_rect, tileset[i]->get_col_rect(), &repos))
-            {
+            if (check_collision(col_rect, tileset[i]->get_col_rect(), &repos)) {
                 // black wall
-                if (tileset[i]->wall_b && !tileset[i]->floor_b && !tileset[i]->ceiling_b)
-                {
+                if (tileset[i]->wall_b && !tileset[i]->floor_b && !tileset[i]->ceiling_b) {
                     // halt
                     col_rect.x += repos.x;
                     x_vel = 0;
@@ -722,17 +718,15 @@ void Dot::spring(int x, int y, int direction)
 // center Dot on an object
 bool Dot::center(SDL_Rect* end_rect)
 {
-    // center Dot on an object
-    while (col_rect.x < end_rect->x )
-        col_rect.x++;
-    while (col_rect.x > end_rect->x )
-        col_rect.x--;
-    while (col_rect.y < end_rect->y )
-        col_rect.y++;
-    while (col_rect.y > end_rect->y )
-        col_rect.y--;
+    col_rect.x = end_rect->x;
+    col_rect.y = end_rect->y;
 
     return true;
+}
+
+SDL_Rect Dot::get_rect()
+{
+    return col_rect;
 }
 
 // return y_vel

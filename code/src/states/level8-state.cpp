@@ -77,7 +77,7 @@ void Level8State::update(Engine* game)
         crates[i]->update();
     }
 
-    camera->update(&b_char->col_rect, &w_char->col_rect);
+    camera->update(b_char->get_rect(), w_char->get_rect());
 
     interactions(game);
 }
@@ -145,64 +145,52 @@ void Level8State::cleanup()
 void Level8State::load_textures(Engine* game)
 {
     // LOAD ALL TEXTURES
-    if (!b_char_tex.load_tile_sheet("resources/textures/black/b_char.png", game->rend))
-    {
+    if (!b_char_tex.load_tile_sheet("resources/textures/black/b_char.png", game->rend)) {
         printf("Failed to load black dot texture!\n");
         return;
     }
-    if (!w_char_tex.load_tile_sheet("resources/textures/white/w_char.png", game->rend))
-    {
+    if (!w_char_tex.load_tile_sheet("resources/textures/white/w_char.png", game->rend)) {
         printf("Failed to load white dot texture!\n");
         return;
     }
-    if (!tile_tex.load_tile_sheet("resources/textures/tile_sheet.png", game->rend))
-    {
+    if (!tile_tex.load_tile_sheet("resources/textures/tile_sheet.png", game->rend)) {
         printf("Failed to load tile sheet texture!\n");
         return;
     }
-    if (!b_end_tex.load_tile_sheet("resources/textures/black/level_end/black_end.png", game->rend))
-    {
+    if (!b_end_tex.load_tile_sheet("resources/textures/black/level_end/black_end.png", game->rend)) {
         printf("Failed to load black level end texter!\n");
         return;
     }
-    if (!w_crate_tex_four_by_two.load_object(TILE_WIDTH * 4, TILE_WIDTH * 2, "resources/textures/white/crates/w_crate.png", game->rend))
-    {
+    if (!w_crate_tex_four_by_two.load_object(TILE_WIDTH * 4, TILE_WIDTH * 2, "resources/textures/white/crates/w_crate.png", game->rend)) {
         printf("Failed to load white crate (4x2) texture!\n");
         return;
     }
-    if (!w_end_tex.load_tile_sheet("resources/textures/white/level_end/white_end.png", game->rend))
-    {
+    if (!w_end_tex.load_tile_sheet("resources/textures/white/level_end/white_end.png", game->rend)) {
         printf("Failed to load  white level end texture!\n");
         return;
     }
-    if (!b_button_tex.load_tile_sheet("resources/textures/black/button/b_button.png", game-> rend))
-    {
+    if (!b_button_tex.load_tile_sheet("resources/textures/black/button/b_button.png", game-> rend)) {
         printf("Failed to load  black button texture!\n");
         return;
     }
-    if (!w_button_tex.load_tile_sheet("resources/textures/white/button/w_button.png", game-> rend))
-    {
+    if (!w_button_tex.load_tile_sheet("resources/textures/white/button/w_button.png", game-> rend)) {
         printf("Failed to load white button texture!\n");
         return;
     }
-    if (!b_springboard_tex.load_tile_sheet("resources/textures/black/spring/b_spring.png", game-> rend))
-    {
+    if (!b_springboard_tex.load_tile_sheet("resources/textures/black/spring/b_spring.png", game-> rend)) {
         printf("Failed to load black springboard texture!\n");
         return;
     }
-    if (!w_springboard_tex.load_tile_sheet("resources/textures/white/spring/w_spring.png", game-> rend))
-    {
+    if (!w_springboard_tex.load_tile_sheet("resources/textures/white/spring/w_spring.png", game-> rend)) {
         printf("Failed to load white springboard texture!\n");
         return;
     }
-    // initialize level
     width = 26;
     height = 21;
 
     path = "resources/level-files/level_08.csv";
 
-    if (!set_tiles(tileset, path, width, height))
-    {
+    if (!set_tiles(tileset, path, width, height)) {
         printf("Failed to load level 8 map!\n");
         return;
     }
@@ -215,7 +203,7 @@ void Level8State::init_objects(Engine* game)
     w_char = new class Dot(2, 11, false, &w_char_tex);
     camera = new class Camera(game->screen_width, game->screen_height,
                               width * TILE_WIDTH, height * TILE_WIDTH,
-                              &b_char->col_rect, &w_char->col_rect);
+                              b_char->get_rect(), w_char->get_rect());
 
     // initialize black level end
     b_level_end.tex = b_end_tex;
@@ -251,26 +239,18 @@ void Level8State::interactions(Engine* game)
 {
 
     // if both are on level end object
-    if(b_level_end.check(b_char->col_rect) && w_level_end.check(w_char->col_rect))
-
-    {
-        // change state to main menu
+    if(b_level_end.check(b_char->get_rect()) && w_level_end.check(w_char->get_rect())) {
         change_state(game, new MainMenuState);
     }
 
 
     //if black button is activated
-    if(b_button.check(b_char->col_rect) && b_button.used == false)
-    {
-        // used
+    if(b_button.check(b_char->get_rect()) && b_button.used == false) {
         b_button.used = true;
-
-        // activate
         b_button.activated = true;
 
         // animate
-        if(b_button.status == BUTT_INACTIVE)
-        {
+        if(b_button.status == BUTT_INACTIVE) {
             b_button.status = (b_button.status + 1) % 4;
         }
 
@@ -288,27 +268,19 @@ void Level8State::interactions(Engine* game)
         w_springboard.x_spring = 4;
         w_springboard.y_spring = 12;
     }
-    else
-    {
+    else {
         b_button.activated = false;
 
-        if(b_button.status != BUTT_INACTIVE)
-        {
+        if(b_button.status != BUTT_INACTIVE) {
             b_button.status = (b_button.status + 1) % 4;
         }
     }
     //if white button is activated
-    if(w_button.check(w_char->col_rect) && w_button.used == false)
-    {
-        // used
+    if(w_button.check(w_char->get_rect()) && w_button.used == false) {
         w_button.used = true;
-
-        // activate
         w_button.activated = true;
 
-        // animate
-        if(w_button.status == BUTT_INACTIVE)
-        {
+        if(w_button.status == BUTT_INACTIVE) {
             w_button.status = (w_button.status + 1) % 4;
         }
 
@@ -322,50 +294,43 @@ void Level8State::interactions(Engine* game)
         b_springboard.y_spring = 10;
 
         // init crate #2
-        //crates.push_back(new Crate(5 * TILE_WIDTH, 17 * TILE_WIDTH, FOUR_BY_TWO));
-        //crates.back()->tex = w_crate_tex_four_by_two;
-        //crates.back()->black = false;
-
+        crates.push_back(new Crate(5 * TILE_WIDTH, 17 * TILE_WIDTH, FOUR_BY_TWO));
+        crates.back()->tex = w_crate_tex_four_by_two;
+        crates.back()->black = false;
     }
-    else
-    {
+    else {
         w_button.activated = false;
 
-        if(w_button.status != BUTT_INACTIVE)
-        {
+        if(w_button.status != BUTT_INACTIVE) {
             w_button.status = (w_button.status + 1) % 4;
         }
     }
 
     //if black springboard is activated
-    if(b_springboard.check(b_char->col_rect) && b_springboard.show)
+    if(b_springboard.check(b_char->get_rect()) && b_springboard.show)
     {
         //if(b_char->col_rect.y < b_springboard.col_rect.y + 20)
         {
             // activate
             b_springboard.activated = true;
 
-            if(b_springboard.status == BOARD_INACTIVE)
-            {
+            if(b_springboard.status == BOARD_INACTIVE) {
                 b_springboard.status = (b_springboard.status + 1) % 4;
             }
 
             b_char->spring(b_springboard.x_spring, b_springboard.y_spring, b_springboard.direction);
         }
     }
-    else
-    {
+    else {
         b_springboard.activated = false;
 
-        if(b_springboard.status != BOARD_INACTIVE)
-        {
+        if(b_springboard.status != BOARD_INACTIVE) {
             b_springboard.status = (b_springboard.status + 1) % 4;
         }
     }
 
     //if black springboard is activated
-    if(w_springboard.check(w_char->col_rect) && w_springboard.show)
-    {
+    if(w_springboard.check(w_char->get_rect()) && w_springboard.show) {
         //if(b_char->col_rect.y < b_springboard.col_rect.y + 20)
         {
             // activate
@@ -379,8 +344,7 @@ void Level8State::interactions(Engine* game)
             w_char->spring(w_springboard.x_spring, w_springboard.y_spring, w_springboard.direction);
         }
     }
-    else
-    {
+    else {
         w_springboard.activated = false;
 
         if(w_springboard.status != BOARD_INACTIVE)
