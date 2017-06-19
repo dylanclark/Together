@@ -157,14 +157,7 @@ void Level2State::load_textures(Engine* game)
         return;
     }
 
-
-    // initialize level
-    width = 27;
-    height = 18;
-
-    path = "resources/level-files/level02.lvl";
-
-    if (!set_tiles(tileset, path, width, height))
+    if (!set_tiles(this, tileset, "level02.lvl"))
     {
         printf("Failed to load level 2 map!\n");
         return;

@@ -185,12 +185,8 @@ void Level8State::load_textures(Engine* game)
         printf("Failed to load white springboard texture!\n");
         return;
     }
-    width = 26;
-    height = 21;
 
-    path = "resources/level-files/level08.lvl";
-
-    if (!set_tiles(tileset, path, width, height)) {
+    if (!set_tiles(this, tileset, "level08.lvl")) {
         printf("Failed to load level 8 map!\n");
         return;
     }

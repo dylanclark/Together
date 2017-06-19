@@ -79,8 +79,10 @@ private:
     bool animating;
 };
 
+class Levelstate;
+
 // draw the tilemap
-bool set_tiles(Tile* tiles[], std::string path, int level_w, int level_h);
+bool set_tiles(Levelstate* lvl, Tile* tiles[], std::string filename);
 
 // close the tilemap
 void close_tiles(Tile* tiles[]);

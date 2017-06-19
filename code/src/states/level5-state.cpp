@@ -173,14 +173,7 @@ void Level5State::load_textures(Engine* game)
         return;
     }
 
-
-    // initialize level
-    width = 29;
-    height = 21;
-
-    path = "resources/level-files/level05.lvl";
-
-    if (!set_tiles(tileset, path, width, height))
+    if (!set_tiles(this, tileset, "level05.lvl"))
     {
         printf("Failed to load level 5 map!\n");
         return;

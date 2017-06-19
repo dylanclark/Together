@@ -174,13 +174,7 @@ void Level9State::load_textures(Engine* game)
         return;
     }
 
-    // initialize level
-    width = 32;
-    height = 30;
-
-    path = "resources/level-files/level09.lvl";
-
-    if (!set_tiles(tileset, path, width, height)) {
+    if (!set_tiles(this, tileset, "level09.lvl")) {
         printf("Failed to load level 9 map!\n");
         return;
     }

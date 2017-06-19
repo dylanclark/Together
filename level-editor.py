@@ -1,14 +1,12 @@
 #!/usr/bin/env python
 
 # controls:
-#   create black square - leftclick
-#   create white square - rightclick
 #   to fill a rectangle of squares -
-#       hold shift, and (r/l)click the two corners of the rectangle
-#   add a row - h
-#   delete a row - j
-#   add a column - k
-#   delete a column - l
+#       (r/l)click the two corners of the rectangle
+#   add a row - h (TODO)
+#   delete a row - j (TODO)
+#   add a column - k (TODO)
+#   delete a column - l (TODO)
 #   output space separated file - enter
 
 import pygame
@@ -58,7 +56,7 @@ class Camera:
             elif event.key == pygame.K_x:
                 self.zoomin = False
 
-    def update(self, screen):
+    def update(self, screen, w, h):
         scr_w, scr_h = screen.get_width(), screen.get_height()
         if self.up:
             self.locy -= 30.
@@ -70,10 +68,10 @@ class Camera:
             self.locx -= 30.
         if self.zoomout:
             if self.locw > TILE_WIDTH*4:
-                self.locw -= 40.
+                self.locw /= 1.1
                 self.loch = self.locw * (float(scr_h) / float(scr_w))
         if self.zoomin:
-            self.locw += 40.
+            self.locw *= 1.1
             self.loch = self.locw * (float(scr_h) / float(scr_w))
         self.truex = self.locx - self.locw / 2.
         self.truey = self.locy - self.loch / 2.
@@ -118,8 +116,6 @@ class Gridlines:
 
 class Tileset:
     array = []
-    rightclick, leftclick = False, False
-    shift = False
     rect = 0
     x1, y1 = 0, 0
 
@@ -131,69 +127,54 @@ class Tileset:
         scr_w, scr_h = screen.get_width(), screen.get_height()
         for i in range(len(self.array)):
             for j in range(len(self.array[0])):
-                if self.array[i][j]:
+                if self.array[i][j] == 1:
                     x1 = (j*TILE_WIDTH - camx) / (float(camw) / float(scr_w))
                     x2 = ((j+1)*TILE_WIDTH - camx) / (float(camw) / float(scr_w)) + 1
                     y1 = (i*TILE_WIDTH - camy) / (float(camh) / float(scr_h))
                     y2 = ((i+1)*TILE_WIDTH - camy) / (float(camh) / float(scr_h)) + 1
                     rect = (x1, y1, x2-x1, y2-y1)
                     pygame.draw.rect(screen, (0,0,0), rect)
+                elif self.array[i][j] > 1:
+                    x1 = (j*TILE_WIDTH - camx) / (float(camw) / float(scr_w))
+                    x2 = ((j+1)*TILE_WIDTH - camx) / (float(camw) / float(scr_w)) + 1
+                    y1 = (i*TILE_WIDTH - camy) / (float(camh) / float(scr_h))
+                    y2 = ((i+1)*TILE_WIDTH - camy) / (float(camh) / float(scr_h)) + 1
+                    rect = (x1, y1, x2-x1, y2-y1)
+                    if self.array[i][j] == 2:
+                        pygame.draw.rect(screen, (0,0,255), rect)
+                    else:
+                        pygame.draw.rect(screen, (255,255,0), rect)
+
 
     def handle_event(self, event, screen, cam):
         scr_w, scr_h = screen.get_width(), screen.get_height()
         camx, camy, camw, camh = cam
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_LSHIFT:
-                self.shift = True
-        if event.type == pygame.KEYUP:
-            if event.key == pygame.K_LSHIFT:
-                self.shift = False
         if event.type == pygame.MOUSEBUTTONDOWN:
-            if event.button == 1:
-                if self.shift:
-                    if not self.rect:
-                        mousex, mousey = pygame.mouse.get_pos()
-                        self.x1 = int((mousex * (float(camw) / float(scr_w)) + camx) / TILE_WIDTH)
-                        self.y1 = int((mousey * (float(camh) / float(scr_h)) + camy) / TILE_WIDTH)
-                        self.rect = 1
-                    else:
-                        mousex, mousey = pygame.mouse.get_pos()
-                        mx = int((mousex * (float(camw) / float(scr_w)) + camx) / TILE_WIDTH)
-                        my = int((mousey * (float(camh) / float(scr_h)) + camy) / TILE_WIDTH)
-                        self.fill_rect(True, mx, my)
-                else:
-                    self.leftclick = True
-            elif event.button == 3:
-                if self.shift:
-                    if not self.rect:
-                        mousex, mousey = pygame.mouse.get_pos()
-                        self.x1 = int((mousex * (float(camw) / float(scr_w)) + camx) / TILE_WIDTH)
-                        self.y1 = int((mousey * (float(camh) / float(scr_h)) + camy) / TILE_WIDTH)
-                        self.rect = 3
-                    else:
-                        mousex, mousey = pygame.mouse.get_pos()
-                        mx = int((mousex * (float(camw) / float(scr_w)) + camx) / TILE_WIDTH)
-                        my = int((mousey * (float(camh) / float(scr_h)) + camy) / TILE_WIDTH)
-                        self.fill_rect(False, mx, my)
-                else:
-                    self.leftclick = True
-        if event.type == pygame.MOUSEBUTTONUP:
-            if event.button == 1:
-                self.leftclick = False
-            elif event.button == 3:
-                self.rightclick = False
-
-    def update(self, screen, cam):
-        scr_w, scr_h = screen.get_width(), screen.get_height()
-        camx, camy, camw, camh = cam
-        if self.leftclick or self.rightclick:
-            mousex, mousey = pygame.mouse.get_pos()
-            j = int((mousex * (float(camw) / float(scr_w)) + camx) / TILE_WIDTH)
-            i = int((mousey * (float(camh) / float(scr_h)) + camy) / TILE_WIDTH)
-            if self.rightclick:
-                self.array[i][j] = False
-            elif self.leftclick:
-                self.array[i][j] = True
+            if not self.rect:
+                mousex, mousey = pygame.mouse.get_pos()
+                x1 = int((mousex * (float(camw) / float(scr_w)) + camx) / TILE_WIDTH)
+                y1 = int((mousey * (float(camh) / float(scr_h)) + camy) / TILE_WIDTH)
+                if x1 >= len(self.array[0]) or y1 >= len(self.array) or x1 < 0 or y1 < 0:
+                    return
+                self.x1 = x1
+                self.y1 = y1
+                self.rect = event.button
+                if event.button == 1:
+                    self.rect = 1
+                    self.array[self.y1][self.x1] = 2
+                elif event.button == 3:
+                    self.rect = 3
+                    self.array[self.y1][self.x1] = 3
+            else:
+                mousex, mousey = pygame.mouse.get_pos()
+                mx = int((mousex * (float(camw) / float(scr_w)) + camx) / TILE_WIDTH)
+                my = int((mousey * (float(camh) / float(scr_h)) + camy) / TILE_WIDTH)
+                if mx >= len(self.array[0]) or my >= len(self.array) or mx < 0 or my < 0:
+                    return
+                if self.rect == 1:
+                    self.fill_rect(True, mx, my)
+                elif self.rect == 3:
+                    self.fill_rect(False, mx, my)
 
     def fill_rect(self, black, mx, my):
         x1, x2 = min(self.x1, mx), max(self.x1, mx)
@@ -674,8 +655,7 @@ if __name__ == "__main__":
             tileset.handle_event(event, screen, camrect)
 
         # update the objects that change
-        camera.update(screen)
-        tileset.update(screen, camrect)
+        camera.update(screen, w, h)
 
         # draw everything to the screen
         screen.fill(white)
@@ -690,7 +670,7 @@ if __name__ == "__main__":
     w, h = len(output[0]), len(output)
 
     # output .lvl file!
-    with open(filename, 'w') as fh:
+    with open('resources/level-files/'+filename, 'w') as fh:
         fh.write(str(w)+' '+str(h)+'\n')
         for i in range(h):
             for j in range(w):

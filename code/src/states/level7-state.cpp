@@ -160,13 +160,7 @@ void Level7State::load_textures(Engine* game)
         return;
     }
 
-    // initialize level
-    width = 26;
-    height = 28;
-
-    path = "resources/level-files/level07.lvl";
-
-    if (!set_tiles(tileset, path, width, height))
+    if (!set_tiles(this, tileset, "level07.lvl"))
     {
         printf("Failed to load level 7 map!\n");
         return;

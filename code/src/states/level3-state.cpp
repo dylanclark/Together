@@ -168,14 +168,7 @@ void Level3State::load_textures(Engine* game)
         return;
     }
 
-
-    // initialize level
-    width = 24;
-    height = 18;
-
-    path = "resources/level-files/level03.lvl";
-
-    if (!set_tiles(tileset, path, width, height))
+    if (!set_tiles(this, tileset, "level03.lvl"))
     {
         printf("Failed to load level 3 map!\n");
         return;

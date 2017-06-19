@@ -13,7 +13,7 @@
 // tile clipper
 SDL_Rect tile_clips[TOTAL_TILES];
 
-bool set_tiles(Tile* tiles[], std::string map_path, int lvl_w, int lvl_h)
+bool set_tiles(Levelstate* lvl, Tile* tiles[], std::string filename)
 {
     // success flag
     bool success = true;
@@ -21,7 +21,9 @@ bool set_tiles(Tile* tiles[], std::string map_path, int lvl_w, int lvl_h)
     // tile offsets
     int x = 0, y = 0;
 
-    std::ifstream map(map_path.c_str());
+    std::string path = "resources/level-files/"+filename;
+
+    std::ifstream map(path.c_str());
 
     if (!map.is_open()) {
         printf("Could not find level file!\n");
@@ -32,6 +34,8 @@ bool set_tiles(Tile* tiles[], std::string map_path, int lvl_w, int lvl_h)
         int level_h;
         map >> level_w;
         map >> level_h;
+        lvl->width = level_w;
+        lvl->height = level_h;
 
         for (int i = 0; i < level_w * level_h; i++)
         {
