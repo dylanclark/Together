@@ -124,7 +124,7 @@ class Tileset:
     x1, y1 = 0, 0
 
     def __init__(self, w, h):
-        self.array = [[False]*h for _ in range(w)]
+        self.array = [[False]*w for _ in range(h)]
 
     def draw(self, screen, cam):
         camx, camy, camw, camh = cam
@@ -132,10 +132,10 @@ class Tileset:
         for i in range(len(self.array)):
             for j in range(len(self.array[0])):
                 if self.array[i][j]:
-                    x1 = (i*TILE_WIDTH - camx) / (float(camw) / float(scr_w))
-                    x2 = ((i+1)*TILE_WIDTH - camx) / (float(camw) / float(scr_w)) + 1
-                    y1 = (j*TILE_WIDTH - camy) / (float(camh) / float(scr_h))
-                    y2 = ((j+1)*TILE_WIDTH - camy) / (float(camh) / float(scr_h)) + 1
+                    x1 = (j*TILE_WIDTH - camx) / (float(camw) / float(scr_w))
+                    x2 = ((j+1)*TILE_WIDTH - camx) / (float(camw) / float(scr_w)) + 1
+                    y1 = (i*TILE_WIDTH - camy) / (float(camh) / float(scr_h))
+                    y2 = ((i+1)*TILE_WIDTH - camy) / (float(camh) / float(scr_h)) + 1
                     rect = (x1, y1, x2-x1, y2-y1)
                     pygame.draw.rect(screen, (0,0,0), rect)
 
@@ -188,8 +188,8 @@ class Tileset:
         camx, camy, camw, camh = cam
         if self.leftclick or self.rightclick:
             mousex, mousey = pygame.mouse.get_pos()
-            i = int((mousex * (float(camw) / float(scr_w)) + camx) / TILE_WIDTH)
-            j = int((mousey * (float(camh) / float(scr_h)) + camy) / TILE_WIDTH)
+            j = int((mousex * (float(camw) / float(scr_w)) + camx) / TILE_WIDTH)
+            i = int((mousey * (float(camh) / float(scr_h)) + camy) / TILE_WIDTH)
             if self.rightclick:
                 self.array[i][j] = False
             elif self.leftclick:
@@ -198,8 +198,8 @@ class Tileset:
     def fill_rect(self, black, mx, my):
         x1, x2 = min(self.x1, mx), max(self.x1, mx)
         y1, y2 = min(self.y1, my), max(self.y1, my)
-        for i in range(x1, x2+1):
-            for j in range(y1, y2+1):
+        for i in range(y1, y2+1):
+            for j in range(x1, x2+1):
                 self.array[i][j] = black
         self.rect = 0
 
@@ -266,10 +266,11 @@ def get_str(screen, prompt):
 def output_arr(array):
     w = len(array[0])
     h = len(array)
-    result = [['']*w for _ in h]
+    result = [['']*w for _ in range(h)]
     for i in range(h):
         for j in range(w):
-            if arra[i][j]:
+            # if this is a black square
+            if array[i][j]:
                 if i == 0 and j == 0:
                     if array[i+1][j] and array[i][j+1]:
                         result[i][j] = '00'
@@ -297,7 +298,7 @@ def output_arr(array):
                         result[i][j] = random.choice(['01','02','03'])
                     elif not array[i-1][j] and not array[i][j+1]:
                         result[i][j] = '04'
-                elif i == h-1 and j == h-1:
+                elif i == h-1 and j == w-1:
                     if array[i-1][j] and array[i][j-1]:
                         result[i][j] = '00'
                     elif array[i-1][j] and not array[i][j-1]:
@@ -426,25 +427,214 @@ def output_arr(array):
                         if array[i][j+1]:
                             if array[i+1][j]:
                                 if array[i-1][j]:
-                                    result[i][j] = '00'
+                                    result[i][j] = '10'
                                 else:
-                                    result[i][j] = random.choice(['01','02','03'])
+                                    result[i][j] = '05'
                             else:
                                 if array[i-1][j]:
-                                    result[i][j] = '06'
+                                    result[i][j] = '08'
                                 else:
                                     result[i][j] = '00'
                         else:
+                            result[i][j] = '00'
+            # if it's a white square
+            else:
+                if i == 0 and j == 0:
+                    if array[i+1][j]:
+                        if array[i][j+1]:
+                            result[i][j] = '19'
+                        else:
+                            result[i][j] = random.choice(['16','17','18'])
+                    else:
+                        if array[i][j+1]:
+                            result[i][j] = '24'
+                        else:
+                            # TODO corner
+                            result[i][j] = '15'
+                elif i == 0 and j == w-1:
+                    if array[i+1][j]:
+                        if array[i][j-1]:
+                            result[i][j] = '20'
+                        else:
+                            result[i][j] = random.choice(['16','17','18'])
+                    else:
+                        if array[i][j-1]:
+                            result[i][j] = '25'
+                        else:
+                            # TODO corner
+                            result[i][j] = '15'
+                elif i == h-1 and j == 0:
+                    if array[i-1][j]:
+                        if array[i][j+1]:
+                            result[i][j] = '22'
+                        else:
+                            result[i][j] = '21'
+                    else:
+                        if array[i][j+1]:
+                            result[i][j] = '24'
+                        else:
+                            # TODO corner
+                            result[i][j] = '15'
+                elif i == h-1 and j == w-1:
+                    if array[i-1][j]:
+                        if array[i][j-1]:
+                            result[i][j] = '23'
+                        else:
+                            result[i][j] = '21'
+                    else:
+                        if array[i][j-1]:
+                            result[i][j] = '25'
+                        else:
+                            # TODO corner
+                            result[i][j] = '15'
+                elif i == 0:
+                    if array[i+1][j]:
+                        if array[i][j-1]:
+                            if array[i][j+1]:
+                                # bad
+                                result[i][j] = '15'
+                            else:
+                                result[i][j] = '20'
+                        else:
+                            if array[i][j+1]:
+                                result[i][j] = '19'
+                            else:
+                                result[i][j] = random.choice(['16','17','18'])
+                    else:
+                        if array[i][j-1]:
+                            if array[i][j+1]:
+                                # bad
+                                result[i][j] = '15'
+                            else:
+                                result[i][j] = '25'
+                        else:
+                            if array[i][j+1]:
+                                result[i][j] = '24'
+                            else:
+                                # TODO corner
+                                result[i][j] = '15'
+                elif i == h-1:
+                    if array[i-1][j]:
+                        if array[i][j-1]:
+                            if array[i][j+1]:
+                                # bad
+                                result[i][j] = '15'
+                            else:
+                                result[i][j] = '23'
+                        else:
+                            if array[i][j+1]:
+                                result[i][j] = '22'
+                            else:
+                                result[i][j] = '21'
+                    else:
+                        if array[i][j-1]:
+                            if array[i][j+1]:
+                                # bad
+                                result[i][j] = '15'
+                            else:
+                                result[i][j] = '25'
+                        else:
+                            if array[i][j+1]:
+                                result[i][j] = '24'
+                            else:
+                                # TODO corner
+                                result[i][j] = '15'
+                elif j == 0:
+                    if array[i][j+1]:
+                        if array[i+1][j]:
+                            if array[i-1][j]:
+                                # bad
+                                result[i][j] = '15'
+                            else:
+                                result[i][j] = '19'
+                        else:
+                            if array[i-1][j]:
+                                result[i][j] = '22'
+                            else:
+                                result[i][j] = '24'
+                    else:
+                        if array[i+1][j]:
+                            if array[i-1][j]:
+                                # bad
+                                result[i][j] = '15'
+                            else:
+                                result[i][j] = random.choice(['16','17','18'])
+                        else:
+                            if array[i-1][j]:
+                                result[i][j] = '21'
+                            else:
+                                # TODO corner
+                                result[i][j] = '15'
+                elif j == w-1:
+                    if array[i][j-1]:
+                        if array[i+1][j]:
+                            if array[i-1][j]:
+                                # bad
+                                result[i][j] = '15'
+                            else:
+                                result[i][j] = '20'
+                        else:
+                            if array[i-1][j]:
+                                result[i][j] = '23'
+                            else:
+                                result[i][j] = '25'
+                    else:
+                        if array[i+1][j]:
+                            if array[i-1][j]:
+                                # bad
+                                result[i][j] = '15'
+                            else:
+                                result[i][j] = random.choice(['16','17','18'])
+                        else:
+                            if array[i-1][j]:
+                                result[i][j] = '21'
+                            else:
+                                # TODO corner
+                                result[i][j] = '15'
+                else:
+                    if array[i][j-1]:
+                        if array[i][j+1]:
+                            # bad
+                            result[i][j] = '15'
+                        else:
                             if array[i+1][j]:
                                 if array[i-1][j]:
-                                    result[i][j] = '09'
+                                    # bad
+                                    result[i][j] = '15'
                                 else:
-                                    result[i][j] = '04'
+                                    result[i][j] = '20'
                             else:
                                 if array[i-1][j]:
-                                    result[i][j] = '07'
+                                    result[i][j] = '23'
                                 else:
-                                    result[i][j] = '00'
+                                    result[i][j] = '25'
+                    else:
+                        if array[i][j+1]:
+                            if array[i+1][j]:
+                                if array[i-1][j]:
+                                    # bad
+                                    result[i][j] = '15'
+                                else:
+                                    result[i][j] = '19'
+                            else:
+                                if array[i-1][j]:
+                                    result[i][j] = '22'
+                                else:
+                                    result[i][j] = '24'
+                        else:
+                            if array[i+1][j]:
+                                if array[i-1][j]:
+                                    # bad
+                                    result[i][j] = '15'
+                                else:
+                                    result[i][j] = random.choice(['16','17','18'])
+                            else:
+                                if array[i-1][j]:
+                                    result[i][j] = '21'
+                                else:
+                                    # TODO corner
+                                    result[i][j] = '15'
+    return result
 
 if __name__ == "__main__":
 
@@ -466,12 +656,10 @@ if __name__ == "__main__":
     grid = Gridlines(w, h)
     camera = Camera(screen.get_width(), screen.get_height())
     tileset = Tileset(w, h)
-
     done = False
 
     while not done:
         camrect = camera.get_rect()
-
         clock.tick(100)
 
         # handle events (check for quit signal)
@@ -485,29 +673,29 @@ if __name__ == "__main__":
             camera.handle_event(event)
             tileset.handle_event(event, screen, camrect)
 
+        # update the objects that change
         camera.update(screen)
         tileset.update(screen, camrect)
 
+        # draw everything to the screen
         screen.fill(white)
         tileset.draw(screen, camrect)
         border.draw(screen, camrect)
         grid.draw(screen, camrect)
         pygame.display.flip()
 
+    # get filename and output array
     filename = "level"+get_str(screen, "level number: ").zfill(2)+".lvl"
     output = output_arr(tileset.get_array())
+    w, h = len(output[0]), len(output)
 
-    # done button
-    # user can change dimensions?
-
-    # when you hit enter
-
-    #   generate csv writer obj
-
-    #   check the adjacent values of each tile
-
-    #   assign each value of another array a number in this format: 03, 13, etc.
-
-    #   ask user for filename
-
-    #   generate file
+    # output .lvl file!
+    with open(filename, 'w') as fh:
+        fh.write(str(w)+' '+str(h)+'\n')
+        for i in range(h):
+            for j in range(w):
+                fh.write(output[i][j])
+                if j != w-1:
+                    fh.write(' ')
+            if i != h-1:
+                fh.write('\n')

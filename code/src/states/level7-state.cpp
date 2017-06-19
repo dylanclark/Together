@@ -164,7 +164,7 @@ void Level7State::load_textures(Engine* game)
     width = 26;
     height = 28;
 
-    path = "resources/level-files/level_07.csv";
+    path = "resources/level-files/level07.lvl";
 
     if (!set_tiles(tileset, path, width, height))
     {

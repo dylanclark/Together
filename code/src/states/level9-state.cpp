@@ -178,7 +178,7 @@ void Level9State::load_textures(Engine* game)
     width = 32;
     height = 30;
 
-    path = "resources/level-files/level_09.csv";
+    path = "resources/level-files/level09.lvl";
 
     if (!set_tiles(tileset, path, width, height)) {
         printf("Failed to load level 9 map!\n");

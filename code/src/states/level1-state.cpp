@@ -136,7 +136,7 @@ void Level1State::load_textures(Engine* game)
     width = 26;
     height = 17;
 
-    path = "resources/level-files/level_01.csv";
+    path = "resources/level-files/level01.lvl";
 
     if (!set_tiles(tileset, path, width, height)) {
         printf("Failed to load level 1 map!\n");

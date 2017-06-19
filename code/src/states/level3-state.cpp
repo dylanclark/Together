@@ -173,7 +173,7 @@ void Level3State::load_textures(Engine* game)
     width = 24;
     height = 18;
 
-    path = "resources/level-files/level_03.csv";
+    path = "resources/level-files/level03.lvl";
 
     if (!set_tiles(tileset, path, width, height))
     {
