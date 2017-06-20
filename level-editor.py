@@ -119,8 +119,11 @@ class Tileset:
     rect = 0
     x1, y1 = 0, 0
 
-    def __init__(self, w, h):
-        self.array = [[False]*w for _ in range(h)]
+    def __init__(self, w, h, array=None):
+        if not array:
+            self.array = [[False]*w for _ in range(h)]
+        else:
+            self.array = array
 
     def draw(self, screen, cam):
         camx, camy, camw, camh = cam
@@ -210,6 +213,9 @@ def get_str(screen, prompt):
     res = ""
     while True:
         for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     sys.exit()
@@ -238,10 +244,11 @@ def get_str(screen, prompt):
                 elif event.key == pygame.K_BACKSPACE:
                     res = res[:-1]
         textsurface = myfont.render(prompt+res, False, (0, 0, 0))
-        tex_rect = textsurface.get_rect()
+        tex_w, tex_h = myfont.size(prompt+res)
+        scr_w, scr_h = screen.get_width(), screen.get_height()
 
         screen.fill(white)
-        screen.blit(textsurface, tex_rect)
+        screen.blit(textsurface, (scr_w/2-tex_w/2,scr_h/2-tex_h/2))
         pygame.display.flip()
 
 def output_arr(array):
@@ -253,52 +260,78 @@ def output_arr(array):
             # if this is a black square
             if array[i][j]:
                 if i == 0 and j == 0:
-                    if array[i+1][j] and array[i][j+1]:
-                        result[i][j] = '00'
-                    elif array[i+1][j] and not array[i][j+1]:
-                        result[i][j] = '09'
-                    elif not array[i+1][j] and array[i][j+1]:
-                        result[i][j] = '06'
-                    elif not array[i+1][j] and not array[i][j+1]:
-                        result[i][j] = '07'
+                    if array[i+1][j]:
+                        if array[i][j+1]:
+                            if not array[i+1][j+1]:
+                                result[i][j] = '13'
+                            else:
+                                result[i][j] = '00'
+                        else:
+                            result[i][j] = '09'
+                    else:
+                        if array[i][j+1]:
+                            result[i][j] = '06'
+                        else:
+                            result[i][j] = '07'
                 elif i == 0 and j == w-1:
-                    if array[i+1][j] and array[i][j-1]:
-                        result[i][j] = '00'
-                    elif array[i+1][j] and not array[i][j-1]:
-                        result[i][j] = '10'
-                    elif not array[i+1][j] and array[i][j-1]:
-                        result[i][j] = '06'
-                    elif not array[i+1][j] and not array[i][j-1]:
-                        result[i][j] = '08'
+                    if array[i+1][j]:
+                        if array[i][j-1]:
+                            if not array[i+1][j-1]:
+                                result[i][j] = '14'
+                            else:
+                                result[i][j] = '00'
+                        else:
+                            result[i][j] = '10'
+                    else:
+                        if array[i][j-1]:
+                            result[i][j] = '06'
+                        else:
+                            result[i][j] = '08'
                 elif i == h-1 and j == 0:
-                    if array[i-1][j] and array[i][j+1]:
-                        result[i][j] = '00'
-                    elif array[i-1][j] and not array[i][j+1]:
-                        result[i][j] = '09'
-                    elif not array[i-1][j] and array[i][j+1]:
-                        result[i][j] = random.choice(['01','02','03'])
-                    elif not array[i-1][j] and not array[i][j+1]:
-                        result[i][j] = '04'
+                    if array[i-1][j]:
+                        if array[i][j+1]:
+                            if not array[i-1][j+1]:
+                                result[i][j] = '11'
+                            else:
+                                result[i][j] = '00'
+                        else:
+                            result[i][j] = '09'
+                    else:
+                        if array[i][j+1]:
+                            result[i][j] = random.choice(['01','02','03'])
+                        else:
+                            result[i][j] = '04'
                 elif i == h-1 and j == w-1:
-                    if array[i-1][j] and array[i][j-1]:
-                        result[i][j] = '00'
-                    elif array[i-1][j] and not array[i][j-1]:
-                        result[i][j] = '10'
-                    elif not array[i-1][j] and array[i][j-1]:
-                        result[i][j] = random.choice(['01','02','03'])
-                    elif not array[i-1][j] and not array[i][j-1]:
-                        result[i][j] = '05'
+                    if array[i-1][j]:
+                        if array[i][j-1]:
+                            if not array[i-1][j-1]:
+                                result[i][j] = '12'
+                            else:
+                                result[i][j] = '00'
+                        else:
+                            result[i][j] = '10'
+                    else:
+                        if array[i][j-1]:
+                            result[i][j] = random.choice(['01','02','03'])
+                        else:
+                            result[i][j] = '05'
                 elif i == 0:
                     if array[i+1][j]:
                         if array[i][j-1]:
                             if array[i][j+1]:
-                                result[i][j] = '00'
+                                if not array[i+1][j+1]:
+                                    result[i][j] = '13'
+                                elif not array[i+1][j-1]:
+                                    result[i][j] = '14'
+                                else:
+                                    result[i][j] = '00'
                             else:
                                 result[i][j] = '09'
                         else:
                             if array[i][j+1]:
                                 result[i][j] = '10'
                             else:
+                                # bad
                                 result[i][j] = '00'
                     else:
                         if array[i][j-1]:
@@ -310,18 +343,25 @@ def output_arr(array):
                             if array[i][j+1]:
                                 result[i][j] = '08'
                             else:
+                                # bad
                                 result[i][j] = '00'
                 elif i == h-1:
                     if array[i-1][j]:
                         if array[i][j-1]:
                             if array[i][j+1]:
-                                result[i][j] = '00'
+                                if not array[i-1][j+1]:
+                                    result[i][j] = '11'
+                                elif not array[i-1][j-1]:
+                                    result[i][j] = '12'
+                                else:
+                                    result[i][j] = '00'
                             else:
                                 result[i][j] = '09'
                         else:
                             if array[i][j+1]:
                                 result[i][j] = '10'
                             else:
+                                # bad
                                 result[i][j] = '00'
                     else:
                         if array[i][j-1]:
@@ -333,18 +373,25 @@ def output_arr(array):
                             if array[i][j+1]:
                                 result[i][j] = '05'
                             else:
+                                # bad
                                 result[i][j] = '00'
                 elif j == 0:
                     if array[i][j+1]:
                         if array[i+1][j]:
                             if array[i-1][j]:
-                                result[i][j] = '00'
+                                if not array[i-1][j+1]:
+                                    result[i][j] = '11'
+                                elif not array[i+1][j+1]:
+                                    result[i][j] = '13'
+                                else:
+                                    result[i][j] = '00'
                             else:
                                 result[i][j] = random.choice(['01','02','03'])
                         else:
                             if array[i-1][j]:
                                 result[i][j] = '06'
                             else:
+                                # bad
                                 result[i][j] = '00'
                     else:
                         if array[i+1][j]:
@@ -356,18 +403,25 @@ def output_arr(array):
                             if array[i-1][j]:
                                 result[i][j] = '07'
                             else:
+                                # bad
                                 result[i][j] = '00'
                 elif j == w-1:
                     if array[i][j-1]:
                         if array[i+1][j]:
                             if array[i-1][j]:
-                                result[i][j] = '00'
+                                if not array[i-1][j-1]:
+                                    result[i][j] = '12'
+                                elif not array[i+1][j-1]:
+                                    result[i][j] = '14'
+                                else:
+                                    result[i][j] = '00'
                             else:
                                 result[i][j] = random.choice(['01','02','03'])
                         else:
                             if array[i-1][j]:
                                 result[i][j] = '06'
                             else:
+                                # bad
                                 result[i][j] = '00'
                     else:
                         if array[i+1][j]:
@@ -379,19 +433,30 @@ def output_arr(array):
                             if array[i-1][j]:
                                 result[i][j] = '08'
                             else:
+                                # bad
                                 result[i][j] = '00'
                 else:
                     if array[i][j-1]:
                         if array[i][j+1]:
                             if array[i+1][j]:
                                 if array[i-1][j]:
-                                    result[i][j] = '00'
+                                    if not array[i-1][j+1]:
+                                        result[i][j] = '11'
+                                    elif not array[i+1][j+1]:
+                                        result[i][j] = '13'
+                                    elif not array[i-1][j-1]:
+                                        result[i][j] = '12'
+                                    elif not array[i+1][j-1]:
+                                        result[i][j] = '14'
+                                    else:
+                                        result[i][j] = '00'
                                 else:
                                     result[i][j] = random.choice(['01','02','03'])
                             else:
                                 if array[i-1][j]:
                                     result[i][j] = '06'
                                 else:
+                                    # bad
                                     result[i][j] = '00'
                         else:
                             if array[i+1][j]:
@@ -403,6 +468,7 @@ def output_arr(array):
                                 if array[i-1][j]:
                                     result[i][j] = '07'
                                 else:
+                                    # bad
                                     result[i][j] = '00'
                     else:
                         if array[i][j+1]:
@@ -415,8 +481,10 @@ def output_arr(array):
                                 if array[i-1][j]:
                                     result[i][j] = '08'
                                 else:
+                                    # bad
                                     result[i][j] = '00'
                         else:
+                            # bad
                             result[i][j] = '00'
             # if it's a white square
             else:
@@ -430,8 +498,10 @@ def output_arr(array):
                         if array[i][j+1]:
                             result[i][j] = '24'
                         else:
-                            # TODO corner
-                            result[i][j] = '15'
+                            if array[i+1][j+1]:
+                                result[i][j] = '28'
+                            else:
+                                result[i][j] = '15'
                 elif i == 0 and j == w-1:
                     if array[i+1][j]:
                         if array[i][j-1]:
@@ -442,8 +512,10 @@ def output_arr(array):
                         if array[i][j-1]:
                             result[i][j] = '25'
                         else:
-                            # TODO corner
-                            result[i][j] = '15'
+                            if array[i+1][j-1]:
+                                result[i][j] = '29'
+                            else:
+                                result[i][j] = '15'
                 elif i == h-1 and j == 0:
                     if array[i-1][j]:
                         if array[i][j+1]:
@@ -454,8 +526,10 @@ def output_arr(array):
                         if array[i][j+1]:
                             result[i][j] = '24'
                         else:
-                            # TODO corner
-                            result[i][j] = '15'
+                            if array[i-1][j+1]:
+                                result[i][j] = '26'
+                            else:
+                                result[i][j] = '15'
                 elif i == h-1 and j == w-1:
                     if array[i-1][j]:
                         if array[i][j-1]:
@@ -466,8 +540,10 @@ def output_arr(array):
                         if array[i][j-1]:
                             result[i][j] = '25'
                         else:
-                            # TODO corner
-                            result[i][j] = '15'
+                            if array[i+1][j+1]:
+                                result[i][j] = '27'
+                            else:
+                                result[i][j] = '15'
                 elif i == 0:
                     if array[i+1][j]:
                         if array[i][j-1]:
@@ -492,8 +568,12 @@ def output_arr(array):
                             if array[i][j+1]:
                                 result[i][j] = '24'
                             else:
-                                # TODO corner
-                                result[i][j] = '15'
+                                if array[i+1][j+1]:
+                                    result[i][j] = '28'
+                                elif array[i+1][j-1]:
+                                    result[i][j] = '29'
+                                else:
+                                    result[i][j] = '15'
                 elif i == h-1:
                     if array[i-1][j]:
                         if array[i][j-1]:
@@ -518,8 +598,12 @@ def output_arr(array):
                             if array[i][j+1]:
                                 result[i][j] = '24'
                             else:
-                                # TODO corner
-                                result[i][j] = '15'
+                                if array[i-1][j+1]:
+                                    result[i][j] = '26'
+                                elif array[i-1][j-1]:
+                                    result[i][j] = '27'
+                                else:
+                                    result[i][j] = '15'
                 elif j == 0:
                     if array[i][j+1]:
                         if array[i+1][j]:
@@ -544,8 +628,12 @@ def output_arr(array):
                             if array[i-1][j]:
                                 result[i][j] = '21'
                             else:
-                                # TODO corner
-                                result[i][j] = '15'
+                                if array[i-1][j+1]:
+                                    result[i][j] = '26'
+                                elif array[i+1][j+1]:
+                                    result[i][j] = '28'
+                                else:
+                                    result[i][j] = '15'
                 elif j == w-1:
                     if array[i][j-1]:
                         if array[i+1][j]:
@@ -570,8 +658,12 @@ def output_arr(array):
                             if array[i-1][j]:
                                 result[i][j] = '21'
                             else:
-                                # TODO corner
-                                result[i][j] = '15'
+                                if array[i-1][j-1]:
+                                    result[i][j] = '27'
+                                elif array[i+1][j-1]:
+                                    result[i][j] = '29'
+                                else:
+                                    result[i][j] = '15'
                 else:
                     if array[i][j-1]:
                         if array[i][j+1]:
@@ -613,9 +705,41 @@ def output_arr(array):
                                 if array[i-1][j]:
                                     result[i][j] = '21'
                                 else:
-                                    # TODO corner
-                                    result[i][j] = '15'
+                                    if array[i-1][j-1]:
+                                        result[i][j] = '27'
+                                    elif array[i-1][j+1]:
+                                        result[i][j] = '26'
+                                    elif array[i+1][j-1]:
+                                        result[i][j] = '29'
+                                    elif array[i+1][j+1]:
+                                        result[i][j] = '28'
+                                    else:
+                                        result[i][j] = '15'
     return result
+
+def yes_no(screen, prompt):
+    myfont = pygame.font.SysFont('Times New Roman', 30)
+    s = " (y/n)"
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    sys.exit()
+                elif event.key == pygame.K_y:
+                    return True
+                elif event.key == pygame.K_n:
+                    return False
+        textsurface = myfont.render(prompt+s, False, (0, 0, 0))
+
+        tex_w, tex_h = myfont.size(prompt+s)
+        scr_w, scr_h = screen.get_width(), screen.get_height()
+
+        screen.fill(white)
+        screen.blit(textsurface, (scr_w/2-tex_w/2,scr_h/2-tex_h/2))
+        pygame.display.flip()
 
 if __name__ == "__main__":
 
@@ -629,14 +753,21 @@ if __name__ == "__main__":
 
     # get level dimensions from user
     screen = pygame.display.set_mode(size)
-    w = int(get_str(screen, "width: "))
-    h = int(get_str(screen, "height: "))
+    if not yes_no(screen, "load file?"):
+        w = int(get_str(screen, "width: "))
+        h = int(get_str(screen, "height: "))
+        tileset = Tileset(w, h)
+    else:
+        lvl = str(int(get_str(screen, "level number: "))).zfill(2)
+        with open("resources/level-files/level"+lvl+".lvl", "r") as fh:
+            w, h = [int(x) for x in next(fh).split()]
+            array = [[int(x) < 15 for x in line.split()] for line in fh]
+        tileset = Tileset(w, h, array)
 
     # create the border, gridlines, tileset, and camera
     border = Border(w, h)
     grid = Gridlines(w, h)
     camera = Camera(screen.get_width(), screen.get_height())
-    tileset = Tileset(w, h)
     done = False
 
     while not done:
