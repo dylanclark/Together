@@ -3,10 +3,14 @@
 # controls:
 #   to fill a rectangle of squares -
 #       (r/l)click the two corners of the rectangle
-#   add a row - h (TODO)
-#   delete a row - j (TODO)
-#   add a column - k (TODO)
-#   delete a column - l (TODO)
+#   add a row (top) - w
+#   add a row (bottom) - s
+#   add a column (left) - a
+#   add a column (right) - d
+#   remove a row (top) - k
+#   remove a row (bottom) - i
+#   remove a column (left) - l
+#   remove a column (right) - j
 #   output space separated file - enter
 
 import pygame
@@ -21,8 +25,8 @@ class Camera:
     up, down, left, right = False, False, False, False
     zoomout, zoomin = False, False
 
-    def __init__(self, w, h):
-        self.locx, self.locy = float(w)/2., float(h)/2.
+    def __init__(self, lvlw, lvlh, w, h):
+        self.locx, self.locy = float(lvlw)/2., float(lvlh)/2.
         self.locw, self.loch = float(w), float(h)
         self.truex = self.locx - self.locw / 2.
         self.truey = self.locy - self.loch / 2.
@@ -80,6 +84,17 @@ class Camera:
     def get_rect(self):
         return self.truex, self.truey, self.truew, self.trueh
 
+    def move_up(self):
+        self.locy -= TILE_WIDTH
+
+    def move_down(self):
+        self.locy += TILE_WIDTH
+
+    def move_left(self):
+        self.locx -= TILE_WIDTH
+
+    def move_right(self):
+        self.locx += TILE_WIDTH
 
 class Border:
     def __init__(self, w, h):
@@ -93,6 +108,9 @@ class Border:
         y2 = y1 + self.h * (screen.get_height() / camh)
         pointlist = [[x1, y1], [x2, y1], [x2, y2], [x1, y2]]
         pygame.draw.lines(screen, (255,0,0),True, pointlist, 3)
+
+    def update(self, w, h):
+        self.w, self.h = float(w)*TILE_WIDTH, float(h)*TILE_WIDTH
 
 class Gridlines:
     def __init__(self, w, h):
@@ -113,6 +131,9 @@ class Gridlines:
             x1 = (-camx) / (camw / float(scr_w))
             x2 = (w*TILE_WIDTH - camx) / (camw / float(scr_w))
             pygame.draw.line(screen, (0,200,0), [x1, y], [x2, y])
+
+    def update(self, w, h):
+        self.w, self.h = w, h
 
 class Tileset:
     array = []
@@ -187,18 +208,35 @@ class Tileset:
                 self.array[i][j] = black
         self.rect = 0
 
-    def add_rows(self, n):
+    def add_row_bottom(self):
         w = len(self.array[0])
-        self.array = self.array + [[False]*w for _ in range(n)]
+        self.array += [[False]*w]
 
-    def remove_rows(self, n):
-        self.array = self.array[:-n]
+    def remove_row_bottom(self):
+        self.array = self.array[:-1]
 
-    def add_cols(self, n):
-        pass
+    def add_row_top(self):
+        w = len(self.array[0])
+        self.array.insert(0, [False]*w)
 
-    def remove_cols(self, n):
-        pass
+    def remove_row_top(self):
+        self.array = self.array[1:]
+
+    def add_col_right(self):
+        for i in range(len(self.array)):
+            self.array[i] += [False]
+
+    def remove_col_right(self):
+        for i in range(len(self.array)):
+            self.array[i] = self.array[i][:-1]
+
+    def add_col_left(self):
+        for i in range(len(self.array)):
+            self.array[i].insert(0, False)
+
+    def remove_col_left(self):
+        for i in range(len(self.array)):
+            self.array[i] = self.array[i][1:]
 
     def get_array(self):
         return self.array
@@ -767,12 +805,12 @@ if __name__ == "__main__":
     # create the border, gridlines, tileset, and camera
     border = Border(w, h)
     grid = Gridlines(w, h)
-    camera = Camera(screen.get_width(), screen.get_height())
+    camera = Camera(w*TILE_WIDTH, h*TILE_WIDTH, screen.get_width(), screen.get_height())
     done = False
 
     while not done:
-        camrect = camera.get_rect()
         clock.tick(100)
+        camrect = camera.get_rect()
 
         # handle events (check for quit signal)
         for event in pygame.event.get():
@@ -780,13 +818,53 @@ if __name__ == "__main__":
                 pygame.quit()
                 sys.exit()
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_RETURN:
+                if event.key == pygame.K_ESCAPE:
+                    pygame.quit()
+                    sys.exit()
+                elif event.key == pygame.K_RETURN:
                     done = True
+                elif event.key == pygame.K_s:
+                    tileset.add_row_bottom()
+                    h += 1
+                elif event.key == pygame.K_w:
+                    camera.move_down()
+                    tileset.add_row_top()
+                    h += 1
+                elif event.key == pygame.K_d:
+                    tileset.add_col_right()
+                    w += 1
+                elif event.key == pygame.K_a:
+                    camera.move_right()
+                    tileset.add_col_left()
+                    w += 1
+                elif event.key == pygame.K_i:
+                    if h > 2:
+                        tileset.remove_row_bottom()
+                        h -= 1
+                elif event.key == pygame.K_k:
+                    if h > 2:
+                        camera.move_up()
+                        tileset.remove_row_top()
+                        h -= 1
+                elif event.key == pygame.K_j:
+                    if w > 2:
+                        tileset.remove_col_right()
+                        w -= 1
+                elif event.key == pygame.K_l:
+                    if w > 2:
+                        camera.move_left()
+                        tileset.remove_col_left()
+                        w -= 1
+
             camera.handle_event(event)
             tileset.handle_event(event, screen, camrect)
 
         # update the objects that change
         camera.update(screen, w, h)
+        border.update(w, h)
+        grid.update(w, h)
+
+        camrect = camera.get_rect()
 
         # draw everything to the screen
         screen.fill(white)

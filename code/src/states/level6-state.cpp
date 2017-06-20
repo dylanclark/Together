@@ -69,8 +69,7 @@ void Level6State::update(Engine* game)
         w_char->move(this, game);
     }
 
-    for (int i = 0; i < crates.size(); i++)
-    {
+    for (int i = 0; i < crates.size(); i++) {
         crates[i]->update();
     }
 
@@ -214,9 +213,7 @@ void Level6State::interactions(Engine* game)
         }
 
         // init crate #1
-        crates.push_back(new Crate(5 * TILE_WIDTH, 7  * TILE_WIDTH, FOUR_BY_TWO));
-        crates.back()->tex = crate_tex_four_by_two;
-        crates.back()->black = true;
+        crates.push_back(new Crate(5, 7, FOUR_BY_TWO, true, &crate_tex_four_by_two));
 
     }
     else {

@@ -92,12 +92,12 @@ public:
     void update();
     void render(int b_status, SDL_Rect* camera, Engine* game, Levelstate* level);
 
-    Texture tex;
+    Texture* tex;
     int crate_type;
     bool black;
     bool pushed;
 
-    Crate(int x, int y, int type);
+    Crate(int x, int y, int type, bool is_black, Texture* texture);
 
     Tile* tileset[MAX_BORDER];
     void create_tiles(int b_status, Levelstate* level);

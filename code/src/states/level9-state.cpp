@@ -219,17 +219,14 @@ void Level9State::interactions(Engine* game)
 {
 
     // if both are on level end object
-    if(b_level_end.check(b_char->get_rect()) && w_level_end.check(w_char->get_rect()))
-
-    {
+    if(b_level_end.check(b_char->get_rect()) && w_level_end.check(w_char->get_rect())) {
         // change state to level 5
         //change_state(game, new Level5State);
     }
 
 
     //if black button is activated
-    if(b_button.check(b_char->get_rect()) && b_button.used == false)
-    {
+    if(b_button.check(b_char->get_rect()) && b_button.used == false) {
         // used
         b_button.used = true;
 
@@ -243,23 +240,18 @@ void Level9State::interactions(Engine* game)
         }
 
         // init crate #1
-        crates.push_back(new Crate(5 * TILE_WIDTH, 12 * TILE_WIDTH, FOUR_BY_TWO));
-        crates.back()->tex = w_crate_tex_four_by_two;
-        crates.back()->black = false;
+        crates.push_back(new Crate(5, 12, FOUR_BY_TWO, false, &w_crate_tex_four_by_two));
 
     }
-    else
-    {
+    else {
         b_button.activated = false;
 
-        if(b_button.status != BUTT_INACTIVE)
-        {
+        if(b_button.status != BUTT_INACTIVE) {
             b_button.status = (b_button.status + 1) % 4;
         }
     }
     //if white button is activated
-    if(w_button.check(w_char->get_rect()) && w_button.used == false)
-    {
+    if(w_button.check(w_char->get_rect()) && w_button.used == false) {
         // used
         w_button.used = true;
 
@@ -267,23 +259,18 @@ void Level9State::interactions(Engine* game)
         w_button.activated = true;
 
         // animate
-        if(w_button.status == BUTT_INACTIVE)
-        {
+        if(w_button.status == BUTT_INACTIVE) {
             w_button.status = (w_button.status + 1) % 4;
         }
 
         // init crate #2
-        crates.push_back(new Crate(5 * TILE_WIDTH, 17 * TILE_WIDTH, FOUR_BY_TWO));
-        crates.back()->tex = w_crate_tex_four_by_two;
-        crates.back()->black = false;
+        crates.push_back(new Crate(5, 17, FOUR_BY_TWO, false, &w_crate_tex_four_by_two));
 
     }
-    else
-    {
+    else {
         w_button.activated = false;
 
-        if(w_button.status != BUTT_INACTIVE)
-        {
+        if(w_button.status != BUTT_INACTIVE) {
             w_button.status = (w_button.status + 1) % 4;
         }
     }

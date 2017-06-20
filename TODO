@@ -2,7 +2,6 @@
 TO-DO LIST
 
 LOGISTICS:
-  - python script for generating level tilings
   - make class variables private, expose them with methods
   - private methods for dots, camera, etc. -> instead of level "moving" and "tracking", just have the level "update" the object, and have the public update functions for each object use private methods for specific things like tracking and stuff
   - general object class, each level can then have a list of objects
@@ -10,8 +9,7 @@ LOGISTICS:
   - more private things!!! just update, draw, and such should be public. and get_col_rect()
   - maybe there's a way to void passing the engine around everywhere?
   - change initialization functions for Dot and things like it: should take arguments (x, y, etc.) and initialize traits
-  - remove all initializations in headers. if you want standardized values, then just set them in the allocation function and adjust them
-later. it's basically the same thing
+  - remove all initializations in headers. if you want standardized values, then just set them in the allocation function and adjust them later. it's basically the same thing
 
 GAMEPLAY:
   - more objects: waterfall? decorative objects, like grass/insects/flowers/what else?

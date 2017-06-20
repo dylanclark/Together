@@ -206,9 +206,7 @@ void Level5State::interactions(Engine* game)
 {
 
     // if both are on level end object
-    if(b_level_end.check(b_char->get_rect()) && w_level_end.check(w_char->get_rect()))
-
-    {
+    if(b_level_end.check(b_char->get_rect()) && w_level_end.check(w_char->get_rect())) {
         // change state to level 5
         change_state(game, new Level6State);
     }

@@ -8,8 +8,8 @@
 #include <SDL2/SDL_image.h>
 
 // tile dimensions!
-#define TILE_WIDTH 60
-#define TILE_WIDTH_TEX 16
+static const int TILE_WIDTH = 60;
+static const int TILE_WIDTH_TEX = 16;
 
 typedef enum _tiletype {
     B_BACK = 0,

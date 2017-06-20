@@ -251,9 +251,7 @@ void Level8State::interactions(Engine* game)
         }
 
         // init crate #1
-        crates.push_back(new Crate(10 * TILE_WIDTH, 11 * TILE_WIDTH, FOUR_BY_TWO));
-        crates.back()->tex = w_crate_tex_four_by_two;
-        crates.back()->black = false;
+        crates.push_back(new Crate(10, 11, FOUR_BY_TWO, false, &w_crate_tex_four_by_two));
 
         // initialize black springboard
         w_springboard.tex = w_springboard_tex;
@@ -290,9 +288,7 @@ void Level8State::interactions(Engine* game)
         b_springboard.y_spring = 10;
 
         // init crate #2
-        crates.push_back(new Crate(5 * TILE_WIDTH, 17 * TILE_WIDTH, FOUR_BY_TWO));
-        crates.back()->tex = w_crate_tex_four_by_two;
-        crates.back()->black = false;
+        crates.push_back(new Crate(5, 17, FOUR_BY_TWO, false, &w_crate_tex_four_by_two));
     }
     else {
         w_button.activated = false;

@@ -221,9 +221,7 @@ void Level7State::interactions(Engine* game)
         }
 
         // init crate #1
-        crates.push_back(new Crate(5 * TILE_WIDTH, 12 * TILE_WIDTH, FOUR_BY_TWO));
-        crates.back()->tex = w_crate_tex_four_by_two;
-        crates.back()->black = false;
+        crates.push_back(new Crate(5, 12, FOUR_BY_TWO, false, &w_crate_tex_four_by_two));
     }
     else {
         b_button.activated = false;
@@ -246,9 +244,7 @@ void Level7State::interactions(Engine* game)
         }
 
         // init crate #2
-        crates.push_back(new Crate(5 * TILE_WIDTH, 17 * TILE_WIDTH, FOUR_BY_TWO));
-        crates.back()->tex = w_crate_tex_four_by_two;
-        crates.back()->black = false;
+        crates.push_back(new Crate(5, 17, FOUR_BY_TWO, false, &w_crate_tex_four_by_two));
 
     }
     else {
