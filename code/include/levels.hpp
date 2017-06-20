@@ -48,14 +48,14 @@ private:
 class LevelEnd
 {
 public:
-    LevelEnd();
-
+    LevelEnd(int x, int y, bool is_black, SDL_Renderer* rend);
+    void move(int x, int y);
+    bool check(SDL_Rect dot_rect);
     void render(SDL_Rect* camera, Engine* game);
 
+private:
     SDL_Rect col_rect;
     Texture tex;
-
-    bool check(SDL_Rect dot_rect);
 };
 
 class LevelMessage
@@ -75,6 +75,11 @@ class Tile;
 class Levelstate : public Gamestate
 {
 public:
+
+    virtual void load_tiles(Engine* game) = 0;
+    virtual void init_objects(Engine* game) = 0;
+    virtual void interactions(Engine* game) = 0;
+
     // tile dimensions of level
     int width;
     int height;
@@ -85,8 +90,9 @@ public:
     Dot* w_char;
 
     // objects
-    LevelEnd b_level_end;
-    LevelEnd w_level_end;
+    LevelEnd* b_level_end;
+    LevelEnd* w_level_end;
+
     Button b_button;
     Button w_button;
     Button b_button2;
@@ -100,19 +106,10 @@ public:
     LevelMessage level2_start;
 
     // textures
-    Texture b_char_tex;
-    Texture w_char_tex;
     Texture tile_tex;
-    Texture b_end_tex;
-    Texture w_end_tex;
     Texture b_button_tex;
     Texture w_button_tex;
-    Texture crate_tex_four_by_two;
-    Texture w_crate_tex_four_by_two;
     Texture w_platform;
-    Texture crate_tex_four_by_one;
-    Texture crate_tex_three_by_two;
-    Texture crate_tex_two_by_two;
     Texture b_springboard_tex;
     Texture w_springboard_tex;
     Texture w_end_animate;

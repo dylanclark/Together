@@ -32,10 +32,11 @@ bool Texture::load_object(int w, int h, std::string path, SDL_Renderer* rend)
     // new texture!
     tex = NULL;
 
-    SDL_Surface* surface = IMG_Load(path.c_str());
+    SDL_Surface* surface = IMG_Load(("resources/textures/"+path).c_str());
     if (surface == NULL)
     {
-        printf("Unable to load image %s! SDL error: %s\n", path.c_str(), SDL_GetError());
+        printf("Unable to load image %s! SDL error: %s\n",
+               ("resources/textures/"+path).c_str(), SDL_GetError());
         return false;
     }
     else
@@ -67,10 +68,10 @@ bool Texture::load_tile_sheet(std::string path, SDL_Renderer* rend)
     // new texture!
     tex = NULL;
 
-    SDL_Surface* surface = IMG_Load(path.c_str());
+    SDL_Surface* surface = IMG_Load(("resources/textures/"+path).c_str());
     if (surface == NULL)
     {
-        printf("Unable to load image %s! SDL error: %s\n", path.c_str(), SDL_GetError());
+        printf("Unable to load image %s! SDL error: %s\n", ("resources/textures/"+path).c_str(), SDL_GetError());
         return false;
     }
     else
@@ -87,7 +88,6 @@ bool Texture::load_tile_sheet(std::string path, SDL_Renderer* rend)
             width = TILE_WIDTH;
             height = TILE_WIDTH;
         }
-
         SDL_FreeSurface(surface);
     }
 

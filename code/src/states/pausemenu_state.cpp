@@ -17,25 +17,25 @@
 
 void PauseMenuState::init(Engine* game)
 {
-    if (!ResumeButton.load_object(64, 16, "resources/textures/menu/resume.png", game->rend))
+    if (!ResumeButton.load_object(64, 16, "menu/resume.png", game->rend))
     {
         printf("Failed to load resume button object!\n");
         return;
     }
 
-    if (!LevelSelectButton.load_object(128, 16, "resources/textures/menu/level_select.png", game->rend))
+    if (!LevelSelectButton.load_object(128, 16, "menu/level_select.png", game->rend))
     {
         printf("Failed to load level select button texture!\n");
         return;
     }
 
-    if (!OptionsButton.load_object(64, 16, "resources/textures/menu/options.png", game->rend))
+    if (!OptionsButton.load_object(64, 16, "menu/options.png", game->rend))
     {
         printf("Failed to load options button texture!\n");
         return;
     }
 
-    if (!SaveAndQuitButton.load_object(128, 16, "resources/textures/menu/save_and_quit.png", game->rend))
+    if (!SaveAndQuitButton.load_object(128, 16, "menu/save_and_quit.png", game->rend))
     {
         printf("Failed to load save/quit button texture!\n");
         return;

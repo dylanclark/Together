@@ -19,13 +19,13 @@
 
 void LevelSelectMenuState::init(Engine* game)
 {
-    if (!level_slider.load_object(96, 16, "resources/textures/menu/level_slider.png", game->rend))
+    if (!level_slider.load_object(96, 16, "menu/level_slider.png", game->rend))
     {
         printf("Failed to load resume button object!\n");
         return;
     }
 
-    if (!back_button.load_object(64, 16, "resources/textures/menu/back.png", game->rend))
+    if (!back_button.load_object(64, 16, "menu/back.png", game->rend))
     {
         printf("Failed to load save/quit button texture!\n");
         return;

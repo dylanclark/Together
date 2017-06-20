@@ -11,13 +11,12 @@
 #include <char.hpp>
 #include <tiles.hpp>
 
-Crate::Crate(int x, int y, int type, bool is_black, Texture* texture)
+Crate::Crate(int x, int y, int type, bool is_black, SDL_Renderer* rend)
 {
     col_rect.x = x * TILE_WIDTH;
     col_rect.y = y * TILE_WIDTH;
     crate_type = type;
     black = is_black;
-    tex = texture;
     pushed = false;
     generating = true;
 
@@ -26,6 +25,18 @@ Crate::Crate(int x, int y, int type, bool is_black, Texture* texture)
         case FOUR_BY_TWO:
             col_rect.w = 4 * TILE_WIDTH;
             col_rect.h = 2 * TILE_WIDTH;
+            if (black) {
+                if (!tex.load_object(TILE_WIDTH * 4, TILE_WIDTH * 2, "black/crates/b_crate.png", rend)) {
+                    printf("Failed to load black crate (4x2) texture!\n");
+                    return;
+                }
+            }
+            else {
+                if (!tex.load_object(TILE_WIDTH * 4, TILE_WIDTH * 2, "white/crates/w_crate.png", rend)) {
+                    printf("Failed to load white crate (4x2) texture!\n");
+                    return;
+                }
+            }
             break;
         case FOUR_BY_ONE:
             col_rect.w = 4 * TILE_WIDTH;
@@ -72,12 +83,12 @@ void Crate::render(int b_status, SDL_Rect* camera, Engine* game, Levelstate* lev
 
     // render based on char status
     if ((b_status == CHAR_ACTIVE && black) || (b_status == CHAR_INACTIVE && !black)) {
-        tex->render(col_rect.x, col_rect.y, &active_clip, camera, game);
+        tex.render(col_rect.x, col_rect.y, &active_clip, camera, game);
         if (!generating)
             generating = true;
     }
     else {
-        tex->render(col_rect.x, col_rect.y, &inactive_clip, camera, game);
+        tex.render(col_rect.x, col_rect.y, &inactive_clip, camera, game);
 
         if (generating) {
             create_tiles(b_status, level);

@@ -23,7 +23,7 @@ public:
     void update(Engine* game);
     void draw(Engine* game);
 
-    void load_textures(Engine* game);
+    void load_tiles(Engine* game);
     void init_objects(Engine* game);
     void interactions(Engine* game);
 };
@@ -38,7 +38,7 @@ public:
     void update(Engine* game);
     void draw(Engine* game);
 
-    void load_textures(Engine* game);
+    void load_tiles(Engine* game);
     void init_objects(Engine* game);
     void interactions(Engine* game);
 };
@@ -53,7 +53,7 @@ public:
     void update(Engine* game);
     void draw(Engine* game);
 
-    void load_textures(Engine* game);
+    void load_tiles(Engine* game);
     void init_objects(Engine* game);
     void interactions(Engine* game);
 };
@@ -68,7 +68,7 @@ public:
     void update(Engine* game);
     void draw(Engine* game);
 
-    void load_textures(Engine* game);
+    void load_tiles(Engine* game);
     void init_objects(Engine* game);
     void interactions(Engine* game);
 };
@@ -83,7 +83,7 @@ public:
     void update(Engine* game);
     void draw(Engine* game);
 
-    void load_textures(Engine* game);
+    void load_tiles(Engine* game);
     void init_objects(Engine* game);
     void interactions(Engine* game);
 };
@@ -98,7 +98,7 @@ public:
     void update(Engine* game);
     void draw(Engine* game);
 
-    void load_textures(Engine* game);
+    void load_tiles(Engine* game);
     void init_objects(Engine* game);
     void interactions(Engine* game);
 };
@@ -113,7 +113,7 @@ public:
     void update(Engine* game);
     void draw(Engine* game);
 
-    void load_textures(Engine* game);
+    void load_tiles(Engine* game);
     void init_objects(Engine* game);
     void interactions(Engine* game);
 };
@@ -128,7 +128,7 @@ public:
     void update(Engine* game);
     void draw(Engine* game);
 
-    void load_textures(Engine* game);
+    void load_tiles(Engine* game);
     void init_objects(Engine* game);
     void interactions(Engine* game);
 };
@@ -143,7 +143,7 @@ public:
     void update(Engine* game);
     void draw(Engine* game);
 
-    void load_textures(Engine* game);
+    void load_tiles(Engine* game);
     void init_objects(Engine* game);
     void interactions(Engine* game);
 };

@@ -36,7 +36,7 @@ public:
     int frame;
     bool black;
 
-    Dot(int x, int y, bool is_black, Texture* texture);
+    Dot(int x, int y, bool is_black, SDL_Renderer* rend);
     bool handle_event(SDL_Event &e, Levelstate* level, Engine* game);
     void move(Levelstate* level, Engine* game);
     void render(SDL_Rect* camera, Engine* game);
@@ -51,7 +51,7 @@ private:
     float x_vel, y_vel;
     bool up, down, left, right;
     Controller* controller;
-    Texture* tex;
+    Texture tex;
     SDL_Rect col_rect;
 
     bool crate_col(Levelstate* level, Engine* game);

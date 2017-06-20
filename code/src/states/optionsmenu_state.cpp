@@ -18,25 +18,25 @@
 
 void OptionsMenuState::init(Engine* game)
 {
-    if (!volume_slider.load_object(128, 16, "resources/textures/menu/volume.png", game->rend))
+    if (!volume_slider.load_object(128, 16, "menu/volume.png", game->rend))
     {
         printf("Failed to load resume button object!\n");
         return;
     }
 
-    if (!sfx_slider.load_object(128, 16, "resources/textures/menu/sfx.png", game->rend))
+    if (!sfx_slider.load_object(128, 16, "menu/sfx.png", game->rend))
     {
         printf("Failed to load level select button texture!\n");
         return;
     }
 
-    if (!controls_button.load_object(96, 16, "resources/textures/menu/controls.png", game->rend))
+    if (!controls_button.load_object(96, 16, "menu/controls.png", game->rend))
     {
         printf("Failed to load options button texture!\n");
         return;
     }
 
-    if (!back_button.load_object(64, 16, "resources/textures/menu/back.png", game->rend))
+    if (!back_button.load_object(64, 16, "menu/back.png", game->rend))
     {
         printf("Failed to load save/quit button texture!\n");
         return;

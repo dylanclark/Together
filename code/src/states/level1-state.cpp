@@ -22,7 +22,7 @@
 void Level1State::init(Engine* game)
 {
     // load textures
-    load_textures(game);
+    load_tiles(game);
 
     // initialize objects
     init_objects(game);
@@ -89,7 +89,7 @@ void Level1State::draw(Engine* game)
     }
 
     b_char->render(cam_rect, game);
-    b_level_end.render(cam_rect, game);
+    b_level_end->render(cam_rect, game);
     SDL_RenderPresent(game->rend);
 }
 
@@ -109,29 +109,18 @@ void Level1State::cleanup()
             crates.pop_back();
         }
     }
-
-    // free all textures
-    b_char_tex.free();
-    w_char_tex.free();
-
+    delete b_char;
+    delete camera;
+    delete b_level_end;
+    tile_tex.free();
 }
 
-void Level1State::load_textures(Engine* game)
+void Level1State::load_tiles(Engine* game)
 {
-    // LOAD ALL TEXTURES
-    if (!b_char_tex.load_tile_sheet("resources/textures/black/b_char.png", game->rend)) {
-        printf("Failed to load black dot texture!\n");
-        return;
-    }
-    if (!tile_tex.load_tile_sheet("resources/textures/tile_sheet.png", game->rend)) {
+    if (!tile_tex.load_tile_sheet("tile_sheet.png", game->rend)) {
         printf("Failed to load tile sheet texture!\n");
         return;
     }
-    if (!b_end_tex.load_tile_sheet("resources/textures/black/level_end/black_end.png", game->rend)) {
-        printf("Failed to load black level end texter!\n");
-        return;
-    }
-
     if (!set_tiles(this, tileset, "level01.lvl")) {
         printf("Failed to load level 1 map!\n");
         return;
@@ -140,28 +129,17 @@ void Level1State::load_textures(Engine* game)
 
 void Level1State::init_objects(Engine* game)
 {
-    // initialize black dot
-    b_char = new class Dot(2, 7, true, &b_char_tex);
+    b_char = new class Dot(2, 7, true, game->rend);
     camera = new class Camera(game->screen_width, game->screen_height,
                               width * TILE_WIDTH, height * TILE_WIDTH,
                               b_char->get_rect(), b_char->get_rect());
-
-    // initialize black level end
-    b_level_end.tex = b_end_tex;
-    b_level_end.col_rect.x = 1360;
-    b_level_end.col_rect.y = 720;
-
-
+    b_level_end = new class LevelEnd(23, 12, true, game->rend);
 }
 
 void Level1State::interactions(Engine* game)
 {
     // if both are on level end object
-    if(b_level_end.check(b_char->get_rect()))
-    {
-        b_char->center(&b_level_end.col_rect);
-
-        // change state to level 2
+    if(b_level_end->check(b_char->get_rect())) {
         change_state(game, new Level2State);
     }
 

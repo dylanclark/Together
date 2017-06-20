@@ -16,19 +16,19 @@
 
 void QuitMenuState::init(Engine* game)
 {
-    if (!quit_title.load_object(128, 16, "resources/textures/menu/quit_title.png", game->rend))
+    if (!quit_title.load_object(128, 16, "menu/quit_title.png", game->rend))
     {
         printf("Failed to load quit title object!\n");
         return;
     }
 
-    if (!yes_button.load_object(32, 16, "resources/textures/menu/yes_quit.png", game->rend))
+    if (!yes_button.load_object(32, 16, "menu/yes_quit.png", game->rend))
     {
         printf("Failed to load yes button texture!\n");
         return;
     }
 
-    if (!no_button.load_object(32, 16, "resources/textures/menu/no.png", game->rend))
+    if (!no_button.load_object(32, 16, "menu/no.png", game->rend))
     {
         printf("Failed to load no button texture!\n");
         return;

@@ -16,7 +16,7 @@
 extern Texture b_end_animate;
 extern Texture w_end_animate;
 
-Dot::Dot(int x, int y, bool is_black, Texture* texture)
+Dot::Dot(int x, int y, bool is_black, SDL_Renderer* rend)
 {
     // initialize velocity
     x_vel = 0;
@@ -34,12 +34,20 @@ Dot::Dot(int x, int y, bool is_black, Texture* texture)
     black = is_black;
     if (black) {
         status = CHAR_ACTIVE;
+        if (!tex.load_tile_sheet("black/b_char.png", rend))
+        {
+            printf("Failed to load black dot texture!\n");
+            return;
+        }
     }
     else {
         status = CHAR_INACTIVE;
+        if (!tex.load_tile_sheet("white/w_char.png", rend))
+        {
+            printf("Failed to load white dot texture!\n");
+            return;
+        }
     }
-
-    tex = texture;
 
     // initialize animation
     frame = 0;
@@ -647,10 +655,10 @@ void Dot::render(SDL_Rect* camera, Engine* game)
     {
         // different cases render appropriate clips
         case CHAR_ACTIVE:
-            tex->render(col_rect.x, col_rect.y, &active_clip, camera, game);
+            tex.render(col_rect.x, col_rect.y, &active_clip, camera, game);
             break;
         case CHAR_INACTIVE:
-            tex->render(col_rect.x, col_rect.y, &inactive_clip, camera, game);
+            tex.render(col_rect.x, col_rect.y, &inactive_clip, camera, game);
             break;
         case CHAR_INACTIVATE:
         {
@@ -661,7 +669,7 @@ void Dot::render(SDL_Rect* camera, Engine* game)
             SDL_Rect inactivate_clip = {16 * frame, 0, 16, 16};
 
             // render that
-            tex->render(col_rect.x, col_rect.y, &inactivate_clip, camera, game);
+            tex.render(col_rect.x, col_rect.y, &inactivate_clip, camera, game);
 
             // change the status if animation is over!
             if (frame == ANIMATION_LENGTH - 1)
@@ -680,7 +688,7 @@ void Dot::render(SDL_Rect* camera, Engine* game)
             SDL_Rect activate_clip = {16 * (frame + 8), 0, 16, 16};
 
             // render that
-            tex->render(col_rect.x, col_rect.y, &activate_clip, camera, game);
+            tex.render(col_rect.x, col_rect.y, &activate_clip, camera, game);
 
             // change the status if animation is over!
             if (frame == ANIMATION_LENGTH - 1)

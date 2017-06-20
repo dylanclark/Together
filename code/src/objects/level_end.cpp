@@ -11,19 +11,33 @@
 #include <char.hpp>
 #include <levels.hpp>
 
-// reinitialize textures
-extern Texture b_level_end;
-extern Texture w_level_end;
-
 // level end class
-LevelEnd::LevelEnd()
+LevelEnd::LevelEnd(int x, int y, bool is_black, SDL_Renderer* rend)
 {
     // initialize collision rectangle
     col_rect.w = TILE_WIDTH;
     col_rect.h = TILE_WIDTH;
-    col_rect.x = 0;
-    col_rect.y = 0;
+    col_rect.x = x * TILE_WIDTH;
+    col_rect.y = y * TILE_WIDTH;
 
+    if (is_black) {
+        if (!tex.load_tile_sheet("black/level_end/black_end.png", rend)) {
+            printf("Failed to load black level end texture!\n");
+            return;
+        }
+    }
+    else {
+        if (!tex.load_tile_sheet("white/level_end/white_end.png", rend)) {
+            printf("Failed to load  white level end texture!\n");
+            return;
+        }
+    }
+}
+
+void LevelEnd::move(int x, int y)
+{
+    col_rect.x = x * TILE_WIDTH;
+    col_rect.y = y * TILE_WIDTH;
 }
 
 // draw on screen

@@ -15,7 +15,7 @@
 
 void MainMenuState::init(Engine* game)
 {
-    if (!fade_in_tex.load_object(16, 16, "resources/textures/white/background/white_back.png", game->rend))
+    if (!fade_in_tex.load_object(16, 16, "white/background/white_back.png", game->rend))
     {
         printf("Failed to load fade-in object!\n");
         return;
@@ -25,28 +25,28 @@ void MainMenuState::init(Engine* game)
         fade_in_tex.set_blend_mode(SDL_BLENDMODE_BLEND);
     }
 
-    if (!title.load_object(128, 16, "resources/textures/menu/title.png", game->rend))
+    if (!title.load_object(128, 16, "menu/title.png", game->rend))
     {
         printf("Failed to load title texture!\n");
         return;
     }
 
-    if (!new_game_button.load_object(96, 16, "resources/textures/menu/new_game.png", game->rend))
+    if (!new_game_button.load_object(96, 16, "menu/new_game.png", game->rend))
     {
         printf("Failed to load new game button texture!\n");
         return;
     }
-    if (!continue_button.load_object(96, 16, "resources/textures/menu/continue.png", game->rend))
+    if (!continue_button.load_object(96, 16, "menu/continue.png", game->rend))
     {
         printf("Failed to load continue button texture!\n");
         return;
     }
-    if (!OptionsButton.load_object(64, 16, "resources/textures/menu/options.png", game->rend))
+    if (!OptionsButton.load_object(64, 16, "menu/options.png", game->rend))
     {
         printf("Failed to load options button texture!\n");
         return;
     }
-    if (!quit_button.load_object(32, 16, "resources/textures/menu/quit.png", game->rend))
+    if (!quit_button.load_object(32, 16, "menu/quit.png", game->rend))
     {
         printf("Failed to load quit button texture!\n");
         return;

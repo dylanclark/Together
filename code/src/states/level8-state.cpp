@@ -19,7 +19,7 @@
 void Level8State::init(Engine* game)
 {
     // load textures
-    load_textures(game);
+    load_tiles(game);
 
     // initialize objects
     init_objects(game);
@@ -97,8 +97,8 @@ void Level8State::draw(Engine* game)
     }
 
     b_char->render(cam_rect, game);
-    b_level_end.render(cam_rect, game);
-    w_level_end.render(cam_rect, game);
+    b_level_end->render(cam_rect, game);
+    w_level_end->render(cam_rect, game);
     w_char->render(cam_rect, game);
     b_button.render(cam_rect, game);
     w_button.render(cam_rect, game);
@@ -110,29 +110,27 @@ void Level8State::draw(Engine* game)
 void Level8State::cleanup()
 {
     // iterate over all tiles and delete them all
-    for (int i = 0; i < width * height; i++)
-    {
-        if (tileset[i] != NULL)
-        {
+    for (int i = 0; i < width * height; i++) {
+        if (tileset[i] != NULL) {
             delete tileset[i];
             tileset[i] = NULL;
         }
     }
 
-    for (int i = 0; i < crates.size(); i++)
-    {
-        if (crates[i] != NULL)
-        {
+    for (int i = 0; i < crates.size(); i++) {
+        if (crates[i] != NULL) {
             delete crates[i];
             crates.pop_back();
         }
     }
 
-    // free all textures
-    b_char_tex.free();
-    w_char_tex.free();
+    delete b_char;
+    delete w_char;
+    delete camera;
+    delete b_level_end;
+    delete w_level_end;
+
     tile_tex.free();
-    crate_tex_four_by_two.free();
     b_button_tex.free();
     w_button_tex.free();
     b_springboard_tex.free();
@@ -142,50 +140,28 @@ void Level8State::cleanup()
 
 }
 
-void Level8State::load_textures(Engine* game)
+void Level8State::load_tiles(Engine* game)
 {
-    // LOAD ALL TEXTURES
-    if (!b_char_tex.load_tile_sheet("resources/textures/black/b_char.png", game->rend)) {
-        printf("Failed to load black dot texture!\n");
-        return;
-    }
-    if (!w_char_tex.load_tile_sheet("resources/textures/white/w_char.png", game->rend)) {
-        printf("Failed to load white dot texture!\n");
-        return;
-    }
-    if (!tile_tex.load_tile_sheet("resources/textures/tile_sheet.png", game->rend)) {
+    if (!tile_tex.load_tile_sheet("tile_sheet.png", game->rend)) {
         printf("Failed to load tile sheet texture!\n");
         return;
     }
-    if (!b_end_tex.load_tile_sheet("resources/textures/black/level_end/black_end.png", game->rend)) {
-        printf("Failed to load black level end texter!\n");
-        return;
-    }
-    if (!w_crate_tex_four_by_two.load_object(TILE_WIDTH * 4, TILE_WIDTH * 2, "resources/textures/white/crates/w_crate.png", game->rend)) {
-        printf("Failed to load white crate (4x2) texture!\n");
-        return;
-    }
-    if (!w_end_tex.load_tile_sheet("resources/textures/white/level_end/white_end.png", game->rend)) {
-        printf("Failed to load  white level end texture!\n");
-        return;
-    }
-    if (!b_button_tex.load_tile_sheet("resources/textures/black/button/b_button.png", game-> rend)) {
+    if (!b_button_tex.load_tile_sheet("black/button/b_button.png", game-> rend)) {
         printf("Failed to load  black button texture!\n");
         return;
     }
-    if (!w_button_tex.load_tile_sheet("resources/textures/white/button/w_button.png", game-> rend)) {
+    if (!w_button_tex.load_tile_sheet("white/button/w_button.png", game-> rend)) {
         printf("Failed to load white button texture!\n");
         return;
     }
-    if (!b_springboard_tex.load_tile_sheet("resources/textures/black/spring/b_spring.png", game-> rend)) {
+    if (!b_springboard_tex.load_tile_sheet("black/spring/b_spring.png", game-> rend)) {
         printf("Failed to load black springboard texture!\n");
         return;
     }
-    if (!w_springboard_tex.load_tile_sheet("resources/textures/white/spring/w_spring.png", game-> rend)) {
+    if (!w_springboard_tex.load_tile_sheet("white/spring/w_spring.png", game-> rend)) {
         printf("Failed to load white springboard texture!\n");
         return;
     }
-
     if (!set_tiles(this, tileset, "level08.lvl")) {
         printf("Failed to load level 8 map!\n");
         return;
@@ -195,21 +171,15 @@ void Level8State::load_textures(Engine* game)
 void Level8State::init_objects(Engine* game)
 {
 
-    b_char = new class Dot(2, 9, true, &b_char_tex);
-    w_char = new class Dot(2, 11, false, &w_char_tex);
+    b_char = new class Dot(2, 9, true, game->rend);
+    w_char = new class Dot(2, 11, false, game->rend);
     camera = new class Camera(game->screen_width, game->screen_height,
                               width * TILE_WIDTH, height * TILE_WIDTH,
                               b_char->get_rect(), w_char->get_rect());
 
     // initialize black level end
-    b_level_end.tex = b_end_tex;
-    b_level_end.col_rect.x = 1300;
-    b_level_end.col_rect.y = 16 * TILE_WIDTH;
-
-    // initialize white level end
-    w_level_end.tex = w_end_tex;
-    w_level_end.col_rect.x = 1300;
-    w_level_end.col_rect.y = 17 * TILE_WIDTH;
+    b_level_end = new class LevelEnd(22, 16, true, game->rend);
+    w_level_end = new class LevelEnd(22, 17, false, game->rend);
 
 
     // initialize black button
@@ -235,7 +205,7 @@ void Level8State::interactions(Engine* game)
 {
 
     // if both are on level end object
-    if(b_level_end.check(b_char->get_rect()) && w_level_end.check(w_char->get_rect())) {
+    if(b_level_end->check(b_char->get_rect()) && w_level_end->check(w_char->get_rect())) {
         change_state(game, new MainMenuState);
     }
 
@@ -251,7 +221,7 @@ void Level8State::interactions(Engine* game)
         }
 
         // init crate #1
-        crates.push_back(new Crate(10, 11, FOUR_BY_TWO, false, &w_crate_tex_four_by_two));
+        crates.push_back(new Crate(10, 11, FOUR_BY_TWO, false, game->rend));
 
         // initialize black springboard
         w_springboard.tex = w_springboard_tex;
@@ -288,7 +258,7 @@ void Level8State::interactions(Engine* game)
         b_springboard.y_spring = 10;
 
         // init crate #2
-        crates.push_back(new Crate(5, 17, FOUR_BY_TWO, false, &w_crate_tex_four_by_two));
+        crates.push_back(new Crate(5, 17, FOUR_BY_TWO, false, game->rend));
     }
     else {
         w_button.activated = false;

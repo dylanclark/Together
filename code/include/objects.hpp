@@ -86,18 +86,18 @@ public:
 class Crate
 {
 public:
-    float x_vel;
+    Crate(int x, int y, int type, bool is_black, SDL_Renderer* rend);
     SDL_Rect get_col_rect() { return col_rect; };
     bool check_col(SDL_Rect crate, Levelstate* level, Vector* repos);
     void update();
     void render(int b_status, SDL_Rect* camera, Engine* game, Levelstate* level);
 
-    Texture* tex;
+    Texture tex;
     int crate_type;
     bool black;
     bool pushed;
+    float x_vel;
 
-    Crate(int x, int y, int type, bool is_black, Texture* texture);
 
     Tile* tileset[MAX_BORDER];
     void create_tiles(int b_status, Levelstate* level);
