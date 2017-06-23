@@ -6,11 +6,11 @@
 #include <SDL2/SDL_mixer.h>
 
 // include headers
-#include <states/mainmenu_state.hpp>
+#include <states/mainmenu-state.hpp>
 #include <engine.hpp>
 #include <menu.hpp>
 #include <states/levelstate.hpp>
-#include <states/quitmenu_state.hpp>
+#include <states/quitmenu-state.hpp>
 #include <states/levelstate.hpp>
 
 void MainMenuState::init(Engine* game)

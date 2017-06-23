@@ -9,11 +9,11 @@
 #include <states/levelstate.hpp>
 #include <states/levelstate.hpp>
 #include <states/levelstate.hpp>
-#include <states/mainmenu_state.hpp>
+#include <states/mainmenu-state.hpp>
 #include <char.hpp>
 #include <levels.hpp>
 #include <engine.hpp>
-#include <states/pausemenu_state.hpp>
+#include <states/pausemenu-state.hpp>
 
 void Level5State::init(Engine* game)
 {
@@ -99,10 +99,8 @@ void Level5State::draw(Engine* game)
 void Level5State::cleanup()
 {
     // iterate over all tiles and delete them all
-    for (int i = 0; i < width * height; i++)
-    {
-        if (tileset[i] != NULL)
-        {
+    for (int i = 0; i < width * height; i++) {
+        if (tileset[i] != NULL) {
             delete tileset[i];
             tileset[i] = NULL;
         }
@@ -121,13 +119,11 @@ void Level5State::cleanup()
 
 void Level5State::load_tiles(Engine* game)
 {
-    if (!tile_tex.load_tile_sheet("tile_sheet.png", game->rend))
-    {
+    if (!tile_tex.load_tile_sheet("tile_sheet.png", game->rend)) {
         printf("Failed to load tile sheet texture!\n");
         return;
     }
-    if (!set_tiles(this, tileset, "level05.lvl"))
-    {
+    if (!set_tiles(this, tileset, "level05.lvl")) {
         printf("Failed to load level 5 map!\n");
         return;
     }

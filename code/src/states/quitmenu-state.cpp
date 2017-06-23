@@ -6,8 +6,8 @@
 #include <SDL2/SDL_mixer.h>
 
 // include headers
-#include <states/quitmenu_state.hpp>
-#include <states/mainmenu_state.hpp>
+#include <states/quitmenu-state.hpp>
+#include <states/mainmenu-state.hpp>
 #include <engine.hpp>
 #include <menu.hpp>
 #include <states/levelstate.hpp>

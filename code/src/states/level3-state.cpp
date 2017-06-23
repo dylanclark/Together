@@ -8,12 +8,12 @@
 // include headers
 #include <states/levelstate.hpp>
 #include <states/levelstate.hpp>
-#include <states/mainmenu_state.hpp>
+#include <states/mainmenu-state.hpp>
 #include <char.hpp>
 #include <objects.hpp>
 #include <levels.hpp>
 #include <engine.hpp>
-#include <states/pausemenu_state.hpp>
+#include <states/pausemenu-state.hpp>
 
 void Level3State::init(Engine* game)
 {

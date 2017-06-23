@@ -13,7 +13,7 @@
 
 // include all headers
 #include <engine.hpp>
-#include <states/mainmenu_state.hpp>
+#include <states/mainmenu-state.hpp>
 
 // Let's do this.
 int main(void)

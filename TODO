@@ -1,4 +1,18 @@
 
+WORLD 1: BASIC
+  - teach basic mechanics
+  - blocks they can both pass through
+  - buttons, crates, springs, etc.
+WORLD 2: MORE COMPLEX
+  - no new gimmicks, tougher puzzles
+  - cross-springs?
+WORLD 3: ACTIVATE BLOCKS (dotted lines)
+WORLD 4: SWITCH SIDES (manhole)
+WORLD 5: CONTROLLING BOTH AT ONCE?
+WORLD 6: SUPER CRYPTIC PUZZLES?
+
+maybe an explorable overworld? where if one dot enters a door they both go?
+
 TO-DO LIST
 
 LOGISTICS:
@@ -14,20 +28,6 @@ LOGISTICS:
 GAMEPLAY:
   - more objects: waterfall? decorative objects, like grass/insects/flowers/what else?
   - water? perhaps a gray tiles that both dots can swim in: something like this:
-
-        |------------------------------------------------                                         |
-        |               |                |              |                                         |
-        |     water     |                |              |                     --------------------|
-        |               |                |              |                     |       |           |
-o       |               |                |              |                     |       | water     |
--------------------------                |              |       ---------     --------------------|
-o                                        |    water     |       |       |                         |
-                                         |              |       |       |                         |
-                                         |              |       ---------                         |
-                                         |              |                                         |
-                                         |              |                                         |
-                                         |--------------------------------------------------------|
-
   - should this game be level-by-level or more open world?
   - perhaps a world-map with level selection?
   - perhaps a world-map with a few doorways that lead to sets of levels!

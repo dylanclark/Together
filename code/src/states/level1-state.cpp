@@ -11,8 +11,8 @@
 #include <states/levelstate.hpp>
 #include <states/levelstate.hpp>
 #include <states/levelstate.hpp>
-#include <states/mainmenu_state.hpp>
-#include <states/pausemenu_state.hpp>
+#include <states/mainmenu-state.hpp>
+#include <states/pausemenu-state.hpp>
 #include <char.hpp>
 #include <levels.hpp>
 #include <engine.hpp>
@@ -61,17 +61,13 @@ void Level1State::update(Engine* game)
     // clear the window
     SDL_RenderClear(game->rend);
 
-    // move the square
-    if (b_char->status == CHAR_ACTIVE) {
-        b_char->move(this, game);
-    }
+    b_char->move(this, game);
 
     for (int i = 0; i < crates.size(); i++) {
         crates[i]->update();
     }
 
     camera->update(b_char->get_rect(), b_char->get_rect());
-
     interactions(game);
 }
 

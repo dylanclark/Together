@@ -6,7 +6,7 @@
 #include <SDL2/SDL_mixer.h>
 
 // include headers
-#include <states/intro_state.hpp>
+#include <states/intro-state.hpp>
 
 void IntroState::update(Engine* game)
 {
