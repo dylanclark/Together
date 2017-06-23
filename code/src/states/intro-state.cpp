@@ -11,15 +11,13 @@
 void IntroState::update(Engine* game)
 {
     // switch to level if the sound effect is over
-    if (Mix_Playing(-1) == 0)
-    {
+    if (Mix_Playing(-1) == 0) {
         game->pop_state();
         return;
     }
 
     // update the levelstate if the intro state is still active
-    if (game->states.size() > 1)
-    {
+    if (game->states.size() > 1) {
         game->states.rbegin()[1]->update(game);
     }
 
@@ -33,5 +31,4 @@ void IntroState::handle_events(Engine* game)
 
     // handle those events, bruh
     while (SDL_PollEvent(&event)) { };
-
 }

@@ -97,7 +97,9 @@ bool Dot::handle_event(SDL_Event &e, Levelstate* level, Engine* game)
                     game->restart_state();
                     break;
                 case SDL_SCANCODE_ESCAPE:
-                    return false;
+                    if  (black) {
+                        level->pause(game);
+                    }
                     break;
                 default:
                     break;

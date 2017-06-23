@@ -75,10 +75,11 @@ class Tile;
 class Levelstate : public Gamestate
 {
 public:
-
     virtual void load_tiles(Engine* game) = 0;
     virtual void init_objects(Engine* game) = 0;
     virtual void interactions(Engine* game) = 0;
+
+    void pause(Engine* game);
 
     // tile dimensions of level
     int width;
@@ -112,14 +113,8 @@ public:
     Texture w_platform;
     Texture b_springboard_tex;
     Texture w_springboard_tex;
-    Texture w_end_animate;
-    Texture b_end_animate;
     Texture b_cross_spring_tex;
     Texture w_cross_spring_tex;
-    Texture level1_end_tex;
-    Texture level1_start_tex;
-    Texture level2_end_tex;
-    Texture level2_start_tex;
 
     // tileset
     Tile* tileset[MAX_SIZE];

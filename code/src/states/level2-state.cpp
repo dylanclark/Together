@@ -7,7 +7,6 @@
 
 // include headers
 #include <states/levelstate.hpp>
-#include <states/levelstate.hpp>
 #include <states/mainmenu-state.hpp>
 #include <char.hpp>
 #include <levels.hpp>
@@ -31,22 +30,15 @@ void Level2State::handle_events(Engine* game)
     SDL_Event event;
 
     // handle those events, bruh
-    while (SDL_PollEvent(&event))
-    {
-        switch (event.type)
-        {
+    while (SDL_PollEvent(&event)) {
+        switch (event.type) {
             case SDL_QUIT:
                 game->quit();
                 break;
         }
 
         // quit if he pressed escape
-        if (!b_char->handle_event(event, this, game))
-        {
-            Mix_PauseMusic();
-            Mix_PlayChannel(-1, game->sound->menu_exit_snd, 0);
-            game->push_state(new PauseMenuState);
-        }
+        b_char->handle_event(event, this, game);
     }
 
     shiftable = true;

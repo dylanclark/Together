@@ -7,8 +7,6 @@
 
 // include headers
 #include <states/levelstate.hpp>
-#include <states/levelstate.hpp>
-#include <states/levelstate.hpp>
 #include <states/mainmenu-state.hpp>
 #include <char.hpp>
 #include <levels.hpp>
@@ -46,11 +44,7 @@ void Level4State::handle_events(Engine* game)
         }
 
         // quit if he pressed escape
-        if (!b_char->handle_event(event, this, game)) {
-            Mix_PauseMusic();
-            Mix_PlayChannel(-1, game->sound->menu_exit_snd, 0);
-            game->push_state(new PauseMenuState);
-        }
+        b_char->handle_event(event, this, game);
         if (w_char != NULL) {
             w_char->handle_event(event, this, game);
         }
