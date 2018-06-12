@@ -33,25 +33,6 @@ void Level1State::init(Engine* game)
     }
 }
 
-void Level1State::update(Engine* game)
-{
-    // clear the window
-    SDL_RenderClear(game->rend);
-
-    for (int i = 0; i < chars.size(); i++) {
-        chars[i]->move(this, game);
-    }
-    for (int i = 0; i < crates.size(); i++) {
-        crates[i]->update();
-    }
-    if (chars.size() == 1) {
-        camera->update(chars[0]->get_rect(), chars[0]->get_rect());
-    } else {
-        camera->update(chars[0]->get_rect(), chars[1]->get_rect());
-    }
-    interactions(game);
-}
-
 void Level1State::draw(Engine* game)
 {
     SDL_Rect* cam_rect = camera->get_display();

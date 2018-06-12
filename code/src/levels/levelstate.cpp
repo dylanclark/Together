@@ -26,6 +26,25 @@ void Levelstate::handle_events(Engine* game)
     shiftable = true;
 }
 
+void Levelstate::update(Engine* game)
+{
+    // clear the window
+    SDL_RenderClear(game->rend);
+
+    for (int i = 0; i < chars.size(); i++) {
+        chars[i]->move(this, game);
+    }
+    for (int i = 0; i < crates.size(); i++) {
+        crates[i]->update();
+    }
+    if (chars.size() == 1) {
+        camera->update(chars[0]->get_rect(), chars[0]->get_rect());
+    } else {
+        camera->update(chars[0]->get_rect(), chars[1]->get_rect());
+    }
+    interactions(game);
+}
+
 void Levelstate::load_tiles(Engine* game, std::string lvlnum)
 {
     if (!tile_tex.load_tile_sheet("tile_sheet.png", game->rend, &palette)) {

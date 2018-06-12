@@ -75,6 +75,7 @@ class Tile;
 class Levelstate : public Gamestate
 {
 public:
+    void update(Engine* game);
     void handle_events(Engine* game);
     void load_tiles(Engine* game, std::string lvlnum);
     virtual void init_objects(Engine* game) = 0;
