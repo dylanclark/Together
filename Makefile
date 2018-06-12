@@ -65,9 +65,7 @@ $(1)/%.o: %.cpp
 	$(HIDE)$(CC) -c -I$$(INCLUDES) -I/usr/local/include -o $$(subst /,$$(PSEP),$$@) $$(subst /,$$(PSEP),$$<) -MMD
 endef
 
-
-
-# Indicate to make which targets are not files
+# indicate to make which targets are not files
 .PHONY: all ../build/resources resources clean directories
 
 all: directories $(BUILDDIR)/$(TARGET) ../build/resources

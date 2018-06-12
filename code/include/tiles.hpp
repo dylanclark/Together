@@ -8,7 +8,7 @@
 #include <SDL2/SDL_image.h>
 
 // tile dimensions!
-static const int TILE_WIDTH = 60;
+static const int TILE_WIDTH = 16;
 static const int TILE_WIDTH_TEX = 16;
 
 typedef enum _tiletype {
@@ -65,9 +65,12 @@ public:
     SDL_Rect get_col_rect();
 
     // edges and floors
-    bool floor_b, floor_w;
-    bool wall_b, wall_w;
-    bool ceiling_b, ceiling_w;
+    bool floor;
+    bool wall;
+    bool ceiling;
+
+    // is the tile black or nah?
+    bool black;
 
     // tile status
     int status;

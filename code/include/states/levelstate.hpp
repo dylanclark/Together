@@ -19,11 +19,9 @@ public:
     void init(Engine* game);
     void cleanup();
 
-    void handle_events(Engine* game);
     void update(Engine* game);
     void draw(Engine* game);
 
-    void load_tiles(Engine* game);
     void init_objects(Engine* game);
     void interactions(Engine* game);
 };
@@ -34,11 +32,9 @@ public:
     void init(Engine* game);
     void cleanup();
 
-    void handle_events(Engine* game);
     void update(Engine* game);
     void draw(Engine* game);
 
-    void load_tiles(Engine* game);
     void init_objects(Engine* game);
     void interactions(Engine* game);
 };
@@ -49,11 +45,9 @@ public:
     void init(Engine* game);
     void cleanup();
 
-    void handle_events(Engine* game);
     void update(Engine* game);
     void draw(Engine* game);
 
-    void load_tiles(Engine* game);
     void init_objects(Engine* game);
     void interactions(Engine* game);
 };
@@ -64,11 +58,9 @@ public:
     void init(Engine* game);
     void cleanup();
 
-    void handle_events(Engine* game);
     void update(Engine* game);
     void draw(Engine* game);
 
-    void load_tiles(Engine* game);
     void init_objects(Engine* game);
     void interactions(Engine* game);
 };
@@ -79,11 +71,9 @@ public:
     void init(Engine* game);
     void cleanup();
 
-    void handle_events(Engine* game);
     void update(Engine* game);
     void draw(Engine* game);
 
-    void load_tiles(Engine* game);
     void init_objects(Engine* game);
     void interactions(Engine* game);
 };
@@ -94,11 +84,9 @@ public:
     void init(Engine* game);
     void cleanup();
 
-    void handle_events(Engine* game);
     void update(Engine* game);
     void draw(Engine* game);
 
-    void load_tiles(Engine* game);
     void init_objects(Engine* game);
     void interactions(Engine* game);
 };
@@ -109,11 +97,9 @@ public:
     void init(Engine* game);
     void cleanup();
 
-    void handle_events(Engine* game);
     void update(Engine* game);
     void draw(Engine* game);
 
-    void load_tiles(Engine* game);
     void init_objects(Engine* game);
     void interactions(Engine* game);
 };
@@ -124,11 +110,9 @@ public:
     void init(Engine* game);
     void cleanup();
 
-    void handle_events(Engine* game);
     void update(Engine* game);
     void draw(Engine* game);
 
-    void load_tiles(Engine* game);
     void init_objects(Engine* game);
     void interactions(Engine* game);
 };
@@ -139,11 +123,9 @@ public:
     void init(Engine* game);
     void cleanup();
 
-    void handle_events(Engine* game);
     void update(Engine* game);
     void draw(Engine* game);
 
-    void load_tiles(Engine* game);
     void init_objects(Engine* game);
     void interactions(Engine* game);
 };

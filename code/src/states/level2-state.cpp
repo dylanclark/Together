@@ -16,32 +16,12 @@
 
 void Level2State::init(Engine* game)
 {
-    load_tiles(game);
+    load_tiles(game, "02");
     init_objects(game);
 
     if (game->read_save() < 2) {
         game->save(2);
     }
-}
-
-void Level2State::handle_events(Engine* game)
-{
-    // event handler
-    SDL_Event event;
-
-    // handle those events, bruh
-    while (SDL_PollEvent(&event)) {
-        switch (event.type) {
-            case SDL_QUIT:
-                game->quit();
-                break;
-        }
-
-        // quit if he pressed escape
-        b_char->handle_event(event, this, game);
-    }
-
-    shiftable = true;
 }
 
 void Level2State::update(Engine* game)
@@ -50,17 +30,16 @@ void Level2State::update(Engine* game)
     SDL_RenderClear(game->rend);
 
     // move the square
-    if (b_char->status == CHAR_ACTIVE)
-        b_char->move(this, game);
+    b_char->move(this, game);
 
     for (int i = 0; i < crates.size(); i++)
     {
         crates[i]->update();
     }
 
-    camera->update(b_char->get_rect(), b_char->get_rect());
-
     interactions(game);
+
+    camera->update(b_char->get_rect(), b_char->get_rect());
 }
 
 void Level2State::draw(Engine* game)
@@ -70,12 +49,12 @@ void Level2State::draw(Engine* game)
     // draw stuff to the screen!
     for (int i = 0; i < (width * height); i++)
     {
-        tileset[i]->render(b_char->status, cam_rect, game, &tile_tex);
+        tileset[i]->render(status, cam_rect, game, &tile_tex);
     }
 
     for (int i = 0; i < crates.size(); i++)
     {
-        crates[i]->render(b_char->status, cam_rect, game, this);
+        crates[i]->render(status, cam_rect, game, this);
     }
 
     b_char->render(cam_rect, game);
@@ -105,18 +84,6 @@ void Level2State::cleanup()
     delete camera;
     delete b_level_end;
     tile_tex.free();
-}
-
-void Level2State::load_tiles(Engine* game)
-{
-    if (!tile_tex.load_tile_sheet("tile_sheet.png", game->rend)) {
-        printf("Failed to load tile sheet texture!\n");
-        return;
-    }
-    if (!set_tiles(this, tileset, "level02.lvl")) {
-        printf("Failed to load level 2 map!\n");
-        return;
-    }
 }
 
 void Level2State::init_objects(Engine* game)

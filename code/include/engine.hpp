@@ -52,7 +52,6 @@ public:
 
 private:
     bool running_flag;
-
 };
 
 class Gamestate
@@ -69,6 +68,8 @@ public:
     {
         game->change_state(state);
     }
+
+    SDL_Color palette;
 
     Gamestate() { };
 };

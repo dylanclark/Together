@@ -1,17 +1,17 @@
 #!/usr/bin/env python
 
-# controls:
-#   to fill a rectangle of squares -
-#       (r/l)click the two corners of the rectangle
-#   add a row (top) - w
-#   add a row (bottom) - s
-#   add a column (left) - a
-#   add a column (right) - d
-#   remove a row (top) - k
-#   remove a row (bottom) - i
-#   remove a column (left) - l
-#   remove a column (right) - j
-#   output space separated file - enter
+__doc__="""controls:
+
+to fill a rectangle of squares, (r/l)click the two corners of the rectangle
+w     - add a row (top)
+s     - add a row (bottom)
+a     - add a column (left)
+d     - add a column (right)
+k     - remove a row (top) - k
+i     - remove a row (bottom) - i
+l     - remove a column (left) - l
+j     - remove a column (right) - j
+enter - output space separated file"""
 
 import pygame
 import sys
@@ -789,13 +789,15 @@ if __name__ == "__main__":
     size = 1080, 720
     white = 255, 255, 255
 
-    # get level dimensions from user
+    # ask if user wants to load
     screen = pygame.display.set_mode(size)
     if not yes_no(screen, "load file?"):
+        # get level dimensions from user
         w = int(get_str(screen, "width: "))
         h = int(get_str(screen, "height: "))
         tileset = Tileset(w, h)
     else:
+        # get level number to load
         lvl = str(int(get_str(screen, "level number: "))).zfill(2)
         with open("resources/level-files/level"+lvl+".lvl", "r") as fh:
             w, h = [int(x) for x in next(fh).split()]

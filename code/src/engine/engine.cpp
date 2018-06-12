@@ -82,7 +82,6 @@ bool Engine::init()
         success = false;
     }
 
-
     if (save_file.fail()) {
         printf("error opening save_file\n");
     }

@@ -24,7 +24,7 @@ Texture::~Texture()
     free();
 };
 
-bool Texture::load_object(int w, int h, std::string path, SDL_Renderer* rend)
+bool Texture::load_object(int w, int h, std::string path, SDL_Renderer* rend, SDL_Color* palette)
 {
     // ditch the last texture
     free();
@@ -39,28 +39,24 @@ bool Texture::load_object(int w, int h, std::string path, SDL_Renderer* rend)
                ("resources/textures/"+path).c_str(), SDL_GetError());
         return false;
     }
-    else
-    {
-        tex = SDL_CreateTextureFromSurface(rend, surface);
-        if (tex == NULL)
-        {
-            printf("Unable to create texture from image! SDL error: %s\n", SDL_GetError());
-            return false;
-        }
-        else
-        {
-            // get image dimensions
-            width = w;
-            height = h;
-        }
-
-        SDL_FreeSurface(surface);
+    tex = SDL_CreateTextureFromSurface(rend, surface);
+    if (tex == NULL) {
+        printf("Unable to create texture from image! SDL error: %s\n", SDL_GetError());
+        return false;
     }
+    if (palette != NULL) {
+        SDL_SetTextureColorMod(tex, palette->r, palette->g, palette->b);
+    }
+    // get image dimensions
+    width = w;
+    height = h;
+
+    SDL_FreeSurface(surface);
 
     return true;
 };
 
-bool Texture::load_tile_sheet(std::string path, SDL_Renderer* rend)
+bool Texture::load_tile_sheet(std::string path, SDL_Renderer* rend, SDL_Color* palette)
 {
     // ditch the last texture
     free();
@@ -69,27 +65,23 @@ bool Texture::load_tile_sheet(std::string path, SDL_Renderer* rend)
     tex = NULL;
 
     SDL_Surface* surface = IMG_Load(("resources/textures/"+path).c_str());
-    if (surface == NULL)
-    {
-        printf("Unable to load image %s! SDL error: %s\n", ("resources/textures/"+path).c_str(), SDL_GetError());
+    if (surface == NULL) {
+        printf("Unable to load image %s! SDL error: %s\n",
+              ("resources/textures/"+path).c_str(), SDL_GetError());
         return false;
     }
-    else
-    {
-        tex = SDL_CreateTextureFromSurface(rend, surface);
-        if (tex == NULL)
-        {
-            printf("Unable to create texture from image! SDL error: %s\n", SDL_GetError());
-            return false;
-        }
-        else
-        {
-            // tile dimensions
-            width = TILE_WIDTH;
-            height = TILE_WIDTH;
-        }
-        SDL_FreeSurface(surface);
+    tex = SDL_CreateTextureFromSurface(rend, surface);
+    if (tex == NULL) {
+        printf("Unable to create texture from image! SDL error: %s\n", SDL_GetError());
+        return false;
     }
+    if (palette != NULL) {
+        SDL_SetTextureColorMod(tex, palette->r, palette->g, palette->b);
+    }
+    // tile dimensions
+    width = TILE_WIDTH;
+    height = TILE_WIDTH;
+    SDL_FreeSurface(surface);
 
     return true;
 };
@@ -116,7 +108,7 @@ void Texture::free()
     }
 }
 
-void Texture::render(int x, int y, SDL_Rect* clip, SDL_Rect* camera, Engine* game)
+void Texture::render(int x, int y, SDL_Rect* clip, SDL_Rect* camera, Engine* game, int dir)
 {
     int render_x = (x - camera->x) / ( (float) camera->w / (float) game->screen_width);
     int render_y = (y - camera->y) / ((float) camera->h / (float) game->screen_height);
@@ -127,7 +119,11 @@ void Texture::render(int x, int y, SDL_Rect* clip, SDL_Rect* camera, Engine* gam
     SDL_Rect render_rect = {render_x, render_y, render_w, render_h};
 
     // render to the screen
-    SDL_RenderCopy(game->rend, tex, clip, &render_rect);
+    if (dir == 0) {
+        SDL_RenderCopy(game->rend, tex, clip, &render_rect);
+    } else {
+        SDL_RenderCopyEx(game->rend, tex, clip, &render_rect, 0.0, NULL, SDL_FLIP_HORIZONTAL);
+    }
 }
 
 void Texture::render_tile(int x, int y, SDL_Rect* type_clip, SDL_Rect* active_clip, SDL_Rect* camera, Engine* game)

@@ -82,7 +82,7 @@ void Crate::render(int b_status, SDL_Rect* camera, Engine* game, Levelstate* lev
     SDL_Rect inactive_clip = {64 * 9, 0, 64, 32};
 
     // render based on char status
-    if ((b_status == CHAR_ACTIVE && black) || (b_status == CHAR_INACTIVE && !black)) {
+    if (black) {
         tex.render(col_rect.x, col_rect.y, &active_clip, camera, game);
         if (!generating)
             generating = true;
@@ -105,16 +105,15 @@ bool Crate::check_col(SDL_Rect crate, Levelstate* level, Vector* repos)
 {
     for (int i = 0; i < level->width * level->height; i++)
     {
-        bool iswall_b = (level->tileset[i]->wall_b && !level->tileset[i]->floor_b && !level->tileset[i]->ceiling_b);
-        bool iswall_w = (level->tileset[i]->wall_w && !level->tileset[i]->floor_w && !level->tileset[i]->ceiling_w);
+        bool is_wall = (level->tileset[i]->wall && !level->tileset[i]->floor && !level->tileset[i]->ceiling);
 
-        if (iswall_b && black)
+        if (is_wall && black)
         {
             check_collision(col_rect, level->tileset[i]->get_col_rect(), repos);
             col_rect.x += repos->x;
             return true;
         }
-        else if (iswall_w && !black)
+        else if (is_wall && !black)
         {
             check_collision(col_rect, level->tileset[i]->get_col_rect(), repos);
             col_rect.x += repos->x;

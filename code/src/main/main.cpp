@@ -14,6 +14,7 @@
 // include all headers
 #include <engine.hpp>
 #include <states/mainmenu-state.hpp>
+#include <states/levelstate.hpp>
 
 // Let's do this.
 int main(void)
@@ -25,7 +26,7 @@ int main(void)
     game.init();
 
     // initialize game state to main menu
-    game.change_state(new MainMenuState);
+    game.change_state(new Level1State);
 
     // run game
     while (game.running())

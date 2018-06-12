@@ -75,7 +75,8 @@ class Tile;
 class Levelstate : public Gamestate
 {
 public:
-    virtual void load_tiles(Engine* game) = 0;
+    void handle_events(Engine* game);
+    void load_tiles(Engine* game, std::string lvlnum);
     virtual void init_objects(Engine* game) = 0;
     virtual void interactions(Engine* game) = 0;
 
@@ -85,12 +86,16 @@ public:
     int width;
     int height;
     bool shiftable;
+    int status;
 
     Camera* camera;
+    std::vector<Dot*> chars;
     Dot* b_char;
     Dot* w_char;
 
     // objects
+    std::vector<LevelEnd*> level_ends;
+
     LevelEnd* b_level_end;
     LevelEnd* w_level_end;
 

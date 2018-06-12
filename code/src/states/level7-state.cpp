@@ -16,36 +16,12 @@
 
 void Level7State::init(Engine* game)
 {
-    load_tiles(game);
+    load_tiles(game, "07");
     init_objects(game);
 
     if (game->read_save() < 7) {
         game->save(7);
     }
-}
-
-void Level7State::handle_events(Engine* game)
-{
-    // event handler
-    SDL_Event event;
-
-    // handle those events, bruh
-    while (SDL_PollEvent(&event)) {
-        switch (event.type) {
-            case SDL_QUIT:
-                game->quit();
-                break;
-        }
-
-        // quit if he pressed escape
-        if (!b_char->handle_event(event, this, game)) {
-            Mix_PauseMusic();
-            Mix_PlayChannel(-1, game->sound->menu_exit_snd, 0);
-            game->push_state(new PauseMenuState);
-        }
-        w_char->handle_event(event, this, game);
-    }
-    shiftable = true;
 }
 
 void Level7State::update(Engine* game)
@@ -54,12 +30,8 @@ void Level7State::update(Engine* game)
     SDL_RenderClear(game->rend);
 
     // move the square
-    if (b_char->status == CHAR_ACTIVE) {
-        b_char->move(this, game);
-    }
-    if (w_char->status == CHAR_ACTIVE) {
-        w_char->move(this, game);
-    }
+    b_char->move(this, game);
+    w_char->move(this, game);
 
     for (int i = 0; i < crates.size(); i++) {
         crates[i]->update();
@@ -76,16 +48,16 @@ void Level7State::draw(Engine* game)
 
     // draw stuff to the screen!
     for (int i = 0; i < (width * height); i++) {
-        tileset[i]->render(b_char->status, cam_rect, game, &tile_tex);
+        tileset[i]->render(status, cam_rect, game, &tile_tex);
     }
     for (int i = 0; i < crates.size(); i++) {
-        crates[i]->render(b_char->status, cam_rect, game, this);
+        crates[i]->render(status, cam_rect, game, this);
     }
 
     b_char->render(cam_rect, game);
+    w_char->render(cam_rect, game);
     b_level_end->render(cam_rect, game);
     w_level_end->render(cam_rect, game);
-    w_char->render(cam_rect, game);
     b_button.render(cam_rect, game);
     w_button.render(cam_rect, game);
     SDL_RenderPresent(game->rend);
@@ -111,26 +83,6 @@ void Level7State::cleanup()
     tile_tex.free();
     b_button_tex.free();
     w_button_tex.free();
-}
-
-void Level7State::load_tiles(Engine* game)
-{
-    if (!tile_tex.load_tile_sheet("tile_sheet.png", game->rend)) {
-        printf("Failed to load tile sheet texture!\n");
-        return;
-    }
-    if (!b_button_tex.load_tile_sheet("black/button/b_button.png", game->rend)) {
-        printf("Failed to load  black button texture!\n");
-        return;
-    }
-    if (!w_button_tex.load_tile_sheet("white/button/w_button.png", game->rend)) {
-        printf("Failed to load white button texture!\n");
-        return;
-    }
-    if (!set_tiles(this, tileset, "level07.lvl")) {
-        printf("Failed to load level 7 map!\n");
-        return;
-    }
 }
 
 void Level7State::init_objects(Engine* game)

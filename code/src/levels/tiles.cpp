@@ -38,72 +38,82 @@ Tile::Tile(int x, int y, int tile_type)
     // animation DEBUG
     animating = false;
 
+    // start with this
+    floor = wall = ceiling = false;
+
     // define floor properties (corners to come to smooth some stuff out, biznatches)
     switch (type)
     {
         case B_FLOOR1:
         case B_FLOOR2:
         case B_FLOOR3:
-            floor_b = true;
+            floor = true;
+            black = true;
             break;
         case B_FLOOREDGE_L:
         case B_FLOOREDGE_R:
-            floor_b = true;
-            wall_b = true;
+            floor = true;
+            wall = true;
+            black = true;
             break;
         case B_WALL_L:
         case B_WALL_R:
-            wall_b = true;
+            wall = true;
+            black = true;
             break;
         case B_CEILING:
-            ceiling_b = true;
+            ceiling = true;
+            black = true;
             break;
         case B_CEILINGEDGE_L:
         case B_CEILINGEDGE_R:
-            ceiling_b = true;
-            wall_b = true;
+            ceiling = true;
+            wall = true;
+            black = true;
             break;
         case W_FLOOR1:
         case W_FLOOR2:
         case W_FLOOR3:
-            floor_w = true;
+            floor = true;
+            black = false;
             break;
         case W_FLOOREDGE_L:
         case W_FLOOREDGE_R:
-            floor_w = true;
-            wall_w = true;
+            floor = true;
+            wall = true;
+            black = false;
             break;
         case W_WALL_L:
         case W_WALL_R:
-            wall_w = true;
+            wall = true;
+            black = false;
             break;
         case W_CEILING:
-            ceiling_w = true;
+            ceiling = true;
+            black = false;
             break;
         case W_CEILINGEDGE_L:
         case W_CEILINGEDGE_R:
-            ceiling_w = true;
-            wall_w = true;
+            ceiling = true;
+            wall = true;
+            black = false;
             break;
     }
 }
 
 // collision rectangle accessor
-int Tile::get_type()
-{
+int Tile::get_type() {
     return type;
 }
 
 // collision rectangle accessor
-SDL_Rect Tile::get_col_rect()
-{
+SDL_Rect Tile::get_col_rect() {
     return col_rect;
 }
 
 
 // render tile
-void Tile::render(int b_status, SDL_Rect* camera, Engine* game, Texture* tile_tex)
-{
+void Tile::render(int b_status, SDL_Rect* camera, Engine* game, Texture* tile_tex) {
     if (type >= B_BACK && type <= B_CORNER_TR)
         status = b_status;
     else if (type >+ W_BACK && type <= W_CORNER_TR)
@@ -137,13 +147,10 @@ void Tile::render(int b_status, SDL_Rect* camera, Engine* game, Texture* tile_te
 
             // sprite sheet clipper
             SDL_Rect inactivate_clip = {TILE_WIDTH_TEX * frame, 0, TILE_WIDTH_TEX, TILE_WIDTH_TEX};
-
-            // render that
             tile_tex->render_tile(col_rect.x, col_rect.y, &tile_clips[type], &inactivate_clip, camera, game);
 
             // change the status if animation is over!
-            if (frame >= TILE_FRAMES - 1)
-            {
+            if (frame >= TILE_FRAMES - 1) {
                 animating = false;
                 status = TILE_INACTIVE;
             }

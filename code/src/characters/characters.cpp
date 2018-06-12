@@ -16,7 +16,25 @@
 extern Texture b_end_animate;
 extern Texture w_end_animate;
 
-Dot::Dot(int x, int y, bool is_black, SDL_Renderer* rend)
+static const int DOT_VEL = 3;
+static const int JUMP_VEL = 6;
+static const float DOT_ACC = .5;
+static const float GRAVITY = .27;
+static const int PUSH_VEL = 2;
+
+typedef enum _char_dir {
+    DIR_RIGHT = 0,
+    DIR_LEFT
+} char_dir;
+
+typedef enum _char_status {
+    CHAR_IDLE = 0,
+    CHAR_RUN,
+    CHAR_JUMP,
+    CHAR_INACTIVE
+} char_status;
+
+Dot::Dot(int x, int y, bool is_black, SDL_Renderer* rend, SDL_Color* palette)
 {
     // initialize velocity
     x_vel = 0;
@@ -33,8 +51,8 @@ Dot::Dot(int x, int y, bool is_black, SDL_Renderer* rend)
 
     black = is_black;
     if (black) {
-        status = CHAR_ACTIVE;
-        if (!tex.load_tile_sheet("black/b_char.png", rend))
+        status = CHAR_IDLE;
+        if (!tex.load_tile_sheet("char-sheet.png", rend, palette))
         {
             printf("Failed to load black dot texture!\n");
             return;
@@ -42,15 +60,12 @@ Dot::Dot(int x, int y, bool is_black, SDL_Renderer* rend)
     }
     else {
         status = CHAR_INACTIVE;
-        if (!tex.load_tile_sheet("white/w_char.png", rend))
+        if (!tex.load_tile_sheet("char-sheet.png", rend, palette))
         {
             printf("Failed to load white dot texture!\n");
             return;
         }
     }
-
-    // initialize animation
-    frame = 0;
 
     // initialize collision rectangle
     col_rect.w = TILE_WIDTH;
@@ -87,8 +102,7 @@ bool Dot::handle_event(SDL_Event &e, Levelstate* level, Engine* game)
                 case SDL_SCANCODE_Q:
                 case SDL_SCANCODE_LSHIFT:
                 case SDL_SCANCODE_RSHIFT:
-                    if (level->shiftable)
-                    {
+                    if (level->shiftable) {
                         Mix_PlayChannel(-1, game->sound->level_switch_snd, 0);
                         status = (status + 1) % 4;
                     }
@@ -204,310 +218,204 @@ bool Dot::handle_event(SDL_Event &e, Levelstate* level, Engine* game)
                     up = false;
                     break;
         }
-
-
     }
-
     // success! (no quitting)
     return true;
 }
 
 void Dot::move(Levelstate* level, Engine* game)
 {
-    if (status != CHAR_ACTIVE)
+    if (status != CHAR_JUMP) {
+        short_hop = -1;
+    }
+
+    if (status == CHAR_INACTIVE) {
         return;
+    }
 
     // update y velocity with gravity
-    black ? y_vel += GRAVITY : y_vel -= GRAVITY;
+    if (status == CHAR_JUMP) {
+        int jump_duration = SDL_GetTicks() - jump_start;
+        if (jump_duration > 100 && jump_duration < 150) {
+            if (short_hop == -1) {
+                short_hop = !up;
+            }
+        } else if (jump_duration >= 150) {
+            short_hop = 0;
+        }
+    }
+    black ? y_vel += GRAVITY * ((short_hop > 0)*3.2 + 1): y_vel -= GRAVITY * ((short_hop > 0)*3.2 + 1);
 
     // update x velocity
     if (right && !left)
         x_vel += DOT_ACC;
     if (left && !right)
         x_vel -= DOT_ACC;
-    if ((!right && !left) || (right && left))
-    {
-        if (x_vel < 0)
+    if ((!right && !left) || (right && left)) {
+        if (x_vel < 0) {
             x_vel += DOT_ACC;
-        else if (x_vel > 0)
+        } else if (x_vel > 0) {
             x_vel -= DOT_ACC;
+        }
     }
 
-    // if the square is moving slowly enough, stop him
-    if (x_vel < (DOT_ACC) && x_vel > -(DOT_ACC))
+    // if the char is moving slowly enough, stop it
+    if (x_vel < (DOT_ACC) && x_vel > -(DOT_ACC)) {
         x_vel = 0;
+        if (status != CHAR_JUMP) {
+            status = CHAR_IDLE;
+        }
+    }
 
     // limit top speed
-    if (x_vel > DOT_VEL)
+    if (x_vel > DOT_VEL) {
         x_vel = DOT_VEL;
-    if (x_vel < -DOT_VEL)
+    } else if (x_vel < -DOT_VEL)
         x_vel = -DOT_VEL;
-    if (y_vel > 1.5 * JUMP_VEL)
-        y_vel = 1.5 * JUMP_VEL;
-    if (y_vel < 1.5 * -JUMP_VEL)
-        y_vel = 1.5 * -JUMP_VEL;
 
-    // dont move inactive chars
-    if (status != CHAR_ACTIVE)
-    {
-        x_vel = 0;
-        y_vel = 0;
+    // set direction (for animation)
+    if (x_vel < 0) {
+        dir = DIR_LEFT;
+    } else if (x_vel > 0) {
+        dir = DIR_RIGHT;
+    }
+
+    if (x_vel != 0 && status != CHAR_JUMP) {
+        status = CHAR_RUN;
     }
 
     // move that Dot
     col_rect.x += x_vel;
     col_rect.y += y_vel;
 
-
     // deal with crate collisions using crate_col
-    if (!crate_col(level, game))
-    {
+    if (!crate_col(level, game)) {
         level->shiftable = tile_col(level->tileset, level->width * level->height, game);
     }
 
     // check edges
-    if (col_rect.x < 0)
-    {
+    if (col_rect.x < 0) {
         col_rect.x = 0;
-        x_vel = 0;
     }
-    if (col_rect.y < 0)
-    {
+    if (col_rect.y < 0) {
         col_rect.y = 0;
         y_vel = 0;
     }
-    if (col_rect.x + col_rect.w > level->width * TILE_WIDTH)
-    {
+    if (col_rect.x + col_rect.w > level->width * TILE_WIDTH) {
         col_rect.x = level->width * TILE_WIDTH - col_rect.w;
-        x_vel = 0;
     }
-    if (col_rect.y + col_rect.h > level->height * TILE_WIDTH)
-    {
+    if (col_rect.y + col_rect.h > level->height * TILE_WIDTH) {
         col_rect.y = level->height * TILE_WIDTH - col_rect.h;
         y_vel = 0;
     }
 }
 
 
-// deal with tile collisions
+// deal with tile collisions, return whether the dot can shift
 bool Dot::tile_col(Tile* tileset[], int size, Engine* game)
 {
     Vector repos;
-
     bool shiftable;
+    bool airborne = true;
 
-    // depends on color
-    if (black) {
-        // for every tile
-        for (int i = 0, n = size; i < n; i++) {
-            // store reposition vector
-            if (check_collision(col_rect, tileset[i]->get_col_rect(), &repos)) {
-                // black wall
-                if (tileset[i]->wall_b && !tileset[i]->floor_b && !tileset[i]->ceiling_b) {
-                    // halt
-                    col_rect.x += repos.x;
+    for (int i = 0, n = size; i < n; i++) {
+        if (tileset[i]->black != black) {
+            continue;
+        }
+        // store reposition vector
+        if (check_collision(col_rect, tileset[i]->get_col_rect(), &repos)) {
+            // wall
+            if (tileset[i]->wall && !tileset[i]->floor && !tileset[i]->ceiling) {
+                col_rect.x += repos.x;
+                SDL_Rect tile_rect = tileset[i]->get_col_rect();
+                if ((repos.x > 0 && x_vel < 0 && col_rect.x > tile_rect.x) ||
+                    (repos.x < 0 && x_vel > 0 && col_rect.x < tile_rect.x)) {
                     x_vel = 0;
-
-                    shiftable = false;
                 }
-                // black floor
-                else if (tileset[i]->floor_b && !tileset[i]->wall_b)
-                {
-                    if (col_rect.y + col_rect.h / 2 >= tileset[i]->get_col_rect().y + tileset[i]->get_col_rect().h / 2) continue;
-
-                    // halt
+            }
+            // floor
+            else if (tileset[i]->floor && !tileset[i]->wall) {
+                // land!
+                if (status == CHAR_JUMP) {
+                    status = CHAR_IDLE;
+                }
+                col_rect.y += repos.y;
+                y_vel = 0;
+                shiftable = true;
+                // jump!
+                if (up) {
+                    status = CHAR_JUMP;
+                    jump_start = SDL_GetTicks();
+                    y_vel = y_vel + (black ? -JUMP_VEL : JUMP_VEL);
+                    Mix_PlayChannel(-1, game->sound->level_b_jump_snd, 0);
+                    shiftable = false;
+                } else {
+                    airborne = false;
+                }
+            }
+            // floor edge
+            else if (tileset[i]->floor && tileset[i]->wall) {
+                SDL_Rect tile_rect = tileset[i]->get_col_rect();
+                if (abs(repos.x) <= abs(repos.y)) {
+                    col_rect.x += repos.x;
+                    SDL_Rect tile_rect = tileset[i]->get_col_rect();
+                    if ((repos.x > 0 && x_vel < 0 && col_rect.x > tile_rect.x) ||
+                        (repos.x < 0 && x_vel > 0 && col_rect.x < tile_rect.x)) {
+                        x_vel = 0;
+                    }
+                } else if ((black && y_vel >= 0 && col_rect.y < tile_rect.y) || (!black && y_vel <= 0 && repos.y >= 0)) {
+                    // land!
+                    if (status == CHAR_JUMP) {
+                        status = CHAR_IDLE;
+                    }
                     col_rect.y += repos.y;
                     y_vel = 0;
-
                     shiftable = true;
-
-                    // jump?
-                    if (up && status == CHAR_ACTIVE)
-                    {
-                        y_vel -= JUMP_VEL;
+                    // jump!
+                    if (up) {
+                        status = CHAR_JUMP;
+                        jump_start = SDL_GetTicks();
+                        y_vel = y_vel + (black ? -JUMP_VEL : JUMP_VEL);
                         Mix_PlayChannel(-1, game->sound->level_b_jump_snd, 0);
                         shiftable = false;
-                    }
-                }
-                // black floor edge
-                else if (tileset[i]->floor_b && tileset[i]->wall_b)
-                {
-                    // determine which is smaller, and use that one!
-                    if (abs(repos.x) <= abs(repos.y))
-                    {
-                        //adjust x pos
-                        col_rect.x += repos.x;
-                        x_vel = 0;
-
-                        shiftable = false;
-                    }
-                    else if (y_vel > 0)
-                    {
-                        if (col_rect.y + col_rect.h / 2 >= tileset[i]->get_col_rect().y + tileset[i]->get_col_rect().h / 2)
-                            continue;
-
-                        // adjust y pos
-                        col_rect.y += repos.y;
-                        y_vel = 0;
-
-                        shiftable = true;
-
-                        // jump! (if you want)
-                        if (up && status == CHAR_ACTIVE)
-                        {
-                            y_vel -= JUMP_VEL;
-                            Mix_PlayChannel(-1, game->sound->level_b_jump_snd, 0);
-                            shiftable = false;
-                        }
-                    }
-                }
-
-                // black ceiling
-                else if (tileset[i]->ceiling_b && !tileset[i]->wall_b)
-                {
-                    // adjust y pos
-                    col_rect.y += repos.y;
-                    y_vel = 1;
-
-                    shiftable = false;
-                }
-
-                // black ceiling edge
-                else if (tileset[i]->ceiling_b && tileset[i]->wall_b)
-                {
-                    // determine which is smaller, and use that one!
-                    if (abs(repos.x) <= abs(repos.y))
-                    {
-                        //adjust x pos
-                        col_rect.x += repos.x;
-                        x_vel = 0;
-
-                        shiftable = false;
-                    }
-                    else if (y_vel < 0)
-                    {
-                        // adjust y pos
-                        col_rect.y += repos.y;
-                        y_vel = fabsf(y_vel);
-
-                        shiftable = false;
+                    } else {
+                        airborne = false;
                     }
                 }
             }
-        }
-        return shiftable;
-    }
-
-    // check collisions with white character
-    else if (!black)
-    {
-        // iterate over all tiles
-        for (int i = 0, n = size; i < n; i++)
-        {
-            // store reposition vector
-            if (check_collision(col_rect, tileset[i]->get_col_rect(), &repos))
-            {
-                // white wall
-                if (tileset[i]->wall_w && !tileset[i]->floor_w && !tileset[i]->ceiling_w)
-                {
-                    // halt
+            // ceiling
+            else if (tileset[i]->ceiling && !tileset[i]->wall) {
+                // adjust y pos
+                col_rect.y += repos.y;
+                y_vel = black ? 1 : -1;
+                shiftable = false;
+            }
+            // ceiling edge
+            else if (tileset[i]->ceiling && tileset[i]->wall) {
+                if (abs(repos.x) <= abs(repos.y)) {
+                    // adjust x pos
                     col_rect.x += repos.x;
-                    x_vel = 0;
-
-                    shiftable = false;
-                }
-
-                // white floor
-                else if (tileset[i]->floor_w && !tileset[i]->wall_w)
-                {
-                    if (col_rect.y + col_rect.h / 2 <= tileset[i]->get_col_rect().y + tileset[i]->get_col_rect().h / 2)
-                        continue;
-
-                    // halt
-                    col_rect.y += repos.y;
-                    y_vel = 0;
-
-                    shiftable = true;
-
-                    // jump
-                    if (up && status == CHAR_ACTIVE)
-                    {
-                        y_vel += JUMP_VEL;
-                        Mix_PlayChannel(-1, game->sound->level_w_jump_snd, 0);
-                        shiftable = false;
-                    }
-                }
-
-                // white floor edge
-                else if (tileset[i]->floor_w && tileset[i]->wall_w)
-                {
-                    // determine which is smaller, and use that one!
-                    if (abs(repos.x) <= abs(repos.y))
-                    {
-                        //adjust x pos (lol expos)
-                        col_rect.x += repos.x;
+                    SDL_Rect tile_rect = tileset[i]->get_col_rect();
+                    if ((repos.x > 0 && x_vel < 0 && col_rect.x > tile_rect.x) ||
+                        (repos.x < 0 && x_vel > 0 && col_rect.x < tile_rect.x)) {
                         x_vel = 0;
-
-                        shiftable = false;
                     }
-                    else if (y_vel < 0)
-                    {
-                        if (col_rect.y + col_rect.h / 2 <= tileset[i]->get_col_rect().y + tileset[i]->get_col_rect().h / 2)
-                            continue;
-
-                        // adjust y pos
-                        col_rect.y += repos.y;
-                        y_vel = 0;
-
-                        shiftable = true;
-
-                        // jump! (if you want)
-                        if (up && status == CHAR_ACTIVE)
-                        {
-                            y_vel += JUMP_VEL;
-                            Mix_PlayChannel(-1, game->sound->level_w_jump_snd, 0);
-                            shiftable = false;
-                        }
-                    }
-                }
-
-                // white ceiling
-                else if (tileset[i]->ceiling_w && !tileset[i]->wall_w)
-                {
+                    shiftable = false;
+                } else if (y_vel < 0) {
                     // adjust y pos
                     col_rect.y += repos.y;
-                    y_vel = -1;
-
+                    y_vel = black ? 1 : -1;
                     shiftable = false;
-                }
-
-                // white ceiling edge
-                else if (tileset[i]->ceiling_w && tileset[i]->wall_w)
-                {
-                    // determine which is smaller, and use that one!
-                    if (abs(repos.x) <= abs(repos.y))
-                    {
-                        //adjust x pos (lol expos)
-                        col_rect.x += repos.x;
-                        x_vel = 0;
-
-                        shiftable = false;
-                    }
-                    else if (y_vel < 0)
-                    {
-                        // adjust y pos
-                        col_rect.y += repos.y;
-                        y_vel = -fabsf(y_vel);
-
-                        shiftable = false;
-                    }
                 }
             }
         }
+    }
+    if (airborne && status != CHAR_JUMP) {
+        status = CHAR_JUMP;
+        jump_start = INT_MIN;
     }
     return shiftable;
 }
-
 
 // deal with crate collisions
 bool Dot::crate_col(Levelstate* level, Engine* game)
@@ -515,129 +423,57 @@ bool Dot::crate_col(Levelstate* level, Engine* game)
     Vector repos;
 
     // check all crates
-    for (int i = 0; i < level->crates.size(); i++)
-    {
-        if (black)
-        {
-            level->crates[i]->pushed = false;
+    for (int i = 0; i < level->crates.size(); i++) {
+        level->crates[i]->pushed = false;
 
-            // if theres a collision
-            if (check_collision(col_rect, level->crates[i]->get_col_rect(), &repos))
-            {
-                if (!level->crates[i]->black)
-                {
+        // if theres a collision
+        if (check_collision(col_rect, level->crates[i]->get_col_rect(), &repos)) {
+            if (black != level->crates[i]->black) {
+                level->shiftable = false;
+                tile_col(level->crates[i]->tileset, MAX_BORDER, game);
+                return true;
+            } else {
+                // push and move the crate
+                if (abs(repos.x) <= abs(repos.y)) {
+                    // tell the crate its being pushed
+                    level->crates[i]->pushed = true;
+
+                    // adjust Dot speed
+                    if (x_vel > PUSH_VEL || x_vel < -PUSH_VEL) {
+                        x_vel = (x_vel > 0) ? PUSH_VEL : -PUSH_VEL;
+                    }
+
+                    // move crate
+                    level->crates[i]->col_rect.x += x_vel;
+                    level->crates[i]->check_col(level->crates[i]->get_col_rect(), level, &repos);
+                    level->crates[i]->x_vel = 0;
+
+                    // correct Dot position
+                    check_collision(col_rect, level->crates[i]->get_col_rect(), &repos);
+                    col_rect.x += repos.x;
+
                     level->shiftable = false;
-                    tile_col(level->crates[i]->tileset, MAX_BORDER, game);
-
-                    return true;
                 }
+                // land on crate
                 else
                 {
-                    // push and move the crate
-                    if (abs(repos.x) <= abs(repos.y))
-                    {
-                        // tell the crate its being pushed
-                        level->crates[i]->pushed = true;
-
-                        // adjust Dot speed
-                        if (x_vel > PUSH_VEL || x_vel < -PUSH_VEL)
-                            x_vel = (x_vel > 0) ? PUSH_VEL : -PUSH_VEL;
-
-                        // move crate
-                        level->crates[i]->col_rect.x += x_vel;
-                        level->crates[i]->check_col(level->crates[i]->get_col_rect(), level, &repos);
-                        level->crates[i]->x_vel = 0;
-
-                        // correct Dot position
-                        check_collision(col_rect, level->crates[i]->get_col_rect(), &repos);
-                        col_rect.x += repos.x;
-
-                        level->shiftable = false;
+                    // halt
+                    if (status == CHAR_JUMP) {
+                        status = CHAR_IDLE;
                     }
-                    // land on crate
-                    else
-                    {
-                        // halt
-                        col_rect.y += repos.y;
-                        y_vel = 0;
+                    col_rect.y += repos.y;
+                    y_vel = 0;
+                    level->shiftable = true;
 
-                        level->shiftable = true;
-
-                        if (col_rect.y > level->crates[i]->get_col_rect().y)
-                        {
-                            y_vel = 1;
-                        }
-
-                        // jump! (if you want)
-                        if (up && status == CHAR_ACTIVE)
-                        {
-                            y_vel -= JUMP_VEL;
-                            Mix_PlayChannel(-1, game->sound->level_b_jump_snd, 0);
-                        }
+                    if (col_rect.y > level->crates[i]->get_col_rect().y) {
+                        y_vel = black ? 1 : -1;
                     }
-                }
-            }
-        }
-        else if (!black)
-        {
-            level->crates[i]->pushed = false;
-
-            if (check_collision(col_rect, level->crates[i]->get_col_rect(), &repos))
-            {
-                if (level->crates[i]->black)
-                {
-                    level->shiftable = false;
-                    tile_col(level->crates[i]->tileset, MAX_BORDER, game);
-
-                    return true;
-                }
-                else
-                {
-                    // push and move the crate
-                    if (abs(repos.x) <= abs(repos.y))
-                    {
-                        // tell the crate its being pushed
-                        level->crates[i]->pushed = true;
-
-                        if (!Mix_Playing(2))
-                        {
-                            Mix_PlayChannel(2, game->sound->level_crate_snd, 0);
-                        }
-
-                        // adjust Dot speed
-                        if (x_vel > PUSH_VEL || x_vel < -PUSH_VEL)
-                            x_vel = (x_vel > 0) ? PUSH_VEL : -PUSH_VEL;
-
-                        // move crate
-                        level->crates[i]->col_rect.x += x_vel;
-                        level->crates[i]->x_vel = 0;
-                        level->crates[i]->check_col(level->crates[i]->get_col_rect(), level, &repos);
-
-                        // correct Dot position
-                        check_collision(col_rect, level->crates[i]->get_col_rect(), &repos);
-                        col_rect.x += repos.x;
-
-                        level->shiftable = false;
-                    }
-                    // land on crate
-                    else
-                    {
-                        col_rect.y += repos.y;
-                        y_vel = 0;
-
-                        if (col_rect.y < level->crates[i]->get_col_rect().y)
-                        {
-                            y_vel = -1;
-                        }
-
-                        level->shiftable = true;
-
-                        // jump! (if you want)
-                        if (up && status == CHAR_ACTIVE && col_rect.y > level->crates[i]->get_col_rect().y)
-                        {
-                            y_vel += JUMP_VEL;
-                            Mix_PlayChannel(-1, game->sound->level_w_jump_snd, 0);
-                        }
+                    // jump! (if you want)
+                    if (up) {
+                        status = CHAR_JUMP;
+                        jump_start = SDL_GetTicks();
+                        y_vel -= JUMP_VEL;
+                        Mix_PlayChannel(-1, game->sound->level_b_jump_snd, 0);
                     }
                 }
             }
@@ -649,66 +485,42 @@ bool Dot::crate_col(Levelstate* level, Engine* game)
 
 void Dot::render(SDL_Rect* camera, Engine* game)
 {
-    // relevant clips
-    SDL_Rect active_clip = {0, 0, 16, 16};
-    SDL_Rect inactive_clip = {16 * ANIMATION_LENGTH, 0, 16, 16};
-
-    switch (status)
-    {
-        // different cases render appropriate clips
-        case CHAR_ACTIVE:
-            tex.render(col_rect.x, col_rect.y, &active_clip, camera, game);
+    int animation_length;
+    double animation_speed;
+    switch (status) {
+        case CHAR_IDLE:
+            animation_speed = 100.0;
+            animation_length = 6;
             break;
-        case CHAR_INACTIVE:
-            tex.render(col_rect.x, col_rect.y, &inactive_clip, camera, game);
+        case CHAR_RUN:
+            animation_speed = 30.0;
+            animation_length = 12;
             break;
-        case CHAR_INACTIVATE:
-        {
-            // next frame!
-            frame++;
-
-            // sprite sheet clipper
-            SDL_Rect inactivate_clip = {16 * frame, 0, 16, 16};
-
-            // render that
-            tex.render(col_rect.x, col_rect.y, &inactivate_clip, camera, game);
-
-            // change the status if animation is over!
-            if (frame == ANIMATION_LENGTH - 1)
-            {
-                frame = 0;
-                status = (status + 1) % 4;
-            }
+        case CHAR_JUMP:
+            animation_speed = 100.0;
+            animation_length = 5;
             break;
-        }
-        case CHAR_ACTIVATE:
-        {
-            // next frame!
-            frame++;
+    }
 
-            // sprite sheet clipper
-            SDL_Rect activate_clip = {16 * (frame + 8), 0, 16, 16};
-
-            // render that
-            tex.render(col_rect.x, col_rect.y, &activate_clip, camera, game);
-
-            // change the status if animation is over!
-            if (frame == ANIMATION_LENGTH - 1)
-            {
-                frame = 0;
-                status = (status + 1) % 4;
-            }
-            break;
+    int frame;
+    if (status != CHAR_JUMP) {
+        frame = ((int) ((float) SDL_GetTicks() / animation_speed)) % animation_length;
+    } else {
+        frame = ((int) (((float) SDL_GetTicks() - (float) jump_start)
+                / animation_speed));
+        if (frame >= animation_length) {
+            frame = animation_length - 1;
         }
     }
+
+    // relevant clips
+    SDL_Rect frame_clip = {frame * 16, status * 16, 16, 16};
+    tex.render(col_rect.x, col_rect.y, &frame_clip, camera, game, dir);
 };
 
 // spring when sprung
 void Dot::spring(int x, int y, int direction)
 {
-    // become active if not
-    status = CHAR_ACTIVE;
-
     // spring the right way
     y_vel = 0;
     black ? y_vel -= y * 2 : y_vel += y * 2;

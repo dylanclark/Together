@@ -17,65 +17,72 @@
 
 void Level1State::init(Engine* game)
 {
+    status = 0;
+    palette.r = 200;
+    palette.g = 100;
+    palette.b = 255;
+
     // load textures
-    load_tiles(game);
+    load_tiles(game, "01");
 
     // initialize objects
     init_objects(game);
+    printf("created char\n");
 
     if (game->read_save() < 1) {
         game->save(1);
     }
 }
 
-void Level1State::handle_events(Engine* game)
-{
-    // event handler
-    SDL_Event event;
-
-    // handle those events, bruh
-    while (SDL_PollEvent(&event)) {
-        switch (event.type) {
-            case SDL_QUIT:
-                game->quit();
-                break;
-        }
-
-        b_char->handle_event(event, this, game);
-    }
-
-    shiftable = true;
-}
-
 void Level1State::update(Engine* game)
 {
+    printf("new update\n");
     // clear the window
     SDL_RenderClear(game->rend);
 
-    b_char->move(this, game);
+    for (int i = 0; i < chars.size(); i++) {
+        printf("about to move char %d\n", i);
+        chars[i]->move(this, game);
+        printf("moved!\n");
+    }
 
     for (int i = 0; i < crates.size(); i++) {
         crates[i]->update();
     }
-
-    camera->update(b_char->get_rect(), b_char->get_rect());
+    printf("about to check size...\n");
+    if (chars.size() == 1) {
+        printf("about to update camera\n");
+        camera->update(chars[0]->get_rect(), chars[0]->get_rect());
+        printf("success!\n");
+    } else {
+        camera->update(chars[0]->get_rect(), chars[1]->get_rect());
+    }
     interactions(game);
 }
 
 void Level1State::draw(Engine* game)
 {
+    printf("draw begin\n");
     SDL_Rect* cam_rect = camera->get_display();
+    printf("got cam\n");
 
     // draw stuff to the screen!
     for (int i = 0; i < (width * height); i++) {
-        tileset[i]->render(b_char->status, cam_rect, game, &tile_tex);
+        tileset[i]->render(status, cam_rect, game, &tile_tex);
     }
+    printf("drew tiles\n");
 
     for (int i = 0; i < crates.size(); i++) {
-        crates[i]->render(b_char->status, cam_rect, game, this);
+        crates[i]->render(status, cam_rect, game, this);
     }
 
-    b_char->render(cam_rect, game);
+    printf("about to check size in draw...\n");
+    for (int i = 0; i < chars.size(); i++) {
+        printf("about to draw char\n");
+        chars[i]->render(cam_rect, game);
+        printf("nailed it!\n");
+    }
+
     b_level_end->render(cam_rect, game);
     SDL_RenderPresent(game->rend);
 }
@@ -96,38 +103,28 @@ void Level1State::cleanup()
             crates.pop_back();
         }
     }
-    delete b_char;
     delete camera;
     delete b_level_end;
     tile_tex.free();
 }
 
-void Level1State::load_tiles(Engine* game)
-{
-    if (!tile_tex.load_tile_sheet("tile_sheet.png", game->rend)) {
-        printf("Failed to load tile sheet texture!\n");
-        return;
-    }
-    if (!set_tiles(this, tileset, "level01.lvl")) {
-        printf("Failed to load level 1 map!\n");
-        return;
-    }
-}
-
 void Level1State::init_objects(Engine* game)
 {
-    b_char = new class Dot(2, 7, true, game->rend);
+    printf("check");
+    chars.push_back(new Dot(2, 3, true, game->rend, &palette));
     camera = new class Camera(game->screen_width, game->screen_height,
                               width * TILE_WIDTH, height * TILE_WIDTH,
-                              b_char->get_rect(), b_char->get_rect());
+                              chars[0]->get_rect(), chars[0]->get_rect());
     b_level_end = new class LevelEnd(23, 12, true, game->rend);
 }
 
 void Level1State::interactions(Engine* game)
 {
+    printf("interactions begin\n");
     // if both are on level end object
-    if(b_level_end->check(b_char->get_rect())) {
+    if(b_level_end->check(chars[0]->get_rect())) {
         change_state(game, new Level2State);
     }
+    printf("interactions end\n");
 
 }

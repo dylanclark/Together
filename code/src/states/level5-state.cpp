@@ -16,7 +16,7 @@
 void Level5State::init(Engine* game)
 {
     // load textures
-    load_tiles(game);
+    load_tiles(game, "05");
 
     // initialize objects
     init_objects(game);
@@ -27,38 +27,14 @@ void Level5State::init(Engine* game)
     }
 }
 
-void Level5State::handle_events(Engine* game)
-{
-    // event handler
-    SDL_Event event;
-
-    // handle those events, bruh
-    while (SDL_PollEvent(&event)) {
-        switch (event.type) {
-            case SDL_QUIT:
-                game->quit();
-                break;
-        }
-
-        // quit if he pressed escape
-        b_char->handle_event(event, this, game);
-        // quit if he pressed escape
-        w_char->handle_event(event, this, game);
-    }
-
-    shiftable = true;
-}
-
 void Level5State::update(Engine* game)
 {
     // clear the window
     SDL_RenderClear(game->rend);
 
     // move the square
-    if (b_char->status == CHAR_ACTIVE)
-        b_char->move(this, game);
-    if (w_char->status == CHAR_ACTIVE)
-        w_char->move(this, game);
+    b_char->move(this, game);
+    w_char->move(this, game);
 
     for (int i = 0; i < crates.size(); i++) {
         crates[i]->update();
@@ -75,11 +51,11 @@ void Level5State::draw(Engine* game)
 
     // draw stuff to the screen!
     for (int i = 0; i < (width * height); i++) {
-        tileset[i]->render(b_char->status, cam_rect, game, &tile_tex);
+        tileset[i]->render(status, cam_rect, game, &tile_tex);
     }
 
     for (int i = 0; i < crates.size(); i++) {
-        crates[i]->render(b_char->status, cam_rect, game, this);
+        crates[i]->render(status, cam_rect, game, this);
     }
 
     b_char->render(cam_rect, game);
@@ -109,18 +85,6 @@ void Level5State::cleanup()
 
     tile_tex.free();
 
-}
-
-void Level5State::load_tiles(Engine* game)
-{
-    if (!tile_tex.load_tile_sheet("tile_sheet.png", game->rend)) {
-        printf("Failed to load tile sheet texture!\n");
-        return;
-    }
-    if (!set_tiles(this, tileset, "level05.lvl")) {
-        printf("Failed to load level 5 map!\n");
-        return;
-    }
 }
 
 void Level5State::init_objects(Engine* game)

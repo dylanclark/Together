@@ -12,31 +12,15 @@
 #include <engine.hpp>
 #include <tiles.hpp>
 
-static const int DOT_VEL = 12;
-static const int JUMP_VEL = 18;
-static const int DOT_ACC = 1;
-static const float GRAVITY = 0.6;
-static const int PUSH_VEL = 3;
-static const int ANIMATION_LENGTH = 8;
-
-typedef enum _char_status {
-    CHAR_ACTIVE = 0,
-    CHAR_INACTIVATE,
-    CHAR_INACTIVE,
-    CHAR_ACTIVATE
-} char_status;
-
 class Levelstate;
 
-// dot class definition
 class Dot
 {
 public:
-    int status;
-    int frame;
+    Dot(int x, int y, bool is_black, SDL_Renderer* rend, SDL_Color* palette = NULL);
+
     bool black;
 
-    Dot(int x, int y, bool is_black, SDL_Renderer* rend);
     bool handle_event(SDL_Event &e, Levelstate* level, Engine* game);
     void move(Levelstate* level, Engine* game);
     void render(SDL_Rect* camera, Engine* game);
@@ -47,7 +31,15 @@ public:
     float get_y_vel();
 
 private:
-    int jump;
+    // status = idle, jump, run, inactive, etc.
+    int status;
+    // which way is the dot facing?
+    int dir;
+    // what animation frame is the dot on?
+    int jump_start;
+
+    // is the dot jumping?
+    int short_hop;
     float x_vel, y_vel;
     bool up, down, left, right;
     Controller* controller;

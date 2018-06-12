@@ -6,6 +6,57 @@
 #include <engine.hpp>
 #include <states/pausemenu-state.hpp>
 
+void Levelstate::handle_events(Engine* game)
+{
+    // event handler
+    SDL_Event event;
+
+    // handle those events, bruh
+    while (SDL_PollEvent(&event)) {
+        switch (event.type) {
+            case SDL_QUIT:
+                game->quit();
+                break;
+        }
+        // quit if he pressed escape
+        b_char->handle_event(event, this, game);
+        if (w_char != NULL) {
+            w_char->handle_event(event, this, game);
+        }
+    }
+    shiftable = true;
+}
+
+void Levelstate::load_tiles(Engine* game, std::string lvlnum)
+{
+    if (!tile_tex.load_tile_sheet("tile_sheet.png", game->rend, &palette)) {
+        printf("Failed to load tile sheet texture!\n");
+        return;
+    }
+    if (!set_tiles(this, tileset, "level"+lvlnum+".lvl")) {
+        printf("Failed to load level %s map!\n", path.c_str());
+        return;
+    }
+    /*
+    if (!b_button_tex.load_tile_sheet("black/button/b_button.png", game->rend)) {
+        printf("Failed to load  black button texture!\n");
+        return;
+    }
+    if (!w_button_tex.load_tile_sheet("white/button/w_button.png", game->rend)) {
+        printf("Failed to load white button texture!\n");
+        return;
+    }
+    if (!b_springboard_tex.load_tile_sheet("black/spring/b_spring.png", game-> rend)) {
+        printf("Failed to load black springboard texture!\n");
+        return;
+    }
+    if (!w_springboard_tex.load_tile_sheet("white/spring/w_spring.png", game-> rend)) {
+        printf("Failed to load white springboard texture!\n");
+        return;
+    }
+    */
+}
+
 void
 Levelstate::pause(Engine* game)
 {
