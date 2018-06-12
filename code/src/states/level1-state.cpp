@@ -69,7 +69,9 @@ void Level1State::draw(Engine* game)
         chars[i]->render(cam_rect, game);
     }
 
-    b_level_end->render(cam_rect, game);
+    for (int i = 0; i < level_ends.size(); i++) {
+        level_ends[i]->render(cam_rect, game);
+    }
     SDL_RenderPresent(game->rend);
 }
 
@@ -96,7 +98,6 @@ void Level1State::cleanup()
             chars.pop_back();
         }
     }
-    delete b_level_end;
     delete camera;
     tile_tex.free();
 }
