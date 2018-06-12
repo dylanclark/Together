@@ -388,6 +388,7 @@ bool Dot::tile_col(Tile* tileset[], int size, Engine* game)
                 // adjust y pos
                 col_rect.y += repos.y;
                 y_vel = black ? 1 : -1;
+                short_hop = 0;
                 shiftable = false;
             }
             // ceiling edge
@@ -405,6 +406,7 @@ bool Dot::tile_col(Tile* tileset[], int size, Engine* game)
                     // adjust y pos
                     col_rect.y += repos.y;
                     y_vel = black ? 1 : -1;
+                    short_hop = 0;
                     shiftable = false;
                 }
             }
@@ -412,7 +414,7 @@ bool Dot::tile_col(Tile* tileset[], int size, Engine* game)
     }
     if (airborne && status != CHAR_JUMP) {
         status = CHAR_JUMP;
-        jump_start = INT_MIN;
+        jump_start = 0;
     }
     return shiftable;
 }
@@ -467,6 +469,7 @@ bool Dot::crate_col(Levelstate* level, Engine* game)
 
                     if (col_rect.y > level->crates[i]->get_col_rect().y) {
                         y_vel = black ? 1 : -1;
+                        short_hop = 0;
                     }
                     // jump! (if you want)
                     if (up) {

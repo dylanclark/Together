@@ -19,9 +19,8 @@ void Levelstate::handle_events(Engine* game)
                 break;
         }
         // quit if he pressed escape
-        b_char->handle_event(event, this, game);
-        if (w_char != NULL) {
-            w_char->handle_event(event, this, game);
+        for (int i = 0; i < chars.size(); i++) {
+            chars[i]->handle_event(event, this, game);
         }
     }
     shiftable = true;

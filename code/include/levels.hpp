@@ -95,7 +95,6 @@ public:
 
     // objects
     std::vector<LevelEnd*> level_ends;
-
     LevelEnd* b_level_end;
     LevelEnd* w_level_end;
 
