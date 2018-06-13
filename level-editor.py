@@ -221,62 +221,37 @@ class Tileset:
                         self.fill_rect(True, mx, my)
                     elif self.rect == 3:
                         self.fill_rect(False, mx, my)
-            # placing chars
-            elif placing == 1:
+            # placing objects
+            else:
                 mousex, mousey = pygame.mouse.get_pos()
                 x = int((mousex * (float(camw) / float(scr_w)) + camx) / TILE_WIDTH)
                 y = int((mousey * (float(camh) / float(scr_h)) + camy) / TILE_WIDTH)
+                name = ""
+                if placing == 1:
+                    name = "char"
+                elif placing == 2:
+                    name = "level_end"
+                elif placing == 3:
+                    name = "button"
+                elif placing == 4:
+                    name = "spring"
+                elif placing == -1:
+                    for i in range(len(self.obj_array)):
+                        if self.obj_array[i][1] == x and self.obj_array[i][2] == y:
+                            self.obj_array.pop(i)
+                            return
+
                 if x >= len(self.array[0]) or y >= len(self.array) or x < 0 or y < 0:
                     return
-                for i in range(len(self.obj_array)):
-                    if self.obj_array[i][0] == "char" and self.obj_array[i][3] == (event.button == 1):
-                        self.obj_array.pop(i)
-                        break
-                self.obj_array.append(["char", x, y, (event.button == 1)])
-            # placing level ends
-            elif placing == 2:
-                mousex, mousey = pygame.mouse.get_pos()
-                x = int((mousex * (float(camw) / float(scr_w)) + camx) / TILE_WIDTH)
-                y = int((mousey * (float(camh) / float(scr_h)) + camy) / TILE_WIDTH)
-                if x >= len(self.array[0]) or y >= len(self.array) or x < 0 or y < 0:
+                if self.array[y][x] == (event.button == 1):
+                    print '\a'
                     return
-                for i in range(len(self.obj_array)):
-                    if self.obj_array[i][0] == "level_end" and self.obj_array[i][3] == (event.button == 1):
-                        self.obj_array.pop(i)
-                        break
-                self.obj_array.append(["level_end", x, y, (event.button == 1)])
-            # placing buttons
-            elif placing == 3:
-                mousex, mousey = pygame.mouse.get_pos()
-                x = int((mousex * (float(camw) / float(scr_w)) + camx) / TILE_WIDTH)
-                y = int((mousey * (float(camh) / float(scr_h)) + camy) / TILE_WIDTH)
-                if x >= len(self.array[0]) or y >= len(self.array) or x < 0 or y < 0:
-                    return
-                for i in range(len(self.obj_array)):
-                    if self.obj_array[i][0] == "button" and self.obj_array[i][3] == (event.button == 1):
-                        self.obj_array.pop(i)
-                        break
-                self.obj_array.append(["button", x, y, (event.button == 1)])
-            # springs
-            elif placing == 4:
-                mousex, mousey = pygame.mouse.get_pos()
-                x = int((mousex * (float(camw) / float(scr_w)) + camx) / TILE_WIDTH)
-                y = int((mousey * (float(camh) / float(scr_h)) + camy) / TILE_WIDTH)
-                if x >= len(self.array[0]) or y >= len(self.array) or x < 0 or y < 0:
-                    return
-                for i in range(len(self.obj_array)):
-                    if self.obj_array[i][0] == "spring" and self.obj_array[i][3] == (event.button == 1):
-                        self.obj_array.pop(i)
-                        break
-                self.obj_array.append(["spring", x, y, (event.button == 1)])
-            # deleting stuff
-            elif placing == -1:
-                mousex, mousey = pygame.mouse.get_pos()
-                x = int((mousex * (float(camw) / float(scr_w)) + camx) / TILE_WIDTH)
-                y = int((mousey * (float(camh) / float(scr_h)) + camy) / TILE_WIDTH)
-                for i in range(len(self.obj_array)):
-                    if self.obj_array[i][1] == x and self.obj_array[i][2] == y:
-                        self.obj_array.pop(i)
+                if placing == 1 or placing == 2:
+                    for i in range(len(self.obj_array)):
+                        if self.obj_array[i][0] == name and self.obj_array[i][3] == (event.button == 1):
+                            self.obj_array.pop(i)
+                            break
+                self.obj_array.append([name, x, y, (event.button == 1)])
 
     def fill_rect(self, black, mx, my):
         x1, x2 = min(self.x1, mx), max(self.x1, mx)
