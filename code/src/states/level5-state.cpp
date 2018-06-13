@@ -16,7 +16,7 @@
 void Level5State::init(Engine* game)
 {
     // load textures
-    load_tiles(game, "05");
+    load_level(game, "05");
 
     // initialize objects
     init_objects(game);
@@ -59,9 +59,9 @@ void Level5State::draw(Engine* game)
     }
 
     b_char->render(cam_rect, game);
+    w_char->render(cam_rect, game);
     b_level_end->render(cam_rect, game);
     w_level_end->render(cam_rect, game);
-    w_char->render(cam_rect, game);
 
     SDL_RenderPresent(game->rend);
 }

@@ -17,7 +17,7 @@
 void Level8State::init(Engine* game)
 {
     // load textures
-    load_tiles(game, "08");
+    load_level(game, "08");
 
     // initialize objects
     init_objects(game);

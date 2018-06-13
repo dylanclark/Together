@@ -75,7 +75,7 @@ void Crate::update()
     col_rect.x += x_vel;
 }
 
-void Crate::render(int b_status, SDL_Rect* camera, Engine* game, Levelstate* level)
+void Crate::render(int status, SDL_Rect* camera, Engine* game, Levelstate* level)
 {
     // determine which chunk of the texture to render
     SDL_Rect active_clip = {0, 0, 64, 32};
@@ -91,12 +91,12 @@ void Crate::render(int b_status, SDL_Rect* camera, Engine* game, Levelstate* lev
         tex.render(col_rect.x, col_rect.y, &inactive_clip, camera, game);
 
         if (generating) {
-            create_tiles(b_status, level);
+            create_tiles(status, level);
             generating = false;
         }
 
         for (int i = 0; i < MAX_BORDER; i++) {
-            tileset[i]->render(b_status, camera, game, &level->tile_tex);
+            tileset[i]->render(status, camera, game, &level->tile_tex);
         }
     }
 }

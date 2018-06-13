@@ -45,16 +45,17 @@ void Levelstate::update(Engine* game)
     interactions(game);
 }
 
-void Levelstate::load_tiles(Engine* game, std::string lvlnum)
+void Levelstate::load_level(Engine* game, std::string lvlnum)
 {
+    if (!load_level_from_file(game, this, "level"+lvlnum+".lvl")) {
+        printf("Failed to load level %s map!\n", path.c_str());
+        return;
+    }
     if (!tile_tex.load_tile_sheet("tile_sheet.png", game->rend, &palette)) {
         printf("Failed to load tile sheet texture!\n");
         return;
     }
-    if (!set_tiles(this, tileset, "level"+lvlnum+".lvl")) {
-        printf("Failed to load level %s map!\n", path.c_str());
-        return;
-    }
+
     /*
     if (!b_button_tex.load_tile_sheet("black/button/b_button.png", game->rend)) {
         printf("Failed to load  black button texture!\n");

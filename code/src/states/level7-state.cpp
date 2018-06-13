@@ -16,7 +16,7 @@
 
 void Level7State::init(Engine* game)
 {
-    load_tiles(game, "07");
+    load_level(game, "07");
     init_objects(game);
 
     if (game->read_save() < 7) {

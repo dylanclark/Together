@@ -18,15 +18,13 @@
 void Level1State::init(Engine* game)
 {
     status = 0;
-    palette.r = 200;
-    palette.g = 100;
-    palette.b = 255;
 
     // load textures
-    load_tiles(game, "01");
+    load_level(game, "01");
 
-    // initialize objects
-    init_objects(game);
+    camera = new class Camera(game->screen_width, game->screen_height,
+                              width * TILE_WIDTH, height * TILE_WIDTH,
+                              chars[0]->get_rect(), chars[0]->get_rect());
 
     if (game->read_save() < 1) {
         game->save(1);
@@ -41,17 +39,14 @@ void Level1State::draw(Engine* game)
     for (int i = 0; i < (width * height); i++) {
         tileset[i]->render(status, cam_rect, game, &tile_tex);
     }
-
-    for (int i = 0; i < crates.size(); i++) {
-        crates[i]->render(status, cam_rect, game, this);
-    }
-
     for (int i = 0; i < chars.size(); i++) {
         chars[i]->render(cam_rect, game);
     }
-
     for (int i = 0; i < level_ends.size(); i++) {
         level_ends[i]->render(cam_rect, game);
+    }
+    for (int i = 0; i < crates.size(); i++) {
+        crates[i]->render(status, cam_rect, game, this);
     }
     SDL_RenderPresent(game->rend);
 }
@@ -85,11 +80,6 @@ void Level1State::cleanup()
 
 void Level1State::init_objects(Engine* game)
 {
-    chars.push_back(new Dot(2, 3, true, game->rend, &palette));
-    camera = new class Camera(game->screen_width, game->screen_height,
-                              width * TILE_WIDTH, height * TILE_WIDTH,
-                              chars[0]->get_rect(), chars[0]->get_rect());
-    level_ends.push_back(new LevelEnd(5, 5, true, game->rend));
 }
 
 void Level1State::interactions(Engine* game)

@@ -17,7 +17,7 @@
 void Level6State::init(Engine* game)
 {
     // load textures
-    load_tiles(game, "06");
+    load_level(game, "06");
 
     // initialize objects
     init_objects(game);
@@ -33,7 +33,7 @@ void Level6State::update(Engine* game)
     // clear the window
     SDL_RenderClear(game->rend);
 
-    // move the square
+    // move the characters
     b_char->move(this, game);
     w_char->move(this, game);
 
@@ -59,9 +59,9 @@ void Level6State::draw(Engine* game)
     }
 
     b_char->render(cam_rect, game);
+    w_char->render(cam_rect, game);
     b_level_end->render(cam_rect, game);
     w_level_end->render(cam_rect, game);
-    w_char->render(cam_rect, game);
     b_button.render(cam_rect, game);
     SDL_RenderPresent(game->rend);
 }

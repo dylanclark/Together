@@ -17,7 +17,7 @@
 void Level4State::init(Engine* game)
 {
     // load textures
-    load_tiles(game, "04");
+    load_level(game, "04");
 
     w_char = NULL;
     w_level_end = NULL;

@@ -51,10 +51,8 @@ void LevelEnd::render(SDL_Rect* camera, Engine* game)
 bool LevelEnd::check(SDL_Rect dot_rect)
 {
     Vector repos;
-    if(check_collision(col_rect, dot_rect, &repos))
-    {
-        if (abs(repos.x) > 40 && abs(repos.y) > 40)
-        {
+    if (check_collision(col_rect, dot_rect, &repos)) {
+        if (abs(repos.x) > 40 && abs(repos.y) > 40) {
             return true;
         }
     }

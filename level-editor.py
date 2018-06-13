@@ -800,9 +800,12 @@ if __name__ == "__main__":
         # get level number to load
         lvl = str(int(get_str(screen, "level number: "))).zfill(2)
         with open("resources/level-files/level"+lvl+".lvl", "r") as fh:
+            r, g, b = [int(x) for x in next(fh).split()]
             w, h = [int(x) for x in next(fh).split()]
-            array = [[int(x) < 15 for x in line.split()] for line in fh]
+            lines = [line for line in fh][:h]
+            array = [[int(x) < 15 for x in line.split()] for line in lines]
         tileset = Tileset(w, h, array)
+        print array
 
     # create the border, gridlines, tileset, and camera
     border = Border(w, h)
@@ -877,11 +880,15 @@ if __name__ == "__main__":
 
     # get filename and output array
     filename = "level"+get_str(screen, "level number: ").zfill(2)+".lvl"
+    palette_red = int(get_str(screen, "red: "))
+    palette_green = int(get_str(screen, "green: "))
+    palette_blue = int(get_str(screen, "blue: "))
     output = output_arr(tileset.get_array())
     w, h = len(output[0]), len(output)
 
     # output .lvl file!
     with open('resources/level-files/'+filename, 'w') as fh:
+        fh.write(str(palette_red)+' '+str(palette_green)+' '+str(palette_blue)+'\n')
         fh.write(str(w)+' '+str(h)+'\n')
         for i in range(h):
             for j in range(w):

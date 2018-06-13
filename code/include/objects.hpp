@@ -63,13 +63,12 @@ class Button
 {
 public:
     Button();
-
     void render(SDL_Rect* camera, Engine* game);
 
+    SDL_Rect col_rect;
     double angle;
     SDL_Point* center;
     SDL_RendererFlip flip;
-    SDL_Rect col_rect;
 
     Texture tex;
 
@@ -88,9 +87,9 @@ class Crate
 public:
     Crate(int x, int y, int type, bool is_black, SDL_Renderer* rend);
     SDL_Rect get_col_rect() { return col_rect; };
+    void render(int status, SDL_Rect* camera, Engine* game, Levelstate* level);
     bool check_col(SDL_Rect crate, Levelstate* level, Vector* repos);
     void update();
-    void render(int b_status, SDL_Rect* camera, Engine* game, Levelstate* level);
 
     Texture tex;
     int crate_type;

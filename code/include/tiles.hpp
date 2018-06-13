@@ -84,9 +84,6 @@ private:
 
 class Levelstate;
 
-// draw the tilemap
-bool set_tiles(Levelstate* lvl, Tile* tiles[], std::string filename);
-
 // close the tilemap
 void close_tiles(Tile* tiles[]);
 

@@ -51,6 +51,7 @@ public:
     LevelEnd(int x, int y, bool is_black, SDL_Renderer* rend);
     void move(int x, int y);
     bool check(SDL_Rect dot_rect);
+    bool update(SDL_Rect dot_rect);
     void render(SDL_Rect* camera, Engine* game);
 
 private:
@@ -72,12 +73,14 @@ public:
 class Crate;
 class Tile;
 
+bool load_level_from_file(Engine* game, Levelstate* lvl, std::string filename);
+
 class Levelstate : public Gamestate
 {
 public:
     void update(Engine* game);
     void handle_events(Engine* game);
-    void load_tiles(Engine* game, std::string lvlnum);
+    void load_level(Engine* game, std::string lvlnum);
     virtual void init_objects(Engine* game) = 0;
     virtual void interactions(Engine* game) = 0;
 
@@ -94,11 +97,18 @@ public:
     Dot* b_char;
     Dot* w_char;
 
-    // objects
+    // level ends
     std::vector<LevelEnd*> level_ends;
     LevelEnd* b_level_end;
     LevelEnd* w_level_end;
 
+    // objects
+    std::vector<Crate*> crates;
+    std::vector<Button*> buttons;
+    std::vector<Springboard*> springs;
+    std::vector<LevelMessage*> messages;
+
+    // other objects
     Button b_button;
     Button w_button;
     Button b_button2;
@@ -123,9 +133,6 @@ public:
 
     // tileset
     Tile* tileset[MAX_SIZE];
-
-    // crate array
-    std::vector<Crate*> crates;
 
     // level file path
     std::string path;

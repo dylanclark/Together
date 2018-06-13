@@ -18,7 +18,7 @@
 void Level3State::init(Engine* game)
 {
     // load textures
-    load_tiles(game, "03");
+    load_level(game, "03");
 
     // initialize objects
     init_objects(game);
