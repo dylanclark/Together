@@ -12,15 +12,9 @@
 #include <objects.hpp>
 #include <tiles.hpp>
 
-// camera edge buffer
-static const float BUFFER = 400;
-
 // max level size
 static const int MAX_SIZE = 50 * 50;
 static const int MAX_CRATES = 10;
-
-// speed constants
-static const float CAM_ACC = 0.3;
 
 class Camera
 {
@@ -33,16 +27,10 @@ public:
 
 private:
     SDL_Rect display;
-    SDL_Rect location;
+    float loc_x, loc_y, loc_w, loc_h;
     int level_w, level_h;
     int screen_w, screen_h;
-    float x_vel;
-    float y_vel;
-    float w_vel;
-    float h_vel;
     void track (SDL_Rect char1, SDL_Rect char2);
-    void move ();
-    SDL_Rect get_target (SDL_Rect char1, SDL_Rect char2);
 };
 
 class LevelEnd
