@@ -37,7 +37,6 @@ bool load_level_from_file(Engine* game, Levelstate* lvl, std::string filename)
     lvl->palette.r = r;
     lvl->palette.g = g;
     lvl->palette.b = b;
-    printf("%d, %d, %d\n", lvl->palette.r, lvl->palette.g, lvl->palette.b);
 
     int level_w;
     int level_h;
@@ -247,6 +246,7 @@ bool load_level_from_file(Engine* game, Levelstate* lvl, std::string filename)
 
     // close the file
     map.close();
+    printf("level file closed\n");
 
     // return whether tiles were loaded
     return success;

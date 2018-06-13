@@ -137,14 +137,16 @@ class Gridlines:
 
 class Tileset:
     array = []
+    obj_array = []
     rect = 0
     x1, y1 = 0, 0
 
-    def __init__(self, w, h, array=None):
-        if not array:
+    def __init__(self, w, h, array=None, obj_array=None):
+        if not array and not obj_array:
             self.array = [[False]*w for _ in range(h)]
         else:
             self.array = array
+            self.obj_array = obj_array
 
     def draw(self, screen, cam):
         camx, camy, camw, camh = cam
@@ -168,37 +170,113 @@ class Tileset:
                         pygame.draw.rect(screen, (0,0,255), rect)
                     else:
                         pygame.draw.rect(screen, (255,255,0), rect)
+        for i in range(len(self.obj_array)):
+            x1 = (self.obj_array[i][1]*TILE_WIDTH - camx + 1) / (float(camw) / float(scr_w))
+            x2 = ((self.obj_array[i][1]+1)*TILE_WIDTH - camx - 1) / (float(camw) / float(scr_w))
+            y1 = (self.obj_array[i][2]*TILE_WIDTH - camy + 1) / (float(camh) / float(scr_h))
+            y2 = ((self.obj_array[i][2]+1)*TILE_WIDTH - camy - 1) / (float(camh) / float(scr_h))
+            rect = (x1, y1, x2-x1, y2-y1)
+            color = (255,255,255)
+            if self.obj_array[i][3]:
+                color = (0,0,0)
+            if self.obj_array[i][0] == "char":
+                pygame.draw.ellipse(screen, color, rect)
+            elif self.obj_array[i][0] == "level_end":
+                pygame.draw.rect(screen, color, rect)
+            elif self.obj_array[i][0] == "button":
+                rect = (x1, y1, (x2-x1)/2, (y2-y1)/2)
+                pygame.draw.ellipse(screen, color, rect)
+            elif self.obj_array[i][0] == "spring":
+                rect = (x1+(x2-x1)/2, y1+(y2-y1)/2, (x2-x1)/2, (y2-y1)/2)
+                pygame.draw.ellipse(screen, color, rect)
 
-
-    def handle_event(self, event, screen, cam):
+    def handle_event(self, event, screen, cam, placing):
         scr_w, scr_h = screen.get_width(), screen.get_height()
         camx, camy, camw, camh = cam
         if event.type == pygame.MOUSEBUTTONDOWN:
-            if not self.rect:
+            # placing tiles
+            if placing == 0:
+                if not self.rect:
+                    mousex, mousey = pygame.mouse.get_pos()
+                    x1 = int((mousex * (float(camw) / float(scr_w)) + camx) / TILE_WIDTH)
+                    y1 = int((mousey * (float(camh) / float(scr_h)) + camy) / TILE_WIDTH)
+                    if x1 >= len(self.array[0]) or y1 >= len(self.array) or x1 < 0 or y1 < 0:
+                        return
+                    self.x1 = x1
+                    self.y1 = y1
+                    self.rect = event.button
+                    if event.button == 1:
+                        self.rect = 1
+                        self.array[self.y1][self.x1] = 2
+                    elif event.button == 3:
+                        self.rect = 3
+                        self.array[self.y1][self.x1] = 3
+                else:
+                    mousex, mousey = pygame.mouse.get_pos()
+                    mx = int((mousex * (float(camw) / float(scr_w)) + camx) / TILE_WIDTH)
+                    my = int((mousey * (float(camh) / float(scr_h)) + camy) / TILE_WIDTH)
+                    if mx >= len(self.array[0]) or my >= len(self.array) or mx < 0 or my < 0:
+                        return
+                    if self.rect == 1:
+                        self.fill_rect(True, mx, my)
+                    elif self.rect == 3:
+                        self.fill_rect(False, mx, my)
+            # placing chars
+            elif placing == 1:
                 mousex, mousey = pygame.mouse.get_pos()
-                x1 = int((mousex * (float(camw) / float(scr_w)) + camx) / TILE_WIDTH)
-                y1 = int((mousey * (float(camh) / float(scr_h)) + camy) / TILE_WIDTH)
-                if x1 >= len(self.array[0]) or y1 >= len(self.array) or x1 < 0 or y1 < 0:
+                x = int((mousex * (float(camw) / float(scr_w)) + camx) / TILE_WIDTH)
+                y = int((mousey * (float(camh) / float(scr_h)) + camy) / TILE_WIDTH)
+                if x >= len(self.array[0]) or y >= len(self.array) or x < 0 or y < 0:
                     return
-                self.x1 = x1
-                self.y1 = y1
-                self.rect = event.button
-                if event.button == 1:
-                    self.rect = 1
-                    self.array[self.y1][self.x1] = 2
-                elif event.button == 3:
-                    self.rect = 3
-                    self.array[self.y1][self.x1] = 3
-            else:
+                for i in range(len(self.obj_array)):
+                    if self.obj_array[i][0] == "char" and self.obj_array[i][3] == (event.button == 1):
+                        self.obj_array.pop(i)
+                        break
+                self.obj_array.append(["char", x, y, (event.button == 1)])
+            # placing level ends
+            elif placing == 2:
                 mousex, mousey = pygame.mouse.get_pos()
-                mx = int((mousex * (float(camw) / float(scr_w)) + camx) / TILE_WIDTH)
-                my = int((mousey * (float(camh) / float(scr_h)) + camy) / TILE_WIDTH)
-                if mx >= len(self.array[0]) or my >= len(self.array) or mx < 0 or my < 0:
+                x = int((mousex * (float(camw) / float(scr_w)) + camx) / TILE_WIDTH)
+                y = int((mousey * (float(camh) / float(scr_h)) + camy) / TILE_WIDTH)
+                if x >= len(self.array[0]) or y >= len(self.array) or x < 0 or y < 0:
                     return
-                if self.rect == 1:
-                    self.fill_rect(True, mx, my)
-                elif self.rect == 3:
-                    self.fill_rect(False, mx, my)
+                for i in range(len(self.obj_array)):
+                    if self.obj_array[i][0] == "level_end" and self.obj_array[i][3] == (event.button == 1):
+                        self.obj_array.pop(i)
+                        break
+                self.obj_array.append(["level_end", x, y, (event.button == 1)])
+            # placing buttons
+            elif placing == 3:
+                mousex, mousey = pygame.mouse.get_pos()
+                x = int((mousex * (float(camw) / float(scr_w)) + camx) / TILE_WIDTH)
+                y = int((mousey * (float(camh) / float(scr_h)) + camy) / TILE_WIDTH)
+                if x >= len(self.array[0]) or y >= len(self.array) or x < 0 or y < 0:
+                    return
+                for i in range(len(self.obj_array)):
+                    if self.obj_array[i][0] == "button" and self.obj_array[i][3] == (event.button == 1):
+                        self.obj_array.pop(i)
+                        break
+                self.obj_array.append(["button", x, y, (event.button == 1)])
+            # springs
+            elif placing == 4:
+                mousex, mousey = pygame.mouse.get_pos()
+                x = int((mousex * (float(camw) / float(scr_w)) + camx) / TILE_WIDTH)
+                y = int((mousey * (float(camh) / float(scr_h)) + camy) / TILE_WIDTH)
+                if x >= len(self.array[0]) or y >= len(self.array) or x < 0 or y < 0:
+                    return
+                for i in range(len(self.obj_array)):
+                    if self.obj_array[i][0] == "spring" and self.obj_array[i][3] == (event.button == 1):
+                        self.obj_array.pop(i)
+                        break
+                self.obj_array.append(["spring", x, y, (event.button == 1)])
+            # deleting stuff
+            elif placing == -1:
+                mousex, mousey = pygame.mouse.get_pos()
+                x = int((mousex * (float(camw) / float(scr_w)) + camx) / TILE_WIDTH)
+                y = int((mousey * (float(camh) / float(scr_h)) + camy) / TILE_WIDTH)
+                for i in range(len(self.obj_array)):
+                    if self.obj_array[i][1] == x and self.obj_array[i][2] == y:
+                        self.obj_array.pop(i)
 
     def fill_rect(self, black, mx, my):
         x1, x2 = min(self.x1, mx), max(self.x1, mx)
@@ -240,6 +318,9 @@ class Tileset:
 
     def get_array(self):
         return self.array
+
+    def get_obj_array(self):
+        return self.obj_array
 
 def collide_pt(rect, pt):
     rx, ry, rw, rh = rect
@@ -771,7 +852,6 @@ def yes_no(screen, prompt):
                 elif event.key == pygame.K_n:
                     return False
         textsurface = myfont.render(prompt+s, False, (0, 0, 0))
-
         tex_w, tex_h = myfont.size(prompt+s)
         scr_w, scr_h = screen.get_width(), screen.get_height()
 
@@ -802,16 +882,25 @@ if __name__ == "__main__":
         with open("resources/level-files/level"+lvl+".lvl", "r") as fh:
             r, g, b = [int(x) for x in next(fh).split()]
             w, h = [int(x) for x in next(fh).split()]
-            lines = [line for line in fh][:h]
-            array = [[int(x) < 15 for x in line.split()] for line in lines]
-        tileset = Tileset(w, h, array)
-        print array
+            array = [0] * h
+            for i in range(h):
+                array[i] = [int(x) < 15 for x in next(fh).split()]
+            num_chars = int(next(fh))
+            obj_array = []
+            for i in range(num_chars):
+                char_x, char_y = [int(x) for x in next(fh).split()]
+                level_end_x, level_end_y = [int(x) for x in next(fh).split()]
+                obj_array.append(["char", char_x, char_y, not i])
+                obj_array.append(["level_end", level_end_x, level_end_y, not i])
+
+        tileset = Tileset(w, h, array, obj_array)
 
     # create the border, gridlines, tileset, and camera
     border = Border(w, h)
     grid = Gridlines(w, h)
     camera = Camera(w*TILE_WIDTH, h*TILE_WIDTH, screen.get_width(), screen.get_height())
     done = False
+    placing = 0
 
     while not done:
         clock.tick(100)
@@ -860,9 +949,26 @@ if __name__ == "__main__":
                         camera.move_left()
                         tileset.remove_col_left()
                         w -= 1
+                # placing tiles
+                elif event.key == pygame.K_0:
+                    placing = 0
+                # placing chars
+                elif event.key == pygame.K_1:
+                    placing = 1
+                # placing level ends
+                elif event.key == pygame.K_2:
+                    placing = 2
+                # placing buttons
+                elif event.key == pygame.K_3:
+                    placing = 3
+                # placing springs
+                elif event.key == pygame.K_4:
+                    placing = 4
+                elif event.key == pygame.K_BACKSPACE:
+                    placing = -1
 
             camera.handle_event(event)
-            tileset.handle_event(event, screen, camrect)
+            tileset.handle_event(event, screen, camrect, placing)
 
         # update the objects that change
         camera.update(screen, w, h)
@@ -883,8 +989,10 @@ if __name__ == "__main__":
     palette_red = int(get_str(screen, "red: "))
     palette_green = int(get_str(screen, "green: "))
     palette_blue = int(get_str(screen, "blue: "))
-    output = output_arr(tileset.get_array())
-    w, h = len(output[0]), len(output)
+    tiles = output_arr(tileset.get_array())
+    objects = tileset.get_obj_array()
+
+    w, h = len(tiles[0]), len(tiles)
 
     # output .lvl file!
     with open('resources/level-files/'+filename, 'w') as fh:
@@ -892,8 +1000,20 @@ if __name__ == "__main__":
         fh.write(str(w)+' '+str(h)+'\n')
         for i in range(h):
             for j in range(w):
-                fh.write(output[i][j])
+                fh.write(tiles[i][j])
                 if j != w-1:
                     fh.write(' ')
-            if i != h-1:
-                fh.write('\n')
+            fh.write('\n')
+        num_chars = 0
+        chars = [0,0]
+        level_ends = [0,0]
+        for i in range(len(objects)):
+            if objects[i][0] == "char":
+                num_chars += 1
+                chars[not objects[i][3]] = (objects[i][1], objects[i][2])
+            if objects[i][0] == "level_end":
+                level_ends[not objects[i][3]] = (objects[i][1], objects[i][2])
+        fh.write(str(num_chars)+'\n')
+        for i in range(num_chars):
+            fh.write(str(chars[i][0])+' '+str(chars[i][1])+'\n')
+            fh.write(str(level_ends[i][0])+' '+str(level_ends[i][1])+'\n')
