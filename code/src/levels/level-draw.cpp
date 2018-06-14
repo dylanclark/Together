@@ -22,7 +22,6 @@ bool load_level_from_file(Engine* game, Levelstate* lvl, std::string filename)
     int x = 0, y = 0;
 
     std::string path = "resources/level-files/"+filename;
-
     std::ifstream map(path.c_str());
 
     if (!map.is_open()) {
@@ -241,7 +240,9 @@ bool load_level_from_file(Engine* game, Levelstate* lvl, std::string filename)
         map >> lvl_end_x;
         map >> lvl_end_y;
         lvl->chars.push_back(new Dot(char_x, char_y, i, game->rend, &lvl->palette));
-        lvl->level_ends.push_back(new LevelEnd(lvl_end_x, lvl_end_y, i, game->rend));
+        printf("is this it\n");
+        lvl->level_ends.push_back(new LevelEnd(lvl_end_x, lvl_end_y, i, game->rend, &lvl->palette));
+        printf("no\n");
     }
 
     // close the file

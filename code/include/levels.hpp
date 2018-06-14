@@ -36,7 +36,7 @@ private:
 class LevelEnd
 {
 public:
-    LevelEnd(int x, int y, bool is_black, SDL_Renderer* rend);
+    LevelEnd(int x, int y, bool is_black, SDL_Renderer* rend, SDL_Color* palette);
     void move(int x, int y);
     bool check(SDL_Rect dot_rect);
     bool update(SDL_Rect dot_rect);
@@ -66,14 +66,19 @@ bool load_level_from_file(Engine* game, Levelstate* lvl, std::string filename);
 class Levelstate : public Gamestate
 {
 public:
+    Levelstate(int lvl_num) { m_lvl_num = lvl_num; }
+    void init(Engine* game);
     void update(Engine* game);
+    void draw(Engine* game);
     void handle_events(Engine* game);
     void load_level(Engine* game, std::string lvlnum);
-    virtual void init_objects(Engine* game) = 0;
-    virtual void interactions(Engine* game) = 0;
+    void cleanup();
 
     void pause(Engine* game);
     void shift();
+
+    // level number
+    int m_lvl_num;
 
     // tile dimensions of level
     int width;
@@ -84,14 +89,10 @@ public:
     bool active_color;
 
     Camera* camera;
-    std::vector<Dot*> chars;
-    Dot* b_char;
-    Dot* w_char;
 
-    // level ends
+    // chars and level endings!
+    std::vector<Dot*> chars;
     std::vector<LevelEnd*> level_ends;
-    LevelEnd* b_level_end;
-    LevelEnd* w_level_end;
 
     // objects
     std::vector<Crate*> crates;
@@ -100,13 +101,6 @@ public:
     std::vector<LevelMessage*> messages;
 
     // other objects
-    Button b_button;
-    Button w_button;
-    Button b_button2;
-    Springboard w_springboard;
-    Springboard b_springboard;
-    Springboard w_cross_spring;
-    Springboard b_cross_spring;
     LevelMessage level1_end;
     LevelMessage level2_end;
     LevelMessage level1_start;

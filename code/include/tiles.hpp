@@ -61,8 +61,8 @@ public:
     Tile(int x, int y, int tile_type);
 
     void render(int b_status, SDL_Rect* camera, Engine* game, Texture* tile_tex);
-    int get_type();
-    SDL_Rect get_col_rect();
+    int get_type() { return type; }
+    SDL_Rect get_col_rect() { return col_rect; }
 
     // edges and floors
     bool floor;

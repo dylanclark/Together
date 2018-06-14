@@ -92,17 +92,6 @@ Tile::Tile(int x, int y, int tile_type)
     my_color = (type >= W_BACK);
 }
 
-// collision rectangle accessor
-int Tile::get_type() {
-    return type;
-}
-
-// collision rectangle accessor
-SDL_Rect Tile::get_col_rect() {
-    return col_rect;
-}
-
-
 // render tile
 void Tile::render(int active_color, SDL_Rect* camera, Engine* game, Texture* tile_tex)
 {

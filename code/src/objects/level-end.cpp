@@ -12,7 +12,7 @@
 #include <levels.hpp>
 
 // level end class
-LevelEnd::LevelEnd(int x, int y, bool is_black, SDL_Renderer* rend)
+LevelEnd::LevelEnd(int x, int y, bool color, SDL_Renderer* rend, SDL_Color* palette)
 {
     // initialize collision rectangle
     col_rect.w = TILE_WIDTH;
@@ -20,18 +20,20 @@ LevelEnd::LevelEnd(int x, int y, bool is_black, SDL_Renderer* rend)
     col_rect.x = x * TILE_WIDTH;
     col_rect.y = y * TILE_WIDTH;
 
-    if (is_black) {
-        if (!tex.load_tile_sheet("black/level_end/black_end.png", rend)) {
+    if (color == 0) {
+        printf("hmm");
+        if (!tex.load_tile_sheet("black/level_end/black_end.png", rend, palette)) {
             printf("Failed to load black level end texture!\n");
             return;
         }
-    }
-    else {
-        if (!tex.load_tile_sheet("white/level_end/white_end.png", rend)) {
-            printf("Failed to load  white level end texture!\n");
+        printf("hmm");
+    } else {
+        if (!tex.load_tile_sheet("white/level_end/white_end.png", rend, palette)) {
+            printf("Failed to load white level end texture!\n");
             return;
         }
     }
+    printf("initialized!");
 }
 
 void LevelEnd::move(int x, int y)

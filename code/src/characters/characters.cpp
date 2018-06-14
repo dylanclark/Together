@@ -45,6 +45,7 @@ Dot::Dot(int x, int y, bool color, SDL_Renderer* rend, SDL_Color* palette)
     down = false;
     right = false;
     left = false;
+    dir = 0;
 
     // initiliaze gamepad
     controller = new class Controller;
@@ -389,12 +390,14 @@ bool Dot::tile_col(Tile* tileset[], int size, Engine* game)
             }
             // ceiling
             else if (tileset[i]->ceiling && !tileset[i]->wall) {
-                // adjust y pos
-                col_rect.y += repos.y;
-                true_y = col_rect.y;
-                y_vel = ((my_color == 0) - (my_color == 1)) * .5;
-                short_hop = 0;
-                shiftable = false;
+                if ((my_color == 0 && y_vel < 0) || (my_color == 1 && y_vel > 0)) {
+                    // adjust y pos
+                    col_rect.y += repos.y;
+                    true_y = col_rect.y;
+                    y_vel = ((my_color == 0) - (my_color == 1)) * .1;
+                    short_hop = 0;
+                    shiftable = false;
+                }
             }
             // ceiling edge
             else if (tileset[i]->ceiling && tileset[i]->wall) {
@@ -407,11 +410,11 @@ bool Dot::tile_col(Tile* tileset[], int size, Engine* game)
                         x_vel = 0;
                     }
                     shiftable = false;
-                } else if (y_vel < 0) {
+                } else if ((my_color == 0 && y_vel < 0) || (my_color == 1 && y_vel > 0)) {
                     // adjust y pos
                     col_rect.y += repos.y;
                     true_y = col_rect.y;
-                    y_vel = my_color - !my_color;
+                    y_vel = ((my_color == 0) - (my_color == 1)) * .1;
                     short_hop = 0;
                     shiftable = false;
                 }
