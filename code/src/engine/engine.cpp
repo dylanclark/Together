@@ -35,7 +35,7 @@ bool Engine::init()
     screen_height = 720;
 
     // creates a window that we can (eventually) draw into
-    win = SDL_CreateWindow("together.",
+    win = SDL_CreateWindow("together",
                            SDL_WINDOWPOS_CENTERED,
                            SDL_WINDOWPOS_CENTERED,
                            screen_width, screen_height, SDL_WINDOW_RESIZABLE);
