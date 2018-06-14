@@ -24,8 +24,6 @@ SoundPlayer::SoundPlayer()
     menu_exit_snd = Mix_LoadWAV("resources/audio/fx/menu/exit.wav");
     level_crate_snd = Mix_LoadWAV("resources/audio/fx/level/crate.wav");
     level_switch_snd = Mix_LoadWAV("resources/audio/fx/level/switch2.wav");
-    level_b_jump_snd = Mix_LoadWAV("resources/audio/fx/level/b_jump.wav");
-    level_w_jump_snd = Mix_LoadWAV("resources/audio/fx/level/w_jump.wav");
 }
 
 SoundPlayer::~SoundPlayer()
@@ -40,6 +38,4 @@ SoundPlayer::~SoundPlayer()
     Mix_FreeChunk(menu_exit_snd);
     Mix_FreeChunk(level_crate_snd);
     Mix_FreeChunk(level_switch_snd);
-    Mix_FreeChunk(level_b_jump_snd);
-    Mix_FreeChunk(level_w_jump_snd);
 }

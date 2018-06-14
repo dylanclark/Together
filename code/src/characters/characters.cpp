@@ -350,7 +350,6 @@ bool Dot::tile_col(Tile* tileset[], int size, Engine* game)
                     status = CHAR_JUMP;
                     jump_start = SDL_GetTicks();
                     y_vel += (my_color - !my_color) * JUMP_VEL;
-                    Mix_PlayChannel(-1, game->sound->level_b_jump_snd, 0);
                     shiftable = false;
                 } else {
                     airborne = false;
@@ -381,7 +380,6 @@ bool Dot::tile_col(Tile* tileset[], int size, Engine* game)
                         status = CHAR_JUMP;
                         jump_start = SDL_GetTicks();
                         y_vel += (my_color - !my_color) * JUMP_VEL;
-                        Mix_PlayChannel(-1, game->sound->level_b_jump_snd, 0);
                         shiftable = false;
                     } else {
                         airborne = false;
@@ -485,7 +483,6 @@ bool Dot::crate_col(Levelstate* level, Engine* game)
                         status = CHAR_JUMP;
                         jump_start = SDL_GetTicks();
                         y_vel -= JUMP_VEL;
-                        Mix_PlayChannel(-1, game->sound->level_b_jump_snd, 0);
                     }
                 }
             }

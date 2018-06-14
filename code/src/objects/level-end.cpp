@@ -22,8 +22,9 @@ LevelEnd::LevelEnd(int x, int y, bool color, SDL_Renderer* rend, SDL_Color* pale
 
     if (color == 0) {
         printf("hmm");
-        if (!tex.load_tile_sheet("black/level_end/black_end.png", rend, palette)) {
-            printf("Failed to load black level end texture!\n");
+        bool success = tex.load_tile_sheet("black/level_end/black_end.png", rend, palette);
+        if (!success) {
+            printf("Failed to load black level end texture! SDL_Error: %s\n", SDL_GetError());
             return;
         }
         printf("hmm");

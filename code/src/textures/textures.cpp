@@ -61,9 +61,6 @@ bool Texture::load_tile_sheet(std::string path, SDL_Renderer* rend, SDL_Color* p
     // ditch the last texture
     free();
 
-    // new texture!
-    tex = NULL;
-
     SDL_Surface* surface = IMG_Load(("resources/textures/"+path).c_str());
     if (surface == NULL) {
         printf("Unable to load image %s! SDL error: %s\n",
@@ -180,9 +177,6 @@ bool Texture::load_message(int w, int h, std::string path, SDL_Renderer* rend)
 {
         // ditch the last texture
         free();
-
-        // new texture!
-        tex = NULL;
 
         SDL_Surface* surface = IMG_Load(path.c_str());
         if (surface == NULL)
