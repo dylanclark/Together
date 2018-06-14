@@ -31,14 +31,14 @@ bool Engine::init()
         printf("could not get display info: %s\n", SDL_GetError());
     }
 
-    screen_width = current.w;
-    screen_height = current.h;
+    screen_width = 1080;
+    screen_height = 720;
 
     // creates a window that we can (eventually) draw into
     win = SDL_CreateWindow("together.",
                            SDL_WINDOWPOS_CENTERED,
                            SDL_WINDOWPOS_CENTERED,
-                           current.w, current.h, SDL_WINDOW_FULLSCREEN);
+                           screen_width, screen_height, SDL_WINDOW_RESIZABLE);
     if (!win)
     {
         printf("error creating window: %s\n", SDL_GetError());

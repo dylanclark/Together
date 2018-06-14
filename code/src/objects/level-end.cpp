@@ -21,20 +21,16 @@ LevelEnd::LevelEnd(int x, int y, bool color, SDL_Renderer* rend, SDL_Color* pale
     col_rect.y = y * TILE_WIDTH;
 
     if (color == 0) {
-        printf("hmm");
-        bool success = tex.load_tile_sheet("black/level_end/black_end.png", rend, palette);
-        if (!success) {
+        if (!tex.load_tile_sheet("black/level_end/black_end.png", rend, palette)) {
             printf("Failed to load black level end texture! SDL_Error: %s\n", SDL_GetError());
             return;
         }
-        printf("hmm");
     } else {
         if (!tex.load_tile_sheet("white/level_end/white_end.png", rend, palette)) {
             printf("Failed to load white level end texture!\n");
             return;
         }
     }
-    printf("initialized!");
 }
 
 void LevelEnd::move(int x, int y)
