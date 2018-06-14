@@ -17,18 +17,19 @@ class Levelstate;
 class Dot
 {
 public:
-    Dot(int x, int y, bool is_black, SDL_Renderer* rend, SDL_Color* palette = NULL);
+    Dot(int x, int y, bool color, SDL_Renderer* rend, SDL_Color* palette = NULL);
 
-    bool black;
+    bool my_color;
 
     bool handle_event(SDL_Event &e, Levelstate* level, Engine* game);
-    void move(Levelstate* level, Engine* game);
+    void update(Levelstate* level, Engine* game);
     void render(SDL_Rect* camera, Engine* game);
-    SDL_Rect get_rect();
+    SDL_Rect get_rect() { return col_rect; }
+    int get_dir() { return dir; }
+    float get_y_vel() { return y_vel; }
 
     void spring(int x, int y, int direction);
     bool center(SDL_Rect* end_rect);
-    float get_y_vel();
 
 private:
     // status = idle, jump, run, inactive, etc.
@@ -41,6 +42,7 @@ private:
     // is the dot jumping?
     int short_hop;
     float x_vel, y_vel;
+    float true_y;
     bool up, down, left, right;
     Controller* controller;
     Texture tex;

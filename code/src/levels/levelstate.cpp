@@ -6,6 +6,13 @@
 #include <engine.hpp>
 #include <states/pausemenu-state.hpp>
 
+void Levelstate::shift()
+{
+    if (chars.size() == 2) {
+        active_color = !active_color;
+    }
+}
+
 void Levelstate::handle_events(Engine* game)
 {
     // event handler
@@ -18,10 +25,7 @@ void Levelstate::handle_events(Engine* game)
                 game->quit();
                 break;
         }
-        // quit if he pressed escape
-        for (int i = 0; i < chars.size(); i++) {
-            chars[i]->handle_event(event, this, game);
-        }
+        chars[active_color]->handle_event(event, this, game);
     }
     shiftable = true;
 }
@@ -32,16 +36,13 @@ void Levelstate::update(Engine* game)
     SDL_RenderClear(game->rend);
 
     for (int i = 0; i < chars.size(); i++) {
-        chars[i]->move(this, game);
+        chars[i]->update(this, game);
     }
     for (int i = 0; i < crates.size(); i++) {
         crates[i]->update();
     }
-    if (chars.size() == 1) {
-        camera->update(chars[0]->get_rect(), chars[0]->get_rect());
-    } else {
-        camera->update(chars[0]->get_rect(), chars[1]->get_rect());
-    }
+    camera->update(chars[active_color]->get_rect(), chars[active_color]->get_dir());
+
     interactions(game);
 }
 

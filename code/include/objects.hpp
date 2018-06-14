@@ -85,7 +85,7 @@ public:
 class Crate
 {
 public:
-    Crate(int x, int y, int type, bool is_black, SDL_Renderer* rend);
+    Crate(int x, int y, int type, bool color, SDL_Renderer* rend);
     SDL_Rect get_col_rect() { return col_rect; };
     void render(int status, SDL_Rect* camera, Engine* game, Levelstate* level);
     bool check_col(SDL_Rect crate, Levelstate* level, Vector* repos);
@@ -93,7 +93,7 @@ public:
 
     Texture tex;
     int crate_type;
-    bool black;
+    bool my_color;
     bool pushed;
     float x_vel;
 

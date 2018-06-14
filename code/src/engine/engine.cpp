@@ -17,8 +17,8 @@ bool Engine::init()
     running_flag = true;
 
     // attempt initialization
-    if (SDL_Init(SDL_INIT_VIDEO|SDL_INIT_TIMER|SDL_INIT_AUDIO|SDL_INIT_JOYSTICK|SDL_INIT_GAMECONTROLLER) != 0)
-    {
+    if (SDL_Init(SDL_INIT_VIDEO|SDL_INIT_TIMER|SDL_INIT_AUDIO|
+                 SDL_INIT_JOYSTICK|SDL_INIT_GAMECONTROLLER) != 0) {
         printf("error initializing SDL: %s\n", SDL_GetError());
         success = false;
     }
@@ -38,7 +38,7 @@ bool Engine::init()
     win = SDL_CreateWindow("together.",
                            SDL_WINDOWPOS_CENTERED,
                            SDL_WINDOWPOS_CENTERED,
-                           current.w, current.h, SDL_WINDOW_RESIZABLE);
+                           current.w, current.h, SDL_WINDOW_FULLSCREEN);
     if (!win)
     {
         printf("error creating window: %s\n", SDL_GetError());

@@ -108,7 +108,7 @@ void Texture::free()
     }
 }
 
-void Texture::render(int x, int y, SDL_Rect* clip, SDL_Rect* camera, Engine* game, int dir)
+void Texture::render(int x, int y, SDL_Rect* clip, SDL_Rect* camera, Engine* game, int dir, int flip)
 {
     int render_x = (x - camera->x) / ( (float) camera->w / (float) game->screen_width);
     int render_y = (y - camera->y) / ((float) camera->h / (float) game->screen_height);
@@ -117,12 +117,22 @@ void Texture::render(int x, int y, SDL_Rect* clip, SDL_Rect* camera, Engine* gam
 
     // rendering rectangle
     SDL_Rect render_rect = {render_x, render_y, render_w, render_h};
+    SDL_RendererFlip flip_flags = SDL_FLIP_NONE;
 
     // render to the screen
-    if (dir == 0) {
-        SDL_RenderCopy(game->rend, tex, clip, &render_rect);
+    if (dir) {
+        if (flip) {
+            SDL_RenderCopyEx(game->rend, tex, clip, &render_rect, 0.0, NULL,
+                (SDL_RendererFlip) (SDL_FLIP_HORIZONTAL | SDL_FLIP_VERTICAL));
+        } else {
+            SDL_RenderCopyEx(game->rend, tex, clip, &render_rect, 0.0, NULL, SDL_FLIP_HORIZONTAL);
+        }
     } else {
-        SDL_RenderCopyEx(game->rend, tex, clip, &render_rect, 0.0, NULL, SDL_FLIP_HORIZONTAL);
+        if (flip) {
+            SDL_RenderCopyEx(game->rend, tex, clip, &render_rect, 0.0, NULL, SDL_FLIP_VERTICAL);
+        } else {
+            SDL_RenderCopyEx(game->rend, tex, clip, &render_rect, 0.0, NULL, SDL_FLIP_NONE);
+        }
     }
 }
 

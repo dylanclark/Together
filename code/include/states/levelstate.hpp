@@ -31,7 +31,6 @@ public:
     void init(Engine* game);
     void cleanup();
 
-    void update(Engine* game);
     void draw(Engine* game);
 
     void init_objects(Engine* game);
@@ -44,7 +43,6 @@ public:
     void init(Engine* game);
     void cleanup();
 
-    void update(Engine* game);
     void draw(Engine* game);
 
     void init_objects(Engine* game);
@@ -57,7 +55,6 @@ public:
     void init(Engine* game);
     void cleanup();
 
-    void update(Engine* game);
     void draw(Engine* game);
 
     void init_objects(Engine* game);
@@ -70,7 +67,6 @@ public:
     void init(Engine* game);
     void cleanup();
 
-    void update(Engine* game);
     void draw(Engine* game);
 
     void init_objects(Engine* game);
@@ -83,7 +79,6 @@ public:
     void init(Engine* game);
     void cleanup();
 
-    void update(Engine* game);
     void draw(Engine* game);
 
     void init_objects(Engine* game);
@@ -96,7 +91,6 @@ public:
     void init(Engine* game);
     void cleanup();
 
-    void update(Engine* game);
     void draw(Engine* game);
 
     void init_objects(Engine* game);
@@ -109,7 +103,6 @@ public:
     void init(Engine* game);
     void cleanup();
 
-    void update(Engine* game);
     void draw(Engine* game);
 
     void init_objects(Engine* game);
@@ -122,7 +115,6 @@ public:
     void init(Engine* game);
     void cleanup();
 
-    void update(Engine* game);
     void draw(Engine* game);
 
     void init_objects(Engine* game);

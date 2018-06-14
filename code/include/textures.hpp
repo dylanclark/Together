@@ -8,11 +8,10 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 
-// include headers
-#include <engine.hpp>
-
 const int START = 0;
 const int END = 1;
+
+class Engine;
 
 class Texture
 {
@@ -24,7 +23,7 @@ public:
     bool load_object(int w, int h, std::string path, SDL_Renderer* rend, SDL_Color* palette = NULL);
     bool load_tile_sheet(std::string path, SDL_Renderer* rend, SDL_Color* palette = NULL);
 
-    void render(int x, int y, SDL_Rect* clip, SDL_Rect* camera, Engine* game, int dir = 0);
+    void render(int x, int y, SDL_Rect* clip, SDL_Rect* camera, Engine* game, int dir = 0, int flip = 0);
     void render_tile(int x, int y, SDL_Rect* type_clip, SDL_Rect* active_clip, SDL_Rect* camera, Engine* game);
     void render_button(SDL_Rect* button, SDL_Rect* clip, SDL_Renderer* rend);
     void angle_render(int x, int y, SDL_Rect *clip, SDL_Rect *camera, Engine* game, double angle, SDL_Point *center, SDL_RendererFlip flip);

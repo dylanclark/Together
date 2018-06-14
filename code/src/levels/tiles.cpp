@@ -48,57 +48,48 @@ Tile::Tile(int x, int y, int tile_type)
         case B_FLOOR2:
         case B_FLOOR3:
             floor = true;
-            black = true;
             break;
         case B_FLOOREDGE_L:
         case B_FLOOREDGE_R:
             floor = true;
             wall = true;
-            black = true;
             break;
         case B_WALL_L:
         case B_WALL_R:
             wall = true;
-            black = true;
             break;
         case B_CEILING:
             ceiling = true;
-            black = true;
             break;
         case B_CEILINGEDGE_L:
         case B_CEILINGEDGE_R:
             ceiling = true;
             wall = true;
-            black = true;
             break;
         case W_FLOOR1:
         case W_FLOOR2:
         case W_FLOOR3:
             floor = true;
-            black = false;
             break;
         case W_FLOOREDGE_L:
         case W_FLOOREDGE_R:
             floor = true;
             wall = true;
-            black = false;
             break;
         case W_WALL_L:
         case W_WALL_R:
             wall = true;
-            black = false;
             break;
         case W_CEILING:
             ceiling = true;
-            black = false;
             break;
         case W_CEILINGEDGE_L:
         case W_CEILINGEDGE_R:
             ceiling = true;
             wall = true;
-            black = false;
             break;
     }
+    my_color = (type >= W_BACK);
 }
 
 // collision rectangle accessor
@@ -113,11 +104,9 @@ SDL_Rect Tile::get_col_rect() {
 
 
 // render tile
-void Tile::render(int b_status, SDL_Rect* camera, Engine* game, Texture* tile_tex) {
-    if (type >= B_BACK && type <= B_CORNER_TR)
-        status = b_status;
-    else if (type >+ W_BACK && type <= W_CORNER_TR)
-        status = (b_status + 2) % 4;
+void Tile::render(int active_color, SDL_Rect* camera, Engine* game, Texture* tile_tex)
+{
+    status = (my_color == active_color) ? TILE_ACTIVE : TILE_INACTIVE;
 
     // activity clippers
     SDL_Rect active_clip = {0, 0, TILE_WIDTH_TEX, TILE_WIDTH_TEX};

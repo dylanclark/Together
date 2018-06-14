@@ -11,12 +11,12 @@
 #include <char.hpp>
 #include <tiles.hpp>
 
-Crate::Crate(int x, int y, int type, bool is_black, SDL_Renderer* rend)
+Crate::Crate(int x, int y, int type, bool color, SDL_Renderer* rend)
 {
     col_rect.x = x * TILE_WIDTH;
     col_rect.y = y * TILE_WIDTH;
     crate_type = type;
-    black = is_black;
+    my_color = color;
     pushed = false;
     generating = true;
 
@@ -25,7 +25,7 @@ Crate::Crate(int x, int y, int type, bool is_black, SDL_Renderer* rend)
         case FOUR_BY_TWO:
             col_rect.w = 4 * TILE_WIDTH;
             col_rect.h = 2 * TILE_WIDTH;
-            if (black) {
+            if (my_color == 0) {
                 if (!tex.load_object(TILE_WIDTH * 4, TILE_WIDTH * 2, "black/crates/b_crate.png", rend)) {
                     printf("Failed to load black crate (4x2) texture!\n");
                     return;
@@ -82,7 +82,7 @@ void Crate::render(int status, SDL_Rect* camera, Engine* game, Levelstate* level
     SDL_Rect inactive_clip = {64 * 9, 0, 64, 32};
 
     // render based on char status
-    if (black) {
+    if (my_color == 0) {
         tex.render(col_rect.x, col_rect.y, &active_clip, camera, game);
         if (!generating)
             generating = true;
@@ -107,13 +107,13 @@ bool Crate::check_col(SDL_Rect crate, Levelstate* level, Vector* repos)
     {
         bool is_wall = (level->tileset[i]->wall && !level->tileset[i]->floor && !level->tileset[i]->ceiling);
 
-        if (is_wall && black)
+        if (is_wall && my_color == 0)
         {
             check_collision(col_rect, level->tileset[i]->get_col_rect(), repos);
             col_rect.x += repos->x;
             return true;
         }
-        else if (is_wall && !black)
+        else if (is_wall && my_color == 1)
         {
             check_collision(col_rect, level->tileset[i]->get_col_rect(), repos);
             col_rect.x += repos->x;
@@ -205,94 +205,94 @@ void Crate::create_tiles(int b_status, Levelstate* level)
 
 int Crate::tile_type_top(int type)
 {
-    int new_type = black ? W_BACK : B_BACK;
+    int new_type = my_color == 0 ? W_BACK : B_BACK;
 
     switch (type)
     {
         case B_BACK:
-            new_type = black ? B_BACK : B_CEILING;
+            new_type = my_color == 0 ? B_BACK : B_CEILING;
             break;
         case B_FLOOR1:
         case B_FLOOR2:
         case B_FLOOR3:
-            new_type = black ? B_BACK : B_BACK;
+            new_type = my_color == 0 ? B_BACK : B_BACK;
             break;
         case B_FLOOREDGE_L:
-            new_type = black ? B_BACK : B_BACK;
+            new_type = my_color == 0 ? B_BACK : B_BACK;
             break;
         case B_FLOOREDGE_R:
-            new_type = black ? B_BACK : B_BACK;
+            new_type = my_color == 0 ? B_BACK : B_BACK;
             break;
         case B_CEILING:
-            new_type = black ? B_BACK : B_BACK;
+            new_type = my_color == 0 ? B_BACK : B_BACK;
             break;
         case B_CEILINGEDGE_L:
-            new_type = black ? B_BACK : B_BACK;
+            new_type = my_color == 0 ? B_BACK : B_BACK;
             break;
         case B_CEILINGEDGE_R:
-            new_type = black ? B_BACK : B_BACK;
+            new_type = my_color == 0 ? B_BACK : B_BACK;
             break;
         case B_WALL_L:
-            new_type = black ? B_BACK : B_CEILINGEDGE_L;
+            new_type = my_color == 0 ? B_BACK : B_CEILINGEDGE_L;
             break;
         case B_WALL_R:
-            new_type = black ? B_BACK : B_CEILINGEDGE_R;
+            new_type = my_color == 0 ? B_BACK : B_CEILINGEDGE_R;
             break;
         case B_CORNER_BL:
-            new_type = black ? B_BACK : B_BACK;
+            new_type = my_color == 0 ? B_BACK : B_BACK;
             break;
         case B_CORNER_BR:
-            new_type = black ? B_BACK : B_BACK;
+            new_type = my_color == 0 ? B_BACK : B_BACK;
             break;
         case B_CORNER_TL:
-            new_type = black ? B_BACK : B_BACK;
+            new_type = my_color == 0 ? B_BACK : B_BACK;
             break;
         case B_CORNER_TR:
-            new_type = black ? B_BACK : B_BACK;
+            new_type = my_color == 0 ? B_BACK : B_BACK;
             break;
         case W_BACK:
-            new_type = black ? W_FLOOR1 : W_BACK;
+            new_type = my_color == 0 ? W_FLOOR1 : W_BACK;
             break;
         case W_FLOOR1:
         case W_FLOOR2:
         case W_FLOOR3:
-            new_type = black ? W_BACK : W_BACK;
+            new_type = my_color == 0 ? W_BACK : W_BACK;
             break;
         case W_FLOOREDGE_L:
-            new_type = black ? W_BACK : W_BACK;
+            new_type = my_color == 0 ? W_BACK : W_BACK;
             break;
         case W_FLOOREDGE_R:
-            new_type = black ? W_BACK : W_BACK;
+            new_type = my_color == 0 ? W_BACK : W_BACK;
             break;
         case W_CEILING:
-            new_type = black ? W_BACK : W_BACK;
+            new_type = my_color == 0 ? W_BACK : W_BACK;
             break;
         case W_CEILINGEDGE_L:
-            new_type = black ? W_BACK : W_BACK;
+            new_type = my_color == 0 ? W_BACK : W_BACK;
             break;
         case W_CEILINGEDGE_R:
-            new_type = black ? W_BACK : W_BACK;
+            new_type = my_color == 0 ? W_BACK : W_BACK;
             break;
         case W_WALL_L:
-            new_type = black ? W_FLOOREDGE_L : W_BACK;
+            new_type = my_color == 0 ? W_FLOOREDGE_L : W_BACK;
             break;
         case W_WALL_R:
-            new_type = black ? W_FLOOREDGE_R : W_BACK;
+            new_type = my_color == 0 ? W_FLOOREDGE_R : W_BACK;
             break;
         case W_CORNER_BL:
-            new_type = black ? W_BACK : W_BACK;
+            new_type = W_BACK;
             break;
         case W_CORNER_BR:
-            new_type = black ? W_BACK : W_BACK;
+            new_type = W_BACK;
             break;
         case W_CORNER_TL:
-            new_type = black ? W_BACK : W_BACK;
+            new_type = W_BACK;
             break;
         case W_CORNER_TR:
-            new_type = black ? W_BACK : W_BACK;
+            new_type = W_BACK;
             break;
         default:
-            new_type = black ? W_BACK : B_BACK;
+            new_type = my_color == 0 ? W_BACK : B_BACK;
             break;
     }
 
@@ -301,94 +301,94 @@ int Crate::tile_type_top(int type)
 
 int Crate::tile_type_bottom(int type)
 {
-    int new_type = black ? W_BACK : B_BACK;
+    int new_type = my_color == 0 ? W_BACK : B_BACK;
 
     switch (type)
     {
         case B_BACK:
-            new_type = black ? B_BACK : B_FLOOR1;
+            new_type = my_color == 0 ? B_BACK : B_FLOOR1;
             break;
         case B_FLOOR1:
         case B_FLOOR2:
         case B_FLOOR3:
-            new_type = black ? B_BACK : B_BACK;
+            new_type = my_color == 0 ? B_BACK : B_BACK;
             break;
         case B_FLOOREDGE_L:
-            new_type = black ? B_BACK : B_BACK;
+            new_type = my_color == 0 ? B_BACK : B_BACK;
             break;
         case B_FLOOREDGE_R:
-            new_type = black ? B_BACK : B_BACK;
+            new_type = my_color == 0 ? B_BACK : B_BACK;
             break;
         case B_CEILING:
-            new_type = black ? B_BACK : B_BACK;
+            new_type = my_color == 0 ? B_BACK : B_BACK;
             break;
         case B_CEILINGEDGE_L:
-            new_type = black ? B_BACK : B_BACK;
+            new_type = my_color == 0 ? B_BACK : B_BACK;
             break;
         case B_CEILINGEDGE_R:
-            new_type = black ? B_BACK : B_BACK;
+            new_type = my_color == 0 ? B_BACK : B_BACK;
             break;
         case B_WALL_L:
-            new_type = black ? B_BACK : B_FLOOREDGE_L;
+            new_type = my_color == 0 ? B_BACK : B_FLOOREDGE_L;
             break;
         case B_WALL_R:
-            new_type = black ? B_BACK : B_FLOOREDGE_R;
+            new_type = my_color == 0 ? B_BACK : B_FLOOREDGE_R;
             break;
         case B_CORNER_BL:
-            new_type = black ? B_BACK : B_BACK;
+            new_type = my_color == 0 ? B_BACK : B_BACK;
             break;
         case B_CORNER_BR:
-            new_type = black ? B_BACK : B_BACK;
+            new_type = my_color == 0 ? B_BACK : B_BACK;
             break;
         case B_CORNER_TL:
-            new_type = black ? B_BACK : B_BACK;
+            new_type = my_color == 0 ? B_BACK : B_BACK;
             break;
         case B_CORNER_TR:
-            new_type = black ? B_BACK : B_BACK;
+            new_type = my_color == 0 ? B_BACK : B_BACK;
             break;
         case W_BACK:
-            new_type = black ? W_CEILING : W_BACK;
+            new_type = my_color == 0 ? W_CEILING : W_BACK;
             break;
         case W_FLOOR1:
         case W_FLOOR2:
         case W_FLOOR3:
-            new_type = black ? W_BACK : W_BACK;
+            new_type = my_color == 0 ? W_BACK : W_BACK;
             break;
         case W_FLOOREDGE_L:
-            new_type = black ? W_BACK : W_BACK;
+            new_type = my_color == 0 ? W_BACK : W_BACK;
             break;
         case W_FLOOREDGE_R:
-            new_type = black ? W_BACK : W_BACK;
+            new_type = my_color == 0 ? W_BACK : W_BACK;
             break;
         case W_CEILING:
-            new_type = black ? W_BACK : W_BACK;
+            new_type = my_color == 0 ? W_BACK : W_BACK;
             break;
         case W_CEILINGEDGE_L:
-            new_type = black ? W_BACK : W_BACK;
+            new_type = my_color == 0 ? W_BACK : W_BACK;
             break;
         case W_CEILINGEDGE_R:
-            new_type = black ? W_BACK : W_BACK;
+            new_type = my_color == 0 ? W_BACK : W_BACK;
             break;
         case W_WALL_L:
-            new_type = black ? W_CEILINGEDGE_L : W_BACK;
+            new_type = my_color == 0 ? W_CEILINGEDGE_L : W_BACK;
             break;
         case W_WALL_R:
-            new_type = black ? W_CEILINGEDGE_R : W_BACK;
+            new_type = my_color == 0 ? W_CEILINGEDGE_R : W_BACK;
             break;
         case W_CORNER_BL:
-            new_type = black ? W_BACK : W_BACK;
+            new_type = my_color == 0 ? W_BACK : W_BACK;
             break;
         case W_CORNER_BR:
-            new_type = black ? W_BACK : W_BACK;
+            new_type = my_color == 0 ? W_BACK : W_BACK;
             break;
         case W_CORNER_TL:
-            new_type = black ? W_BACK : W_BACK;
+            new_type = my_color == 0 ? W_BACK : W_BACK;
             break;
         case W_CORNER_TR:
-            new_type = black ? W_BACK : W_BACK;
+            new_type = my_color == 0 ? W_BACK : W_BACK;
             break;
         default:
-            new_type = black ? W_BACK : B_BACK;
+            new_type = my_color == 0 ? W_BACK : B_BACK;
             break;
     }
 
@@ -398,94 +398,94 @@ int Crate::tile_type_bottom(int type)
 // left side tile determinant
 int Crate::tile_type_left(int type)
 {
-    int new_type = black ? W_BACK : B_BACK;
+    int new_type = my_color == 0 ? W_BACK : B_BACK;
 
     switch (type)
     {
         case B_BACK:
-            new_type = black ? B_BACK : B_WALL_R;
+            new_type = my_color == 0 ? B_BACK : B_WALL_R;
             break;
         case B_FLOOR1:
         case B_FLOOR2:
         case B_FLOOR3:
-            new_type = black ? B_BACK : B_FLOOREDGE_R;
+            new_type = my_color == 0 ? B_BACK : B_FLOOREDGE_R;
             break;
         case B_FLOOREDGE_L:
-            new_type = black ? B_BACK : B_BACK;
+            new_type = my_color == 0 ? B_BACK : B_BACK;
             break;
         case B_FLOOREDGE_R:
-            new_type = black ? B_BACK : B_BACK;
+            new_type = my_color == 0 ? B_BACK : B_BACK;
             break;
         case B_CEILING:
-            new_type = black ? B_BACK : B_CEILINGEDGE_R;
+            new_type = my_color == 0 ? B_BACK : B_CEILINGEDGE_R;
             break;
         case B_CEILINGEDGE_L:
-            new_type = black ? B_BACK : B_CEILINGEDGE_R;
+            new_type = my_color == 0 ? B_BACK : B_CEILINGEDGE_R;
             break;
         case B_CEILINGEDGE_R:
-            new_type = black ? B_BACK : B_CEILINGEDGE_R;
+            new_type = my_color == 0 ? B_BACK : B_CEILINGEDGE_R;
             break;
         case B_WALL_L:
-            new_type = black ? B_BACK : B_WALL_R;
+            new_type = my_color == 0 ? B_BACK : B_WALL_R;
             break;
         case B_WALL_R:
-            new_type = black ? B_BACK : B_BACK;
+            new_type = my_color == 0 ? B_BACK : B_BACK;
             break;
         case B_CORNER_BL:
-            new_type = black ? B_BACK : B_WALL_R;
+            new_type = my_color == 0 ? B_BACK : B_WALL_R;
             break;
         case B_CORNER_BR:
-            new_type = black ? B_BACK : B_WALL_R;
+            new_type = my_color == 0 ? B_BACK : B_WALL_R;
             break;
         case B_CORNER_TL:
-            new_type = black ? B_BACK : B_WALL_R;
+            new_type = my_color == 0 ? B_BACK : B_WALL_R;
             break;
         case B_CORNER_TR:
-            new_type = black ? B_BACK : B_WALL_R;
+            new_type = my_color == 0 ? B_BACK : B_WALL_R;
             break;
         case W_BACK:
-            new_type = black ? W_WALL_R : W_BACK;
+            new_type = my_color == 0 ? W_WALL_R : W_BACK;
             break;
         case W_FLOOR1:
         case W_FLOOR2:
         case W_FLOOR3:
-            new_type = black ? W_FLOOREDGE_R : W_BACK;
+            new_type = my_color == 0 ? W_FLOOREDGE_R : W_BACK;
             break;
         case W_FLOOREDGE_L:
-            new_type = black ? W_BACK : W_BACK;
+            new_type = my_color == 0 ? W_BACK : W_BACK;
             break;
         case W_FLOOREDGE_R:
-            new_type = black ? W_BACK : W_BACK;
+            new_type = my_color == 0 ? W_BACK : W_BACK;
             break;
         case W_CEILING:
-            new_type = black ? W_BACK : W_BACK;
+            new_type = my_color == 0 ? W_BACK : W_BACK;
             break;
         case W_CEILINGEDGE_L:
-            new_type = black ? W_BACK : W_BACK;
+            new_type = my_color == 0 ? W_BACK : W_BACK;
             break;
         case W_CEILINGEDGE_R:
-            new_type = black ? W_BACK : W_BACK;
+            new_type = my_color == 0 ? W_BACK : W_BACK;
             break;
         case W_WALL_L:
-            new_type = black ? W_CEILINGEDGE_L : W_BACK;
+            new_type = my_color == 0 ? W_CEILINGEDGE_L : W_BACK;
             break;
         case W_WALL_R:
-            new_type = black ? W_CEILINGEDGE_R : W_BACK;
+            new_type = my_color == 0 ? W_CEILINGEDGE_R : W_BACK;
             break;
         case W_CORNER_BL:
-            new_type = black ? W_WALL_R : W_BACK;
+            new_type = my_color == 0 ? W_WALL_R : W_BACK;
             break;
         case W_CORNER_BR:
-            new_type = black ? W_WALL_R : W_BACK;
+            new_type = my_color == 0 ? W_WALL_R : W_BACK;
             break;
         case W_CORNER_TL:
-            new_type = black ? W_WALL_R : W_BACK;
+            new_type = my_color == 0 ? W_WALL_R : W_BACK;
             break;
         case W_CORNER_TR:
-            new_type = black ? W_WALL_R : W_BACK;
+            new_type = my_color == 0 ? W_WALL_R : W_BACK;
             break;
         default:
-            new_type = black ? W_BACK : B_BACK;
+            new_type = my_color == 0 ? W_BACK : B_BACK;
             break;
     }
 
@@ -495,94 +495,94 @@ int Crate::tile_type_left(int type)
 // right side tile determinant
 int Crate::tile_type_right(int type)
 {
-    int new_type = black ? W_BACK : B_BACK;
+    int new_type = my_color == 0 ? W_BACK : B_BACK;
 
     switch (type)
     {
         case B_BACK:
-            new_type = black ? B_BACK : B_WALL_L;
+            new_type = my_color == 0 ? B_BACK : B_WALL_L;
             break;
         case B_FLOOR1:
         case B_FLOOR2:
         case B_FLOOR3:
-            new_type = black ? B_BACK : B_FLOOREDGE_L;
+            new_type = my_color == 0 ? B_BACK : B_FLOOREDGE_L;
             break;
         case B_FLOOREDGE_L:
-            new_type = black ? B_BACK : B_CEILINGEDGE_L;
+            new_type = my_color == 0 ? B_BACK : B_CEILINGEDGE_L;
             break;
         case B_FLOOREDGE_R:
-            new_type = black ? B_BACK : B_CEILINGEDGE_L;
+            new_type = my_color == 0 ? B_BACK : B_CEILINGEDGE_L;
             break;
         case B_CEILING:
-            new_type = black ? B_BACK : B_CEILINGEDGE_L;
+            new_type = my_color == 0 ? B_BACK : B_CEILINGEDGE_L;
             break;
         case B_CEILINGEDGE_L:
-            new_type = black ? B_BACK : B_WALL_L;
+            new_type = my_color == 0 ? B_BACK : B_WALL_L;
             break;
         case B_CEILINGEDGE_R:
-            new_type = black ? B_BACK : B_WALL_L;
+            new_type = my_color == 0 ? B_BACK : B_WALL_L;
             break;
         case B_WALL_L:
-            new_type = black ? B_BACK : B_WALL_L;
+            new_type = my_color == 0 ? B_BACK : B_WALL_L;
             break;
         case B_WALL_R:
-            new_type = black ? B_BACK : B_WALL_L;
+            new_type = my_color == 0 ? B_BACK : B_WALL_L;
             break;
         case B_CORNER_BL:
-            new_type = black ? B_BACK : B_WALL_L;
+            new_type = my_color == 0 ? B_BACK : B_WALL_L;
             break;
         case B_CORNER_BR:
-            new_type = black ? B_BACK : B_WALL_L;
+            new_type = my_color == 0 ? B_BACK : B_WALL_L;
             break;
         case B_CORNER_TL:
-            new_type = black ? B_BACK : B_WALL_L;
+            new_type = my_color == 0 ? B_BACK : B_WALL_L;
             break;
         case B_CORNER_TR:
-            new_type = black ? B_BACK : B_WALL_L;
+            new_type = my_color == 0 ? B_BACK : B_WALL_L;
             break;
         case W_BACK:
-            new_type = black ? W_WALL_L : W_BACK;
+            new_type = my_color == 0 ? W_WALL_L : W_BACK;
             break;
         case W_FLOOR1:
         case W_FLOOR2:
         case W_FLOOR3:
-            new_type = black ? W_FLOOREDGE_L : W_BACK;
+            new_type = my_color == 0 ? W_FLOOREDGE_L : W_BACK;
             break;
         case W_FLOOREDGE_L:
-            new_type = black ? W_BACK : W_BACK;
+            new_type = my_color == 0 ? W_BACK : W_BACK;
             break;
         case W_FLOOREDGE_R:
-            new_type = black ? W_BACK : W_BACK;
+            new_type = my_color == 0 ? W_BACK : W_BACK;
             break;
         case W_CEILING:
-            new_type = black ? W_BACK : W_BACK;
+            new_type = my_color == 0 ? W_BACK : W_BACK;
             break;
         case W_CEILINGEDGE_L:
-            new_type = black ? W_BACK : W_BACK;
+            new_type = my_color == 0 ? W_BACK : W_BACK;
             break;
         case W_CEILINGEDGE_R:
-            new_type = black ? W_BACK : W_BACK;
+            new_type = my_color == 0 ? W_BACK : W_BACK;
             break;
         case W_WALL_L:
-            new_type = black ? W_FLOOREDGE_L : W_BACK;
+            new_type = my_color == 0 ? W_FLOOREDGE_L : W_BACK;
             break;
         case W_WALL_R:
-            new_type = black ? W_FLOOREDGE_R : W_BACK;
+            new_type = my_color == 0 ? W_FLOOREDGE_R : W_BACK;
             break;
         case W_CORNER_BL:
-            new_type = black ? W_WALL_L : W_BACK;
+            new_type = my_color == 0 ? W_WALL_L : W_BACK;
             break;
         case W_CORNER_BR:
-            new_type = black ? W_WALL_L : W_BACK;
+            new_type = my_color == 0 ? W_WALL_L : W_BACK;
             break;
         case W_CORNER_TL:
-            new_type = black ? W_WALL_L : W_BACK;
+            new_type = my_color == 0 ? W_WALL_L : W_BACK;
             break;
         case W_CORNER_TR:
-            new_type = black ? W_WALL_L : W_BACK;
+            new_type = my_color == 0 ? W_WALL_L : W_BACK;
             break;
         default:
-            new_type = black ? W_BACK : B_BACK;
+            new_type = my_color == 0 ? W_BACK : B_BACK;
             break;
     }
 

@@ -240,8 +240,8 @@ bool load_level_from_file(Engine* game, Levelstate* lvl, std::string filename)
         map >> char_y;
         map >> lvl_end_x;
         map >> lvl_end_y;
-        lvl->chars.push_back(new Dot(char_x, char_y, !i, game->rend, &lvl->palette));
-        lvl->level_ends.push_back(new LevelEnd(lvl_end_x, lvl_end_y, !i, game->rend));
+        lvl->chars.push_back(new Dot(char_x, char_y, i, game->rend, &lvl->palette));
+        lvl->level_ends.push_back(new LevelEnd(lvl_end_x, lvl_end_y, i, game->rend));
     }
 
     // close the file

@@ -69,8 +69,8 @@ public:
     bool wall;
     bool ceiling;
 
-    // is the tile black or nah?
-    bool black;
+    // tile color
+    bool my_color;
 
     // tile status
     int status;

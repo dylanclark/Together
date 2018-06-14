@@ -17,14 +17,14 @@
 
 void Level1State::init(Engine* game)
 {
-    status = 0;
+    active_color = 0;
 
     // load textures
     load_level(game, "01");
 
     camera = new class Camera(game->screen_width, game->screen_height,
                               width * TILE_WIDTH, height * TILE_WIDTH,
-                              chars[0]->get_rect(), chars[0]->get_rect());
+                              chars[0]->get_rect(), chars[active_color]->get_dir());
 
     if (game->read_save() < 1) {
         game->save(1);
@@ -37,7 +37,7 @@ void Level1State::draw(Engine* game)
 
     // draw stuff to the screen!
     for (int i = 0; i < (width * height); i++) {
-        tileset[i]->render(status, cam_rect, game, &tile_tex);
+        tileset[i]->render(active_color, cam_rect, game, &tile_tex);
     }
     for (int i = 0; i < chars.size(); i++) {
         chars[i]->render(cam_rect, game);
@@ -46,7 +46,7 @@ void Level1State::draw(Engine* game)
         level_ends[i]->render(cam_rect, game);
     }
     for (int i = 0; i < crates.size(); i++) {
-        crates[i]->render(status, cam_rect, game, this);
+        crates[i]->render(active_color, cam_rect, game, this);
     }
     SDL_RenderPresent(game->rend);
 }

@@ -19,7 +19,7 @@ extern Texture w_end_animate;
 static const int DOT_VEL = 3;
 static const int JUMP_VEL = 6;
 static const float DOT_ACC = .5;
-static const float GRAVITY = .27;
+static const float GRAVITY = .25;
 static const int PUSH_VEL = 2;
 
 typedef enum _char_dir {
@@ -34,7 +34,7 @@ typedef enum _char_status {
     CHAR_INACTIVE
 } char_status;
 
-Dot::Dot(int x, int y, bool is_black, SDL_Renderer* rend, SDL_Color* palette)
+Dot::Dot(int x, int y, bool color, SDL_Renderer* rend, SDL_Color* palette)
 {
     // initialize velocity
     x_vel = 0;
@@ -49,18 +49,17 @@ Dot::Dot(int x, int y, bool is_black, SDL_Renderer* rend, SDL_Color* palette)
     // initiliaze gamepad
     controller = new class Controller;
 
-    black = is_black;
-    if (black) {
+    my_color = color;
+    if (my_color == 0) {
         status = CHAR_IDLE;
-        if (!tex.load_tile_sheet("char-sheet.png", rend, palette))
+        if (!tex.load_tile_sheet("char-sheet-black.png", rend, palette))
         {
             printf("Failed to load black dot texture!\n");
             return;
         }
-    }
-    else {
+    } else {
         status = CHAR_INACTIVE;
-        if (!tex.load_tile_sheet("char-sheet.png", rend, palette))
+        if (!tex.load_tile_sheet("char-sheet-white.png", rend, palette))
         {
             printf("Failed to load white dot texture!\n");
             return;
@@ -72,6 +71,7 @@ Dot::Dot(int x, int y, bool is_black, SDL_Renderer* rend, SDL_Color* palette)
     col_rect.h = TILE_WIDTH;
     col_rect.x = x*TILE_WIDTH;
     col_rect.y = y*TILE_WIDTH;
+    true_y = col_rect.y;
 }
 
 bool Dot::handle_event(SDL_Event &e, Levelstate* level, Engine* game)
@@ -104,16 +104,14 @@ bool Dot::handle_event(SDL_Event &e, Levelstate* level, Engine* game)
                 case SDL_SCANCODE_RSHIFT:
                     if (level->shiftable) {
                         Mix_PlayChannel(-1, game->sound->level_switch_snd, 0);
-                        status = (status + 1) % 4;
+                        level->shift();
                     }
                     break;
                 case SDL_SCANCODE_R:
                     game->restart_state();
                     break;
                 case SDL_SCANCODE_ESCAPE:
-                    if  (black) {
-                        level->pause(game);
-                    }
+                    level->pause(game);
                     break;
                 default:
                     break;
@@ -223,14 +221,15 @@ bool Dot::handle_event(SDL_Event &e, Levelstate* level, Engine* game)
     return true;
 }
 
-void Dot::move(Levelstate* level, Engine* game)
+void Dot::update(Levelstate* level, Engine* game)
 {
-    if (status != CHAR_JUMP) {
-        short_hop = -1;
+    if (level->active_color != my_color) {
+        status = CHAR_INACTIVE;
+        return;
     }
 
-    if (status == CHAR_INACTIVE) {
-        return;
+    if (status != CHAR_JUMP) {
+        short_hop = -1;
     }
 
     // update y velocity with gravity
@@ -244,7 +243,7 @@ void Dot::move(Levelstate* level, Engine* game)
             short_hop = 0;
         }
     }
-    black ? y_vel += GRAVITY * ((short_hop > 0)*3.2 + 1): y_vel -= GRAVITY * ((short_hop > 0)*3.2 + 1);
+    y_vel += (!my_color - my_color) * GRAVITY * ((short_hop > 0)*3.2 + 1);
 
     // update x velocity
     if (right && !left)
@@ -286,27 +285,29 @@ void Dot::move(Levelstate* level, Engine* game)
 
     // move that Dot
     col_rect.x += x_vel;
-    col_rect.y += y_vel;
-
-    // deal with crate collisions using crate_col
-    if (!crate_col(level, game)) {
-        level->shiftable = tile_col(level->tileset, level->width * level->height, game);
-    }
+    true_y += y_vel;
 
     // check edges
     if (col_rect.x < 0) {
         col_rect.x = 0;
     }
-    if (col_rect.y < 0) {
-        col_rect.y = 0;
+    if (true_y < 0) {
+        true_y = 0;
         y_vel = 0;
     }
     if (col_rect.x + col_rect.w > level->width * TILE_WIDTH) {
         col_rect.x = level->width * TILE_WIDTH - col_rect.w;
     }
-    if (col_rect.y + col_rect.h > level->height * TILE_WIDTH) {
-        col_rect.y = level->height * TILE_WIDTH - col_rect.h;
+    if (true_y + col_rect.h > level->height * TILE_WIDTH) {
+        true_y = level->height * TILE_WIDTH - col_rect.h;
         y_vel = 0;
+    }
+
+    col_rect.y = (int) true_y;
+
+    // deal with crate collisions using crate_col
+    if (!crate_col(level, game)) {
+        level->shiftable = tile_col(level->tileset, level->width * level->height, game);
     }
 }
 
@@ -319,7 +320,7 @@ bool Dot::tile_col(Tile* tileset[], int size, Engine* game)
     bool airborne = true;
 
     for (int i = 0, n = size; i < n; i++) {
-        if (tileset[i]->black != black) {
+        if (tileset[i]->my_color != my_color) {
             continue;
         }
         // store reposition vector
@@ -340,13 +341,14 @@ bool Dot::tile_col(Tile* tileset[], int size, Engine* game)
                     status = CHAR_IDLE;
                 }
                 col_rect.y += repos.y;
+                true_y = col_rect.y;
                 y_vel = 0;
                 shiftable = true;
                 // jump!
                 if (up) {
                     status = CHAR_JUMP;
                     jump_start = SDL_GetTicks();
-                    y_vel = y_vel + (black ? -JUMP_VEL : JUMP_VEL);
+                    y_vel += (my_color - !my_color) * JUMP_VEL;
                     Mix_PlayChannel(-1, game->sound->level_b_jump_snd, 0);
                     shiftable = false;
                 } else {
@@ -363,19 +365,21 @@ bool Dot::tile_col(Tile* tileset[], int size, Engine* game)
                         (repos.x < 0 && x_vel > 0 && col_rect.x < tile_rect.x)) {
                         x_vel = 0;
                     }
-                } else if ((black && y_vel >= 0 && col_rect.y < tile_rect.y) || (!black && y_vel <= 0 && repos.y >= 0)) {
+                } else if ((my_color == 0 && y_vel >= 0 && col_rect.y < tile_rect.y) ||
+                           (my_color == 1 && y_vel <= 0 && repos.y >= 0)) {
                     // land!
                     if (status == CHAR_JUMP) {
                         status = CHAR_IDLE;
                     }
                     col_rect.y += repos.y;
+                    true_y = col_rect.y;
                     y_vel = 0;
                     shiftable = true;
                     // jump!
                     if (up) {
                         status = CHAR_JUMP;
                         jump_start = SDL_GetTicks();
-                        y_vel = y_vel + (black ? -JUMP_VEL : JUMP_VEL);
+                        y_vel += (my_color - !my_color) * JUMP_VEL;
                         Mix_PlayChannel(-1, game->sound->level_b_jump_snd, 0);
                         shiftable = false;
                     } else {
@@ -387,7 +391,8 @@ bool Dot::tile_col(Tile* tileset[], int size, Engine* game)
             else if (tileset[i]->ceiling && !tileset[i]->wall) {
                 // adjust y pos
                 col_rect.y += repos.y;
-                y_vel = black ? 1 : -1;
+                true_y = col_rect.y;
+                y_vel = ((my_color == 0) - (my_color == 1)) * .5;
                 short_hop = 0;
                 shiftable = false;
             }
@@ -405,7 +410,8 @@ bool Dot::tile_col(Tile* tileset[], int size, Engine* game)
                 } else if (y_vel < 0) {
                     // adjust y pos
                     col_rect.y += repos.y;
-                    y_vel = black ? 1 : -1;
+                    true_y = col_rect.y;
+                    y_vel = my_color - !my_color;
                     short_hop = 0;
                     shiftable = false;
                 }
@@ -430,7 +436,7 @@ bool Dot::crate_col(Levelstate* level, Engine* game)
 
         // if theres a collision
         if (check_collision(col_rect, level->crates[i]->get_col_rect(), &repos)) {
-            if (black != level->crates[i]->black) {
+            if (my_color != level->crates[i]->my_color) {
                 level->shiftable = false;
                 tile_col(level->crates[i]->tileset, MAX_BORDER, game);
                 return true;
@@ -463,12 +469,12 @@ bool Dot::crate_col(Levelstate* level, Engine* game)
                     if (status == CHAR_JUMP) {
                         status = CHAR_IDLE;
                     }
-                    col_rect.y += repos.y;
+                    true_y += repos.y;
                     y_vel = 0;
                     level->shiftable = true;
 
-                    if (col_rect.y > level->crates[i]->get_col_rect().y) {
-                        y_vel = black ? 1 : -1;
+                    if (true_y > level->crates[i]->get_col_rect().y) {
+                        y_vel = !my_color - my_color;
                         short_hop = 0;
                     }
                     // jump! (if you want)
@@ -518,7 +524,7 @@ void Dot::render(SDL_Rect* camera, Engine* game)
 
     // relevant clips
     SDL_Rect frame_clip = {frame * 16, status * 16, 16, 16};
-    tex.render(col_rect.x, col_rect.y, &frame_clip, camera, game, dir);
+    tex.render(col_rect.x, col_rect.y, &frame_clip, camera, game, dir, my_color);
 };
 
 // spring when sprung
@@ -526,7 +532,7 @@ void Dot::spring(int x, int y, int direction)
 {
     // spring the right way
     y_vel = 0;
-    black ? y_vel -= y * 2 : y_vel += y * 2;
+    my_color ? y_vel -= y * 2 : y_vel += y * 2;
 
     // deal with any horizontal springing
     if (direction == FLIP_RIGHT)
@@ -547,15 +553,4 @@ bool Dot::center(SDL_Rect* end_rect)
     col_rect.y = end_rect->y;
 
     return true;
-}
-
-SDL_Rect Dot::get_rect()
-{
-    return col_rect;
-}
-
-// return y_vel
-float Dot::get_y_vel()
-{
-    return y_vel;
 }

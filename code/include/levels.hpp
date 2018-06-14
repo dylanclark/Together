@@ -21,8 +21,8 @@ class Camera
 public:
     Camera (int scr_w, int scr_h,
             int lev_w, int lev_h,
-            SDL_Rect char1, SDL_Rect char2);
-    void update (SDL_Rect char1, SDL_Rect char2);
+            SDL_Rect active_char, int dir);
+    void update (SDL_Rect active_char, int dir);
     SDL_Rect* get_display();
 
 private:
@@ -73,12 +73,15 @@ public:
     virtual void interactions(Engine* game) = 0;
 
     void pause(Engine* game);
+    void shift();
 
     // tile dimensions of level
     int width;
     int height;
+
+    // shifting info
     bool shiftable;
-    int status;
+    bool active_color;
 
     Camera* camera;
     std::vector<Dot*> chars;

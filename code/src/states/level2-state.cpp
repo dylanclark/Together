@@ -16,30 +16,16 @@
 
 void Level2State::init(Engine* game)
 {
+    active_color = 0;
     load_level(game, "02");
-    init_objects(game);
+
+    camera = new class Camera(game->screen_width, game->screen_height,
+                              width * TILE_WIDTH, height * TILE_WIDTH,
+                              chars[0]->get_rect(), chars[active_color]->get_dir());
 
     if (game->read_save() < 2) {
         game->save(2);
     }
-}
-
-void Level2State::update(Engine* game)
-{
-    // clear the window
-    SDL_RenderClear(game->rend);
-
-    // move the square
-    b_char->move(this, game);
-
-    for (int i = 0; i < crates.size(); i++)
-    {
-        crates[i]->update();
-    }
-
-    interactions(game);
-
-    camera->update(b_char->get_rect(), b_char->get_rect());
 }
 
 void Level2State::draw(Engine* game)
@@ -49,12 +35,12 @@ void Level2State::draw(Engine* game)
     // draw stuff to the screen!
     for (int i = 0; i < (width * height); i++)
     {
-        tileset[i]->render(status, cam_rect, game, &tile_tex);
+        tileset[i]->render(active_color, cam_rect, game, &tile_tex);
     }
 
     for (int i = 0; i < crates.size(); i++)
     {
-        crates[i]->render(status, cam_rect, game, this);
+        crates[i]->render(active_color, cam_rect, game, this);
     }
 
     b_char->render(cam_rect, game);
@@ -92,7 +78,7 @@ void Level2State::init_objects(Engine* game)
     b_char = new class Dot(2, 11, true, game->rend);
     camera = new class Camera(game->screen_width, game->screen_height,
                               width * TILE_WIDTH, height * TILE_WIDTH,
-                              b_char->get_rect(), b_char->get_rect());
+                              b_char->get_rect(), b_char->get_dir());
 
     b_level_end = new class LevelEnd(25, 11, true, game->rend);
 }

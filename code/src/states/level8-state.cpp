@@ -28,24 +28,6 @@ void Level8State::init(Engine* game)
     }
 }
 
-void Level8State::update(Engine* game)
-{
-    // clear the window
-    SDL_RenderClear(game->rend);
-
-    // move the square
-    b_char->move(this, game);
-    w_char->move(this, game);
-
-    for (int i = 0; i < crates.size(); i++) {
-        crates[i]->update();
-    }
-
-    camera->update(b_char->get_rect(), w_char->get_rect());
-
-    interactions(game);
-}
-
 void Level8State::draw(Engine* game)
 {
     SDL_Rect* cam_rect = camera->get_display();
@@ -53,11 +35,11 @@ void Level8State::draw(Engine* game)
     // draw stuff to the screen!
     for (int i = 0; i < (width * height); i++)
     {
-        tileset[i]->render(status, cam_rect, game, &tile_tex);
+        tileset[i]->render(active_color, cam_rect, game, &tile_tex);
     }
     for (int i = 0; i < crates.size(); i++)
     {
-        crates[i]->render(status, cam_rect, game, this);
+        crates[i]->render(active_color, cam_rect, game, this);
     }
 
     b_char->render(cam_rect, game);
@@ -111,7 +93,7 @@ void Level8State::init_objects(Engine* game)
     w_char = new class Dot(2, 11, false, game->rend);
     camera = new class Camera(game->screen_width, game->screen_height,
                               width * TILE_WIDTH, height * TILE_WIDTH,
-                              b_char->get_rect(), w_char->get_rect());
+                              b_char->get_rect(), w_char->get_dir());
 
     // initialize black level end
     b_level_end = new class LevelEnd(22, 16, true, game->rend);
