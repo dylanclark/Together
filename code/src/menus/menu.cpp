@@ -106,7 +106,6 @@ void FadeIn::update()
             alpha = 0;
         }
     }
-
     tex.set_alpha(alpha);
 }
 
@@ -116,16 +115,12 @@ Menu::Menu()
     selector = 0;
     controller = new class Controller;
 
-    // in case we want a fade-in
-    fade_in = NULL;
     // initialize this so our check in draw works
     title = NULL;
+    fade_in = NULL;
 
     // are these necessary? or should we do everything in handle-events?
-    up = false;
-    down = false;
-    right = false;
-    left = false;
+    up = down = right = left = false;
 }
 
 void Menu::handle_events(Engine* game)
@@ -204,37 +199,21 @@ void Menu::handle_events(Engine* game)
 void Menu::update(Engine* game)
 {
     // change selector based on controller inputs
-    if (up) {
-        selector = (selector - 1) % items.size();
+    if (down || up) {
+        selector = (selector + (down - up)) % items.size();
         Mix_PlayChannel(-1, game->sound->menu_choose_snd, 0);
-        up = false;
+        up = down = false;
     }
-    if (down) {
-        selector = (selector + 1) % items.size();
-        Mix_PlayChannel(-1, game->sound->menu_choose_snd, 0);
-        down = false;
-    }
-    if (right) {
+    if (right || left) {
         if (items[selector]->type == MENU_SLIDER) {
             MenuSlider* slider = static_cast<MenuSlider*>(items[selector]);
-            slider->cur_frame = (slider->cur_frame + 1) % slider->frames;
+            slider->cur_frame = (slider->cur_frame + (right - left)) % slider->frames;
             if (slider->permanent) {
                 slider->select(game);
             }
             Mix_PlayChannel(-1, game->sound->menu_choose_snd, 0);
         }
-        right = false;
-    }
-    if (left) {
-        if (items[selector]->type == MENU_SLIDER) {
-            MenuSlider* slider = static_cast<MenuSlider*>(items[selector]);
-            slider->cur_frame = (slider->cur_frame - 1) % slider->frames;
-            if (slider->permanent) {
-                slider->select(game);
-            }
-            Mix_PlayChannel(-1, game->sound->menu_choose_snd, 0);
-        }
-        left = false;
+        left = right = false;
     }
 
     // clear the window
