@@ -12,29 +12,14 @@
 #include <engine.hpp>
 #include <textures.hpp>
 
-class NewGameMenuState : public Gamestate
+class NewGameMenuState : public Menu
 {
 public:
+    NewGameMenuState() { };
+
     // init and shutdown
     void init(Engine* game);
     void cleanup();
-
-    // pause and resume
-    void pause();
-    void resume();
-
-    // handling control of screen
-    void handle_events(Engine* game);
-    void update(Engine* game);
-    void draw(Engine* game);
-
-    NewGameMenuState() { };
-
-    Menu* newgame_menu;
-
-    Texture newgame_title;
-    Texture yes_button;
-    Texture no_button;
 };
 
 #endif /* newgamemenu_state_hpp */

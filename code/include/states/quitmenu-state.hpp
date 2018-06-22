@@ -12,29 +12,14 @@
 #include <engine.hpp>
 #include <textures.hpp>
 
-class QuitMenuState : public Gamestate
+class QuitMenuState : public Menu
 {
 public:
+    QuitMenuState() { };
+
     // init and shutdown
     void init(Engine* game);
     void cleanup();
-
-    // pause and resume
-    void pause();
-    void resume();
-
-    // handling control of screen
-    void handle_events(Engine* game);
-    void update(Engine* game);
-    void draw(Engine* game);
-
-    QuitMenuState() { };
-
-    Menu* quit_menu;
-
-    Texture quit_title;
-    Texture yes_button;
-    Texture no_button;
 };
 
 #endif /* MainMenuState_hpp */

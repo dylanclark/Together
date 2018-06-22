@@ -12,30 +12,14 @@
 #include <engine.hpp>
 #include <textures.hpp>
 
-class OptionsMenuState : public Gamestate
+class OptionsMenuState : public Menu
 {
 public:
+    OptionsMenuState() { };
+
     // init and shutdown
     void init(Engine* game);
     void cleanup();
-
-    // pause and resume
-    void pause();
-    void resume();
-
-    // handling control of screen
-    void handle_events(Engine* game);
-    void update(Engine* game);
-    void draw(Engine* game);
-
-    OptionsMenuState() { };
-
-    Menu* options_menu;
-
-    Texture volume_slider;
-    Texture sfx_slider;
-    Texture controls_button;
-    Texture back_button;
 };
 
 #endif /* OptionsMenuState_hpp */

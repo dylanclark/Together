@@ -12,6 +12,8 @@
 #include <objects.hpp>
 #include <tiles.hpp>
 
+static const int DEAD_ZONE = 8000;
+
 // reinitialize character textures
 extern Texture b_end_animate;
 extern Texture w_end_animate;
@@ -105,6 +107,7 @@ bool Dot::handle_event(SDL_Event &e, Levelstate* level, Engine* game)
                 case SDL_SCANCODE_RSHIFT:
                     if (level->shiftable) {
                         Mix_PlayChannel(-1, game->sound->level_switch_snd, 0);
+                        up = left = down = right = 0;
                         level->shift();
                     }
                     break;

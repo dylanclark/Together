@@ -19,6 +19,12 @@ import random
 
 TILE_WIDTH = 16
 
+(PLACING_DELETE, PLACING_TILES, PLACING_CHARS,
+PLACING_LEVEL_ENDS, PLACING_BUTTONS, PLACING_CRATES,
+PLACING_SPRINGS) = range(7)
+
+placing_strings = ["delete", "tile", "char", "level_end", "button", "crate", "spring"]
+
 class Camera:
     truex, truey, truew, trueh = 0, 0, 0, 0
     locx, locy, locw, loch = 0, 0, 0, 0
@@ -195,7 +201,7 @@ class Tileset:
         camx, camy, camw, camh = cam
         if event.type == pygame.MOUSEBUTTONDOWN:
             # placing tiles
-            if placing == 0:
+            if placing == PLACING_TILES:
                 if not self.rect:
                     mousex, mousey = pygame.mouse.get_pos()
                     x1 = int((mousex * (float(camw) / float(scr_w)) + camx) / TILE_WIDTH)
@@ -221,32 +227,41 @@ class Tileset:
                         self.fill_rect(True, mx, my)
                     elif self.rect == 3:
                         self.fill_rect(False, mx, my)
-            # placing objects
-            else:
+
+            # deleting stuff
+            elif placing == PLACING_DELETE:
+
+                # get location of mouse click
                 mousex, mousey = pygame.mouse.get_pos()
                 x = int((mousex * (float(camw) / float(scr_w)) + camx) / TILE_WIDTH)
                 y = int((mousey * (float(camh) / float(scr_h)) + camy) / TILE_WIDTH)
-                name = ""
-                if placing == 1:
-                    name = "char"
-                elif placing == 2:
-                    name = "level_end"
-                elif placing == 3:
-                    name = "button"
-                elif placing == 4:
-                    name = "spring"
-                elif placing == -1:
-                    for i in range(len(self.obj_array)):
-                        if self.obj_array[i][1] == x and self.obj_array[i][2] == y:
-                            self.obj_array.pop(i)
-                            return
 
+                # delete any objects that are there
+                for i in range(len(self.obj_array)):
+                    if self.obj_array[i][1] == x and self.obj_array[i][2] == y:
+                        self.obj_array.pop(i)
+                        return
+
+            # placing objects
+            else:
+                # get location of mouse click
+                mousex, mousey = pygame.mouse.get_pos()
+                x = int((mousex * (float(camw) / float(scr_w)) + camx) / TILE_WIDTH)
+                y = int((mousey * (float(camh) / float(scr_h)) + camy) / TILE_WIDTH)
+
+                # don't place beyond bounds
                 if x >= len(self.array[0]) or y >= len(self.array) or x < 0 or y < 0:
                     return
+                # don't place things on the same color
                 if self.array[y][x] == (event.button == 1):
                     print '\a'
                     return
-                if placing == 1 or placing == 2:
+
+                # get name of object
+                name = placing_strings[placing]
+
+                # if it's a char or level-end, there can only be one of each color
+                if placing == PLACING_CHARS or placing == PLACING_LEVEL_ENDS:
                     for i in range(len(self.obj_array)):
                         if self.obj_array[i][0] == name and self.obj_array[i][3] == (event.button == 1):
                             self.obj_array.pop(i)
@@ -296,6 +311,21 @@ class Tileset:
 
     def get_obj_array(self):
         return self.obj_array
+
+def draw_UI(screen, placing):
+    obj_str = "placing: "+placing_strings[placing]
+    if placing != PLACING_DELETE:
+        obj_str += 's'
+    myfont = pygame.font.SysFont('Times New Roman', 60)
+
+    textsurface = myfont.render(obj_str, False, (0, 0, 0))
+    tex_w, tex_h = myfont.size(obj_str)
+    scr_w, scr_h = screen.get_width(), screen.get_height()
+
+    rect = (scr_w/2-tex_w/2, 20, tex_w, tex_h)
+    pygame.draw.rect(screen, (200,200,200), rect)
+    screen.blit(textsurface, (scr_w/2-tex_w/2, 20))
+    pygame.display.flip()
 
 def collide_pt(rect, pt):
     rx, ry, rw, rh = rect
@@ -875,7 +905,8 @@ if __name__ == "__main__":
     grid = Gridlines(w, h)
     camera = Camera(w*TILE_WIDTH, h*TILE_WIDTH, screen.get_width(), screen.get_height())
     done = False
-    placing = 0
+    placing = PLACING_TILES
+    num_placing_opts = 7
 
     while not done:
         clock.tick(100)
@@ -925,22 +956,11 @@ if __name__ == "__main__":
                         tileset.remove_col_left()
                         w -= 1
                 # placing tiles
-                elif event.key == pygame.K_0:
-                    placing = 0
+                elif event.key == pygame.K_RIGHTBRACKET:
+                    placing = (placing + 1) % num_placing_opts
                 # placing chars
-                elif event.key == pygame.K_1:
-                    placing = 1
-                # placing level ends
-                elif event.key == pygame.K_2:
-                    placing = 2
-                # placing buttons
-                elif event.key == pygame.K_3:
-                    placing = 3
-                # placing springs
-                elif event.key == pygame.K_4:
-                    placing = 4
-                elif event.key == pygame.K_BACKSPACE:
-                    placing = -1
+                elif event.key == pygame.K_LEFTBRACKET:
+                    placing = (placing - 1) % num_placing_opts
 
             camera.handle_event(event)
             tileset.handle_event(event, screen, camrect, placing)
@@ -957,6 +977,7 @@ if __name__ == "__main__":
         tileset.draw(screen, camrect)
         border.draw(screen, camrect)
         grid.draw(screen, camrect)
+        draw_UI(screen, placing)
         pygame.display.flip()
 
     # get filename and output array

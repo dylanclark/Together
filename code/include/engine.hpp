@@ -57,6 +57,8 @@ private:
 class Gamestate
 {
 public:
+    Gamestate() { };
+
     virtual void init(Engine* game) = 0;
     virtual void cleanup() = 0;
 
@@ -70,11 +72,7 @@ public:
     }
 
     SDL_Color palette;
-
-    Gamestate() { };
 };
-
-#define DEAD_ZONE 8000
 
 class Controller
 {
@@ -85,5 +83,7 @@ public:
     SDL_Joystick* joystick;
     SDL_GameController* gamepad;
 };
+
+extern Engine* game;
 
 #endif /* engine_hpp */

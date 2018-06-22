@@ -80,7 +80,6 @@ bool Texture::load_tile_sheet(std::string path, SDL_Renderer* rend, SDL_Color* p
     height = TILE_WIDTH;
     SDL_FreeSurface(surface);
 
-    printf("leaving load_tile_sheet\n");
     return true;
 };
 

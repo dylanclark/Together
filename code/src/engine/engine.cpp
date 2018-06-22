@@ -11,6 +11,8 @@
 // include headers
 #include <engine.hpp>
 
+Engine* game = NULL;
+
 bool Engine::init()
 {
     bool success = true;
@@ -35,7 +37,7 @@ bool Engine::init()
     screen_height = 720;
 
     // creates a window that we can (eventually) draw into
-    win = SDL_CreateWindow("together",
+    win = SDL_CreateWindow("together.",
                            SDL_WINDOWPOS_CENTERED,
                            SDL_WINDOWPOS_CENTERED,
                            screen_width, screen_height, SDL_WINDOW_RESIZABLE);
@@ -125,6 +127,9 @@ void Engine::pop_state()
 {
     states.back()->cleanup();
     states.pop_back();
+    if (states.size() == 0) {
+        quit();
+    }
 }
 
 void Engine::restart_state()

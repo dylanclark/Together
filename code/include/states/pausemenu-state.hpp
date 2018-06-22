@@ -12,30 +12,14 @@
 #include <engine.hpp>
 #include <textures.hpp>
 
-class PauseMenuState : public Gamestate
+class PauseMenuState : public Menu
 {
 public:
+    PauseMenuState() { };
+
     // init and shutdown
     void init(Engine* game);
     void cleanup();
-
-    // pause and resume
-    void pause();
-    void resume();
-
-    // handling control of screen
-    void handle_events(Engine* game);
-    void update(Engine* game);
-    void draw(Engine* game);
-
-    PauseMenuState() { };
-
-    Menu* pause_menu;
-
-    Texture ResumeButton;
-    Texture LevelSelectButton;
-    Texture OptionsButton;
-    Texture SaveAndQuitButton;
 };
 
 #endif /* pausemenu_state_hpp */
