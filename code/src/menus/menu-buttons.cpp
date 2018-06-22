@@ -5,13 +5,9 @@
 
 // include headers
 #include <menu.hpp>
-#include <states/quitmenu-state.hpp>
-#include <states/levelstate.hpp>
-#include <states/mainmenu-state.hpp>
-#include <states/optionsmenu-state.hpp>
-#include <states/newgamemenu-state.hpp>
 #include <states/intro-state.hpp>
-#include <states/levelselectmenu-state.hpp>
+#include <states/levelstate.hpp>
+#include <states/menustate.hpp>
 
 // BUTTONS
 

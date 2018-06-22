@@ -88,6 +88,7 @@ public:
 
     // init and shutdown
     virtual void init(Engine* game) = 0;
+    void cleanup();
 
     // pause and resume
     void pause();

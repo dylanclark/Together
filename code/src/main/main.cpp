@@ -13,7 +13,7 @@
 
 // include all headers
 #include <engine.hpp>
-#include <states/mainmenu-state.hpp>
+#include <states/menustate.hpp>
 #include <states/levelstate.hpp>
 
 // Let's do this.

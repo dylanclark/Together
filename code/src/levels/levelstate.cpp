@@ -4,7 +4,7 @@
 
 #include <levels.hpp>
 #include <engine.hpp>
-#include <states/pausemenu-state.hpp>
+#include <states/menustate.hpp>
 
 void Levelstate::init(Engine* game)
 {

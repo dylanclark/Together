@@ -113,13 +113,13 @@ Menu::Menu()
 {
     // cursor for selecting starts at the top
     selector = 0;
-    controller = new class Controller;
 
-    // initialize this so our check in draw works
+    // initialize these so our checks in draw work
     title = NULL;
     fade_in = NULL;
 
-    // are these necessary? or should we do everything in handle-events?
+    // controls
+    controller = new class Controller;
     up = down = right = left = false;
 }
 
@@ -245,4 +245,9 @@ void Menu::draw(Engine* game)
     }
 
     SDL_RenderPresent(game->rend);
+}
+
+void Menu::cleanup()
+{
+
 }
