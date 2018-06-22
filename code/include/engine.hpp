@@ -84,6 +84,4 @@ public:
     SDL_GameController* gamepad;
 };
 
-extern Engine* game;
-
 #endif /* engine_hpp */

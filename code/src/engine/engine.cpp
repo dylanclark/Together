@@ -11,8 +11,6 @@
 // include headers
 #include <engine.hpp>
 
-Engine* game = NULL;
-
 bool Engine::init()
 {
     bool success = true;
