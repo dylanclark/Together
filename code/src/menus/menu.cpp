@@ -12,6 +12,7 @@
 
 MenuButton::MenuButton(int x, int y, int w, int h)
 {
+    type = MENU_BUTTON;
     selected = false;
     rect.x = x;
     rect.y = y;
@@ -34,6 +35,7 @@ void MenuButton::render(SDL_Renderer* rend)
 
 MenuSlider::MenuSlider(int num_states, bool is_permanent, int x, int y, int w, int h)
 {
+    type = MENU_SLIDER;
     selected = false;
     frames = num_states;
     cur_frame = 0;
@@ -210,7 +212,7 @@ void Menu::update(Engine* game)
     if (right || left) {
         if (items[selector]->type == MENU_SLIDER) {
             MenuSlider* slider = static_cast<MenuSlider*>(items[selector]);
-            slider->cur_frame = (slider->cur_frame + (right - left)) % slider->frames;
+            slider->cur_frame = (slider->cur_frame + slider->frames + (right - left)) % slider->frames;
             if (slider->permanent) {
                 slider->select(game);
             }
