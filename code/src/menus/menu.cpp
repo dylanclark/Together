@@ -131,8 +131,11 @@ void Menu::handle_events(Engine* game)
     // handle those events, bruh
     while (SDL_PollEvent(&e))
     {
-        if (fade_in->timer > 0)
-            continue;
+        if (fade_in) {
+            if (fade_in->timer > 0) {
+                continue;
+            }
+        }
 
         switch (e.type)
         {
