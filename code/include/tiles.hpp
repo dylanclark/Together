@@ -7,6 +7,8 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 
+#include <textures.hpp>
+
 // tile dimensions!
 static const int TILE_WIDTH = 16;
 static const int TILE_WIDTH_TEX = 16;

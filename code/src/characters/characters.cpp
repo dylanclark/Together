@@ -219,7 +219,7 @@ bool Dot::handle_event(SDL_Event &e, Levelstate* level, Engine* game)
                 case SDL_CONTROLLER_BUTTON_A:
                     up = false;
                     break;
-        }
+            }
     }
     // success! (no quitting)
     return true;

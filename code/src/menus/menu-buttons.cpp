@@ -6,7 +6,7 @@
 // include headers
 #include <menu.hpp>
 #include <states/intro-state.hpp>
-#include <states/levelstate.hpp>
+#include <levels.hpp>
 #include <states/menustate.hpp>
 
 // BUTTONS

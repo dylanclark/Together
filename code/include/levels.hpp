@@ -94,6 +94,9 @@ public:
     std::vector<Dot*> chars;
     std::vector<LevelEnd*> level_ends;
 
+    // tileset
+    Tile* tileset[MAX_SIZE];
+
     // objects
     std::vector<Crate*> crates;
     std::vector<Button*> buttons;
@@ -115,12 +118,6 @@ public:
     Texture w_springboard_tex;
     Texture b_cross_spring_tex;
     Texture w_cross_spring_tex;
-
-    // tileset
-    Tile* tileset[MAX_SIZE];
-
-    // level file path
-    std::string path;
 };
 
 #endif /* levels_hpp */

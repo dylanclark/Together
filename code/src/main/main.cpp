@@ -14,7 +14,7 @@
 // include all headers
 #include <engine.hpp>
 #include <states/menustate.hpp>
-#include <states/levelstate.hpp>
+#include <levels.hpp>
 
 // Let's do this.
 int main(void)

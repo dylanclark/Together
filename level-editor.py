@@ -327,11 +327,6 @@ def draw_UI(screen, placing):
     screen.blit(textsurface, (scr_w/2-tex_w/2, 20))
     pygame.display.flip()
 
-def collide_pt(rect, pt):
-    rx, ry, rw, rh = rect
-    px, py = pt
-    return px > rx and px < rx+rw and py > ry and py < ry+rh
-
 def get_str(screen, prompt):
     myfont = pygame.font.SysFont('Times New Roman', 30)
     res = ""
