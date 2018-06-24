@@ -149,19 +149,123 @@ void Gridlines::draw(int scr_w, int scr_h, SDL_Rect cam_rect, Engine* game)
     }
 }
 
-Tileset::Tileset(int w, int h, int* tiles, std::vector<Object> objs)
+Tileset::Tileset(int w, int h, int* tiles_arg=NULL, std::vector<Object> objs_arg=std::vector<Object>())
 {
-
+    clicked = 0;
+    click_x = click_y = 0;
+    width = w;
+    height = h;
+    if (tiles_arg == NULL) {
+        tiles = (int*) malloc(sizeof(int) * height * width);
+        for (int i = 0; i < height*width; i++) {
+            tiles[i] = COLOR_WHITE;
+        }
+    } else {
+        tiles = tiles_arg;
+    }
+    objs = objs_arg;
 }
 
-void Tileset::draw(Engine* game)
+void Tileset::draw(int scr_w, int scr_h, SDL_Rect cam_rect, Engine* game)
 {
+    // first we will draw all of the tiles
+    for (int i = 0; i < height; i++) {
+        for (int j = 0; j < width; j++) {
+            if (tiles[i*width + j] == COLOR_BLACK) {
+                int x1 = (j*TILE_WIDTH - cam_rect.x) / ((float) cam_rect.w / (float) scr_w);
+                int x2 = ((j+1)*TILE_WIDTH - cam_rect.x) / ((float) cam_rect.w / (float) scr_w);
+                int y1 = (i*TILE_WIDTH - cam_rect.y) / ((float) cam_rect.h / (float) scr_h);
+                int y2 = ((i+1)*TILE_WIDTH - cam_rect.y) / ((float) cam_rect.h / (float) scr_h);
+                SDL_Rect to_draw;
+                to_draw.x = x1;
+                to_draw.y = y1;
+                to_draw.w = x2-x1;
+                to_draw.h = y2-y1;
+                SDL_SetRenderDrawColor(game->rend, 0, 0, 0, SDL_ALPHA_OPAQUE);
+                SDL_RenderDrawRect(game->rend, &to_draw);
+            }
+            if (clicked && click_x == j && click_y == i) {
+                int x1 = (j*TILE_WIDTH - cam_rect.x) / ((float) cam_rect.w / (float) scr_w);
+                int x2 = ((j+1)*TILE_WIDTH - cam_rect.x) / ((float) cam_rect.w / (float) scr_w);
+                int y1 = (i*TILE_WIDTH - cam_rect.y) / ((float) cam_rect.h / (float) scr_h);
+                int y2 = ((i+1)*TILE_WIDTH - cam_rect.y) / ((float) cam_rect.h / (float) scr_h);
+                SDL_Rect to_draw;
+                to_draw.x = x1;
+                to_draw.y = y1;
+                to_draw.w = x2-x1;
+                to_draw.h = y2-y1;
+                if (clicked_color == COLOR_BLACK) {
+                    SDL_SetRenderDrawColor(game->rend, 0, 0, 255, SDL_ALPHA_OPAQUE);
+                } else {
+                    SDL_SetRenderDrawColor(game->rend, 255, 255, 0, SDL_ALPHA_OPAQUE);
+                }
+                SDL_RenderDrawRect(game->rend, &to_draw);
+            }
+        }
+    }
 
+    // next we will draw all of the objects... eventually, bc we don't support textures yet
 }
 
 void Tileset::handle_event(SDL_Event e, int scr_w, int scr_h, SDL_Rect cam_rect, PlacingType placing)
 {
-
+    switch (e.type)
+    {
+    case SDL_MOUSEBUTTONDOWN:
+        // get mouse position
+        int mousex = e.button.x;
+        int mousey = e.button.y;
+        int x1 = (mousex * ((float) cam_rect.w / (float) scr_w) + cam_rect.x) / TILE_WIDTH;
+        int y1 = (mousey * ((float) cam_rect.h / (float) scr_h) + cam_rect.y) / TILE_WIDTH;
+        if (x1 >= width || y1 >= height || x1 < 0 || y1 < 0) {
+            return;
+        }
+        switch (placing)
+        {
+        // we're placing tiles
+        case PLACING_TILES:
+            if (!clicked) {
+                // if we haven't clicked before, save the click
+                click_x = x1;
+                click_y = y1;
+                clicked = true;
+                clicked_color = (e.button.button == SDL_BUTTON_LEFT) ? COLOR_BLACK : COLOR_WHITE;
+            } else {
+                // otherwise fill the rectangle that our clicks make!
+                fill_rect(clicked_color, x1, y1);
+            }
+            break;
+        // we're deleting stuff
+        case PLACING_DELETE:
+            for (int i = 0; i < objs.size(); i++) {
+                if (objs[i].x == x1 && objs[i].y == y1) {
+                    objs.erase(objs.begin() + i);
+                    return;
+                }
+            }
+            break;
+        // we're placing objects
+        default:
+            Color placing_color = e.button.button == SDL_BUTTON_LEFT ? COLOR_BLACK : COLOR_WHITE;
+            if (tiles[y1 * width + x1] == placing_color) {
+                printf("\a");
+            }
+            if (placing == PLACING_CHARS || placing == PLACING_LEVEL_ENDS) {
+                for (int i = 0; i < objs.size(); i++) {
+                    if (objs[i].type == placing && objs[i].color == placing_color) {
+                        objs.erase(objs.begin() + i);
+                    }
+                }
+                Object new_obj;
+                new_obj.x = x1;
+                new_obj.y = y1;
+                new_obj.type = placing;
+                new_obj.color = placing_color;
+                objs.push_back(new_obj);
+            }
+            break;
+        }
+    }
 }
 
 void Tileset::fill_rect(Color color, int x, int y)
@@ -222,17 +326,30 @@ void Tileset::add_col_left()
 
 void Tileset::remove_col_left()
 {
-
+    for (int i = 0; i < height; i++) {
+        memcpy(tiles + i * width + 1, tiles + i * (width-1), sizeof(int) * (width-1));
+    }
+    width--;
+    tiles = (int*) realloc(tiles, sizeof(int) * height * width);
 }
 
 void Tileset::add_col_right()
 {
-
+    width++;
+    tiles = (int*) realloc(tiles, sizeof(int) * height * width);
+    for (int i = height-1; i >= 0; i--) {
+        memcpy(tiles + i * (width-1), tiles + i * width, sizeof(int) * (width-1));
+        tiles[i * width + (width-1)] = COLOR_WHITE;
+    }
 }
 
 void Tileset::remove_col_right()
 {
-
+    for (int i = 0; i < height; i++) {
+        memcpy(tiles + i * width, tiles + i * (width - 1), sizeof(int) * (width-1));
+    }
+    width--;
+    tiles = (int*) realloc(tiles, sizeof(int) * height * width);
 }
 
 void Editor::init(Engine* game)
@@ -240,7 +357,7 @@ void Editor::init(Engine* game)
 
 }
 
-void Editor::cleanup(Engine* game)
+void Editor::cleanup()
 {
 
 }

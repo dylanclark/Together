@@ -11,6 +11,7 @@
 #include <levels.hpp>
 #include <objects.hpp>
 #include <tiles.hpp>
+#include <editor.hpp>
 
 static const int DEAD_ZONE = 8000;
 
@@ -113,6 +114,9 @@ bool Dot::handle_event(SDL_Event &e, Levelstate* level, Engine* game)
                     break;
                 case SDL_SCANCODE_R:
                     game->restart_state();
+                    break;
+                case SDL_SCANCODE_E:
+                    game->change_state(new Editor);
                     break;
                 case SDL_SCANCODE_ESCAPE:
                     level->pause(game);

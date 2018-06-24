@@ -73,6 +73,7 @@ private:
 
 class Object
 {
+public:
     PlacingType type;
     int x, y;
     Color color;
@@ -82,7 +83,7 @@ class Tileset
 {
 public:
     Tileset(int w, int h, int* tiles, std::vector<Object> objs);
-    void draw(Engine* game);
+    void draw(int scr_w, int scr_h, SDL_Rect cam_rect, Engine* game);
     void handle_event(SDL_Event e, int scr_w, int scr_h, SDL_Rect cam_rect, PlacingType placing);
 
 private:
@@ -104,6 +105,7 @@ private:
     // these are for remembering two clicks when drawing tile rects
     int click_x, click_y;
     bool clicked;
+    Color clicked_color;
 };
 
 
@@ -112,7 +114,7 @@ class Editor : public Gamestate
 {
 public:
     void init(Engine* game);
-    void cleanup(Engine* game);
+    void cleanup();
 
     void handle_events(Engine* game);
     void update(Engine* game);
@@ -128,7 +130,7 @@ private:
     EditorCamera* cam;
     Border* border;
     Gridlines* grid;
-    Tileset* tiles;
+    Tileset* tileset;
 };
 
 #endif /* editor_hpp */
