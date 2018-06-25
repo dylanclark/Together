@@ -257,8 +257,7 @@ class Tileset:
                     print '\a'
                     return
 
-                # get name of object
-                name = placing_strings[placing]
+                # get name of object name = placing_strings[placing]
 
                 # if it's a char or level-end, there can only be one of each color
                 if placing == PLACING_CHARS or placing == PLACING_LEVEL_ENDS:
@@ -868,9 +867,9 @@ if __name__ == "__main__":
     myfont = pygame.font.SysFont('Times New Roman', 30)
     size = 1080, 720
     white = 255, 255, 255
+    screen = pygame.display.set_mode(size)
 
     # ask if user wants to load
-    screen = pygame.display.set_mode(size)
     if not yes_no(screen, "load file?"):
         # get level dimensions from user
         w = int(get_str(screen, "width: "))
