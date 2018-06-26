@@ -84,8 +84,6 @@ private:
     bool animating;
 };
 
-class Levelstate;
-
 // close the tilemap
 void close_tiles(Tile* tiles[]);
 

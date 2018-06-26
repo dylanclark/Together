@@ -22,6 +22,7 @@ bool Engine::init()
         printf("error initializing SDL: %s\n", SDL_GetError());
         success = false;
     }
+    TTF_Init();
     printf("initialization successful!\n");
 
     SDL_DisplayMode current;
@@ -65,7 +66,7 @@ bool Engine::init()
         success = false;
     }
 
-    SDL_ShowCursor(SDL_DISABLE);
+    SDL_ShowCursor(SDL_ENABLE);
 
     sound = new SoundPlayer;
 

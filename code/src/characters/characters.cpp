@@ -116,7 +116,7 @@ bool Dot::handle_event(SDL_Event &e, Levelstate* level, Engine* game)
                     game->restart_state();
                     break;
                 case SDL_SCANCODE_E:
-                    game->change_state(new Editor);
+                    game->change_state(new Editor(level->m_lvl_num));
                     break;
                 case SDL_SCANCODE_ESCAPE:
                     level->pause(game);

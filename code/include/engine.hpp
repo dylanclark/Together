@@ -5,6 +5,7 @@
 // using SDL and standard IO
 #include <stdio.h>
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_ttf.h>
 #include <vector>
 #include <iostream>
 #include <fstream>

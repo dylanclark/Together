@@ -31,7 +31,7 @@ OBJS := $(subst $(SOURCEDIR),$(BUILDDIR),$(subst /src/,/object-files/,$(SOURCES:
 CC = g++
 
 # compiler flags
-CFLAGS = -lstdc++ -lSDL2 -lSDL2_image -lSDL2_mixer
+CFLAGS = -lstdc++ -lSDL2 -lSDL2_image -lSDL2_mixer -lSDL2_ttf
 
 # OS specific part
 ifeq ($(OS),Windows_NT)
@@ -62,7 +62,7 @@ endif
 define generateRules
 $(1)/%.o: %.cpp
 	@echo Building $$(subst $$(SOURCEDIR)/src/,,$$<)
-	$(HIDE)$(CC) -c -I$$(INCLUDES) -I/usr/local/include -o $$(subst /,$$(PSEP),$$@) $$(subst /,$$(PSEP),$$<) -MMD
+	$(HIDE)$(CC) -c -g -I$$(INCLUDES) -I/usr/local/include -o $$(subst /,$$(PSEP),$$@) $$(subst /,$$(PSEP),$$<) -MMD
 endef
 
 # indicate to make which targets are not files

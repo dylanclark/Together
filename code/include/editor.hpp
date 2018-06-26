@@ -19,6 +19,8 @@ typedef enum PlacingType {
     PLACING_SPRINGS
 } PlacingType;
 
+static const int NUM_PLACING_TYPES = 7;
+
 static const int EDITOR_CAMERA_SPEED = 10;
 
 // a specific class for our editor camera. it doesn't mess around
@@ -55,7 +57,7 @@ class Border
 public:
     Border(int w, int h);
     void update(int w, int h);
-    void draw(int scr_w, int scr_h, SDL_Rect cam_rect, Engine* game);
+    void draw(int scr_w, int scr_h, SDL_Rect cam_rect, SDL_Renderer* rend);
 private:
     SDL_Rect rect;
 };
@@ -66,7 +68,7 @@ class Gridlines
 public:
     Gridlines(int w, int h);
     void update(int w, int h);
-    void draw(int scr_w, int scr_h, SDL_Rect cam_rect, Engine* game);
+    void draw(int scr_w, int scr_h, SDL_Rect cam_rect, SDL_Renderer* rend);
 private:
     int width, height;
 };
@@ -82,12 +84,10 @@ public:
 class Tileset
 {
 public:
-    Tileset(int w, int h, int* tiles, std::vector<Object> objs);
-    void draw(int scr_w, int scr_h, SDL_Rect cam_rect, Engine* game);
+    Tileset(int w, int h, std::vector<std::vector<int> > tiles_arg, std::vector<Object> objs);
+    void draw(int scr_w, int scr_h, SDL_Rect cam_rect, SDL_Renderer* rend);
     void handle_event(SDL_Event e, int scr_w, int scr_h, SDL_Rect cam_rect, PlacingType placing);
 
-private:
-    void fill_rect(Color color, int x, int y);
     void add_row_top();
     void remove_row_top();
     void add_row_bottom();
@@ -97,8 +97,11 @@ private:
     void add_col_right();
     void remove_col_right();
 
+private:
+    void fill_rect(Color color, int x, int y);
+
     // tiles and objects we want to keep track of
-    int* tiles;
+    std::vector<std::vector<int> > tiles;
     int width, height;
     std::vector<Object> objs;
 
@@ -113,6 +116,7 @@ private:
 class Editor : public Gamestate
 {
 public:
+    Editor(int lvl_num) { m_lvl_num = lvl_num; }
     void init(Engine* game);
     void cleanup();
 
@@ -122,15 +126,22 @@ public:
 
 private:
     // helper functions for the editor
-    void draw_UI(int scr_w, int scr_h, PlacingType placing);
+    void draw_UI(int scr_w, int scr_h);
     std::string get_str(Engine* game, std::string prompt);
     bool get_yes_no(Engine* game, std::string prompt);
     int* output_arr(int w, int h, int* tiles);
+    void write_level();
 
-    EditorCamera* cam;
+    EditorCamera* camera;
     Border* border;
     Gridlines* grid;
     Tileset* tileset;
+
+    PlacingType placing;
+    int lvl_w, lvl_h;
+    int m_lvl_num;
+
+    TTF_Font* my_font;
 };
 
 #endif /* editor_hpp */
