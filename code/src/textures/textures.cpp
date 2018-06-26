@@ -133,7 +133,7 @@ void Texture::render(int x, int y, SDL_Rect* clip, SDL_Rect* camera, Engine* gam
     }
 }
 
-void Texture::render_tile(int x, int y, SDL_Rect* type_clip, SDL_Rect* active_clip, SDL_Rect* camera, Engine* game)
+void Texture::render_tile(int x, int y, SDL_Rect* active_clip, SDL_Rect* camera, Engine* game)
 {
     int render_x = (x - camera->x) / ((float) camera->w / (float) game->screen_width);
     int render_y = (y - camera->y) / ((float) camera->h / (float) game->screen_height);
@@ -141,8 +141,8 @@ void Texture::render_tile(int x, int y, SDL_Rect* type_clip, SDL_Rect* active_cl
     int render_h = TILE_WIDTH * ((float) game->screen_height / (float) camera->h) + 1;
 
     SDL_Rect render_rect = {render_x, render_y, render_w, render_h};
-    SDL_Rect clip_rect = {type_clip->x + active_clip->x,
-                          type_clip->y + active_clip->y,
+    SDL_Rect clip_rect = {active_clip->x,
+                          active_clip->y,
                           TILE_WIDTH_TEX,
                           TILE_WIDTH_TEX};
 

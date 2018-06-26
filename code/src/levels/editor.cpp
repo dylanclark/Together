@@ -3,6 +3,7 @@
 
 #include <editor.hpp>
 #include <levels.hpp>
+#include <tiles.hpp>
 
 EditorCamera::EditorCamera(int scr_w, int scr_h, int lvl_w, int lvl_h)
 {
@@ -211,10 +212,26 @@ void Tileset::draw(int scr_w, int scr_h, SDL_Rect cam_rect, SDL_Renderer* rend)
             }
         }
     }
+    for (int i = 0; i < objs.size(); i++) {
+        int x1 = (objs[i].x*TILE_WIDTH - cam_rect.x) / ((float) cam_rect.w / (float) scr_w) + 1;
+        int x2 = ((objs[i].x+1)*TILE_WIDTH - cam_rect.x) / ((float) cam_rect.w / (float) scr_w);
+        int y1 = (objs[i].y*TILE_WIDTH - cam_rect.y) / ((float) cam_rect.h / (float) scr_h) + 1;
+        int y2 = ((objs[i].y+1)*TILE_WIDTH - cam_rect.y) / ((float) cam_rect.h / (float) scr_h);
+        SDL_Rect render_rect = {x1, y1, x2-x1, y2-y1};
+
+        if (objs[i].type == PLACING_CHARS) {
+            SDL_Rect clip = {0, 0, TILE_WIDTH_TEX, TILE_WIDTH_TEX};
+            SDL_RenderCopyEx(rend, objs[i].tex, &clip, &render_rect, 0.0, NULL,
+                (SDL_RendererFlip) (objs[i].color == COLOR_BLACK ? SDL_FLIP_NONE : SDL_FLIP_VERTICAL));
+        } else if (objs[i].type == PLACING_LEVEL_ENDS) {
+            SDL_Rect clip = {objs[i].color * TILE_WIDTH_TEX, 0, TILE_WIDTH_TEX, TILE_WIDTH_TEX};
+            SDL_RenderCopy(rend, objs[i].tex, &clip, &render_rect);
+        }
+    }
     // next we will draw all of the objects... eventually, bc we don't support textures yet
 }
 
-void Tileset::handle_event(SDL_Event e, int scr_w, int scr_h, SDL_Rect cam_rect, PlacingType placing)
+void Tileset::handle_event(Engine* game, SDL_Event e, int scr_w, int scr_h, SDL_Rect cam_rect, PlacingType placing)
 {
     switch (e.type)
     {
@@ -268,6 +285,16 @@ void Tileset::handle_event(SDL_Event e, int scr_w, int scr_h, SDL_Rect cam_rect,
                 new_obj.y = y1;
                 new_obj.type = placing;
                 new_obj.color = placing_color;
+                if (placing == PLACING_CHARS) {
+                    std::string color_str = placing_color == COLOR_BLACK ? "black" : "white";
+                    SDL_Surface* char_surf = IMG_Load(("resources/textures/char-sheet-"+color_str+".png").c_str());
+                    new_obj.tex = SDL_CreateTextureFromSurface(game->rend, char_surf);
+                    SDL_FreeSurface(char_surf);
+                } else {
+                    SDL_Surface* lvlend_surf = IMG_Load("resources/textures/lvl-end.png");
+                    new_obj.tex = SDL_CreateTextureFromSurface(game->rend, lvlend_surf);
+                    SDL_FreeSurface(lvlend_surf);
+                }
                 objs.push_back(new_obj);
             }
             break;
@@ -372,7 +399,6 @@ void Editor::init(Engine* game)
         }
     }
     if (loading) {
-        printf("debug");
         char lvl_num_cstr[3];
         snprintf(lvl_num_cstr, 3, "%02d", m_lvl_num);
         std::string lvl_num_str(lvl_num_cstr);
@@ -397,7 +423,7 @@ void Editor::init(Engine* game)
             tiles.push_back(std::vector<int>());
             for (int j = 0; j < lvl_w; j++) {
                 level_file >> cur_tile;
-                tiles[i].push_back(cur_tile < 15 ? COLOR_BLACK : COLOR_WHITE);
+                tiles[i].push_back(cur_tile < W_BACK ? COLOR_BLACK : COLOR_WHITE);
             }
         }
 
@@ -413,6 +439,19 @@ void Editor::init(Engine* game)
             new_char.type = PLACING_CHARS;
             new_lvl_end.type = PLACING_LEVEL_ENDS;
             new_char.color = new_lvl_end.color = (Color) i;
+
+            std::string color_str = ((Color) i == COLOR_BLACK ? "black" : "white");
+            SDL_Surface* char_surf = IMG_Load(("resources/textures/char-sheet-"+color_str+".png").c_str());
+            if (char_surf == NULL) {
+                printf("uh-oh, SDL_Error = %s\n", SDL_GetError());
+            }
+            new_char.tex = SDL_CreateTextureFromSurface(game->rend, char_surf);
+            SDL_FreeSurface(char_surf);
+
+            SDL_Surface* lvlend_surf = IMG_Load("resources/textures/lvl-end.png");
+            new_lvl_end.tex = SDL_CreateTextureFromSurface(game->rend, lvlend_surf);
+            SDL_FreeSurface(lvlend_surf);
+
             objs.push_back(new_char);
             objs.push_back(new_lvl_end);
         }
@@ -428,7 +467,7 @@ void Editor::init(Engine* game)
 
 void Editor::cleanup()
 {
-    printf("leaving editor\n");
+
 }
 
 void Editor::handle_events(Engine* game)
@@ -445,7 +484,7 @@ void Editor::handle_events(Engine* game)
             switch (e.key.keysym.scancode)
             {
             case SDL_SCANCODE_RETURN:
-                write_level();
+                write_level(game);
                 break;
             case SDL_SCANCODE_S:
                 tileset->add_row_bottom();
@@ -503,7 +542,7 @@ void Editor::handle_events(Engine* game)
             break;
         }
         camera->handle_event(e);
-        tileset->handle_event(e, game->screen_width, game->screen_height, camera->get_rect(), placing);
+        tileset->handle_event(game, e, game->screen_width, game->screen_height, camera->get_rect(), placing);
     }
 }
 
@@ -536,9 +575,8 @@ void Editor::draw_UI(int scr_w, int scr_h)
 
 }
 
-std::string Editor::get_str(Engine* game, std::string prompt)
+std::string Editor::get_str(Engine* game, std::string prompt, std::string result)
 {
-    std::string result = "";
     while (1) {
         SDL_Event e;
         while (SDL_PollEvent(&e)) {
@@ -583,6 +621,10 @@ std::string Editor::get_str(Engine* game, std::string prompt)
                 case SDL_SCANCODE_RETURN:
                     return result;
                     break;
+                case SDL_SCANCODE_BACKSPACE:
+                case SDL_SCANCODE_DELETE:
+                    result.pop_back();
+                    break;
                 default:
                     break;
                 }
@@ -590,6 +632,7 @@ std::string Editor::get_str(Engine* game, std::string prompt)
                 break;
             }
         }
+        SDL_SetRenderDrawColor(game->rend, 255, 255, 255, SDL_ALPHA_OPAQUE);
         SDL_RenderClear(game->rend);
         SDL_Color black = {0,0,0};
         std::string final_prompt = prompt + ": " + result;
@@ -650,12 +693,366 @@ bool Editor::get_yes_no(Engine* game, std::string prompt)
     }
 }
 
-int* Editor::output_arr(int w, int h, int* tiles)
+std::vector<std::vector<std::string> > Editor::output_arr(std::vector<std::vector<int> > tiles)
 {
-
+    std::vector<std::vector<std::string> > result;
+    int width = tiles[0].size();
+    int height = tiles.size();
+    for (int i = 0; i < height; i++) {
+        result.push_back(std::vector<std::string>());
+        for (int j = 0; j < width; j++) {
+            Color my_color = (Color) tiles[i][j];
+            int new_tile;
+            if (tiles[i][j] == my_color) {
+                if (i == 0 && j == 0) {
+                    if (tiles[i+1][j] == my_color) {
+                        if (tiles[i][j+1] == my_color) {
+                            if (tiles[i+1][j+1] == my_color) {
+                                new_tile = B_BACK;
+                            } else {
+                                new_tile = B_CORNER_TL;
+                            }
+                        } else {
+                            new_tile = B_WALL_R;
+                        }
+                    } else {
+                        if (tiles[i][j+1] == my_color) {
+                            new_tile = B_CEILING;
+                        } else {
+                            new_tile = B_CEILINGEDGE_R;
+                        }
+                    }
+                } else if (i == 0 && j == width-1) {
+                    if (tiles[i+1][j] == my_color) {
+                        if (tiles[i][j-1] == my_color) {
+                            if (tiles[i+1][j-1] == my_color) {
+                                new_tile = B_BACK;
+                            } else {
+                                new_tile = B_CORNER_TR;
+                            }
+                        } else {
+                            new_tile = B_WALL_L;
+                        }
+                    } else {
+                        if (tiles[i][j-1] == my_color) {
+                            new_tile = B_CEILING;
+                        } else {
+                            new_tile = B_CEILINGEDGE_L;
+                        }
+                    }
+                } else if (i == height-1 && j == 0) {
+                    if (tiles[i-1][j] == my_color) {
+                        if (tiles[i][j+1] == my_color) {
+                            if (tiles[i-1][j+1] == my_color) {
+                                new_tile = B_BACK;
+                            } else {
+                                new_tile = B_CORNER_BL;
+                            }
+                        } else {
+                            new_tile = B_WALL_R;
+                        }
+                    } else {
+                        if (tiles[i][j+1] == my_color) {
+                            new_tile = B_FLOOR;
+                        } else {
+                            new_tile = B_FLOOREDGE_R;
+                        }
+                    }
+                } else if (i == height-1 && j == width-1) {
+                    if (tiles[i-1][j] == my_color) {
+                        if (tiles[i][j-1] == my_color) {
+                            if (tiles[i-1][j-1] == my_color) {
+                                new_tile = B_BACK;
+                            } else {
+                                new_tile = B_CORNER_BR;
+                            }
+                        } else {
+                            new_tile = B_WALL_L;
+                        }
+                    } else {
+                        if (tiles[i][j-1] == my_color) {
+                            new_tile = B_FLOOR;
+                        } else {
+                            new_tile = B_FLOOREDGE_L;
+                        }
+                    }
+                } else if (i == 0) {
+                    if (tiles[i+1][j] == my_color) {
+                        if (tiles[i][j-1] == my_color) {
+                            if (tiles[i][j+1] == my_color) {
+                                if (tiles[i+1][j+1] != my_color) {
+                                    new_tile = B_CORNER_TL;
+                                } else if (tiles[i+1][j-1] != my_color) {
+                                    new_tile = B_CORNER_TR;
+                                } else {
+                                    new_tile = B_BACK;
+                                }
+                            } else {
+                                new_tile = B_WALL_R;
+                            }
+                        } else {
+                            if (tiles[i][j+1] == my_color) {
+                                new_tile = B_WALL_L;
+                            } else {
+                                // BAD
+                                new_tile = B_BACK;
+                            }
+                        }
+                    } else {
+                        if (tiles[i][j-1] == my_color) {
+                            if (tiles[i][j+1] == my_color) {
+                                new_tile = B_CEILING;
+                            } else {
+                                new_tile = B_CEILINGEDGE_R;
+                            }
+                        } else {
+                            if (tiles[i][j+1] == my_color) {
+                                new_tile = B_CEILINGEDGE_L;
+                            } else {
+                                // BAD
+                                new_tile = B_BACK;
+                            }
+                        }
+                    }
+                } else if (i == height-1) {
+                    if (tiles[i-1][j] == my_color) {
+                        if (tiles[i][j-1] == my_color) {
+                            if (tiles[i][j+1] == my_color) {
+                                if (tiles[i-1][j+1] != my_color) {
+                                    new_tile = B_CORNER_BL;
+                                } else if (tiles[i-1][j-1] != my_color) {
+                                    new_tile = B_CORNER_BR;
+                                } else {
+                                    new_tile = B_BACK;
+                                }
+                            } else {
+                                new_tile = B_WALL_R;
+                            }
+                        } else {
+                            if (tiles[i][j+1] == my_color) {
+                                new_tile = B_WALL_L;
+                            } else {
+                                new_tile = B_BACK;
+                            }
+                        }
+                    } else {
+                        if (tiles[i][j-1] == my_color) {
+                            if (tiles[i][j+1] == my_color) {
+                                new_tile = B_FLOOR;
+                            } else {
+                                new_tile = B_FLOOREDGE_R;
+                            }
+                        } else {
+                            if (tiles[i][j+1] == my_color) {
+                                new_tile = B_FLOOREDGE_L;
+                            } else {
+                                // BAD
+                                new_tile = B_BACK;
+                            }
+                        }
+                    }
+                } else if (j == 0) {
+                    if (tiles[i][j+1] == my_color) {
+                        if (tiles[i+1][j] == my_color) {
+                            if (tiles[i-1][j] == my_color) {
+                                if (tiles[i-1][j+1] != my_color) {
+                                    new_tile = B_CORNER_BL;
+                                } else if (tiles[i+1][j+1] != my_color) {
+                                    new_tile = B_CORNER_TL;
+                                } else {
+                                    new_tile = B_BACK;
+                                }
+                            } else {
+                                new_tile = B_FLOOR;
+                            }
+                        } else {
+                            if (tiles[i-1][j] == my_color) {
+                                new_tile = B_CEILING;
+                            } else {
+                                new_tile = B_BACK;
+                            }
+                        }
+                    } else {
+                        if (tiles[i+1][j] == my_color) {
+                            if (tiles[i-1][j] == my_color) {
+                                new_tile = B_WALL_R;
+                            } else {
+                                new_tile = B_FLOOREDGE_R;
+                            }
+                        } else {
+                            if (tiles[i-1][j] == my_color) {
+                                new_tile = B_CEILINGEDGE_R;
+                            } else {
+                                // BAD
+                                new_tile = B_BACK;
+                            }
+                        }
+                    }
+                } else if (j == width-1) {
+                    if (tiles[i][j-1] == my_color) {
+                        if (tiles[i+1][j] == my_color) {
+                            if (tiles[i-1][j] == my_color) {
+                                if (tiles[i-1][j-1] != my_color) {
+                                    new_tile = B_CORNER_BR;
+                                } else if (tiles[i+1][j-1] != my_color) {
+                                    new_tile = B_CORNER_TR;
+                                } else {
+                                    new_tile = B_BACK;
+                                }
+                            } else {
+                                new_tile = B_FLOOR;
+                            }
+                        } else {
+                            if (tiles[i-1][j] == my_color) {
+                                new_tile = B_CEILING;
+                            } else {
+                                // BAD
+                                new_tile = B_BACK;
+                            }
+                        }
+                    } else {
+                        if (tiles[i+1][j] == my_color) {
+                            if (tiles[i-1][j] == my_color) {
+                                new_tile = B_WALL_L;
+                            } else {
+                                new_tile = B_FLOOREDGE_L;
+                            }
+                        } else {
+                            if (tiles[i-1][j] == my_color) {
+                                new_tile = B_CEILINGEDGE_L;
+                            } else {
+                                // BAD
+                                new_tile = B_BACK;
+                            }
+                        }
+                    }
+                } else {
+                    if (tiles[i][j-1] == my_color) {
+                        if (tiles[i][j+1] == my_color) {
+                            if (tiles[i+1][j] == my_color) {
+                                if (tiles[i-1][j] == my_color) {
+                                    if (tiles[i-1][j+1] != my_color) {
+                                        new_tile = B_CORNER_BL;
+                                    } else if (tiles[i+1][j+1] != my_color) {
+                                        new_tile = B_CORNER_TL;
+                                    } else if (tiles[i-1][j-1] != my_color) {
+                                        new_tile = B_CORNER_BR;
+                                    } else if (tiles[i+1][j-1] != my_color) {
+                                        new_tile = B_CORNER_TR;
+                                    } else {
+                                        new_tile = B_BACK;
+                                    }
+                                } else {
+                                    new_tile = B_FLOOR;
+                                }
+                            } else {
+                                if (tiles[i-1][j] == my_color) {
+                                    new_tile = B_CEILING;
+                                } else {
+                                    // BAD
+                                    new_tile = B_BACK;
+                                }
+                            }
+                        } else {
+                            if (tiles[i+1][j] == my_color) {
+                                if (tiles[i-1][j] == my_color) {
+                                    new_tile = B_WALL_R;
+                                } else {
+                                    new_tile = B_FLOOREDGE_R;
+                                }
+                            } else {
+                                if (tiles[i-1][j] == my_color) {
+                                    new_tile = B_CEILINGEDGE_R;
+                                } else {
+                                    // BAD
+                                    new_tile = B_BACK;
+                                }
+                            }
+                        }
+                    } else {
+                        if (tiles[i][j+1] == my_color) {
+                            if (tiles[i+1][j] == my_color) {
+                                if (tiles[i-1][j] == my_color) {
+                                    new_tile = B_WALL_L;
+                                } else {
+                                    new_tile = B_FLOOREDGE_L;
+                                }
+                            } else {
+                                if (tiles[i-1][j] == my_color) {
+                                    new_tile = B_CEILINGEDGE_L;
+                                } else {
+                                    // BAD
+                                    new_tile = B_BACK;
+                                }
+                            }
+                        } else {
+                            // BAD
+                            new_tile = B_BACK;
+                        }
+                    }
+                }
+            }
+            new_tile += W_BACK * (my_color == COLOR_WHITE);
+            char new_tile_str[3];
+            snprintf(new_tile_str, 3, "%02d", new_tile);
+            std::string cppstr = std::string(new_tile_str);
+            result[i].push_back(cppstr);
+        }
+    }
+    return result;
 }
 
-void Editor::write_level()
+void Editor::write_level(Engine* game)
 {
+    std::vector<std::vector<std::string> > result = output_arr(tileset->tiles);
 
+    char lvl_num_cstr[3];
+    snprintf(lvl_num_cstr, 3, "%02d", m_lvl_num);
+    std::string lvl_num_str(lvl_num_cstr);
+
+    std::string path = "resources/level-files/level"+lvl_num_str+".lvl";
+    std::ofstream level_file(path.c_str());
+
+    m_lvl_num = atoi(get_str(game, "level number", std::to_string(m_lvl_num)).c_str());
+    int r = atoi(get_str(game, "red").c_str());
+    int g = atoi(get_str(game, "green").c_str());
+    int b = atoi(get_str(game, "blue").c_str());
+
+    // write the colors!
+    level_file << r << " " << g << " " << b << std::endl;
+    level_file << lvl_w << " " << lvl_h << std::endl;
+
+    for (int i = 0; i < lvl_h; i++) {
+        for (int j = 0; j < lvl_w; j++) {
+            level_file << result[i][j] << " ";
+        }
+        level_file << std::endl;
+    }
+    std::vector<Object> objs = tileset->objs;
+    std::vector<Object> chars;
+    std::vector<Object> level_ends;
+    int num_chars = 0;
+    for (int i = 0; i < objs.size(); i++) {
+        if (objs[i].type == PLACING_CHARS) {
+            num_chars++;
+            if (objs[i].color == COLOR_BLACK) {
+                chars.insert(chars.begin(), objs[i]);
+            } else {
+                chars.push_back(objs[i]);
+            }
+        } else if (objs[i].type == PLACING_LEVEL_ENDS) {
+            if (objs[i].color == COLOR_BLACK) {
+                level_ends.insert(level_ends.begin(), objs[i]);
+            } else {
+                level_ends.push_back(objs[i]);
+            }
+        }
+    }
+    level_file << num_chars << std::endl;
+    for (int i = 0; i < num_chars; i++) {
+        level_file << chars[i].x << " " << chars[i].y << std::endl;
+        level_file << level_ends[i].x << " " << level_ends[i].y << std::endl;
+    }
+    level_file.close();
+    game->change_state(new Levelstate(m_lvl_num));
 }

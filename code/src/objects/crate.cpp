@@ -212,9 +212,7 @@ int Crate::tile_type_top(int type)
         case B_BACK:
             new_type = my_color == 0 ? B_BACK : B_CEILING;
             break;
-        case B_FLOOR1:
-        case B_FLOOR2:
-        case B_FLOOR3:
+        case B_FLOOR:
             new_type = my_color == 0 ? B_BACK : B_BACK;
             break;
         case B_FLOOREDGE_L:
@@ -251,11 +249,9 @@ int Crate::tile_type_top(int type)
             new_type = my_color == 0 ? B_BACK : B_BACK;
             break;
         case W_BACK:
-            new_type = my_color == 0 ? W_FLOOR1 : W_BACK;
+            new_type = my_color == 0 ? W_FLOOR : W_BACK;
             break;
-        case W_FLOOR1:
-        case W_FLOOR2:
-        case W_FLOOR3:
+        case W_FLOOR:
             new_type = my_color == 0 ? W_BACK : W_BACK;
             break;
         case W_FLOOREDGE_L:
@@ -306,11 +302,9 @@ int Crate::tile_type_bottom(int type)
     switch (type)
     {
         case B_BACK:
-            new_type = my_color == 0 ? B_BACK : B_FLOOR1;
+            new_type = my_color == 0 ? B_BACK : B_FLOOR;
             break;
-        case B_FLOOR1:
-        case B_FLOOR2:
-        case B_FLOOR3:
+        case B_FLOOR:
             new_type = my_color == 0 ? B_BACK : B_BACK;
             break;
         case B_FLOOREDGE_L:
@@ -349,9 +343,7 @@ int Crate::tile_type_bottom(int type)
         case W_BACK:
             new_type = my_color == 0 ? W_CEILING : W_BACK;
             break;
-        case W_FLOOR1:
-        case W_FLOOR2:
-        case W_FLOOR3:
+        case W_FLOOR:
             new_type = my_color == 0 ? W_BACK : W_BACK;
             break;
         case W_FLOOREDGE_L:
@@ -405,9 +397,7 @@ int Crate::tile_type_left(int type)
         case B_BACK:
             new_type = my_color == 0 ? B_BACK : B_WALL_R;
             break;
-        case B_FLOOR1:
-        case B_FLOOR2:
-        case B_FLOOR3:
+        case B_FLOOR:
             new_type = my_color == 0 ? B_BACK : B_FLOOREDGE_R;
             break;
         case B_FLOOREDGE_L:
@@ -446,9 +436,7 @@ int Crate::tile_type_left(int type)
         case W_BACK:
             new_type = my_color == 0 ? W_WALL_R : W_BACK;
             break;
-        case W_FLOOR1:
-        case W_FLOOR2:
-        case W_FLOOR3:
+        case W_FLOOR:
             new_type = my_color == 0 ? W_FLOOREDGE_R : W_BACK;
             break;
         case W_FLOOREDGE_L:
@@ -502,9 +490,7 @@ int Crate::tile_type_right(int type)
         case B_BACK:
             new_type = my_color == 0 ? B_BACK : B_WALL_L;
             break;
-        case B_FLOOR1:
-        case B_FLOOR2:
-        case B_FLOOR3:
+        case B_FLOOR:
             new_type = my_color == 0 ? B_BACK : B_FLOOREDGE_L;
             break;
         case B_FLOOREDGE_L:
@@ -543,9 +529,7 @@ int Crate::tile_type_right(int type)
         case W_BACK:
             new_type = my_color == 0 ? W_WALL_L : W_BACK;
             break;
-        case W_FLOOR1:
-        case W_FLOOR2:
-        case W_FLOOR3:
+        case W_FLOOR:
             new_type = my_color == 0 ? W_FLOOREDGE_L : W_BACK;
             break;
         case W_FLOOREDGE_L:

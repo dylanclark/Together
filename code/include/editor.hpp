@@ -79,6 +79,7 @@ public:
     PlacingType type;
     int x, y;
     Color color;
+    SDL_Texture* tex;
 };
 
 class Tileset
@@ -86,7 +87,7 @@ class Tileset
 public:
     Tileset(int w, int h, std::vector<std::vector<int> > tiles_arg, std::vector<Object> objs);
     void draw(int scr_w, int scr_h, SDL_Rect cam_rect, SDL_Renderer* rend);
-    void handle_event(SDL_Event e, int scr_w, int scr_h, SDL_Rect cam_rect, PlacingType placing);
+    void handle_event(Engine* game, SDL_Event e, int scr_w, int scr_h, SDL_Rect cam_rect, PlacingType placing);
 
     void add_row_top();
     void remove_row_top();
@@ -97,13 +98,14 @@ public:
     void add_col_right();
     void remove_col_right();
 
+    std::vector<std::vector<int> > tiles;
+    std::vector<Object> objs;
+
 private:
     void fill_rect(Color color, int x, int y);
 
     // tiles and objects we want to keep track of
-    std::vector<std::vector<int> > tiles;
     int width, height;
-    std::vector<Object> objs;
 
     // these are for remembering two clicks when drawing tile rects
     int click_x, click_y;
@@ -127,10 +129,10 @@ public:
 private:
     // helper functions for the editor
     void draw_UI(int scr_w, int scr_h);
-    std::string get_str(Engine* game, std::string prompt);
+    std::string get_str(Engine* game, std::string prompt, std::string result = "");
     bool get_yes_no(Engine* game, std::string prompt);
-    int* output_arr(int w, int h, int* tiles);
-    void write_level();
+    std::vector<std::vector<std::string> > output_arr(std::vector<std::vector<int> > tiles);
+    void write_level(Engine* game);
 
     EditorCamera* camera;
     Border* border;

@@ -85,7 +85,7 @@ void Levelstate::load_level(Engine* game, std::string lvlnum)
         printf("Failed to load level %s map!\n", lvlnum.c_str());
         return;
     }
-    if (!tile_tex.load_tile_sheet("tile_sheet.png", game->rend, &palette)) {
+    if (!tile_tex.load_tile_sheet("tiles.png", game->rend, &palette)) {
         printf("Failed to load tile sheet texture!\n");
         return;
     }
