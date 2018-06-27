@@ -483,6 +483,10 @@ void Editor::handle_events(Engine* game)
         case SDL_KEYDOWN:
             switch (e.key.keysym.scancode)
             {
+            case SDL_SCANCODE_ESCAPE:
+                game->change_state(new Levelstate(m_lvl_num));
+                return;
+                break;
             case SDL_SCANCODE_RETURN:
                 write_level(game);
                 break;
@@ -565,14 +569,51 @@ void Editor::draw(Engine* game)
     tileset->draw(scr_w, scr_h, cam_rect, game->rend);
     border->draw(scr_w, scr_h, cam_rect, game->rend);
     grid->draw(scr_w, scr_h, cam_rect, game->rend);
-    draw_UI(scr_w, scr_h);
+    draw_UI(game, scr_w, scr_h);
 
     SDL_RenderPresent(game->rend);
 }
 
-void Editor::draw_UI(int scr_w, int scr_h)
+void Editor::draw_UI(Engine* game, int scr_w, int scr_h)
 {
-
+    SDL_SetRenderDrawColor(game->rend, 255, 255, 255, SDL_ALPHA_OPAQUE);
+    SDL_Color black = {0,0,0};
+    std::string placing_str = "placing:\n";
+    switch (placing)
+    {
+    case PLACING_TILES:
+        placing_str += "tiles";
+        break;
+    case PLACING_CHARS:
+        placing_str += "chars";
+        break;
+    case PLACING_LEVEL_ENDS:
+        placing_str += "level ends";
+        break;
+    case PLACING_CRATES:
+        placing_str += "crates";
+        break;
+    case PLACING_BUTTONS:
+        placing_str += "buttons";
+        break;
+    case PLACING_SPRINGS:
+        placing_str += "springs";
+        break;
+    case PLACING_DELETE:
+        placing_str = "deleting";
+        break;
+    default:
+        break;
+    }
+    SDL_Surface* text_surf = TTF_RenderText_Solid(my_font, placing_str.c_str(), black);
+    SDL_Texture* text_tex = SDL_CreateTextureFromSurface(game->rend, text_surf);
+    int w, h;
+    SDL_QueryTexture(text_tex, NULL, NULL, &w, &h);
+    SDL_Rect render_rect = {scr_w / 2 - w / 2, 30, w, h};
+    SDL_Rect bg_render_rect = {scr_w / 2 - w / 2 - 20, 20, w + 40, h + 20};
+    SDL_SetRenderDrawColor(game->rend, 200, 200, 200, SDL_ALPHA_OPAQUE);
+    SDL_RenderFillRect(game->rend, &bg_render_rect);
+    SDL_RenderCopy(game->rend, text_tex, NULL, &render_rect);
 }
 
 std::string Editor::get_str(Engine* game, std::string prompt, std::string result)
@@ -588,6 +629,10 @@ std::string Editor::get_str(Engine* game, std::string prompt, std::string result
             case SDL_KEYDOWN:
                 switch (e.key.keysym.scancode)
                 {
+                case SDL_SCANCODE_ESCAPE:
+                    game->change_state(new Levelstate(m_lvl_num));
+                    return result;
+                    break;
                 case SDL_SCANCODE_0:
                     result += '0';
                     break;
@@ -650,6 +695,7 @@ std::string Editor::get_str(Engine* game, std::string prompt, std::string result
 
 bool Editor::get_yes_no(Engine* game, std::string prompt)
 {
+    SDL_SetRenderDrawColor(game->rend, 255, 255, 255, SDL_ALPHA_OPAQUE);
     SDL_RenderClear(game->rend);
 
     TTF_Font* my_font = TTF_OpenFont("resources/fonts/slkscr.ttf", 24);
@@ -678,6 +724,7 @@ bool Editor::get_yes_no(Engine* game, std::string prompt)
                 {
                 case SDL_SCANCODE_ESCAPE:
                     game->change_state(new Levelstate(1));
+                    return true;
                     break;
                 case SDL_SCANCODE_Y:
                     return true;

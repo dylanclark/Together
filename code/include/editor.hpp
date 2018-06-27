@@ -128,7 +128,7 @@ public:
 
 private:
     // helper functions for the editor
-    void draw_UI(int scr_w, int scr_h);
+    void draw_UI(Engine* game, int scr_w, int scr_h);
     std::string get_str(Engine* game, std::string prompt, std::string result = "");
     bool get_yes_no(Engine* game, std::string prompt);
     std::vector<std::vector<std::string> > output_arr(std::vector<std::vector<int> > tiles);
