@@ -394,14 +394,20 @@ void Editor::init(Engine* game)
         } else {
             loading = false;
             lvl_w = atoi(get_str(game, "level width").c_str());
+            while (lvl_w < 67) {
+                lvl_w = atoi(get_str(game, "level width (must be at least 67)").c_str());
+            }
             lvl_h = atoi(get_str(game, "level height").c_str());
+            while (lvl_h < 45) {
+                lvl_h = atoi(get_str(game, "level height (must be at least 45)").c_str());
+            }
             tileset = new Tileset(lvl_w, lvl_h);
         }
     }
     if (loading) {
         char lvl_num_cstr[3];
         snprintf(lvl_num_cstr, 3, "%02d", m_lvl_num);
-        std::string lvl_num_str(lvl_num_cstr);
+        std::string lvl_num_str = lvl_num_cstr;
 
         std::string path = "resources/level-files/level"+lvl_num_str+".lvl";
         std::ifstream level_file(path.c_str());
@@ -509,26 +515,26 @@ void Editor::handle_events(Engine* game)
                 lvl_w++;
                 break;
             case SDL_SCANCODE_I:
-                if (lvl_h > 2) {
+                if (lvl_h > 45) {
                     tileset->remove_row_bottom();
                     lvl_h--;
                 }
                 break;
             case SDL_SCANCODE_K:
-                if (lvl_h > 2) {
+                if (lvl_h > 45) {
                     camera->move_up();
                     tileset->remove_row_top();
                     lvl_h--;
                 }
                 break;
             case SDL_SCANCODE_J:
-                if (lvl_w > 2) {
+                if (lvl_w > 67) {
                     tileset->remove_col_right();
                     lvl_w--;
                 }
                 break;
             case SDL_SCANCODE_L:
-                if (lvl_w > 2) {
+                if (lvl_w > 67) {
                     camera->move_left();
                     tileset->remove_col_left();
                     lvl_w--;

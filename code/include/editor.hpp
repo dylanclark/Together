@@ -113,7 +113,6 @@ private:
     Color clicked_color;
 };
 
-
 // the editor state class itself
 class Editor : public Gamestate
 {

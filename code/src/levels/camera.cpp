@@ -51,8 +51,8 @@ Camera::Camera(int scr_w, int scr_h, int lev_w, int lev_h, SDL_Rect active_char,
     // level / screen dimensions
     level_w = lev_w;
     level_h = lev_h;
-    screen_w = scr_w / 4;
-    screen_h = scr_h / 4;
+    screen_w = scr_w / 2;
+    screen_h = scr_h / 2;
 
     // set width and height, they won't change
     display.w = screen_w;

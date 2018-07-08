@@ -109,8 +109,8 @@ void Texture::render(int x, int y, SDL_Rect* clip, SDL_Rect* camera, Engine* gam
 {
     int render_x = (x - camera->x) / ( (float) camera->w / (float) game->screen_width);
     int render_y = (y - camera->y) / ((float) camera->h / (float) game->screen_height);
-    int render_w = width * ((float) game->screen_width / (float) camera->w) + 1;
-    int render_h = height * ((float) game->screen_height / (float) camera->h) + 1;
+    int render_w = width * ((float) game->screen_width / (float) camera->w);
+    int render_h = height * ((float) game->screen_height / (float) camera->h);
 
     // rendering rectangle
     SDL_Rect render_rect = {render_x, render_y, render_w, render_h};
