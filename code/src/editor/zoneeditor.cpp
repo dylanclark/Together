@@ -70,6 +70,7 @@ void ZoneEditor::init(Engine* game)
 {
     bool loading = get_yes_no(game, "load existing zone?");
     camera = new EditorCamera(game->screen_width, game->screen_height, 0, 0);
+    select_valid = false;
     selected = -1;
 
     if (loading) {
@@ -134,13 +135,18 @@ void ZoneEditor::handle_events(Engine* game)
             // get mouse position
             true_x = (e.button.x * ((float) cam_rect.w / (float) scr_w) + cam_rect.x);
             true_y = (e.button.y * ((float) cam_rect.h / (float) scr_h) + cam_rect.y);
+            select_valid = false;
             for (int i = 0; i < levels.size(); i++) {
                 SDL_Rect rect = levels[i]->get_rect();
                 if (true_x > rect.x && true_x < rect.x + rect.w &&
                     true_y > rect.y && true_y < rect.y + rect.h) {
                     selected = i;
+                    select_valid = true;
                     break;
                 }
+            }
+            if (!select_valid) {
+                selected = -1;
             }
             break;
         case SDL_MOUSEBUTTONUP:

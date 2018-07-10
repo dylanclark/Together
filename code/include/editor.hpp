@@ -188,6 +188,7 @@ private:
     bool mousedown;
     int selected;
     int x_offset, y_offset;
+    bool select_valid;
 
     EditorCamera* camera;
 
