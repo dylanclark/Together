@@ -7,7 +7,7 @@ LevelThumbnail::LevelThumbnail(Engine* game, int zone_num, int lvl_num)
     std::string lvl_str(lvl_cstr);
     lvl_cstr[1] = '\0';
     std::string zone_str(lvl_cstr);
-    std::string path = "resources/levels/"+zone_str+"/level"+lvl_str+".lvl";
+    std::string path = "resources/level-files/"+zone_str+"/level"+lvl_str+".lvl";
     std::ifstream level_file(path.c_str());
 
     level_file >> m_x;
@@ -17,7 +17,7 @@ LevelThumbnail::LevelThumbnail(Engine* game, int zone_num, int lvl_num)
     level_file >> m_h;
 
     Uint32 format = SDL_GetWindowPixelFormat(game->win);
-    SDL_CreateTexture(game->rend, format, SDL_TEXTUREACCESS_TARGET, m_w*TILE_WIDTH, m_h*TILE_WIDTH);
+    m_tex = SDL_CreateTexture(game->rend, format, SDL_TEXTUREACCESS_TARGET, m_w*TILE_WIDTH, m_h*TILE_WIDTH);
     SDL_SetRenderTarget(game->rend, m_tex);
     for (int i = 0; i < m_w*m_h; i++) {
         int cur_tile;
@@ -46,6 +46,19 @@ void LevelThumbnail::draw(SDL_Renderer* rend, SDL_Rect cam_rect, int scr_w, int 
     int h = m_h*TILE_WIDTH * ((float) scr_h / (float) cam_rect.h);
     SDL_Rect render_rect = {x,y,w,h};
     SDL_RenderCopy(rend, m_tex, NULL, &render_rect);
+
+    if (selected) {
+        SDL_SetRenderDrawColor(rend, 0, 200, 0, SDL_ALPHA_OPAQUE);
+        int thickness = 4;
+        SDL_Rect rect1 = {x,y,w,thickness};
+        SDL_Rect rect2 = {x,y+h-thickness,w,thickness};
+        SDL_Rect rect3 = {x+w-thickness,y,thickness,h};
+        SDL_Rect rect4 = {x,y,thickness,h};
+        SDL_RenderFillRect(rend, &rect1);
+        SDL_RenderFillRect(rend, &rect2);
+        SDL_RenderFillRect(rend, &rect3);
+        SDL_RenderFillRect(rend, &rect4);
+    }
 }
 
 void LevelThumbnail::move(int x, int y, std::vector<LevelThumbnail*> levels)
@@ -64,7 +77,7 @@ void ZoneEditor::init(Engine* game)
         char zone_num_cstr[2];
         snprintf(zone_num_cstr, 2, "%d", m_zone_num);
         std::string zone_num_str(zone_num_cstr);
-        std::string path = "resources/levels/"+zone_num_str+"/zone_info";
+        std::string path = "resources/level-files/"+zone_num_str+"/zone-info";
         std::ifstream zone_file(path.c_str());
 
         int num_levels;
@@ -75,6 +88,7 @@ void ZoneEditor::init(Engine* game)
 
         for (int i = 0; i < num_levels; i++) {
             LevelThumbnail* new_thumbnail = new LevelThumbnail(game, m_zone_num, i);
+            levels.push_back(new_thumbnail);
         }
     } else {
         r = g = b = 255;
@@ -118,8 +132,8 @@ void ZoneEditor::handle_events(Engine* game)
         case SDL_MOUSEBUTTONDOWN:
             mousedown = true;
             // get mouse position
-            true_x = (e.button.x * ((float) cam_rect.w / (float) scr_w) + cam_rect.x) / TILE_WIDTH;
-            true_y = (e.button.y * ((float) cam_rect.h / (float) scr_h) + cam_rect.y) / TILE_WIDTH;
+            true_x = (e.button.x * ((float) cam_rect.w / (float) scr_w) + cam_rect.x);
+            true_y = (e.button.y * ((float) cam_rect.h / (float) scr_h) + cam_rect.y);
             for (int i = 0; i < levels.size(); i++) {
                 SDL_Rect rect = levels[i]->get_rect();
                 if (true_x > rect.x && true_x < rect.x + rect.w &&
@@ -128,6 +142,9 @@ void ZoneEditor::handle_events(Engine* game)
                     break;
                 }
             }
+            break;
+        case SDL_MOUSEBUTTONUP:
+            mousedown = false;
             break;
         case SDL_KEYDOWN:
             switch (e.key.keysym.scancode)
@@ -224,7 +241,7 @@ void ZoneEditor::write_zone()
     char zone_num_cstr[2];
     snprintf(zone_num_cstr, 2, "%d", m_zone_num);
     std::string zone_num_str(zone_num_cstr);
-    std::string path = "resources/levels/"+zone_num_str+"/zone_info";
+    std::string path = "resources/level-files/"+zone_num_str+"/zone-info";
     std::ofstream zone_file(path.c_str());
 
     zone_file << levels.size() << std::endl;

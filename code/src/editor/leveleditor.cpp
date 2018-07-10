@@ -104,6 +104,7 @@ void EditorCamera::update(Engine* game)
     true_rect.y = center_rect.y - center_rect.h/2;
     true_rect.w = center_rect.w;
     true_rect.h = center_rect.h;
+    printf("%d, %d\n", true_rect.x, true_rect.y);
 }
 
 Border::Border(int w, int h)
