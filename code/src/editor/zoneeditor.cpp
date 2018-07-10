@@ -48,6 +48,7 @@ void ZoneEditor::init(Engine* game)
 {
     bool loading = get_yes_no(game, "load existing zone?");
     camera = new EditorCamera(game->screen_width, game->screen_height, 0, 0);
+    selected = -1;
 
     if (loading) {
         m_zone_num = atoi(get_str(game, "zone number to load").c_str());
@@ -163,9 +164,9 @@ void ZoneEditor::draw(Engine* game)
     int x = (cam_rect.x / (5*TILE_WIDTH)) * (5*TILE_WIDTH);
     while (x < cam_rect.x + cam_rect.w) {
         int color;
-        if (x % 20 == 0) {
+        if (x % (20*TILE_WIDTH) == 0) {
             // thick gridlines
-            color = 150;
+            color = 20;
         } else {
             // thin gridlines
             color = 200;
@@ -183,7 +184,7 @@ void ZoneEditor::draw(Engine* game)
     int y = (cam_rect.y / (5*TILE_WIDTH)) * (5*TILE_WIDTH);
     while (y < cam_rect.y + cam_rect.h) {
         int color;
-        if (y % 20 == 0) {
+        if (y % (20*TILE_WIDTH) == 0) {
             // thick gridlines
             color = 20;
         } else {

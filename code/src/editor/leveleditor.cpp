@@ -90,12 +90,12 @@ void EditorCamera::update(Engine* game)
     }
     if (zoomin) {
         if (center_rect.w > TILE_WIDTH*4) {
-            center_rect.w /= 1.1;
+            center_rect.w /= 1.04;
             center_rect.h = center_rect.w * ((float) scr_h / (float) scr_w);
         }
     }
     if (zoomout) {
-        center_rect.w *= 1.1;
+        center_rect.w *= 1.04;
         center_rect.h = center_rect.w * ((float) scr_h / (float) scr_w);
     }
     true_rect.x = center_rect.x - center_rect.w/2;
