@@ -149,7 +149,7 @@ private:
 class LevelThumbnail
 {
 public:
-    LevelThumbnail(int zone_num, int lvl_num);
+    LevelThumbnail(Engine* game, int zone_num, int lvl_num);
     ~LevelThumbnail();
 
     void draw(SDL_Renderer* rend, SDL_Rect cam_rect, int scr_w, int scr_h);

@@ -77,16 +77,16 @@ void EditorCamera::update(Engine* game)
     int scr_w = game->screen_width;
     int scr_h = game->screen_height;
     if (up) {
-        center_rect.y -= EDITOR_CAMERA_SPEED;
+        center_rect.y -= EDITOR_CAMERA_SPEED*((float) center_rect.w / ((float)TILE_WIDTH*70));
     }
     if (down) {
-        center_rect.y += EDITOR_CAMERA_SPEED;
+        center_rect.y += EDITOR_CAMERA_SPEED*((float) center_rect.w / ((float)TILE_WIDTH*70));;
     }
     if (left) {
-        center_rect.x -= EDITOR_CAMERA_SPEED;
+        center_rect.x -= EDITOR_CAMERA_SPEED*((float) center_rect.w / ((float)TILE_WIDTH*70));;
     }
     if (right) {
-        center_rect.x += EDITOR_CAMERA_SPEED;
+        center_rect.x += EDITOR_CAMERA_SPEED*((float) center_rect.w / ((float)TILE_WIDTH*70));;
     }
     if (zoomin) {
         if (center_rect.w > TILE_WIDTH*4) {
@@ -95,7 +95,7 @@ void EditorCamera::update(Engine* game)
         }
     }
     if (zoomout) {
-        if (center_rect.w < TILE_WIDTH*500) {
+        if (center_rect.w < TILE_WIDTH*600) {
             center_rect.w *= 1.04;
             center_rect.h = center_rect.w * ((float) scr_h / (float) scr_w);
         }

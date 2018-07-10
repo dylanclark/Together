@@ -1,6 +1,6 @@
 #include <editor.hpp>
 
-LevelThumbnail::LevelThumbnail(int zone_num, int lvl_num)
+LevelThumbnail::LevelThumbnail(Engine* game, int zone_num, int lvl_num)
 {
     char lvl_cstr[5];
     snprintf(lvl_cstr, 5, "%d-%02d", zone_num, lvl_num);
@@ -16,9 +16,18 @@ LevelThumbnail::LevelThumbnail(int zone_num, int lvl_num)
     level_file >> m_w;
     level_file >> m_h;
 
+    Uint32 format = SDL_GetWindowPixelFormat(game->win);
+    SDL_CreateTexture(game->rend, format, SDL_TEXTUREACCESS_TARGET, m_w*TILE_WIDTH, m_h*TILE_WIDTH);
+    SDL_SetRenderTarget(game->rend, m_tex);
     for (int i = 0; i < m_w*m_h; i++) {
-        // TODO: create a texture
+        int cur_tile;
+        level_file >> cur_tile;
+        int color = (cur_tile >= W_FLOOR) ? 255 : 0;
+        SDL_SetRenderDrawColor(game->rend, color, color, color, SDL_ALPHA_OPAQUE);
+        SDL_Rect to_draw = {(i % m_w)*TILE_WIDTH, (i/m_w)*TILE_WIDTH, TILE_WIDTH, TILE_WIDTH};
+        SDL_RenderFillRect(game->rend, &to_draw);
     }
+    SDL_SetRenderTarget(game->rend, NULL);
 
     level_file.close();
 }
@@ -65,7 +74,7 @@ void ZoneEditor::init(Engine* game)
         zone_file >> b;
 
         for (int i = 0; i < num_levels; i++) {
-            LevelThumbnail* new_thumbnail = new LevelThumbnail(m_zone_num, i);
+            LevelThumbnail* new_thumbnail = new LevelThumbnail(game, m_zone_num, i);
         }
     } else {
         r = g = b = 255;
@@ -138,6 +147,9 @@ void ZoneEditor::handle_events(Engine* game)
                     game->push_state(new LevelEditor(m_zone_num, selected));
                     // TODO: edit selected level
                 }
+                break;
+            case SDL_SCANCODE_L:
+                // TODO: load level
                 break;
             default:
                 break;
