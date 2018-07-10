@@ -34,8 +34,7 @@ public:
     void draw();
 
     void resize();
-    int screen_width;
-    int screen_height;
+    int screen_width, screen_height;
 
     bool running() { return running_flag; }
     void quit() { running_flag = false; }
@@ -43,6 +42,7 @@ public:
     SDL_Window* win;
     SDL_Renderer* rend;
     SoundPlayer* sound;
+    TTF_Font* font;
 
     std::ofstream save_file;
     std::ifstream save_reader;

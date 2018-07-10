@@ -130,7 +130,6 @@ void Levelstate::draw(Engine* game)
     SDL_RenderPresent(game->rend);
 }
 
-
 void Levelstate::cleanup()
 {
     // iterate over all tiles and delete them all

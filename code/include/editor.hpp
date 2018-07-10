@@ -9,6 +9,8 @@ typedef enum Color {
     COLOR_WHITE
 } Color;
 
+static const int NUM_PLACING_TYPES = 7;
+
 typedef enum PlacingType {
     PLACING_DELETE,
     PLACING_TILES,
@@ -18,8 +20,6 @@ typedef enum PlacingType {
     PLACING_CRATES,
     PLACING_SPRINGS
 } PlacingType;
-
-static const int NUM_PLACING_TYPES = 7;
 
 static const int EDITOR_CAMERA_SPEED = 10;
 
@@ -113,11 +113,14 @@ private:
     Color clicked_color;
 };
 
+std::string get_str(Engine* game, std::string prompt, std::string result = "");
+bool get_yes_no(Engine* game, std::string prompt);
+
 // the editor state class itself
-class Editor : public Gamestate
+class LevelEditor : public Gamestate
 {
 public:
-    Editor(int lvl_num) { m_lvl_num = lvl_num; }
+    LevelEditor(int lvl_num) { m_lvl_num = lvl_num; }
     void init(Engine* game);
     void cleanup();
 
@@ -128,8 +131,6 @@ public:
 private:
     // helper functions for the editor
     void draw_UI(Engine* game, int scr_w, int scr_h);
-    std::string get_str(Engine* game, std::string prompt, std::string result = "");
-    bool get_yes_no(Engine* game, std::string prompt);
     std::vector<std::vector<std::string> > output_arr(std::vector<std::vector<int> > tiles);
     void write_level(Engine* game);
 
@@ -143,6 +144,43 @@ private:
     int m_lvl_num;
 
     TTF_Font* my_font;
+};
+
+class LevelThumbnail
+{
+public:
+    LevelThumbnail(int zone_num, int lvl_num);
+    ~LevelThumbnail();
+
+    void draw(SDL_Renderer* rend, SDL_Rect cam_rect, int scr_w, int scr_h);
+    void move(int x, int y) { m_x = x; m_y = y; }
+
+private:
+    // coords and dimensions
+    int m_x, m_y;
+    int m_width, m_height;
+
+    // texture
+    SDL_Texture* m_tex;
+};
+
+class ZoneEditor : public Gamestate
+{
+public:
+    ZoneEditor(int zone_num) { m_zone_num = zone_num; }
+    void init(Engine* game);
+    void cleanup();
+
+    void handle_events(Engine* game);
+    void update(Engine* game);
+    void draw(Engine* game);
+
+private:
+    int m_zone_num;
+
+    EditorCamera* camera;
+
+    std::vector<LevelThumbnail*> levels;
 };
 
 #endif /* editor_hpp */

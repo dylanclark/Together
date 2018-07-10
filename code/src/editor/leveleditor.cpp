@@ -117,11 +117,11 @@ void Border::update(int w, int h)
 
 void Border::draw(int scr_w, int scr_h, SDL_Rect cam_rect, SDL_Renderer* rend)
 {
-    int x1 = (rect.x - cam_rect.x) / ((float) cam_rect.w / (float) scr_w);
-    int y1 = (rect.y - cam_rect.y) / ((float) cam_rect.h / (float) scr_h);
-    int x2 = x1 + rect.w * ((float) scr_w / (float) cam_rect.w);
-    int y2 = y1 + rect.h * ((float) scr_h / (float) cam_rect.h);
-    SDL_Rect to_draw = {x1, y1, x2-x1, y2-y1};
+    int x = (rect.x - cam_rect.x) / ((float) cam_rect.w / (float) scr_w);
+    int y = (rect.y - cam_rect.y) / ((float) cam_rect.h / (float) scr_h);
+    int w = rect.w * ((float) scr_w / (float) cam_rect.w);
+    int h = rect.h * ((float) scr_h / (float) cam_rect.h);
+    SDL_Rect to_draw = {x, y, w, h};
     SDL_SetRenderDrawColor(rend, 255, 0, 0, SDL_ALPHA_OPAQUE);
     SDL_RenderDrawRect(rend, &to_draw);
 }
@@ -380,10 +380,8 @@ void Tileset::remove_col_right()
     }
 }
 
-void Editor::init(Engine* game)
+void LevelEditor::init(Engine* game)
 {
-    my_font = TTF_OpenFont("resources/fonts/slkscr.ttf", 24);
-
     bool loading;
     if (get_yes_no(game, "edit this level?")) {
         loading = true;
@@ -471,12 +469,12 @@ void Editor::init(Engine* game)
     camera = new EditorCamera(game->screen_width, game->screen_height, lvl_w*TILE_WIDTH, lvl_h*TILE_WIDTH);
 }
 
-void Editor::cleanup()
+void LevelEditor::cleanup()
 {
 
 }
 
-void Editor::handle_events(Engine* game)
+void LevelEditor::handle_events(Engine* game)
 {
     SDL_Event e;
 
@@ -556,7 +554,7 @@ void Editor::handle_events(Engine* game)
     }
 }
 
-void Editor::update(Engine* game)
+void LevelEditor::update(Engine* game)
 {
     SDL_SetRenderDrawColor(game->rend, 255, 255, 255, SDL_ALPHA_OPAQUE);
     SDL_RenderClear(game->rend);
@@ -566,7 +564,7 @@ void Editor::update(Engine* game)
     grid->update(lvl_w, lvl_h);
 }
 
-void Editor::draw(Engine* game)
+void LevelEditor::draw(Engine* game)
 {
     int scr_w = game->screen_width;
     int scr_h = game->screen_height;
@@ -580,7 +578,7 @@ void Editor::draw(Engine* game)
     SDL_RenderPresent(game->rend);
 }
 
-void Editor::draw_UI(Engine* game, int scr_w, int scr_h)
+void LevelEditor::draw_UI(Engine* game, int scr_w, int scr_h)
 {
     SDL_SetRenderDrawColor(game->rend, 255, 255, 255, SDL_ALPHA_OPAQUE);
     SDL_Color black = {0,0,0};
@@ -611,7 +609,7 @@ void Editor::draw_UI(Engine* game, int scr_w, int scr_h)
     default:
         break;
     }
-    SDL_Surface* text_surf = TTF_RenderText_Solid(my_font, placing_str.c_str(), black);
+    SDL_Surface* text_surf = TTF_RenderText_Solid(game->font, placing_str.c_str(), black);
     SDL_Texture* text_tex = SDL_CreateTextureFromSurface(game->rend, text_surf);
     int w, h;
     SDL_QueryTexture(text_tex, NULL, NULL, &w, &h);
@@ -622,7 +620,7 @@ void Editor::draw_UI(Engine* game, int scr_w, int scr_h)
     SDL_RenderCopy(game->rend, text_tex, NULL, &render_rect);
 }
 
-std::string Editor::get_str(Engine* game, std::string prompt, std::string result)
+std::string get_str(Engine* game, std::string prompt, std::string result)
 {
     while (1) {
         SDL_Event e;
@@ -635,10 +633,6 @@ std::string Editor::get_str(Engine* game, std::string prompt, std::string result
             case SDL_KEYDOWN:
                 switch (e.key.keysym.scancode)
                 {
-                case SDL_SCANCODE_ESCAPE:
-                    game->change_state(new Levelstate(m_lvl_num));
-                    return result;
-                    break;
                 case SDL_SCANCODE_0:
                     result += '0';
                     break;
@@ -687,7 +681,7 @@ std::string Editor::get_str(Engine* game, std::string prompt, std::string result
         SDL_RenderClear(game->rend);
         SDL_Color black = {0,0,0};
         std::string final_prompt = prompt + ": " + result;
-        SDL_Surface* prompt_surf = TTF_RenderText_Solid(my_font, final_prompt.c_str(), black);
+        SDL_Surface* prompt_surf = TTF_RenderText_Solid(game->font, final_prompt.c_str(), black);
         SDL_Texture* prompt_tex = SDL_CreateTextureFromSurface(game->rend, prompt_surf);
         int w, h;
         SDL_QueryTexture(prompt_tex, NULL, NULL, &w, &h);
@@ -699,15 +693,14 @@ std::string Editor::get_str(Engine* game, std::string prompt, std::string result
     }
 }
 
-bool Editor::get_yes_no(Engine* game, std::string prompt)
+bool get_yes_no(Engine* game, std::string prompt)
 {
     SDL_SetRenderDrawColor(game->rend, 255, 255, 255, SDL_ALPHA_OPAQUE);
     SDL_RenderClear(game->rend);
 
-    TTF_Font* my_font = TTF_OpenFont("resources/fonts/slkscr.ttf", 24);
     std::string final_prompt = prompt + " (y/n)";
     SDL_Color black = {0,0,0};
-    SDL_Surface* prompt_surf = TTF_RenderText_Solid(my_font, final_prompt.c_str(), black);
+    SDL_Surface* prompt_surf = TTF_RenderText_Solid(game->font, final_prompt.c_str(), black);
     SDL_Texture* prompt_tex = SDL_CreateTextureFromSurface(game->rend, prompt_surf);
     int w, h;
     SDL_QueryTexture(prompt_tex, NULL, NULL, &w, &h);
@@ -746,7 +739,7 @@ bool Editor::get_yes_no(Engine* game, std::string prompt)
     }
 }
 
-std::vector<std::vector<std::string> > Editor::output_arr(std::vector<std::vector<int> > tiles)
+std::vector<std::vector<std::string> > LevelEditor::output_arr(std::vector<std::vector<int> > tiles)
 {
     std::vector<std::vector<std::string> > result;
     int width = tiles[0].size();
@@ -1055,7 +1048,7 @@ std::vector<std::vector<std::string> > Editor::output_arr(std::vector<std::vecto
     return result;
 }
 
-void Editor::write_level(Engine* game)
+void LevelEditor::write_level(Engine* game)
 {
     std::vector<std::vector<std::string> > result = output_arr(tileset->tiles);
 

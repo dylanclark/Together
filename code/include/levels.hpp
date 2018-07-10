@@ -58,7 +58,6 @@ public:
     int type;
 };
 
-class Crate;
 class Tile;
 
 bool load_level_from_file(Engine* game, Levelstate* lvl, std::string filename);
@@ -96,28 +95,82 @@ public:
 
     // tileset
     Tile* tileset[MAX_SIZE];
+    Texture tile_tex;
 
     // objects
     std::vector<Crate*> crates;
     std::vector<Button*> buttons;
     std::vector<Springboard*> springs;
     std::vector<LevelMessage*> messages;
+};
 
-    // other objects
-    LevelMessage level1_end;
-    LevelMessage level2_end;
-    LevelMessage level1_start;
-    LevelMessage level2_start;
+class Level
+{
+public:
+    Level(int lvl_num) { m_lvl_num = lvl_num; }
+    void init(Engine* game);
+    void update(Engine* game);
+    void draw(Engine* game);
+    void handle_events(Engine* game);
+    void load_level(Engine* game, std::string lvlnum);
+    void cleanup();
 
-    // textures
+    void shift();
+
+private:
+    // level number
+    int m_lvl_num;
+
+    // these give the level's coords in the zone. they are by tile
+    int m_x, m_y;
+
+    // tile dimensions of level
+    int m_width, m_height;
+
+    // shifting info
+    bool shiftable;
+    bool active_color;
+
+    // chars and level endings!
+    std::vector<Dot*> chars;
+    std::vector<LevelEnd*> level_ends;
+
+    // tileset
+    Tile* tileset[MAX_SIZE];
     Texture tile_tex;
-    Texture b_button_tex;
-    Texture w_button_tex;
-    Texture w_platform;
-    Texture b_springboard_tex;
-    Texture w_springboard_tex;
-    Texture b_cross_spring_tex;
-    Texture w_cross_spring_tex;
+
+    // objects
+    std::vector<Crate*> crates;
+    std::vector<Button*> buttons;
+    std::vector<Springboard*> springs;
+    std::vector<LevelMessage*> messages;
+};
+
+
+class Zonestate : public Gamestate
+{
+public:
+    Zonestate(int zone_num) { m_zone_num = zone_num; }
+    void init(Engine* game);
+    void update(Engine* game);
+    void draw(Engine* game);
+    void handle_events(Engine* game);
+    void cleanup();
+
+    void pause(Engine* game);
+    void shift();
+
+private:
+    // level number
+    int m_zone_num;
+
+    Camera* camera;
+    std::vector<Dot*> chars;
+    std::vector<Level*> levels;
+
+    // shifting info
+    bool shiftable;
+    bool active_color;
 };
 
 #endif /* levels_hpp */

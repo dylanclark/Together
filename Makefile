@@ -11,7 +11,7 @@ TARGET = together
 VERBOSE = FALSE
 
 # create the list of directories. update this when new source files are added
-DIRS = main characters engine levels menus objects sound states textures
+DIRS = main characters engine editor levels menus objects sound states textures
 SOURCEDIRS = $(foreach dir, $(DIRS), $(addprefix $(SOURCEDIR)/src/, $(dir)))
 TARGETDIRS = $(foreach dir, $(DIRS), $(addprefix $(BUILDDIR)/object-files/, $(dir)))
 

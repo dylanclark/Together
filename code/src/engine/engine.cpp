@@ -23,6 +23,7 @@ bool Engine::init()
         success = false;
     }
     TTF_Init();
+    font = TTF_OpenFont("resources/fonts/slkscr.ttf", 24);
     printf("initialization successful!\n");
 
     SDL_DisplayMode current;
@@ -81,13 +82,6 @@ bool Engine::init()
     if(!(IMG_Init(img_flags) & img_flags)) {
         printf( "SDL_image could not initialize! SDL_image Error: %s\n", IMG_GetError() );
         success = false;
-    }
-
-    if (save_file.fail()) {
-        printf("error opening save_file\n");
-    }
-    if (save_file.fail()) {
-        printf("error opening save reader\n");
     }
 
     return success;
