@@ -72,8 +72,10 @@ void EditorCamera::handle_event(SDL_Event e)
     }
 }
 
-void EditorCamera::update(int w, int h, int scr_w, int scr_h)
+void EditorCamera::update(Engine* game)
 {
+    int scr_w = game->screen_width;
+    int scr_h = game->screen_height;
     if (up) {
         center_rect.y -= EDITOR_CAMERA_SPEED;
     }
@@ -559,7 +561,7 @@ void LevelEditor::update(Engine* game)
     SDL_SetRenderDrawColor(game->rend, 255, 255, 255, SDL_ALPHA_OPAQUE);
     SDL_RenderClear(game->rend);
 
-    camera->update(lvl_w, lvl_h, game->screen_width, game->screen_height);
+    camera->update(game);
     border->update(lvl_w, lvl_h);
     grid->update(lvl_w, lvl_h);
 }

@@ -116,7 +116,7 @@ bool Dot::handle_event(SDL_Event &e, Levelstate* level, Engine* game)
                     game->restart_state();
                     break;
                 case SDL_SCANCODE_E:
-                    game->change_state(new LevelEditor(level->m_lvl_num));
+                    game->change_state(new ZoneEditor());
                     break;
                 case SDL_SCANCODE_ESCAPE:
                     level->pause(game);
@@ -440,7 +440,6 @@ bool Dot::crate_col(Levelstate* level, Engine* game)
 
     // check all crates
     for (int i = 0; i < level->crates.size(); i++) {
-        printf("level->crates.size() = %d\n", level->crates.size());
         level->crates[i]->pushed = false;
 
         // if theres a collision

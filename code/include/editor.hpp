@@ -30,7 +30,7 @@ public:
     EditorCamera(int w, int h, int lvlw, int lvlh);
 
     void handle_event(SDL_Event e);
-    void update(int w, int h, int scr_w, int scr_h);
+    void update(Engine* game);
 
     // return the rect for other draw functions
     SDL_Rect get_rect() { return true_rect; }
@@ -120,7 +120,7 @@ bool get_yes_no(Engine* game, std::string prompt);
 class LevelEditor : public Gamestate
 {
 public:
-    LevelEditor(int lvl_num) { m_lvl_num = lvl_num; }
+    LevelEditor(int zone_num, int lvl_num) { m_zone_num = zone_num; m_lvl_num = lvl_num; }
     void init(Engine* game);
     void cleanup();
 
@@ -141,7 +141,7 @@ private:
 
     PlacingType placing;
     int lvl_w, lvl_h;
-    int m_lvl_num;
+    int m_zone_num, m_lvl_num;
 
     TTF_Font* my_font;
 };
@@ -153,7 +153,7 @@ public:
     ~LevelThumbnail();
 
     void draw(SDL_Renderer* rend, SDL_Rect cam_rect, int scr_w, int scr_h);
-    void move(int x, int y) { m_x = x; m_y = y; }
+    void move(int x, int y, std::vector<LevelThumbnail*> levels);
     SDL_Rect get_rect();
 
     bool selected;
@@ -179,6 +179,8 @@ public:
     void draw(Engine* game);
 
 private:
+    void write_zone();
+
     int m_zone_num;
     int r, g, b;
 
