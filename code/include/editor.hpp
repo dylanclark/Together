@@ -154,11 +154,14 @@ public:
 
     void draw(SDL_Renderer* rend, SDL_Rect cam_rect, int scr_w, int scr_h);
     void move(int x, int y) { m_x = x; m_y = y; }
+    SDL_Rect get_rect();
+
+    bool selected;
+    bool valid;
 
 private:
-    // coords and dimensions
     int m_x, m_y;
-    int m_width, m_height;
+    int m_w, m_h;
 
     // texture
     SDL_Texture* m_tex;
@@ -167,7 +170,7 @@ private:
 class ZoneEditor : public Gamestate
 {
 public:
-    ZoneEditor(int zone_num) { m_zone_num = zone_num; }
+    ZoneEditor() { }
     void init(Engine* game);
     void cleanup();
 
@@ -177,6 +180,12 @@ public:
 
 private:
     int m_zone_num;
+    int r, g, b;
+
+    // mouse drag controls
+    bool mousedown;
+    int selected;
+    int x_offset, y_offset;
 
     EditorCamera* camera;
 

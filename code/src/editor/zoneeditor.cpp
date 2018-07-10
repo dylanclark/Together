@@ -1,5 +1,4 @@
 #include <editor.hpp>
-#include <cstring>
 
 LevelThumbnail::LevelThumbnail(int zone_num, int lvl_num)
 {
@@ -14,22 +13,28 @@ LevelThumbnail::LevelThumbnail(int zone_num, int lvl_num)
     level_file >> m_x;
     level_file >> m_y;
 
-    level_file >> m_width;
-    level_file >> m_height;
+    level_file >> m_w;
+    level_file >> m_h;
 
-    for (int i = 0; i < m_width*m_height; i++) {
+    for (int i = 0; i < m_w*m_h; i++) {
         // TODO: create a texture
     }
 
     level_file.close();
 }
 
+SDL_Rect LevelThumbnail::get_rect()
+{
+    SDL_Rect res = {m_x, m_y, m_w*TILE_WIDTH, m_h*TILE_WIDTH};
+    return res;
+}
+
 void LevelThumbnail::draw(SDL_Renderer* rend, SDL_Rect cam_rect, int scr_w, int scr_h)
 {
     int x = (m_x - cam_rect.x) / ((float) cam_rect.w / (float) scr_w);
     int y = (m_y - cam_rect.y) / ((float) cam_rect.h / (float) scr_h);
-    int w = m_width*TILE_WIDTH * ((float) scr_w / (float) cam_rect.w);
-    int h = m_height*TILE_WIDTH * ((float) scr_h / (float) cam_rect.h);
+    int w = m_w*TILE_WIDTH * ((float) scr_w / (float) cam_rect.w);
+    int h = m_h*TILE_WIDTH * ((float) scr_h / (float) cam_rect.h);
     SDL_Rect render_rect = {x,y,w,h};
     SDL_RenderCopy(rend, m_tex, NULL, &render_rect);
 }
@@ -37,16 +42,27 @@ void LevelThumbnail::draw(SDL_Renderer* rend, SDL_Rect cam_rect, int scr_w, int 
 void ZoneEditor::init(Engine* game)
 {
     bool loading = get_yes_no(game, "load existing zone?");
-
-    // TODO: if there's a folder with our zone_num, we're loading. otherwise, creating new
+    // TODO: init camera
 
     if (loading) {
-        int num_levels = 0;
-        // TODO: count how many level files are in our zone folder
+        m_zone_num = atoi(get_str(game, "zone number to load").c_str());
+        char zone_num_cstr[2];
+        snprintf(zone_num_cstr, 2, "%d", m_zone_num);
+        std::string zone_num_str(zone_num_cstr);
+        std::string path = "resources/levels/"+zone_num_str+"/zone_info";
+        std::ifstream zone_file(path.c_str());
+
+        int num_levels;
+        zone_file >> num_levels;
+        zone_file >> r;
+        zone_file >> g;
+        zone_file >> b;
+
         for (int i = 0; i < num_levels; i++) {
             LevelThumbnail* new_thumbnail = new LevelThumbnail(m_zone_num, i);
-            // TODO: read level file for tiles. create level texture
         }
+    } else {
+        r = g = b = 255;
     }
 }
 
@@ -58,11 +74,22 @@ void ZoneEditor::cleanup()
 void ZoneEditor::update(Engine* game)
 {
     SDL_RenderClear(game->rend);
+    if (mousedown) {
+        for (int i = 0; i < levels.size(); i++) {
+            levels[i]->selected = (selected == i);
+        }
+        int mouse_x, mouse_y;
+        levels[selected]->move(mouse_x - x_offset, mouse_y - y_offset);
+    }
 }
 
 void ZoneEditor::handle_events(Engine* game)
 {
     SDL_Event e;
+    int scr_w = game->screen_width;
+    int scr_h = game->screen_height;
+    int true_x, true_y;
+    SDL_Rect cam_rect = camera->get_rect();
 
     while (SDL_PollEvent(&e)) {
         switch (e.type)
@@ -70,10 +97,43 @@ void ZoneEditor::handle_events(Engine* game)
         case SDL_QUIT:
             game->quit();
             break;
+        case SDL_MOUSEBUTTONDOWN:
+            mousedown = true;
+            // get mouse position
+            true_x = (e.button.x * ((float) cam_rect.w / (float) scr_w) + cam_rect.x) / TILE_WIDTH;
+            true_y = (e.button.y * ((float) cam_rect.h / (float) scr_h) + cam_rect.y) / TILE_WIDTH;
+            for (int i = 0; i < levels.size(); i++) {
+                SDL_Rect rect = levels[i]->get_rect();
+                if (true_x > rect.x && true_x < rect.x + rect.w &&
+                    true_y > rect.y && true_y < rect.y + rect.h) {
+                    selected = i;
+                    break;
+                }
+            }
+            break;
+        case SDL_KEYDOWN:
+            switch (e.key.keysym.scancode)
+            {
+            case SDL_SCANCODE_BACKSPACE:
+                // TODO: delete level
+                break;
+            case SDL_SCANCODE_S:
+                // TODO: save zone
+                break;
+            case SDL_SCANCODE_N:
+                // TODO: new level
+                break;
+            default:
+                break;
+            }
+            break;
         default:
             break;
         }
-        camera->handle_event(e);
+        // you can't move the camera if you're dragging something bc that's confusing lol
+        if (!mousedown) {
+            camera->handle_event(e);
+        }
     }
 }
 
