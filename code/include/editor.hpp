@@ -140,6 +140,7 @@ private:
     Tileset* tileset;
 
     PlacingType placing;
+    int m_x, m_y;
     int lvl_w, lvl_h;
     int m_zone_num, m_lvl_num;
 
@@ -188,7 +189,8 @@ private:
     bool mousedown;
     int selected;
     int x_offset, y_offset;
-    bool select_valid;
+
+    bool edited_level, created_level;
 
     EditorCamera* camera;
 

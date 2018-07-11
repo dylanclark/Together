@@ -104,7 +104,6 @@ void EditorCamera::update(Engine* game)
     true_rect.y = center_rect.y - center_rect.h/2;
     true_rect.w = center_rect.w;
     true_rect.h = center_rect.h;
-    printf("%d, %d\n", true_rect.x, true_rect.y);
 }
 
 Border::Border(int w, int h)
@@ -388,7 +387,7 @@ void Tileset::remove_col_right()
 void LevelEditor::init(Engine* game)
 {
     bool loading;
-    if (get_yes_no(game, "edit this level?")) {
+    if (m_lvl_num != -1) {
         loading = true;
     } else {
         if (get_yes_no(game, "edit another level?")) {
@@ -408,17 +407,16 @@ void LevelEditor::init(Engine* game)
         }
     }
     if (loading) {
-        char lvl_num_cstr[3];
-        snprintf(lvl_num_cstr, 3, "%02d", m_lvl_num);
-        std::string lvl_num_str = lvl_num_cstr;
-
-        std::string path = "resources/level-files/level"+lvl_num_str+".lvl";
+        char lvl_cstr[5];
+        snprintf(lvl_cstr, 5, "%d-%02d", m_zone_num, m_lvl_num);
+        std::string lvl_str(lvl_cstr);
+        lvl_cstr[1] = '\0';
+        std::string zone_str(lvl_cstr);
+        std::string path = "resources/level-files/"+zone_str+"/level"+lvl_str+".lvl";
         std::ifstream level_file(path.c_str());
 
-        int r, g, b;
-        level_file >> r;
-        level_file >> g;
-        level_file >> b;
+        level_file >> m_x;
+        level_file >> m_y;
 
         level_file >> lvl_w;
         level_file >> lvl_h;
@@ -451,9 +449,6 @@ void LevelEditor::init(Engine* game)
 
             std::string color_str = ((Color) i == COLOR_BLACK ? "black" : "white");
             SDL_Surface* char_surf = IMG_Load(("resources/textures/char-sheet-"+color_str+".png").c_str());
-            if (char_surf == NULL) {
-                printf("uh-oh, SDL_Error = %s\n", SDL_GetError());
-            }
             new_char.tex = SDL_CreateTextureFromSurface(game->rend, char_surf);
             SDL_FreeSurface(char_surf);
 
@@ -493,8 +488,7 @@ void LevelEditor::handle_events(Engine* game)
             switch (e.key.keysym.scancode)
             {
             case SDL_SCANCODE_ESCAPE:
-                game->change_state(new Levelstate(m_lvl_num));
-                return;
+                game->pop_state();
                 break;
             case SDL_SCANCODE_RETURN:
                 write_level(game);
@@ -1057,20 +1051,20 @@ void LevelEditor::write_level(Engine* game)
 {
     std::vector<std::vector<std::string> > result = output_arr(tileset->tiles);
 
-    char lvl_num_cstr[3];
-    snprintf(lvl_num_cstr, 3, "%02d", m_lvl_num);
-    std::string lvl_num_str(lvl_num_cstr);
-
-    std::string path = "resources/level-files/level"+lvl_num_str+".lvl";
+    char lvl_cstr[5];
+    snprintf(lvl_cstr, 5, "%d-%02d", m_zone_num, m_lvl_num);
+    std::string lvl_str(lvl_cstr);
+    lvl_cstr[1] = '\0';
+    std::string zone_str(lvl_cstr);
+    std::string path = "resources/level-files/"+zone_str+"/level"+lvl_str+".lvl";
     std::ofstream level_file(path.c_str());
 
-    m_lvl_num = atoi(get_str(game, "level number", std::to_string(m_lvl_num)).c_str());
-    int r = atoi(get_str(game, "red").c_str());
-    int g = atoi(get_str(game, "green").c_str());
-    int b = atoi(get_str(game, "blue").c_str());
+    if (m_lvl_num == -1) {
+        m_lvl_num = atoi(get_str(game, "level number", std::to_string(m_lvl_num)).c_str());
+    }
 
     // write the colors!
-    level_file << r << " " << g << " " << b << std::endl;
+    level_file << m_x << " " << m_y << std::endl;
     level_file << lvl_w << " " << lvl_h << std::endl;
 
     for (int i = 0; i < lvl_h; i++) {
@@ -1105,5 +1099,5 @@ void LevelEditor::write_level(Engine* game)
         level_file << level_ends[i].x << " " << level_ends[i].y << std::endl;
     }
     level_file.close();
-    game->change_state(new Levelstate(m_lvl_num));
+    game->pop_state();
 }

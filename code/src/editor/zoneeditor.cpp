@@ -22,7 +22,7 @@ LevelThumbnail::LevelThumbnail(Engine* game, int zone_num, int lvl_num)
     for (int i = 0; i < m_w*m_h; i++) {
         int cur_tile;
         level_file >> cur_tile;
-        int color = (cur_tile >= W_FLOOR) ? 255 : 0;
+        int color = (cur_tile >= W_BACK) ? 255 : 0;
         SDL_SetRenderDrawColor(game->rend, color, color, color, SDL_ALPHA_OPAQUE);
         SDL_Rect to_draw = {(i % m_w)*TILE_WIDTH, (i/m_w)*TILE_WIDTH, TILE_WIDTH, TILE_WIDTH};
         SDL_RenderFillRect(game->rend, &to_draw);
@@ -47,22 +47,28 @@ void LevelThumbnail::draw(SDL_Renderer* rend, SDL_Rect cam_rect, int scr_w, int 
     SDL_Rect render_rect = {x,y,w,h};
     SDL_RenderCopy(rend, m_tex, NULL, &render_rect);
 
+    int thickness;
     if (selected) {
         SDL_SetRenderDrawColor(rend, 0, 200, 0, SDL_ALPHA_OPAQUE);
-        int thickness = 4;
-        SDL_Rect rect1 = {x,y,w,thickness};
-        SDL_Rect rect2 = {x,y+h-thickness,w,thickness};
-        SDL_Rect rect3 = {x+w-thickness,y,thickness,h};
-        SDL_Rect rect4 = {x,y,thickness,h};
-        SDL_RenderFillRect(rend, &rect1);
-        SDL_RenderFillRect(rend, &rect2);
-        SDL_RenderFillRect(rend, &rect3);
-        SDL_RenderFillRect(rend, &rect4);
+        thickness = 5;
+    } else {
+        SDL_SetRenderDrawColor(rend, 0, 0, 255, SDL_ALPHA_OPAQUE);
+        thickness = 3;
     }
+    SDL_Rect rect1 = {x,y,w,thickness};
+    SDL_Rect rect2 = {x,y+h-thickness,w,thickness};
+    SDL_Rect rect3 = {x+w-thickness,y,thickness,h};
+    SDL_Rect rect4 = {x,y,thickness,h};
+    SDL_RenderFillRect(rend, &rect1);
+    SDL_RenderFillRect(rend, &rect2);
+    SDL_RenderFillRect(rend, &rect3);
+    SDL_RenderFillRect(rend, &rect4);
 }
 
 void LevelThumbnail::move(int x, int y, std::vector<LevelThumbnail*> levels)
 {
+    m_x = (x / TILE_WIDTH) * TILE_WIDTH;
+    m_y = (y / TILE_WIDTH) * TILE_WIDTH;
     // TODO: we want to snap the level into place if we can lock exits and entrances
 }
 
@@ -70,8 +76,9 @@ void ZoneEditor::init(Engine* game)
 {
     bool loading = get_yes_no(game, "load existing zone?");
     camera = new EditorCamera(game->screen_width, game->screen_height, 0, 0);
-    select_valid = false;
+    mousedown = false;
     selected = -1;
+    edited_level = created_level = false;
 
     if (loading) {
         m_zone_num = atoi(get_str(game, "zone number to load").c_str());
@@ -105,13 +112,29 @@ void ZoneEditor::update(Engine* game)
 {
     SDL_SetRenderDrawColor(game->rend, 255, 255, 255, SDL_ALPHA_OPAQUE);
     SDL_RenderClear(game->rend);
+    if (edited_level) {
+        levels.erase(levels.begin() + selected);
+        levels.insert(levels.begin() + selected, new LevelThumbnail(game, m_zone_num, selected));
+        edited_level = false;
+    }
+    if (created_level) {
+        levels.push_back(new LevelThumbnail(game, m_zone_num, levels.size()));
+    }
     if (mousedown) {
         for (int i = 0; i < levels.size(); i++) {
             levels[i]->selected = (selected == i);
         }
-        int mouse_x, mouse_y;
-        // TODO: get mouse position
-        levels[selected]->move(mouse_x - x_offset, mouse_y - y_offset, levels);
+        if (selected != -1) {
+            int mouse_x, mouse_y;
+            SDL_GetMouseState(&mouse_x, &mouse_y);
+            int scr_w = game->screen_width;
+            int scr_h = game->screen_height;
+            int target_x, target_y;
+            SDL_Rect cam_rect = camera->get_rect();
+            target_x = mouse_x * ((float) cam_rect.w / (float) scr_w) + cam_rect.x;
+            target_y = mouse_y * ((float) cam_rect.h / (float) scr_h) + cam_rect.y;
+            levels[selected]->move(target_x - x_offset, target_y - y_offset, levels);
+        }
     }
     camera->update(game);
 }
@@ -122,6 +145,7 @@ void ZoneEditor::handle_events(Engine* game)
     int scr_w = game->screen_width;
     int scr_h = game->screen_height;
     int true_x, true_y;
+    bool select_valid;
     SDL_Rect cam_rect = camera->get_rect();
 
     while (SDL_PollEvent(&e)) {
@@ -142,6 +166,8 @@ void ZoneEditor::handle_events(Engine* game)
                     true_y > rect.y && true_y < rect.y + rect.h) {
                     selected = i;
                     select_valid = true;
+                    x_offset = true_x - rect.x;
+                    y_offset = true_y - rect.y;
                     break;
                 }
             }
@@ -163,11 +189,13 @@ void ZoneEditor::handle_events(Engine* game)
                 write_zone();
                 break;
             case SDL_SCANCODE_N:
+                game->push_state(new LevelEditor(m_zone_num, levels.size()));
                 // TODO: new level
                 break;
             case SDL_SCANCODE_E:
                 if (selected != -1) {
                     game->push_state(new LevelEditor(m_zone_num, selected));
+                    edited_level = true;
                     // TODO: edit selected level
                 }
                 break;
@@ -195,16 +223,17 @@ void ZoneEditor::draw(Engine* game)
     int scr_h = game->screen_height;
 
     // vertical gridlines
-    // TODO: this is broken
-    int x = (cam_rect.x / (5*TILE_WIDTH)) * (5*TILE_WIDTH);
+    int x = (cam_rect.x / TILE_WIDTH) * TILE_WIDTH;
     while (x < cam_rect.x + cam_rect.w) {
         int color;
-        if (x % (20*TILE_WIDTH) == 0) {
+        if (x % (16*TILE_WIDTH) == 0) {
             // thick gridlines
             color = 20;
-        } else {
+        } else if (x % (4*TILE_WIDTH) == 0) {
             // thin gridlines
             color = 200;
+        } else {
+            color = 240;
         }
         int y1 = 0;
         int y2 = game->screen_height;
@@ -212,19 +241,20 @@ void ZoneEditor::draw(Engine* game)
         SDL_SetRenderDrawColor(game->rend, color, color, color, SDL_ALPHA_OPAQUE);
         SDL_RenderDrawLine(game->rend, screen_x, y1, screen_x, y2);
 
-        x += 5*TILE_WIDTH;
+        x += TILE_WIDTH;
     }
     // horizontal gridlines
-    // TODO: this is broken
-    int y = (cam_rect.y / (5*TILE_WIDTH)) * (5*TILE_WIDTH);
+    int y = (cam_rect.y / TILE_WIDTH) * TILE_WIDTH;
     while (y < cam_rect.y + cam_rect.h) {
         int color;
-        if (y % (20*TILE_WIDTH) == 0) {
+        if (y % (16*TILE_WIDTH) == 0) {
             // thick gridlines
             color = 20;
-        } else {
+        } else if (y % (4*TILE_WIDTH) == 0) {
             // thin gridlines
             color = 200;
+        } else {
+            color = 240;
         }
         int x1 = 0;
         int x2 = game->screen_width;
@@ -232,7 +262,7 @@ void ZoneEditor::draw(Engine* game)
         SDL_SetRenderDrawColor(game->rend, color, color, color, SDL_ALPHA_OPAQUE);
         SDL_RenderDrawLine(game->rend, x1, screen_y, x2, screen_y);
 
-        y += 5*TILE_WIDTH;
+        y += TILE_WIDTH;
     }
 
     for (int i = 0; i < levels.size(); i++) {
