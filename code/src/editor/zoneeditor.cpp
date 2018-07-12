@@ -108,6 +108,7 @@ void ZoneEditor::init(Engine* game)
             zone_file >> y;
             LevelThumbnail* new_thumbnail = new LevelThumbnail(game, m_zone_num, i, x, y);
             levels.push_back(new_thumbnail);
+            levels[i]->start = (start == i);
         }
         zone_file >> r;
         zone_file >> g;
