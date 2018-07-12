@@ -140,7 +140,6 @@ private:
     Tileset* tileset;
 
     PlacingType placing;
-    int m_x, m_y;
     int lvl_w, lvl_h;
     int m_zone_num, m_lvl_num;
 
@@ -150,7 +149,7 @@ private:
 class LevelThumbnail
 {
 public:
-    LevelThumbnail(Engine* game, int zone_num, int lvl_num);
+    LevelThumbnail(Engine* game, int zone_num, int lvl_num, int x, int y);
     ~LevelThumbnail();
 
     void draw(SDL_Renderer* rend, SDL_Rect cam_rect, int scr_w, int scr_h);
@@ -159,9 +158,9 @@ public:
 
     bool selected;
     bool valid;
+    int m_x, m_y;
 
 private:
-    int m_x, m_y;
     int m_w, m_h;
 
     // texture

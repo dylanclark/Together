@@ -387,37 +387,24 @@ void Tileset::remove_col_right()
 void LevelEditor::init(Engine* game)
 {
     bool loading;
-    if (m_lvl_num != -1) {
-        loading = true;
-    } else {
-        if (get_yes_no(game, "edit another level?")) {
-            loading = true;
-            m_lvl_num = atoi(get_str(game, "level to edit").c_str());
-        } else {
-            loading = false;
-            lvl_w = atoi(get_str(game, "level width").c_str());
-            while (lvl_w < 67) {
-                lvl_w = atoi(get_str(game, "level width (must be at least 67)").c_str());
-            }
-            lvl_h = atoi(get_str(game, "level height").c_str());
-            while (lvl_h < 45) {
-                lvl_h = atoi(get_str(game, "level height (must be at least 45)").c_str());
-            }
-            tileset = new Tileset(lvl_w, lvl_h);
-        }
+    if (m_lvl_num == -1) {
+        m_zone_num = atoi(get_str(game, "zone number").c_str());
+        m_lvl_num = atoi(get_str(game, "level number").c_str());
     }
-    if (loading) {
-        char lvl_cstr[5];
-        snprintf(lvl_cstr, 5, "%d-%02d", m_zone_num, m_lvl_num);
-        std::string lvl_str(lvl_cstr);
-        lvl_cstr[1] = '\0';
-        std::string zone_str(lvl_cstr);
-        std::string path = "resources/level-files/"+zone_str+"/level"+lvl_str+".lvl";
-        std::ifstream level_file(path.c_str());
+    char lvl_cstr[5];
+    snprintf(lvl_cstr, 5, "%d-%02d", m_zone_num, m_lvl_num);
+    std::string lvl_str(lvl_cstr);
+    lvl_cstr[1] = '\0';
+    std::string zone_str(lvl_cstr);
+    std::string path = "resources/level-files/"+zone_str+"/level"+lvl_str+".lvl";
+    std::ifstream level_file(path.c_str());
+    loading = !(level_file == NULL);
 
-        level_file >> m_x;
-        level_file >> m_y;
-
+    if (!loading) {
+        lvl_w = 67;
+        lvl_h = 45;
+        tileset = new Tileset(lvl_w, lvl_h);
+    } else {
         level_file >> lvl_w;
         level_file >> lvl_h;
 
@@ -1051,6 +1038,10 @@ void LevelEditor::write_level(Engine* game)
 {
     std::vector<std::vector<std::string> > result = output_arr(tileset->tiles);
 
+    if (m_lvl_num == -1) {
+        m_lvl_num = atoi(get_str(game, "level number", std::to_string(m_lvl_num)).c_str());
+    }
+
     char lvl_cstr[5];
     snprintf(lvl_cstr, 5, "%d-%02d", m_zone_num, m_lvl_num);
     std::string lvl_str(lvl_cstr);
@@ -1059,12 +1050,6 @@ void LevelEditor::write_level(Engine* game)
     std::string path = "resources/level-files/"+zone_str+"/level"+lvl_str+".lvl";
     std::ofstream level_file(path.c_str());
 
-    if (m_lvl_num == -1) {
-        m_lvl_num = atoi(get_str(game, "level number", std::to_string(m_lvl_num)).c_str());
-    }
-
-    // write the colors!
-    level_file << m_x << " " << m_y << std::endl;
     level_file << lvl_w << " " << lvl_h << std::endl;
 
     for (int i = 0; i < lvl_h; i++) {

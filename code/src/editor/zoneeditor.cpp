@@ -1,6 +1,6 @@
 #include <editor.hpp>
 
-LevelThumbnail::LevelThumbnail(Engine* game, int zone_num, int lvl_num)
+LevelThumbnail::LevelThumbnail(Engine* game, int zone_num, int lvl_num, int x, int y)
 {
     char lvl_cstr[5];
     snprintf(lvl_cstr, 5, "%d-%02d", zone_num, lvl_num);
@@ -10,15 +10,15 @@ LevelThumbnail::LevelThumbnail(Engine* game, int zone_num, int lvl_num)
     std::string path = "resources/level-files/"+zone_str+"/level"+lvl_str+".lvl";
     std::ifstream level_file(path.c_str());
 
-    level_file >> m_x;
-    level_file >> m_y;
-
+    m_x = x;
+    m_y = y;
     level_file >> m_w;
     level_file >> m_h;
 
     Uint32 format = SDL_GetWindowPixelFormat(game->win);
     m_tex = SDL_CreateTexture(game->rend, format, SDL_TEXTUREACCESS_TARGET, m_w*TILE_WIDTH, m_h*TILE_WIDTH);
     SDL_SetRenderTarget(game->rend, m_tex);
+    printf("%d,%d\n", m_w, m_h);
     for (int i = 0; i < m_w*m_h; i++) {
         int cur_tile;
         level_file >> cur_tile;
@@ -85,19 +85,22 @@ void ZoneEditor::init(Engine* game)
         char zone_num_cstr[2];
         snprintf(zone_num_cstr, 2, "%d", m_zone_num);
         std::string zone_num_str(zone_num_cstr);
-        std::string path = "resources/level-files/"+zone_num_str+"/zone-info";
+        std::string path = "resources/level-files/"+zone_num_str+"/zone-file";
         std::ifstream zone_file(path.c_str());
 
         int num_levels;
         zone_file >> num_levels;
+        int x, y;
+
+        for (int i = 0; i < num_levels; i++) {
+            zone_file >> x;
+            zone_file >> y;
+            LevelThumbnail* new_thumbnail = new LevelThumbnail(game, m_zone_num, i, x, y);
+            levels.push_back(new_thumbnail);
+        }
         zone_file >> r;
         zone_file >> g;
         zone_file >> b;
-
-        for (int i = 0; i < num_levels; i++) {
-            LevelThumbnail* new_thumbnail = new LevelThumbnail(game, m_zone_num, i);
-            levels.push_back(new_thumbnail);
-        }
     } else {
         r = g = b = 255;
     }
@@ -113,12 +116,16 @@ void ZoneEditor::update(Engine* game)
     SDL_SetRenderDrawColor(game->rend, 255, 255, 255, SDL_ALPHA_OPAQUE);
     SDL_RenderClear(game->rend);
     if (edited_level) {
+        int x, y;
+        x = levels[selected]->m_x;
+        y = levels[selected]->m_y;
         levels.erase(levels.begin() + selected);
-        levels.insert(levels.begin() + selected, new LevelThumbnail(game, m_zone_num, selected));
+        levels.insert(levels.begin() + selected, new LevelThumbnail(game, m_zone_num, selected, x, y));
         edited_level = false;
     }
     if (created_level) {
-        levels.push_back(new LevelThumbnail(game, m_zone_num, levels.size()));
+        levels.push_back(new LevelThumbnail(game, m_zone_num, selected, 0, 0));
+        created_level = false;
     }
     if (mousedown) {
         for (int i = 0; i < levels.size(); i++) {
@@ -152,6 +159,7 @@ void ZoneEditor::handle_events(Engine* game)
         switch (e.type)
         {
         case SDL_QUIT:
+            write_zone();
             game->quit();
             break;
         case SDL_MOUSEBUTTONDOWN:
@@ -189,8 +197,9 @@ void ZoneEditor::handle_events(Engine* game)
                 write_zone();
                 break;
             case SDL_SCANCODE_N:
-                game->push_state(new LevelEditor(m_zone_num, levels.size()));
-                // TODO: new level
+                selected = levels.size();
+                game->push_state(new LevelEditor(m_zone_num, selected));
+                created_level = true;
                 break;
             case SDL_SCANCODE_E:
                 if (selected != -1) {
@@ -277,9 +286,12 @@ void ZoneEditor::write_zone()
     char zone_num_cstr[2];
     snprintf(zone_num_cstr, 2, "%d", m_zone_num);
     std::string zone_num_str(zone_num_cstr);
-    std::string path = "resources/level-files/"+zone_num_str+"/zone-info";
+    std::string path = "resources/level-files/"+zone_num_str+"/zone-file";
     std::ofstream zone_file(path.c_str());
 
     zone_file << levels.size() << std::endl;
+    for (int i = 0; i < levels.size(); i++) {
+        zone_file << levels[i]->m_x << " " << levels[i]->m_y << std::endl;
+    }
     zone_file << r << " " << g << " " << b << std::endl;
 }
