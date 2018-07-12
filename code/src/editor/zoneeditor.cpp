@@ -27,6 +27,10 @@ LevelThumbnail::LevelThumbnail(Engine* game, int zone_num, int lvl_num, int x, i
         SDL_Rect to_draw = {(i % m_w)*TILE_WIDTH, (i/m_w)*TILE_WIDTH, TILE_WIDTH, TILE_WIDTH};
         SDL_RenderFillRect(game->rend, &to_draw);
     }
+    int num_exits;
+    level_file >> num_exits;
+    // TODO: take coords of exits and draw a yellow rect there
+
     SDL_SetRenderTarget(game->rend, NULL);
 
     level_file.close();
@@ -324,7 +328,7 @@ void ZoneEditor::delete_level(int lvl_num)
 
     // rename all level files greater than deleted lvl
     std::string oldname, newname;
-    for (int i = lvl_num+1; i < levels.size(); i++) {
+    for (int i = lvl_num+1; i <= levels.size(); i++) {
         snprintf(lvl_cstr, 5, "%d-%02d", m_zone_num, i);
         lvl_str = std::string(lvl_cstr);
         oldname = "resources/level-files/"+zone_str+"/level"+lvl_str+".lvl";
