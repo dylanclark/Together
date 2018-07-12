@@ -2,6 +2,9 @@
 
 LevelThumbnail::LevelThumbnail(Engine* game, int zone_num, int lvl_num, int x, int y)
 {
+    start = false;
+    selected = false;
+
     char lvl_cstr[5];
     snprintf(lvl_cstr, 5, "%d-%02d", zone_num, lvl_num);
     std::string lvl_str(lvl_cstr);
@@ -55,6 +58,9 @@ void LevelThumbnail::draw(SDL_Renderer* rend, SDL_Rect cam_rect, int scr_w, int 
     if (selected) {
         SDL_SetRenderDrawColor(rend, 0, 200, 0, SDL_ALPHA_OPAQUE);
         thickness = 5;
+    } else if (start) {
+        SDL_SetRenderDrawColor(rend, 200, 200, 0, SDL_ALPHA_OPAQUE);
+        thickness = 3;
     } else {
         SDL_SetRenderDrawColor(rend, 0, 0, 255, SDL_ALPHA_OPAQUE);
         thickness = 3;
@@ -94,6 +100,7 @@ void ZoneEditor::init(Engine* game)
 
         int num_levels;
         zone_file >> num_levels;
+        zone_file >> start;
         int x, y;
 
         for (int i = 0; i < num_levels; i++) {
@@ -196,6 +203,15 @@ void ZoneEditor::handle_events(Engine* game)
             case SDL_SCANCODE_BACKSPACE:
                 delete_level(selected);
                 selected = -1;
+                break;
+            case SDL_SCANCODE_1:
+                if (selected != -1) {
+                    for (int i = 0; i < levels.size(); i++) {
+                        levels[i]->start = false;
+                    }
+                    levels[selected]->start = true;
+                    start = selected;
+                }
                 break;
             case SDL_SCANCODE_S:
                 write_zone();
@@ -348,6 +364,7 @@ void ZoneEditor::write_zone()
     std::ofstream zone_file(path.c_str());
 
     zone_file << levels.size() << std::endl;
+    zone_file << start << std::endl;
     for (int i = 0; i < levels.size(); i++) {
         zone_file << levels[i]->m_x << " " << levels[i]->m_y << std::endl;
     }

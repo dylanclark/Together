@@ -157,6 +157,7 @@ public:
     SDL_Rect get_rect();
 
     bool selected;
+    bool start;
     bool valid;
     int m_x, m_y;
 
@@ -187,8 +188,11 @@ private:
 
     // mouse drag controls
     bool mousedown;
-    int selected;
     int x_offset, y_offset;
+    // which level is selected?
+    int selected;
+    // which level do the chars start in?
+    int start;
 
     bool edited_level, created_level;
 

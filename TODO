@@ -22,6 +22,11 @@ WORLD 7 (forge/factory)
 
 TO-DO LIST
     - implement "zones": groups of levels that can be navigated like a Metroid map
+        + replace level_ends with exits - 2-tile rects that must touch wall and one black and white square
+        + camera stays on one level until you reach exit, then pans smoothly to the next level
+        + zone-file must have a) starting level and b) characters' starting coordinates. and coordinates of all levels, and palette
+        + when chars exit a level they just move 3 tiles in that diraction and an animation plays
+        + this means each level needs a border for both chars
     - level editor new features
         + level there can be multiple level ends, and now they must touch the wall and touch adjacent white/black
         + level ends can't be in the corner
