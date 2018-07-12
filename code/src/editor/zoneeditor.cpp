@@ -190,7 +190,7 @@ void ZoneEditor::handle_events(Engine* game)
             switch (e.key.keysym.scancode)
             {
             case SDL_SCANCODE_BACKSPACE:
-                levels.erase(levels.begin() + selected);
+                delete_level(selected);
                 selected = -1;
                 break;
             case SDL_SCANCODE_S:
@@ -205,7 +205,6 @@ void ZoneEditor::handle_events(Engine* game)
                 if (selected != -1) {
                     game->push_state(new LevelEditor(m_zone_num, selected));
                     edited_level = true;
-                    // TODO: edit selected level
                 }
                 break;
             case SDL_SCANCODE_L:
@@ -279,6 +278,61 @@ void ZoneEditor::draw(Engine* game)
     }
 
     SDL_RenderPresent(game->rend);
+}
+
+void ZoneEditor::delete_level(int lvl_num)
+{
+    // erase thumbnail from the stack
+    levels.erase(levels.begin() + lvl_num);
+
+    // read extra info and find out how many lvls there are
+    std::ifstream extra_info("resources/level-files/extra/num-levels");
+
+    int extra_lvl_num;
+    if (extra_info == NULL) {
+        extra_lvl_num = 0;
+    } else {
+        extra_info >> extra_lvl_num;
+        extra_info.close();
+    }
+
+    // update that number to be +1
+    std::ofstream extra_info_new("resources/level-files/extra/num-levels");
+    extra_info_new << (extra_lvl_num + 1);
+
+    // copy level file to extra level folder
+    char lvl_cstr[5];
+    snprintf(lvl_cstr, 5, "%d-%02d", m_zone_num, lvl_num);
+    std::string lvl_str(lvl_cstr);
+    lvl_cstr[1] = '\0';
+    std::string zone_str(lvl_cstr);
+    std::string src_path = "resources/level-files/"+zone_str+"/level"+lvl_str+".lvl";
+    std::ifstream src(src_path.c_str(), std::ios::binary);
+
+    char extra_level_cstr[4];
+    snprintf(extra_level_cstr, 4, "%03d", extra_lvl_num);
+    std::string extra_level_str(extra_level_cstr);
+    std::string dst_path = "resources/level-files/extra/level"+extra_level_str+".lvl";
+    std::ofstream dst(dst_path.c_str(), std::ios::binary);
+
+    dst << src.rdbuf();
+    src.close();
+    dst.close();
+
+    // delete level file in zone folder
+    remove(src_path.c_str());
+
+    // rename all level files greater than deleted lvl
+    std::string oldname, newname;
+    for (int i = lvl_num+1; i < levels.size(); i++) {
+        snprintf(lvl_cstr, 5, "%d-%02d", m_zone_num, i);
+        lvl_str = std::string(lvl_cstr);
+        oldname = "resources/level-files/"+zone_str+"/level"+lvl_str+".lvl";
+        snprintf(lvl_cstr, 5, "%d-%02d", m_zone_num, i-1);
+        lvl_str = std::string(lvl_cstr);
+        newname = "resources/level-files/"+zone_str+"/level"+lvl_str+".lvl";
+        rename(oldname.c_str(), newname.c_str());
+    }
 }
 
 void ZoneEditor::write_zone()

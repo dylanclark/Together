@@ -179,6 +179,7 @@ public:
     void draw(Engine* game);
 
 private:
+    void delete_level(int lvl_num);
     void write_zone();
 
     int m_zone_num;

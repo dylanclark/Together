@@ -22,13 +22,14 @@ WORLD 7 (forge/factory)
 
 TO-DO LIST
     - implement "zones": groups of levels that can be navigated like a Metroid map
+    - level editor new features
+        + level there can be multiple level ends, and now they must touch the wall and touch adjacent white/black
+        + level ends can't be in the corner
+        + for now, just draw them as one yellow block
+        + they have a direction and coordinates (which ID top left corner as always)
     - zone editor
         + create new zone
-        + save current zone
-        + create new empty level and enter level editor
-        + click and drag levels
-        + load levels from any zone
-        + delete level from zone but not storage
+        + load levels from any zone or extra storage
         + levels should "click" into place, their exits and entrances lining up
 
 
