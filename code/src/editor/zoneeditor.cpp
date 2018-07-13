@@ -300,7 +300,7 @@ void ZoneList::draw(Engine* game, SDL_Rect cam_rect)
     // draw the zone header
     int w, h;
     SDL_QueryTexture(m_tex, NULL, NULL, &w, &h);
-    SDL_Rect to_draw = {SIDE_MARGIN, m_y, w, h};
+    SDL_Rect to_draw = {SIDE_MARGIN, m_y - cam_rect.y, w, h};
     SDL_RenderCopy(game->rend, m_tex, NULL, &to_draw);
 
     // draw each level thumbnail
@@ -311,10 +311,9 @@ void ZoneList::draw(Engine* game, SDL_Rect cam_rect)
 
 int ZoneList::click(int mousex, int mousey)
 {
-    // TODO
-    int selected;
+    // check level bounds for each level
+    int selected = -1;
     for (int i = 0; i < levels.size(); i++) {
-        // TODO check level bounds
         SDL_Rect lvl = levels[i]->get_rect();
         if (mousex > lvl.x && mousex < lvl.x + lvl.w &&
             mousey > lvl.y && mousey < lvl.y + lvl.h) {
@@ -322,6 +321,7 @@ int ZoneList::click(int mousex, int mousey)
             break;
         }
     }
+    // select that level
     select(selected);
     return selected;
 }
@@ -355,21 +355,21 @@ void LevelLoader::init(Engine* game)
     int grid_space = ((scr_w - 2*SIDE_MARGIN) - THUMBS_PER_ROW*THUMB_MAX_WIDTH) / (THUMBS_PER_ROW - 1);
     int zone_header_h;
 
-    // draw each zone list
+    // create each zone list
     for (int i = 0; i < num_zones; i++) {
         zones.push_back(new ZoneList(game, i, zone_y));
         zone_header_h = zones[i]->get_tex_height();
         zone_num_levels = zones[i]->num_levels();
-        zone_y += zone_header_h + (i / THUMBS_PER_ROW + 1) * (grid_space + THUMB_MAX_WIDTH) + grid_space;
+        zone_y += zone_header_h + (zone_num_levels / THUMBS_PER_ROW + 1) * (grid_space + THUMB_MAX_WIDTH) + grid_space;
     }
     // extra storage
     zones.push_back(new ZoneList(game, -1, zone_y));
 
+    // create camera
     camera = new LevelLoaderCamera(game->screen_width, game->screen_height);
     selected = -1;
     bool just_selected = false;
 
-    // TODO create title texture
     // create a text texture and get its dimensions
     SDL_Color black = {0,0,0};
     SDL_Surface* text_surf = TTF_RenderText_Solid(game->font, "level loader", black);
@@ -446,11 +446,16 @@ void LevelLoader::handle_events(Engine* game)
         case SDL_KEYDOWN:
             switch (e.key.keysym.scancode)
             {
+            case SDL_SCANCODE_ESCAPE:
+                game->pop_state();
+                break;
             case SDL_SCANCODE_RETURN:
                 // load this level into our zone
                 if (selected != -1) {
                     load_level();
                     game->pop_state();
+                } else {
+                    printf("\a");
                 }
                 break;
             default:
@@ -474,24 +479,24 @@ void LevelLoader::update(Engine* game)
     int grid_space = ((scr_w - 2*SIDE_MARGIN) - THUMBS_PER_ROW*THUMB_MAX_WIDTH) / (THUMBS_PER_ROW - 1);
     for (int i = 0; i < zones.size(); i++) {
         max_y += zones[i]->get_tex_height();
-        max_y += (zones[i]->num_levels() / THUMBS_PER_ROW) * (grid_space + THUMB_MAX_WIDTH) + grid_space;
+        max_y += (zones[i]->num_levels() / THUMBS_PER_ROW + 1) * (grid_space + THUMB_MAX_WIDTH) + grid_space;
     }
     camera->update(max_y);
 }
 
 void LevelLoader::draw(Engine* game)
 {
-    // TODO draw title at the top
     int x, y, w, h;
+    SDL_Rect cam_rect = camera->get_rect();
     SDL_QueryTexture(m_tex, NULL, NULL, &w, &h);
     x = game->screen_width / 2 - w / 2;
     y = SIDE_MARGIN / 2 - h / 2;
-    SDL_Rect title_rect = {x,y,w,h};
+    SDL_Rect title_rect = {x, y - cam_rect.y, w, h};
     SDL_RenderCopy(game->rend, m_tex, NULL, &title_rect);
 
     // draw each zone list
     for (int i = 0; i < zones.size(); i++) {
-        zones[i]->draw(game, camera->get_rect());
+        zones[i]->draw(game, cam_rect);
     }
     SDL_RenderPresent(game->rend);
 }
@@ -565,6 +570,7 @@ void ZoneEditor::update(Engine* game)
     }
     if (loaded_level) {
         // levels.push_back(new LevelThumbnail(game, m_zone_num, selected, 0, 0));
+        // read zone-file. if num_levels == levels.size(), do nothing.
         loaded_level = false;
     }
     if (mousedown) {
