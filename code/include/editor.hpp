@@ -168,6 +168,73 @@ private:
     SDL_Texture* m_tex;
 };
 
+class LevelLoaderCamera
+{
+public:
+    LevelLoaderCamera(int scr_w, int scr_h);
+    void handle_event(SDL_Event e);
+    void update(int max_y);
+
+    SDL_Rect get_rect() { return rect; }
+
+private:
+    // camera rect
+    SDL_Rect rect;
+
+    // controller booleans
+    bool up, down;
+};
+
+class LevelLoaderThumbnail
+{
+public:
+    LevelLoaderThumbnail(Engine* game, int zone_num, int lvl_num);
+    void draw(SDL_Renderer* rend, SDL_Rect cam_rect);
+    void select();
+    void unselect();
+
+private:
+    int m_zone_num, m_lvl_num;
+    int m_x, m_y;
+    bool selected;
+    SDL_Texture* m_tex;
+};
+
+class ZoneList
+{
+public:
+    ZoneList(Engine* game, int zone_num);
+
+    void draw(SDL_Renderer* rend, SDL_Rect cam_rect);
+
+    void select(int lvl_num);
+
+private:
+    int m_zone_num;
+    int m_y;
+    std::vector<LevelLoaderThumbnail*> levels;
+};
+
+class LevelLoader : public Gamestate
+{
+public:
+    LevelLoader(int zone_num) { m_zone_num = zone_num; }
+    void init(Engine* game);
+    void cleanup();
+
+    void handle_events(Engine* game);
+    void update(Engine* game);
+    void draw(Engine* game);
+
+    void load_level();
+
+private:
+    LevelLoaderCamera* camera;
+    std::vector<ZoneList*> zones;
+    int selected;
+    int m_zone_num;
+};
+
 class ZoneEditor : public Gamestate
 {
 public:
@@ -194,7 +261,7 @@ private:
     // which level do the chars start in?
     int start;
 
-    bool edited_level, created_level;
+    bool edited_level, created_level, loaded_level;
 
     EditorCamera* camera;
 

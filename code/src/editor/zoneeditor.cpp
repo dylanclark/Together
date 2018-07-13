@@ -52,6 +52,7 @@ void LevelThumbnail::draw(SDL_Renderer* rend, SDL_Rect cam_rect, int scr_w, int 
     int w = m_w*TILE_WIDTH * ((float) scr_w / (float) cam_rect.w);
     int h = m_h*TILE_WIDTH * ((float) scr_h / (float) cam_rect.h);
     SDL_Rect render_rect = {x,y,w,h};
+    // TODO: we want the level to be reddish if it's not in a valid place
     SDL_RenderCopy(rend, m_tex, NULL, &render_rect);
 
     int thickness;
@@ -82,13 +83,238 @@ void LevelThumbnail::move(int x, int y, std::vector<LevelThumbnail*> levels)
     // TODO: we want to snap the level into place if we can lock exits and entrances
 }
 
+LevelLoaderCamera::LevelLoaderCamera(int scr_w, int scr_h)
+{
+    rect.x = 0;
+    rect.y = 0;
+    rect.w = scr_w;
+    rect.h = scr_h;
+    up = down = false;
+}
+
+void LevelLoaderCamera::handle_event(SDL_Event e)
+{
+    switch (e.type)
+    {
+    case SDL_KEYDOWN:
+        switch (e.key.keysym.scancode)
+        {
+        case SDL_SCANCODE_UP:
+            up = true;
+            break;
+        case SDL_SCANCODE_DOWN:
+            down = true;
+            break;
+        default:
+            break;
+        }
+        break;
+    case SDL_KEYUP:
+        switch (e.key.keysym.scancode)
+        {
+        case SDL_SCANCODE_UP:
+            up = false;
+            break;
+        case SDL_SCANCODE_DOWN:
+            down = false;
+            break;
+        default:
+            break;
+        }
+        break;
+    default:
+        break;
+    }
+
+}
+
+void LevelLoaderCamera::update(int max_y)
+{
+    if (up && rect.y > 0) {
+        rect.y -= 10;
+    }
+    if (down && rect.y < max_y) {
+        rect.y += 10;
+    }
+}
+
+LevelLoaderThumbnail::LevelLoaderThumbnail(Engine* game, int zone_num, int lvl_num)
+{
+    selected = false;
+
+    char lvl_cstr[5];
+    snprintf(lvl_cstr, 5, "%d-%02d", zone_num, lvl_num);
+    std::string lvl_str(lvl_cstr);
+    lvl_cstr[1] = '\0';
+    std::string zone_str(lvl_cstr);
+    std::string path = "resources/level-files/"+zone_str+"/level"+lvl_str+".lvl";
+    std::ifstream level_file(path.c_str());
+
+    int w, h;
+    level_file >> w;
+    level_file >> h;
+
+    Uint32 format = SDL_GetWindowPixelFormat(game->win);
+    m_tex = SDL_CreateTexture(game->rend, format, SDL_TEXTUREACCESS_TARGET, w*TILE_WIDTH, h*TILE_WIDTH);
+    SDL_SetRenderTarget(game->rend, m_tex);
+    for (int i = 0; i < w*h; i++) {
+        int cur_tile;
+        level_file >> cur_tile;
+        int color = (cur_tile >= W_BACK) ? 255 : 0;
+        SDL_SetRenderDrawColor(game->rend, color, color, color, SDL_ALPHA_OPAQUE);
+        SDL_Rect to_draw = {(i % w)*TILE_WIDTH, (i/w)*TILE_WIDTH, TILE_WIDTH, TILE_WIDTH};
+        SDL_RenderFillRect(game->rend, &to_draw);
+    }
+    level_file.close();
+}
+
+void LevelLoaderThumbnail::draw(SDL_Renderer* rend, SDL_Rect cam_rect)
+{
+    // TODO
+    // we need to make sure that we draw the thumbnails at a constant size
+}
+
+void LevelLoaderThumbnail::select()
+{
+    selected = true;
+}
+
+void LevelLoaderThumbnail::unselect()
+{
+    selected = false;
+}
+
+ZoneList::ZoneList(Engine* game, int zone_num)
+{
+    m_zone_num = zone_num;
+
+    // read zone-file (or num-levels in extra) to find out how many levels there are
+    std::string path;
+    if (m_zone_num != -1) {
+        char zone_num_cstr[2];
+        snprintf(zone_num_cstr, 2, "%d", m_zone_num);
+        std::string zone_num_str(zone_num_cstr);
+        path = "resources/level-files/"+zone_num_str+"/zone-file";
+    } else {
+        path = "resources/level-files/extra/num-levels";
+    }
+    std::ifstream zone_file(path.c_str());
+
+    int num_levels;
+    zone_file >> num_levels;
+    zone_file.close();
+
+    // load each of these levels
+    for (int i = 0; i < num_levels; i++) {
+        levels.push_back(new LevelLoaderThumbnail(game, m_zone_num, i));
+    }
+}
+
+void ZoneList::draw(SDL_Renderer* rend, SDL_Rect cam_rect)
+{
+    // TODO
+    // draw a zone header
+    // draw each level thumbnail
+}
+
+void ZoneList::select(int lvl_num)
+{
+    for (int i = 0; i < levels.size(); i++) {
+        lvl_num == i ? levels[i]->select() : levels[i]->unselect();
+    }
+}
+
+void LevelLoader::init(Engine* game)
+{
+    // find out how many zones there are
+    std::ifstream num_zones_file("resources/level-files/num-zones");
+    int num_zones;
+    num_zones_file >> num_zones;
+    num_zones_file.close();
+
+    // load each zone. TODO: fix this, bc right now we only have zone 1, ie we don't start at 0
+    for (int i = 0; i < num_zones; i++) {
+        zones.push_back(new ZoneList(game, i));
+    }
+
+    camera = new LevelLoaderCamera(game->screen_width, game->screen_height);
+    selected = -1;
+    bool just_selected = false;
+}
+
+void LevelLoader::cleanup()
+{
+
+}
+
+void LevelLoader::handle_events(Engine* game)
+{
+    SDL_Event e;
+
+    while (SDL_PollEvent(&e)) {
+        switch (e.type)
+        {
+        case SDL_QUIT:
+            game->quit();
+            break;
+        case SDL_MOUSEBUTTONDOWN:
+            // TODO
+            // get mouse x and y
+            // depending on y, call click function in corresponding zonelist
+            // click function will require cam_rect
+            break;
+        case SDL_KEYDOWN:
+            switch (e.key.keysym.scancode)
+            {
+            case SDL_SCANCODE_RETURN:
+                // load this level into our zone
+                if (selected != -1) {
+                    load_level();
+                }
+                break;
+            default:
+                break;
+            }
+        default:
+            break;
+        }
+        // pass event to camera for moving up and down
+        camera->handle_event(e);
+    }
+}
+
+void LevelLoader::update(Engine* game)
+{
+    // TODO
+    // update all levelthumbnails' selected var
+    // we might not need anything here
+}
+
+void LevelLoader::draw(Engine* game)
+{
+    // TODO
+    // draw a title at the top
+    // draw each zone list
+}
+
+void LevelLoader::load_level()
+{
+    // TODO
+    // copy selected file to m_zone_num folder, making it the last level
+    // adjust m_zone_num folder zone-file
+    // adjust selected file zone_num (maybe extra) zone-file
+    // remove file from it's zone_num folder
+    // adjust all following level-numbers in that zone-file
+    // you'll also have to delete those coordinates corresponding to the level from the zone-file (if it's not from extra)
+}
+
 void ZoneEditor::init(Engine* game)
 {
     bool loading = get_yes_no(game, "load existing zone?");
     camera = new EditorCamera(game->screen_width, game->screen_height, 0, 0);
     mousedown = false;
     selected = -1;
-    edited_level = created_level = false;
+    edited_level = created_level = loaded_level = false;
 
     if (loading) {
         m_zone_num = atoi(get_str(game, "zone number to load").c_str());
@@ -138,6 +364,10 @@ void ZoneEditor::update(Engine* game)
     if (created_level) {
         levels.push_back(new LevelThumbnail(game, m_zone_num, selected, 0, 0));
         created_level = false;
+    }
+    if (loaded_level) {
+        levels.push_back(new LevelThumbnail(game, m_zone_num, selected, 0, 0));
+        loaded_level = false;
     }
     if (mousedown) {
         for (int i = 0; i < levels.size(); i++) {
@@ -229,7 +459,9 @@ void ZoneEditor::handle_events(Engine* game)
                 }
                 break;
             case SDL_SCANCODE_L:
-                // TODO: load level
+                selected = levels.size();
+                game->push_state(new LevelLoader(m_zone_num));
+                loaded_level = true;
                 break;
             default:
                 break;
