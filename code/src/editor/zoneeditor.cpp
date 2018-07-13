@@ -1,5 +1,10 @@
 #include <editor.hpp>
 
+static const int SIDE_MARGIN = 30;
+static const int THUMB_MAX_WIDTH = 100;
+static const int THUMBS_PER_ROW = 6;
+static const int TEXT_BORDER = 5;
+
 LevelThumbnail::LevelThumbnail(Engine* game, int zone_num, int lvl_num, int x, int y)
 {
     start = false;
@@ -33,10 +38,9 @@ LevelThumbnail::LevelThumbnail(Engine* game, int zone_num, int lvl_num, int x, i
     int num_exits;
     level_file >> num_exits;
     // TODO: take coords of exits and draw a yellow rect there
+    level_file.close();
 
     SDL_SetRenderTarget(game->rend, NULL);
-
-    level_file.close();
 }
 
 SDL_Rect LevelThumbnail::get_rect()
@@ -156,10 +160,13 @@ LevelLoaderThumbnail::LevelLoaderThumbnail(Engine* game, int zone_num, int lvl_n
 
     Uint32 format = SDL_GetWindowPixelFormat(game->win);
     m_tex = SDL_CreateTexture(game->rend, format, SDL_TEXTUREACCESS_TARGET, w*TILE_WIDTH, h*TILE_WIDTH);
+    m_w = w*TILE_WIDTH;
+    m_h = h*TILE_WIDTH;
     SDL_SetRenderTarget(game->rend, m_tex);
     for (int i = 0; i < w*h; i++) {
         int cur_tile;
         level_file >> cur_tile;
+        printf("%d ", cur_tile);
         int color = (cur_tile >= W_BACK) ? 255 : 0;
         SDL_SetRenderDrawColor(game->rend, color, color, color, SDL_ALPHA_OPAQUE);
         SDL_Rect to_draw = {(i % w)*TILE_WIDTH, (i/w)*TILE_WIDTH, TILE_WIDTH, TILE_WIDTH};
@@ -168,10 +175,19 @@ LevelLoaderThumbnail::LevelLoaderThumbnail(Engine* game, int zone_num, int lvl_n
     level_file.close();
 }
 
-void LevelLoaderThumbnail::draw(SDL_Renderer* rend, SDL_Rect cam_rect)
+void LevelLoaderThumbnail::draw(SDL_Renderer* rend, SDL_Rect cam_rect, int x, int y)
 {
-    // TODO
-    // we need to make sure that we draw the thumbnails at a constant size
+    int w, h;
+    if (m_w > m_h) {
+        w = THUMB_MAX_WIDTH;
+        h = ((float) m_h / (float) m_w) * THUMB_MAX_WIDTH;
+    } else {
+        w = ((float) m_w / (float) m_h) * THUMB_MAX_WIDTH;
+        h = THUMB_MAX_WIDTH;
+    }
+    // TODO: x and y must be adjusted to center the thumbnail
+    SDL_Rect render_rect = {x - cam_rect.x, y - cam_rect.y, w, THUMB_MAX_WIDTH};
+    SDL_RenderCopy(rend, m_tex, NULL, &render_rect);
 }
 
 void LevelLoaderThumbnail::select()
@@ -187,6 +203,36 @@ void LevelLoaderThumbnail::unselect()
 ZoneList::ZoneList(Engine* game, int zone_num)
 {
     m_zone_num = zone_num;
+
+    // create a text texture and get its dimensions
+    char zone_name[7];
+    snprintf(zone_name, 7, "zone %d", m_zone_num);
+    SDL_Color black = {0,0,0};
+    SDL_Surface* text_surf = TTF_RenderText_Solid(game->font, zone_name, black);
+    SDL_Texture* text_tex = SDL_CreateTextureFromSurface(game->rend, text_surf);
+    int text_w, text_h;
+    SDL_QueryTexture(text_tex, NULL, NULL, &text_w, &text_h);
+
+    // prepare to draw into our zone header texture
+    Uint32 format = SDL_GetWindowPixelFormat(game->win);
+    int w, h;
+    w = game->screen_width - 2*SIDE_MARGIN;
+    h = text_h + 2*TEXT_BORDER;
+    m_tex = SDL_CreateTexture(game->rend, format, SDL_TEXTUREACCESS_TARGET, w, h);
+    SDL_SetRenderTarget(game->rend, m_tex);
+
+    // draw rectangle
+    SDL_SetRenderDrawColor(game->rend, 200, 200, 200, SDL_ALPHA_OPAQUE);
+    SDL_Rect rect_rect = {0, 0, w, h};
+    SDL_RenderFillRect(game->rend, &rect_rect);
+    SDL_SetRenderDrawColor(game->rend, 255, 255, 255, SDL_ALPHA_OPAQUE);
+
+    // draw text onto texture
+    SDL_Rect render_rect = {TEXT_BORDER, TEXT_BORDER, text_w, text_h};
+    SDL_RenderCopy(game->rend, text_tex, NULL, &render_rect);
+
+    // we're done creating our texture, so change the render target back to normal
+    SDL_SetRenderTarget(game->rend, NULL);
 
     // read zone-file (or num-levels in extra) to find out how many levels there are
     std::string path;
@@ -210,11 +256,21 @@ ZoneList::ZoneList(Engine* game, int zone_num)
     }
 }
 
-void ZoneList::draw(SDL_Renderer* rend, SDL_Rect cam_rect)
+void ZoneList::draw(Engine* game, SDL_Rect cam_rect, int y)
 {
     // TODO
     // draw a zone header
+    int space_for_header = 0;
+
     // draw each level thumbnail
+    int level_x, level_y;
+    int scr_w = game->screen_width;
+    int grid_space = ((scr_w - 2*SIDE_MARGIN) - THUMBS_PER_ROW*THUMB_MAX_WIDTH) / (THUMBS_PER_ROW - 1);
+    for (int i = 0; i < levels.size(); i++) {
+        level_x = SIDE_MARGIN + (i % THUMBS_PER_ROW) * (THUMB_MAX_WIDTH + grid_space);
+        level_y = y + space_for_header + (i / THUMBS_PER_ROW) * (THUMB_MAX_WIDTH + grid_space) + grid_space;
+        levels[i]->draw(game->rend, cam_rect, level_x, level_y);
+    }
 }
 
 void ZoneList::select(int lvl_num)
@@ -222,6 +278,13 @@ void ZoneList::select(int lvl_num)
     for (int i = 0; i < levels.size(); i++) {
         lvl_num == i ? levels[i]->select() : levels[i]->unselect();
     }
+}
+
+int ZoneList::get_tex_height()
+{
+    int h;
+    SDL_QueryTexture(m_tex, NULL, NULL, NULL, &h);
+    return h;
 }
 
 void LevelLoader::init(Engine* game)
@@ -270,6 +333,7 @@ void LevelLoader::handle_events(Engine* game)
                 // load this level into our zone
                 if (selected != -1) {
                     load_level();
+                    game->pop_state();
                 }
                 break;
             default:
@@ -285,6 +349,7 @@ void LevelLoader::handle_events(Engine* game)
 
 void LevelLoader::update(Engine* game)
 {
+    SDL_RenderClear(game->rend);
     // TODO
     // update all levelthumbnails' selected var
     // we might not need anything here
@@ -294,7 +359,21 @@ void LevelLoader::draw(Engine* game)
 {
     // TODO
     // draw a title at the top
+
+    // prep some variables for iteration through zone lists
+    int zone_y = SIDE_MARGIN;
+    int zone_num_levels;
+    int scr_w = game->screen_width;
+    int grid_space = ((scr_w - 2*SIDE_MARGIN) - THUMBS_PER_ROW*THUMB_MAX_WIDTH) / (THUMBS_PER_ROW - 1);
+    int zone_header_h;
+
     // draw each zone list
+    for (int i = 0; i < zones.size(); i++) {
+        zones[i]->draw(game, camera->get_rect(), zone_y);
+        zone_header_h = zones[i]->get_tex_height();
+        zone_num_levels = zones[i]->num_levels();
+        zone_y += zone_header_h + (i / THUMBS_PER_ROW + 1) * (grid_space + THUMB_MAX_WIDTH) + grid_space;
+    }
 }
 
 void LevelLoader::load_level()
@@ -302,10 +381,10 @@ void LevelLoader::load_level()
     // TODO
     // copy selected file to m_zone_num folder, making it the last level
     // adjust m_zone_num folder zone-file
-    // adjust selected file zone_num (maybe extra) zone-file
-    // remove file from it's zone_num folder
-    // adjust all following level-numbers in that zone-file
-    // you'll also have to delete those coordinates corresponding to the level from the zone-file (if it's not from extra)
+    // if necessary... (extra)
+        // remove file from extra folder
+        // adjust all following level-numbers in extra
+        // adjust num-levels file in extra
 }
 
 void ZoneEditor::init(Engine* game)
@@ -332,8 +411,7 @@ void ZoneEditor::init(Engine* game)
         for (int i = 0; i < num_levels; i++) {
             zone_file >> x;
             zone_file >> y;
-            LevelThumbnail* new_thumbnail = new LevelThumbnail(game, m_zone_num, i, x, y);
-            levels.push_back(new_thumbnail);
+            levels.push_back(new LevelThumbnail(game, m_zone_num, i, x, y));
             levels[i]->start = (start == i);
         }
         zone_file >> r;
