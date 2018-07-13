@@ -141,7 +141,7 @@ void LevelLoaderCamera::update(int max_y)
     }
 }
 
-LevelLoaderThumbnail::LevelLoaderThumbnail(Engine* game, int zone_num, int lvl_num)
+LevelLoaderThumbnail::LevelLoaderThumbnail(Engine* game, int zone_num, int lvl_num, int x, int y)
 {
     selected = false;
 
@@ -167,8 +167,6 @@ LevelLoaderThumbnail::LevelLoaderThumbnail(Engine* game, int zone_num, int lvl_n
 
     Uint32 format = SDL_GetWindowPixelFormat(game->win);
     m_tex = SDL_CreateTexture(game->rend, format, SDL_TEXTUREACCESS_TARGET, w*TILE_WIDTH, h*TILE_WIDTH);
-    m_w = w*TILE_WIDTH;
-    m_h = h*TILE_WIDTH;
     SDL_SetRenderTarget(game->rend, m_tex);
     for (int i = 0; i < w*h; i++) {
         int cur_tile;
@@ -180,24 +178,25 @@ LevelLoaderThumbnail::LevelLoaderThumbnail(Engine* game, int zone_num, int lvl_n
     }
     level_file.close();
     SDL_SetRenderTarget(game->rend, NULL);
-}
 
-void LevelLoaderThumbnail::draw(SDL_Renderer* rend, SDL_Rect cam_rect, int x, int y)
-{
-    int w, h;
-    if (m_w > m_h) {
-        w = THUMB_MAX_WIDTH;
-        h = ((float) m_h / (float) m_w) * THUMB_MAX_WIDTH;
+    if (w > h) {
+        m_w = THUMB_MAX_WIDTH;
+        m_h = ((float) h / (float) w) * THUMB_MAX_WIDTH;
     } else {
-        w = ((float) m_w / (float) m_h) * THUMB_MAX_WIDTH;
-        h = THUMB_MAX_WIDTH;
+        m_w = ((float) w / (float) h) * THUMB_MAX_WIDTH;
+        m_h = THUMB_MAX_WIDTH;
     }
     // since these aren't perfect squares we must offset them
-    int x_diff = (THUMB_MAX_WIDTH - w) / 2;
-    int y_diff = (THUMB_MAX_WIDTH - h) / 2;
-    int final_x = x - cam_rect.x + x_diff;
-    int final_y = y - cam_rect.y + y_diff;
-    SDL_Rect render_rect = {final_x, final_y, w, h};
+    int x_diff = (THUMB_MAX_WIDTH - m_w) / 2;
+    int y_diff = (THUMB_MAX_WIDTH - m_h) / 2;
+    m_x = x + x_diff;
+    m_y = y + y_diff;
+}
+
+void LevelLoaderThumbnail::draw(SDL_Renderer* rend, SDL_Rect cam_rect)
+{
+    int r_y = m_y - cam_rect.y;
+    SDL_Rect render_rect = {m_x, r_y, m_w, m_h};
     SDL_RenderCopy(rend, m_tex, NULL, &render_rect);
 
     int thickness;
@@ -208,10 +207,10 @@ void LevelLoaderThumbnail::draw(SDL_Renderer* rend, SDL_Rect cam_rect, int x, in
         SDL_SetRenderDrawColor(rend, 0, 0, 255, SDL_ALPHA_OPAQUE);
         thickness = 2;
     }
-    SDL_Rect rect1 = {final_x,final_y,w,thickness};
-    SDL_Rect rect2 = {final_x,final_y+h-thickness,w,thickness};
-    SDL_Rect rect3 = {final_x+w-thickness,final_y,thickness,h};
-    SDL_Rect rect4 = {final_x,final_y,thickness,h};
+    SDL_Rect rect1 = {m_x,r_y,m_w,thickness};
+    SDL_Rect rect2 = {m_x,r_y+m_h-thickness,m_w,thickness};
+    SDL_Rect rect3 = {m_x+m_w-thickness,r_y,thickness,m_h};
+    SDL_Rect rect4 = {m_x,r_y,thickness,m_h};
     SDL_RenderFillRect(rend, &rect1);
     SDL_RenderFillRect(rend, &rect2);
     SDL_RenderFillRect(rend, &rect3);
@@ -229,9 +228,10 @@ void LevelLoaderThumbnail::unselect()
     selected = false;
 }
 
-ZoneList::ZoneList(Engine* game, int zone_num)
+ZoneList::ZoneList(Engine* game, int zone_num, int y)
 {
     m_zone_num = zone_num;
+    m_y = y;
 
     // create a text texture and get its dimensions
     SDL_Surface* text_surf;
@@ -285,29 +285,45 @@ ZoneList::ZoneList(Engine* game, int zone_num)
     zone_file.close();
 
     // load each of these levels
+    int level_x, level_y;
+    int scr_w = game->screen_width;
+    int grid_space = ((scr_w - 2*SIDE_MARGIN) - THUMBS_PER_ROW*THUMB_MAX_WIDTH) / (THUMBS_PER_ROW - 1);
     for (int i = 0; i < num_levels; i++) {
-        levels.push_back(new LevelLoaderThumbnail(game, m_zone_num, i));
+        level_x = SIDE_MARGIN + (i % THUMBS_PER_ROW) * (THUMB_MAX_WIDTH + grid_space);
+        level_y = m_y + h + (i / THUMBS_PER_ROW) * (THUMB_MAX_WIDTH + grid_space) + grid_space;
+        levels.push_back(new LevelLoaderThumbnail(game, m_zone_num, i, level_x, level_y));
     }
 }
 
-void ZoneList::draw(Engine* game, SDL_Rect cam_rect, int y)
+void ZoneList::draw(Engine* game, SDL_Rect cam_rect)
 {
     // draw the zone header
     int w, h;
     SDL_QueryTexture(m_tex, NULL, NULL, &w, &h);
-    SDL_Rect to_draw = {SIDE_MARGIN, y, w, h};
+    SDL_Rect to_draw = {SIDE_MARGIN, m_y, w, h};
     SDL_RenderCopy(game->rend, m_tex, NULL, &to_draw);
-    int header_h = h;
 
     // draw each level thumbnail
-    int level_x, level_y;
-    int scr_w = game->screen_width;
-    int grid_space = ((scr_w - 2*SIDE_MARGIN) - THUMBS_PER_ROW*THUMB_MAX_WIDTH) / (THUMBS_PER_ROW - 1);
     for (int i = 0; i < levels.size(); i++) {
-        level_x = SIDE_MARGIN + (i % THUMBS_PER_ROW) * (THUMB_MAX_WIDTH + grid_space);
-        level_y = y + header_h + (i / THUMBS_PER_ROW) * (THUMB_MAX_WIDTH + grid_space) + grid_space;
-        levels[i]->draw(game->rend, cam_rect, level_x, level_y);
+        levels[i]->draw(game->rend, cam_rect);
     }
+}
+
+int ZoneList::click(int mousex, int mousey)
+{
+    // TODO
+    int selected;
+    for (int i = 0; i < levels.size(); i++) {
+        // TODO check level bounds
+        SDL_Rect lvl = levels[i]->get_rect();
+        if (mousex > lvl.x && mousex < lvl.x + lvl.w &&
+            mousey > lvl.y && mousey < lvl.y + lvl.h) {
+            selected = i;
+            break;
+        }
+    }
+    select(selected);
+    return selected;
 }
 
 void ZoneList::select(int lvl_num)
@@ -332,14 +348,55 @@ void LevelLoader::init(Engine* game)
     num_zones_file >> num_zones;
     num_zones_file.close();
 
-    // load each zone. TODO: fix this, bc right now we only have zone 1, ie we don't start at 0
+    // prep some variables for iteration through zone lists
+    int zone_y = SIDE_MARGIN;
+    int zone_num_levels;
+    int scr_w = game->screen_width;
+    int grid_space = ((scr_w - 2*SIDE_MARGIN) - THUMBS_PER_ROW*THUMB_MAX_WIDTH) / (THUMBS_PER_ROW - 1);
+    int zone_header_h;
+
+    // draw each zone list
     for (int i = 0; i < num_zones; i++) {
-        zones.push_back(new ZoneList(game, i));
+        zones.push_back(new ZoneList(game, i, zone_y));
+        zone_header_h = zones[i]->get_tex_height();
+        zone_num_levels = zones[i]->num_levels();
+        zone_y += zone_header_h + (i / THUMBS_PER_ROW + 1) * (grid_space + THUMB_MAX_WIDTH) + grid_space;
     }
+    // extra storage
+    zones.push_back(new ZoneList(game, -1, zone_y));
 
     camera = new LevelLoaderCamera(game->screen_width, game->screen_height);
     selected = -1;
     bool just_selected = false;
+
+    // TODO create title texture
+    // create a text texture and get its dimensions
+    SDL_Color black = {0,0,0};
+    SDL_Surface* text_surf = TTF_RenderText_Solid(game->font, "level loader", black);
+    SDL_Texture* text_tex = SDL_CreateTextureFromSurface(game->rend, text_surf);
+    int text_w, text_h;
+    SDL_QueryTexture(text_tex, NULL, NULL, &text_w, &text_h);
+
+    // prepare to draw into our zone header texture
+    Uint32 format = SDL_GetWindowPixelFormat(game->win);
+    int w, h;
+    w = text_w + 2*TEXT_BORDER;
+    h = text_h + 2*TEXT_BORDER;
+    m_tex = SDL_CreateTexture(game->rend, format, SDL_TEXTUREACCESS_TARGET, w, h);
+    SDL_SetRenderTarget(game->rend, m_tex);
+
+    // draw rectangle
+    SDL_SetRenderDrawColor(game->rend, 200, 100, 255, SDL_ALPHA_OPAQUE);
+    SDL_Rect rect_rect = {0, 0, w, h};
+    SDL_RenderFillRect(game->rend, &rect_rect);
+    SDL_SetRenderDrawColor(game->rend, 255, 255, 255, SDL_ALPHA_OPAQUE);
+
+    // draw text onto texture
+    SDL_Rect render_rect = {TEXT_BORDER, TEXT_BORDER, text_w, text_h};
+    SDL_RenderCopy(game->rend, text_tex, NULL, &render_rect);
+
+    // we're done creating our texture, so change the render target back to normal
+    SDL_SetRenderTarget(game->rend, NULL);
 }
 
 void LevelLoader::cleanup()
@@ -350,18 +407,41 @@ void LevelLoader::cleanup()
 void LevelLoader::handle_events(Engine* game)
 {
     SDL_Event e;
+    int mousex, mousey;
+    int min_y, max_y;
+    int selected_zone;
+    int scr_w = game->screen_width;
+    int grid_space = ((scr_w - 2*SIDE_MARGIN) - THUMBS_PER_ROW*THUMB_MAX_WIDTH) / (THUMBS_PER_ROW - 1);
 
     while (SDL_PollEvent(&e)) {
+        SDL_Rect cam_rect = camera->get_rect();
         switch (e.type)
         {
         case SDL_QUIT:
             game->quit();
             break;
         case SDL_MOUSEBUTTONDOWN:
-            // TODO
-            // get mouse x and y
-            // depending on y, call click function in corresponding zonelist
-            // click function will require cam_rect
+            mousex = e.button.x;
+            mousey = e.button.y + cam_rect.y;
+            min_y = SIDE_MARGIN;
+            for (int i = 0; i < zones.size(); i++) {
+                max_y = min_y + zones[i]->get_tex_height() + grid_space +
+                        (zones[i]->num_levels() / THUMBS_PER_ROW + 1) * (grid_space + THUMB_MAX_WIDTH);
+                if (mousey > min_y && mousey < max_y) {
+                    selected = zones[i]->click(mousex, mousey);
+                    selected_zone = i;
+                    break;
+                }
+                min_y = max_y;
+            }
+            if (selected == -1) {
+                selected_zone = -1;
+            }
+            for (int i = 0; i < zones.size(); i++) {
+                if (i != selected_zone) {
+                    zones[i]->select(-1);
+                }
+            }
             break;
         case SDL_KEYDOWN:
             switch (e.key.keysym.scancode)
@@ -401,22 +481,17 @@ void LevelLoader::update(Engine* game)
 
 void LevelLoader::draw(Engine* game)
 {
-    // TODO
-    // draw a title at the top
-
-    // prep some variables for iteration through zone lists
-    int zone_y = SIDE_MARGIN;
-    int zone_num_levels;
-    int scr_w = game->screen_width;
-    int grid_space = ((scr_w - 2*SIDE_MARGIN) - THUMBS_PER_ROW*THUMB_MAX_WIDTH) / (THUMBS_PER_ROW - 1);
-    int zone_header_h;
+    // TODO draw title at the top
+    int x, y, w, h;
+    SDL_QueryTexture(m_tex, NULL, NULL, &w, &h);
+    x = game->screen_width / 2 - w / 2;
+    y = SIDE_MARGIN / 2 - h / 2;
+    SDL_Rect title_rect = {x,y,w,h};
+    SDL_RenderCopy(game->rend, m_tex, NULL, &title_rect);
 
     // draw each zone list
     for (int i = 0; i < zones.size(); i++) {
-        zones[i]->draw(game, camera->get_rect(), zone_y);
-        zone_header_h = zones[i]->get_tex_height();
-        zone_num_levels = zones[i]->num_levels();
-        zone_y += zone_header_h + (i / THUMBS_PER_ROW + 1) * (grid_space + THUMB_MAX_WIDTH) + grid_space;
+        zones[i]->draw(game, camera->get_rect());
     }
     SDL_RenderPresent(game->rend);
 }
@@ -489,7 +564,7 @@ void ZoneEditor::update(Engine* game)
         created_level = false;
     }
     if (loaded_level) {
-        levels.push_back(new LevelThumbnail(game, m_zone_num, selected, 0, 0));
+        // levels.push_back(new LevelThumbnail(game, m_zone_num, selected, 0, 0));
         loaded_level = false;
     }
     if (mousedown) {

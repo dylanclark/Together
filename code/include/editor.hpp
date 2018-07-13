@@ -188,13 +188,15 @@ private:
 class LevelLoaderThumbnail
 {
 public:
-    LevelLoaderThumbnail(Engine* game, int zone_num, int lvl_num);
-    void draw(SDL_Renderer* rend, SDL_Rect cam_rect, int x, int y);
+    LevelLoaderThumbnail(Engine* game, int zone_num, int lvl_num, int x, int y);
+    void draw(SDL_Renderer* rend, SDL_Rect cam_rect);
     void select();
     void unselect();
+    SDL_Rect get_rect() { return {m_x, m_y, m_w, m_h}; }
 
 private:
     int m_zone_num, m_lvl_num;
+    int m_x, m_y;
     int m_w, m_h;
     bool selected;
     SDL_Texture* m_tex;
@@ -203,9 +205,10 @@ private:
 class ZoneList
 {
 public:
-    ZoneList(Engine* game, int zone_num);
+    ZoneList(Engine* game, int zone_num, int y);
 
-    void draw(Engine* game, SDL_Rect cam_rect, int y);
+    void draw(Engine* game, SDL_Rect cam_rect);
+    int click(int mousex, int mousey);
     void select(int lvl_num);
     int num_levels() { return levels.size(); }
     int get_tex_height();
@@ -214,6 +217,7 @@ private:
     // m_tex will just be text that says "zone 1" or something like that
     SDL_Texture* m_tex;
     int m_zone_num;
+    int m_y;
     std::vector<LevelLoaderThumbnail*> levels;
 };
 
@@ -231,7 +235,7 @@ public:
     void load_level();
 
 private:
-    SDL_Texture* title;
+    SDL_Texture* m_tex;
     LevelLoaderCamera* camera;
     std::vector<ZoneList*> zones;
     int selected;
