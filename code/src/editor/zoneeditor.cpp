@@ -5,87 +5,6 @@ static const int THUMB_MAX_WIDTH = 130;
 static const int THUMBS_PER_ROW = 6;
 static const int TEXT_BORDER = 5;
 
-LevelThumbnail::LevelThumbnail(Engine* game, int zone_num, int lvl_num, int x, int y)
-{
-    start = false;
-    selected = false;
-
-    char lvl_cstr[5];
-    snprintf(lvl_cstr, 5, "%d-%02d", zone_num, lvl_num);
-    std::string lvl_str(lvl_cstr);
-    lvl_cstr[1] = '\0';
-    std::string zone_str(lvl_cstr);
-    std::string path = "resources/level-files/"+zone_str+"/level"+lvl_str+".lvl";
-    std::ifstream level_file(path.c_str());
-
-    m_x = x;
-    m_y = y;
-    level_file >> m_w;
-    level_file >> m_h;
-
-    Uint32 format = SDL_GetWindowPixelFormat(game->win);
-    m_tex = SDL_CreateTexture(game->rend, format, SDL_TEXTUREACCESS_TARGET, m_w*TILE_WIDTH, m_h*TILE_WIDTH);
-    SDL_SetRenderTarget(game->rend, m_tex);
-    for (int i = 0; i < m_w*m_h; i++) {
-        int cur_tile;
-        level_file >> cur_tile;
-        int color = (cur_tile >= W_BACK) ? 255 : 0;
-        SDL_SetRenderDrawColor(game->rend, color, color, color, SDL_ALPHA_OPAQUE);
-        SDL_Rect to_draw = {(i % m_w)*TILE_WIDTH, (i/m_w)*TILE_WIDTH, TILE_WIDTH, TILE_WIDTH};
-        SDL_RenderFillRect(game->rend, &to_draw);
-    }
-    int num_exits;
-    level_file >> num_exits;
-    // TODO: take coords of exits and draw a yellow rect there
-    level_file.close();
-
-    SDL_SetRenderTarget(game->rend, NULL);
-}
-
-SDL_Rect LevelThumbnail::get_rect()
-{
-    SDL_Rect res = {m_x, m_y, m_w*TILE_WIDTH, m_h*TILE_WIDTH};
-    return res;
-}
-
-void LevelThumbnail::draw(SDL_Renderer* rend, SDL_Rect cam_rect, int scr_w, int scr_h)
-{
-    int x = (m_x - cam_rect.x) / ((float) cam_rect.w / (float) scr_w);
-    int y = (m_y - cam_rect.y) / ((float) cam_rect.h / (float) scr_h);
-    int w = m_w*TILE_WIDTH * ((float) scr_w / (float) cam_rect.w);
-    int h = m_h*TILE_WIDTH * ((float) scr_h / (float) cam_rect.h);
-    SDL_Rect render_rect = {x,y,w,h};
-    // TODO: we want the level to be reddish if it's not in a valid place
-    SDL_RenderCopy(rend, m_tex, NULL, &render_rect);
-
-    int thickness;
-    if (selected) {
-        SDL_SetRenderDrawColor(rend, 0, 200, 0, SDL_ALPHA_OPAQUE);
-        thickness = 5;
-    } else if (start) {
-        SDL_SetRenderDrawColor(rend, 200, 200, 0, SDL_ALPHA_OPAQUE);
-        thickness = 3;
-    } else {
-        SDL_SetRenderDrawColor(rend, 0, 0, 255, SDL_ALPHA_OPAQUE);
-        thickness = 3;
-    }
-    SDL_Rect rect1 = {x,y,w,thickness};
-    SDL_Rect rect2 = {x,y+h-thickness,w,thickness};
-    SDL_Rect rect3 = {x+w-thickness,y,thickness,h};
-    SDL_Rect rect4 = {x,y,thickness,h};
-    SDL_RenderFillRect(rend, &rect1);
-    SDL_RenderFillRect(rend, &rect2);
-    SDL_RenderFillRect(rend, &rect3);
-    SDL_RenderFillRect(rend, &rect4);
-}
-
-void LevelThumbnail::move(int x, int y, std::vector<LevelThumbnail*> levels)
-{
-    m_x = (x / TILE_WIDTH) * TILE_WIDTH;
-    m_y = (y / TILE_WIDTH) * TILE_WIDTH;
-    // TODO: we want to snap the level into place if we can lock exits and entrances
-}
-
 LevelLoaderCamera::LevelLoaderCamera(int scr_w, int scr_h)
 {
     rect.x = 0;
@@ -360,14 +279,15 @@ void LevelLoader::init(Engine* game)
         zones.push_back(new ZoneList(game, i, zone_y));
         zone_header_h = zones[i]->get_tex_height();
         zone_num_levels = zones[i]->num_levels();
-        zone_y += zone_header_h + (zone_num_levels / THUMBS_PER_ROW + 1) * (grid_space + THUMB_MAX_WIDTH) + grid_space;
+        zone_y += zone_header_h + (zone_num_levels / THUMBS_PER_ROW + (zone_num_levels % THUMBS_PER_ROW != 0)) * (grid_space + THUMB_MAX_WIDTH) + grid_space;
     }
     // extra storage
     zones.push_back(new ZoneList(game, -1, zone_y));
 
     // create camera
     camera = new LevelLoaderCamera(game->screen_width, game->screen_height);
-    selected = -1;
+    selected_zone = -1;
+    selected_lvl = -1;
     bool just_selected = false;
 
     // create a text texture and get its dimensions
@@ -404,14 +324,46 @@ void LevelLoader::cleanup()
 
 }
 
+static void delete_extra_level(int lvl_num)
+{
+    // remove file from extra folder
+    char lvl_cstr[4];
+    snprintf(lvl_cstr, 4, "%03d", lvl_num);
+    std::string lvl_str(lvl_cstr);
+    std::string path = "resources/level-files/extra/level"+lvl_str+".lvl";
+    remove(path.c_str());
+
+    // adjust num-levels file in extra
+    std::ifstream extra_file("resources/level-files/extra/num-levels");
+    int extra_num_levels;
+    extra_file >> extra_num_levels;
+    extra_file.close();
+    std::ofstream extra_outfile("resources/level-files/extra/num-levels");
+    extra_outfile << (extra_num_levels - 1);
+    extra_outfile.close();
+
+    // adjust all following level-numbers in extra
+    std::string oldname, newname;
+    for (int i = lvl_num+1; i <= extra_num_levels; i++) {
+        char lvl_cstr[4];
+        snprintf(lvl_cstr, 4, "%03d", i);
+        lvl_str = std::string(lvl_cstr);
+        oldname = "resources/level-files/extra/level"+lvl_str+".lvl";
+        snprintf(lvl_cstr, 4, "%03d", i-1);
+        lvl_str = std::string(lvl_cstr);
+        newname = "resources/level-files/extra/level"+lvl_str+".lvl";
+        rename(oldname.c_str(), newname.c_str());
+    }
+}
+
 void LevelLoader::handle_events(Engine* game)
 {
     SDL_Event e;
     int mousex, mousey;
     int min_y, max_y;
-    int selected_zone;
     int scr_w = game->screen_width;
     int grid_space = ((scr_w - 2*SIDE_MARGIN) - THUMBS_PER_ROW*THUMB_MAX_WIDTH) / (THUMBS_PER_ROW - 1);
+    int extra_y;
 
     while (SDL_PollEvent(&e)) {
         SDL_Rect cam_rect = camera->get_rect();
@@ -426,15 +378,16 @@ void LevelLoader::handle_events(Engine* game)
             min_y = SIDE_MARGIN;
             for (int i = 0; i < zones.size(); i++) {
                 max_y = min_y + zones[i]->get_tex_height() + grid_space +
-                        (zones[i]->num_levels() / THUMBS_PER_ROW + 1) * (grid_space + THUMB_MAX_WIDTH);
+                        (zones[i]->num_levels() / THUMBS_PER_ROW + (zones[i]->num_levels() % THUMBS_PER_ROW != 0)) *
+                        (grid_space + THUMB_MAX_WIDTH);
                 if (mousey > min_y && mousey < max_y) {
-                    selected = zones[i]->click(mousex, mousey);
+                    selected_lvl = zones[i]->click(mousex, mousey);
                     selected_zone = i;
                     break;
                 }
                 min_y = max_y;
             }
-            if (selected == -1) {
+            if (selected_lvl == -1) {
                 selected_zone = -1;
             }
             for (int i = 0; i < zones.size(); i++) {
@@ -451,11 +404,20 @@ void LevelLoader::handle_events(Engine* game)
                 break;
             case SDL_SCANCODE_RETURN:
                 // load this level into our zone
-                if (selected != -1) {
+                if (selected_lvl != -1 && selected_zone != m_zone_num) {
                     load_level();
                     game->pop_state();
                 } else {
                     printf("\a");
+                }
+                break;
+            case SDL_SCANCODE_BACKSPACE:
+                // TODO: delete this level (only from extra zone)
+                if (selected_zone == zones.size() - 1 && selected_lvl != -1) {
+                    delete_extra_level(selected_lvl);
+                    extra_y = zones[zones.size() - 1]->get_y();
+                    zones.pop_back();
+                    zones.push_back(new ZoneList(game, -1, extra_y));
                 }
                 break;
             default:
@@ -478,8 +440,10 @@ void LevelLoader::update(Engine* game)
     int scr_w = game->screen_width;
     int grid_space = ((scr_w - 2*SIDE_MARGIN) - THUMBS_PER_ROW*THUMB_MAX_WIDTH) / (THUMBS_PER_ROW - 1);
     for (int i = 0; i < zones.size(); i++) {
-        max_y += zones[i]->get_tex_height();
-        max_y += (zones[i]->num_levels() / THUMBS_PER_ROW + 1) * (grid_space + THUMB_MAX_WIDTH) + grid_space;
+        max_y += zones[i]->get_tex_height() + grid_space;
+        max_y += (zones[i]->num_levels() / THUMBS_PER_ROW +
+                 (zones[i]->num_levels() % THUMBS_PER_ROW != 0)) *
+            (grid_space + THUMB_MAX_WIDTH);
     }
     camera->update(max_y);
 }
@@ -503,13 +467,217 @@ void LevelLoader::draw(Engine* game)
 
 void LevelLoader::load_level()
 {
-    // TODO
     // copy selected file to m_zone_num folder, making it the last level
+    std::string src_path;
+    if (selected_zone != zones.size() - 1) {
+        char lvl_cstr[5];
+        snprintf(lvl_cstr, 5, "%d-%02d", selected_zone, selected_lvl);
+        std::string lvl_str(lvl_cstr);
+        lvl_cstr[1] = '\0';
+        std::string zone_str(lvl_cstr);
+        src_path = "resources/level-files/"+zone_str+"/level"+lvl_str+".lvl";
+    } else {
+        char lvl_cstr[4];
+        snprintf(lvl_cstr, 4, "%03d", selected_lvl);
+        std::string lvl_str(lvl_cstr);
+        src_path = "resources/level-files/extra/level"+lvl_str+".lvl";
+    }
+    std::ifstream src(src_path.c_str(), std::ios::binary);
+
+    char lvl_cstr[5];
+    snprintf(lvl_cstr, 5, "%d-%02d", m_zone_num, zones[m_zone_num]->num_levels());
+    std::string lvl_str(lvl_cstr);
+    lvl_cstr[1] = '\0';
+    std::string zone_str(lvl_cstr);
+    std::string dst_path = "resources/level-files/"+zone_str+"/level"+lvl_str+".lvl";
+    std::ofstream dst(dst_path.c_str(), std::ios::binary);
+
+    dst << src.rdbuf();
+    src.close();
+    dst.close();
+
     // adjust m_zone_num folder zone-file
+    std::string zone_file_path = "resources/level-files/"+zone_str+"/zone-file";
+    std::string old_zone_file_path = "resources/level-files/"+zone_str+"/old-zone-file";
+    rename(zone_file_path.c_str(), old_zone_file_path.c_str());
+
+    std::ifstream old_zone_file(old_zone_file_path.c_str());
+    std::ofstream zone_file(zone_file_path.c_str());
+
+    // increase num_levels
+    int num_levels;
+    old_zone_file >> num_levels;
+    zone_file << num_levels + 1 << std::endl;
+
+    // add coordinates
+    int x, y;
+    for (int i = 0; i < num_levels; i++) {
+        old_zone_file >> x >> y;
+        zone_file << x << " " << y << std::endl;
+    }
+    zone_file << 0 << " " << 0 << std::endl;
+
+    int r, g, b;
+    old_zone_file >> r >> g >> b;
+    zone_file << r << " " << g << " " << b;
+
+    zone_file.close();
+    old_zone_file.close();
+    remove(old_zone_file_path.c_str());
+
     // if necessary... (extra)
+    if (selected_zone == zones.size() - 1) {
         // remove file from extra folder
-        // adjust all following level-numbers in extra
+        remove(src_path.c_str());
+
         // adjust num-levels file in extra
+        std::ifstream extra_file("resources/level-files/extra/num-levels");
+        int extra_num_levels;
+        extra_file >> extra_num_levels;
+        extra_file.close();
+        std::ofstream extra_outfile("resources/level-files/extra/num-levels");
+        extra_outfile << (extra_num_levels - 1);
+        extra_outfile.close();
+
+        // adjust all following level-numbers in extra
+        std::string oldname, newname;
+        for (int i = selected_lvl+1; i <= extra_num_levels; i++) {
+            char lvl_cstr[4];
+            snprintf(lvl_cstr, 4, "%03d", i);
+            lvl_str = std::string(lvl_cstr);
+            oldname = "resources/level-files/extra/level"+lvl_str+".lvl";
+            snprintf(lvl_cstr, 4, "%03d", i-1);
+            lvl_str = std::string(lvl_cstr);
+            newname = "resources/level-files/extra/level"+lvl_str+".lvl";
+            rename(oldname.c_str(), newname.c_str());
+        }
+    }
+}
+
+LevelThumbnail::LevelThumbnail(Engine* game, int zone_num, int lvl_num, int x, int y, std::vector<LevelThumbnail*> levels)
+{
+    m_lvl_num = lvl_num;
+    start = false;
+    selected = false;
+
+    char lvl_cstr[5];
+    snprintf(lvl_cstr, 5, "%d-%02d", zone_num, lvl_num);
+    std::string lvl_str(lvl_cstr);
+    lvl_cstr[1] = '\0';
+    std::string zone_str(lvl_cstr);
+    std::string path = "resources/level-files/"+zone_str+"/level"+lvl_str+".lvl";
+    std::ifstream level_file(path.c_str());
+
+    level_file >> m_w;
+    level_file >> m_h;
+    move(x, y, levels);
+
+    Uint32 format = SDL_GetWindowPixelFormat(game->win);
+    m_tex = SDL_CreateTexture(game->rend, format, SDL_TEXTUREACCESS_TARGET, m_w*TILE_WIDTH, m_h*TILE_WIDTH);
+    SDL_SetRenderTarget(game->rend, m_tex);
+    for (int i = 0; i < m_w*m_h; i++) {
+        int cur_tile;
+        level_file >> cur_tile;
+        int color = (cur_tile >= W_BACK) ? 255 : 0;
+        SDL_SetRenderDrawColor(game->rend, color, color, color, SDL_ALPHA_OPAQUE);
+        SDL_Rect to_draw = {(i % m_w)*TILE_WIDTH, (i/m_w)*TILE_WIDTH, TILE_WIDTH, TILE_WIDTH};
+        SDL_RenderFillRect(game->rend, &to_draw);
+    }
+    int num_exits;
+    level_file >> num_exits;
+    // TODO: take coords of exits and draw a yellow rect there
+    level_file.close();
+
+    SDL_SetRenderTarget(game->rend, NULL);
+    SDL_SetTextureBlendMode(m_tex, SDL_BLENDMODE_BLEND);
+}
+
+SDL_Rect LevelThumbnail::get_rect()
+{
+    SDL_Rect res = {m_x, m_y, m_w*TILE_WIDTH, m_h*TILE_WIDTH};
+    return res;
+}
+
+void LevelThumbnail::draw(SDL_Renderer* rend, SDL_Rect cam_rect, int scr_w, int scr_h)
+{
+    int x = (m_x - cam_rect.x) / ((float) cam_rect.w / (float) scr_w);
+    int y = (m_y - cam_rect.y) / ((float) cam_rect.h / (float) scr_h);
+    int w = m_w*TILE_WIDTH * ((float) scr_w / (float) cam_rect.w);
+    int h = m_h*TILE_WIDTH * ((float) scr_h / (float) cam_rect.h);
+    SDL_Rect render_rect = {x,y,w,h};
+    // TODO: we want the level to be reddish if it's not in a valid place
+    if (valid) {
+        SDL_SetTextureColorMod(m_tex, 255, 255, 255);
+        SDL_SetTextureAlphaMod(m_tex, SDL_ALPHA_OPAQUE);
+    } else {
+        SDL_SetTextureColorMod(m_tex, 255, 100, 100);
+        SDL_SetTextureAlphaMod(m_tex, 100);
+    }
+    SDL_RenderCopy(rend, m_tex, NULL, &render_rect);
+
+    int thickness;
+    if (selected) {
+        if (valid) {
+            SDL_SetRenderDrawColor(rend, 0, 200, 0, SDL_ALPHA_OPAQUE);
+        } else {
+            SDL_SetRenderDrawColor(rend, 200, 0, 0, SDL_ALPHA_OPAQUE);
+        }
+        thickness = 5;
+    } else if (start) {
+        SDL_SetRenderDrawColor(rend, 200, 200, 0, SDL_ALPHA_OPAQUE);
+        thickness = 3;
+    } else {
+        if (valid) {
+            SDL_SetRenderDrawColor(rend, 0, 0, 255, SDL_ALPHA_OPAQUE);
+        } else {
+            SDL_SetRenderDrawColor(rend, 100, 0, 0, SDL_ALPHA_OPAQUE);
+        }
+        thickness = 3;
+    }
+    SDL_Rect rect1 = {x,y,w,thickness};
+    SDL_Rect rect2 = {x,y+h-thickness,w,thickness};
+    SDL_Rect rect3 = {x+w-thickness,y,thickness,h};
+    SDL_Rect rect4 = {x,y,thickness,h};
+    SDL_RenderFillRect(rend, &rect1);
+    SDL_RenderFillRect(rend, &rect2);
+    SDL_RenderFillRect(rend, &rect3);
+    SDL_RenderFillRect(rend, &rect4);
+}
+
+void LevelThumbnail::move(int x, int y, std::vector<LevelThumbnail*> levels)
+{
+    m_x = (x / TILE_WIDTH) * TILE_WIDTH;
+    m_y = (y / TILE_WIDTH) * TILE_WIDTH;
+    valid = true;
+
+    // TODO: we want to snap the level into place if we can lock exits and entrances
+
+    // we should check against all valid levels and see if we are valid
+    int leftA, rightA, topA, bottomA;
+    int leftB, rightB, topB, bottomB;
+    for (int i = 0; i < levels.size(); i++) {
+        if (i == m_lvl_num) {
+            continue;
+        }
+        if (levels[i]->valid) {
+            LevelThumbnail* lvl = levels[i];
+
+            leftA = m_x;
+            rightA = m_x + m_w*TILE_WIDTH;
+            topA = m_y;
+            bottomA = m_y + m_h*TILE_WIDTH;
+
+            leftB = lvl->m_x;
+            rightB = lvl->m_x + lvl->m_w*TILE_WIDTH;
+            topB = lvl->m_y;
+            bottomB = lvl->m_y + lvl->m_h*TILE_WIDTH;
+
+            if (leftA >= rightB || rightA <= leftB || topA >= bottomB || bottomA <= topB) {
+                continue;
+            }
+            valid = false;
+        }
+    }
 }
 
 void ZoneEditor::init(Engine* game)
@@ -536,7 +704,7 @@ void ZoneEditor::init(Engine* game)
         for (int i = 0; i < num_levels; i++) {
             zone_file >> x;
             zone_file >> y;
-            levels.push_back(new LevelThumbnail(game, m_zone_num, i, x, y));
+            levels.push_back(new LevelThumbnail(game, m_zone_num, i, x, y, levels));
             levels[i]->start = (start == i);
         }
         zone_file >> r;
@@ -561,17 +729,30 @@ void ZoneEditor::update(Engine* game)
         x = levels[selected]->m_x;
         y = levels[selected]->m_y;
         levels.erase(levels.begin() + selected);
-        levels.insert(levels.begin() + selected, new LevelThumbnail(game, m_zone_num, selected, x, y));
+        levels.insert(levels.begin() + selected, new LevelThumbnail(game, m_zone_num, selected, x, y, levels));
         edited_level = false;
+        write_zone();
     }
     if (created_level) {
-        levels.push_back(new LevelThumbnail(game, m_zone_num, selected, 0, 0));
+        levels.push_back(new LevelThumbnail(game, m_zone_num, selected, 0, 0, levels));
         created_level = false;
+        write_zone();
     }
     if (loaded_level) {
-        // levels.push_back(new LevelThumbnail(game, m_zone_num, selected, 0, 0));
         // read zone-file. if num_levels == levels.size(), do nothing.
+        char zone_cstr[2];
+        snprintf(zone_cstr, 2, "%d", m_zone_num);
+        std::string zone_str(zone_cstr);
+        std::string path = "resources/level-files/"+zone_str+"/zone-file";
+        std::ifstream zone_file(path.c_str());
+        int num_levels;
+        zone_file >> num_levels;
+        zone_file.close();
+        if (num_levels != levels.size()) {
+            levels.push_back(new LevelThumbnail(game, m_zone_num, selected, 0, 0, levels));
+        }
         loaded_level = false;
+        write_zone();
     }
     if (mousedown) {
         for (int i = 0; i < levels.size(); i++) {
@@ -637,6 +818,7 @@ void ZoneEditor::handle_events(Engine* game)
             {
             case SDL_SCANCODE_BACKSPACE:
                 delete_level(selected);
+                write_zone();
                 selected = -1;
                 break;
             case SDL_SCANCODE_1:
@@ -731,7 +913,14 @@ void ZoneEditor::draw(Engine* game)
     }
 
     for (int i = 0; i < levels.size(); i++) {
-        levels[i]->draw(game->rend, cam_rect, game->screen_width, game->screen_height);
+        if (levels[i]->valid) {
+            levels[i]->draw(game->rend, cam_rect, game->screen_width, game->screen_height);
+        }
+    }
+    for (int i = 0; i < levels.size(); i++) {
+        if (!levels[i]->valid) {
+            levels[i]->draw(game->rend, cam_rect, game->screen_width, game->screen_height);
+        }
     }
 
     SDL_RenderPresent(game->rend);

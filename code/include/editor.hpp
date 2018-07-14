@@ -146,28 +146,6 @@ private:
     TTF_Font* my_font;
 };
 
-class LevelThumbnail
-{
-public:
-    LevelThumbnail(Engine* game, int zone_num, int lvl_num, int x, int y);
-    ~LevelThumbnail();
-
-    void draw(SDL_Renderer* rend, SDL_Rect cam_rect, int scr_w, int scr_h);
-    void move(int x, int y, std::vector<LevelThumbnail*> levels);
-    SDL_Rect get_rect();
-
-    bool selected;
-    bool start;
-    bool valid;
-    int m_x, m_y;
-
-private:
-    int m_w, m_h;
-
-    // texture
-    SDL_Texture* m_tex;
-};
-
 class LevelLoaderCamera
 {
 public:
@@ -192,7 +170,7 @@ public:
     void draw(SDL_Renderer* rend, SDL_Rect cam_rect);
     void select();
     void unselect();
-    SDL_Rect get_rect() { return {m_x, m_y, m_w, m_h}; }
+    SDL_Rect get_rect() { SDL_Rect res = {m_x, m_y, m_w, m_h}; return res; }
 
 private:
     int m_zone_num, m_lvl_num;
@@ -212,6 +190,7 @@ public:
     void select(int lvl_num);
     int num_levels() { return levels.size(); }
     int get_tex_height();
+    int get_y() { return m_y; }
 
 private:
     // m_tex will just be text that says "zone 1" or something like that
@@ -238,8 +217,32 @@ private:
     SDL_Texture* m_tex;
     LevelLoaderCamera* camera;
     std::vector<ZoneList*> zones;
-    int selected;
+    int selected_zone;
+    int selected_lvl;
     int m_zone_num;
+};
+
+class LevelThumbnail
+{
+public:
+    LevelThumbnail(Engine* game, int zone_num, int lvl_num, int x, int y, std::vector<LevelThumbnail*> levels);
+    ~LevelThumbnail();
+
+    void draw(SDL_Renderer* rend, SDL_Rect cam_rect, int scr_w, int scr_h);
+    void move(int x, int y, std::vector<LevelThumbnail*> valid_levels);
+    SDL_Rect get_rect();
+
+    bool selected;
+    bool start;
+    bool valid;
+    int m_x, m_y;
+    int m_w, m_h;
+
+private:
+
+    int m_lvl_num;
+    // texture
+    SDL_Texture* m_tex;
 };
 
 class ZoneEditor : public Gamestate
