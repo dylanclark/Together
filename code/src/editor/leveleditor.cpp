@@ -5,12 +5,12 @@
 #include <levels.hpp>
 #include <tiles.hpp>
 
-EditorCamera::EditorCamera(int scr_w, int scr_h, int lvl_w, int lvl_h)
+EditorCamera::EditorCamera(int scr_w, int scr_h, int x, int y)
 {
-    center_rect.x = lvl_w/2;
-    center_rect.y = lvl_h/2;
     center_rect.w = scr_w;
     center_rect.h = scr_h;
+    center_rect.x = x;
+    center_rect.y = y;
     true_rect.x = center_rect.x - center_rect.w/2;
     true_rect.y = center_rect.y - center_rect.h/2;
     true_rect.w = scr_w;
@@ -453,7 +453,7 @@ void LevelEditor::init(Engine* game)
 
     border = new Border(lvl_w, lvl_h);
     grid = new Gridlines(lvl_w, lvl_h);
-    camera = new EditorCamera(game->screen_width, game->screen_height, lvl_w*TILE_WIDTH, lvl_h*TILE_WIDTH);
+    camera = new EditorCamera(game->screen_width, game->screen_height, lvl_w*TILE_WIDTH/2, lvl_h*TILE_WIDTH/2);
 }
 
 void LevelEditor::cleanup()

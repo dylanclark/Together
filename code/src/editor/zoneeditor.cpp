@@ -683,7 +683,6 @@ void LevelThumbnail::move(int x, int y, std::vector<LevelThumbnail*> levels)
 void ZoneEditor::init(Engine* game)
 {
     bool loading = get_yes_no(game, "load existing zone?");
-    camera = new EditorCamera(game->screen_width, game->screen_height, 0, 0);
     mousedown = false;
     selected = -1;
     edited_level = created_level = loaded_level = false;
@@ -713,6 +712,15 @@ void ZoneEditor::init(Engine* game)
     } else {
         r = g = b = 255;
     }
+    int sum_x, sum_y;
+    sum_x = sum_y = 0;
+    for (int i = 0; i < levels.size(); i++) {
+        sum_x += levels[i]->m_x + levels[i]->m_w*TILE_WIDTH/2;
+        sum_y += levels[i]->m_y + levels[i]->m_h*TILE_WIDTH/2;
+    }
+    sum_x /= levels.size();
+    sum_y /= levels.size();
+    camera = new EditorCamera(game->screen_width*4, game->screen_height*4, sum_x, sum_y);
 }
 
 void ZoneEditor::cleanup()
@@ -796,6 +804,9 @@ void ZoneEditor::handle_events(Engine* game)
             true_y = (e.button.y * ((float) cam_rect.h / (float) scr_h) + cam_rect.y);
             select_valid = false;
             for (int i = 0; i < levels.size(); i++) {
+                if (levels[i]->valid) {
+                    continue;
+                }
                 SDL_Rect rect = levels[i]->get_rect();
                 if (true_x > rect.x && true_x < rect.x + rect.w &&
                     true_y > rect.y && true_y < rect.y + rect.h) {
@@ -804,6 +815,22 @@ void ZoneEditor::handle_events(Engine* game)
                     x_offset = true_x - rect.x;
                     y_offset = true_y - rect.y;
                     break;
+                }
+            }
+            if (!select_valid) {
+                for (int i = 0; i < levels.size(); i++) {
+                    if (!levels[i]->valid) {
+                        continue;
+                    }
+                    SDL_Rect rect = levels[i]->get_rect();
+                    if (true_x > rect.x && true_x < rect.x + rect.w &&
+                        true_y > rect.y && true_y < rect.y + rect.h) {
+                        selected = i;
+                        select_valid = true;
+                        x_offset = true_x - rect.x;
+                        y_offset = true_y - rect.y;
+                        break;
+                    }
                 }
             }
             if (!select_valid) {
