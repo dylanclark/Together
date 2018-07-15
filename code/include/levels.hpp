@@ -16,6 +16,14 @@
 static const int MAX_SIZE = 50 * 50;
 static const int MAX_CRATES = 10;
 
+typedef enum ExitDir
+{
+    EXIT_UP,
+    EXIT_RIGHT,
+    EXIT_DOWN,
+    EXIT_LEFT
+} ExitDir;
+
 class Camera
 {
 public:
@@ -45,6 +53,18 @@ public:
 private:
     SDL_Rect col_rect;
     Texture tex;
+};
+
+class LevelExit
+{
+public:
+    LevelExit(int x, int y, ExitDir dir, SDL_Renderer* rend, SDL_Color* palette);
+    bool check(std::vector<Dot*> chars);
+    void render(Engine* game, SDL_Rect camera);
+
+private:
+    SDL_Rect m_rect;
+    Texture m_tex;
 };
 
 class LevelMessage
@@ -107,33 +127,26 @@ public:
 class Level
 {
 public:
-    Level(int lvl_num) { m_lvl_num = lvl_num; }
-    void init(Engine* game);
-    void update(Engine* game);
-    void draw(Engine* game);
-    void handle_events(Engine* game);
-    void load_level(Engine* game, std::string lvlnum);
+    Level(Engine* game, int zone_num, int lvl_num, int x, int y, SDL_Color palette);
+    void load_level(Engine* game, int zone_num, int lvl_num, SDL_Color palette);
+    void update(std::vector<Dot*> chars);
+    void draw(Engine* game, SDL_Rect cam_rect, bool active_color);
     void cleanup();
 
     void shift();
 
 private:
     // level number
+    int m_zone_num;
     int m_lvl_num;
 
     // these give the level's coords in the zone. they are by tile
     int m_x, m_y;
-
     // tile dimensions of level
-    int m_width, m_height;
-
-    // shifting info
-    bool shiftable;
-    bool active_color;
+    int m_w, m_h;
 
     // chars and level endings!
-    std::vector<Dot*> chars;
-    std::vector<LevelEnd*> level_ends;
+    std::vector<LevelExit*> exits;
 
     // tileset
     Tile* tileset[MAX_SIZE];
