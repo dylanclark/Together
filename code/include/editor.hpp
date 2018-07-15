@@ -231,10 +231,9 @@ public:
     void move(int lvl_x, int lvl_y) { m_lvl_x = lvl_x; m_lvl_y = lvl_y; }
     void draw(SDL_Renderer* rend, SDL_Rect cam_rect, int scr_w, int scr_h);
 
-private:
     int m_x, m_y;
-    int m_lvl_x, m_lvl_y;
     ExitDir m_dir;
+    int m_lvl_x, m_lvl_y;
 };
 
 class LevelThumbnail

@@ -1,9 +1,13 @@
+#include <limits>
+#include <math.h>
 #include <editor.hpp>
 
 static const int SIDE_MARGIN = 100;
 static const int THUMB_MAX_WIDTH = 130;
 static const int THUMBS_PER_ROW = 6;
 static const int TEXT_BORDER = 5;
+
+static const float MAX_SNAP_DISTANCE = 200.0;
 
 LevelLoaderCamera::LevelLoaderCamera(int scr_w, int scr_h)
 {
@@ -670,6 +674,26 @@ void LevelThumbnail::draw(SDL_Renderer* rend, SDL_Rect cam_rect, int scr_w, int 
     }
 }
 
+static float distance(LevelThumbnailExit* exit1, LevelThumbnailExit* exit2)
+{
+    ExitDir dir1, dir2;
+    dir1 = exit1->m_dir;
+    dir2 = exit2->m_dir;
+
+    // exits must match up
+    if (!((dir1 == EXIT_LEFT && dir2 == EXIT_RIGHT) || (dir1 == EXIT_RIGHT && dir2 == EXIT_LEFT) ||
+           (dir1 == EXIT_UP && dir2 == EXIT_DOWN) || (dir1 == EXIT_DOWN && dir2 == EXIT_UP))) {
+        return std::numeric_limits<float>::infinity();
+    }
+    // TODO these need to be adjusted
+    int x1 = exit1->m_x + exit1->m_lvl_x + 2*TILE_WIDTH*(dir1 != EXIT_LEFT);
+    int x2 = exit2->m_x + exit2->m_lvl_x + 2*TILE_WIDTH*(dir2 != EXIT_LEFT);
+    int y1 = exit1->m_y + exit1->m_lvl_y + 2*TILE_WIDTH*(dir1 != EXIT_UP);
+    int y2 = exit2->m_y + exit2->m_lvl_y + 2*TILE_WIDTH*(dir2 != EXIT_UP);
+    float distance = pow(pow(x2-x1,2) + pow(y2-y1,2),0.5);
+    return distance;
+}
+
 void LevelThumbnail::move(int x, int y, std::vector<LevelThumbnail*> levels)
 {
     m_x = (x / TILE_WIDTH) * TILE_WIDTH;
@@ -678,8 +702,43 @@ void LevelThumbnail::move(int x, int y, std::vector<LevelThumbnail*> levels)
         exits[i]->move(m_x, m_y);
     }
     valid = true;
+    bool snapped = false;
 
-    // TODO: we want to snap the level into place if we can lock exits and entrances
+    for (int i = 0; i < exits.size(); i++) {
+        LevelThumbnailExit* exit = exits[i];
+        for (int j = 0; j < levels.size(); j++) {
+            if (j == m_lvl_num) { continue; }
+            LevelThumbnail* level = levels[j];
+            for (int k = 0; k < level->exits.size(); k++) {
+                if (distance(exit, level->exits[k]) < MAX_SNAP_DISTANCE) {
+                    // do the snapping!
+                    snapped = true;
+                    if (exit->m_dir == EXIT_LEFT) {
+                        m_x = level->m_x + level->m_w*TILE_WIDTH;
+                        m_y = level->m_y + level->exits[k]->m_y - exit->m_y;
+                    } else if (exit->m_dir == EXIT_RIGHT) {
+                        m_x = level->m_x - level->m_w*TILE_WIDTH;
+                        m_y = level->m_y + level->exits[k]->m_y - exit->m_y;
+                    } else if (exit->m_dir == EXIT_UP) {
+                        m_x = level->m_x + level->exits[k]->m_x - exit->m_x;
+                        m_y = level->m_y + level->m_w*TILE_WIDTH;
+                    } else if (exit->m_dir == EXIT_DOWN) {
+                        m_x = level->m_x + level->exits[k]->m_x - exit->m_x;
+                        m_y = level->m_y - level->m_w*TILE_WIDTH;
+                    }
+                    for (int i = 0; i < exits.size(); i++) {
+                        exits[i]->move(m_x, m_y);
+                    }
+                }
+            }
+            if (snapped) {
+                break;
+            }
+        }
+        if (snapped) {
+            break;
+        }
+    }
 
     // we should check against all valid levels and see if we are valid
     int leftA, rightA, topA, bottomA;
