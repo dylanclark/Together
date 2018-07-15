@@ -138,9 +138,24 @@ void Zonestate::init(Engine* game)
 {
     // TODO lots
     // first, read the zone-file
+    char zone_num_cstr[2];
+    snprintf(zone_num_cstr, 2, "%d", m_zone_num);
+    std::string zone_num_str(zone_num_cstr);
+    std::string path = "resources/level-files/"+zone_num_str+"/zone-file";
+    std::ifstream zone_file(path.c_str());
+
     // find out how many levels we got
-    // for each level
-        // create a level object at that level's coords
+    zone_file >> palette.r >> palette.g >> palette.b;
+
+    int num_levels;
+    zone_file >> num_levels;
+
+    // for each level, create a level object at that level's coords
+    int lvl_x, lvl_y;
+    for (int i = 0; i < num_levels; i++) {
+        zone_file >> lvl_x >> lvl_y;
+        levels.push_back(new Level(game, m_zone_num, i, lvl_x, lvl_y, palette));
+    }
     // finally figure out where our chars start
 }
 

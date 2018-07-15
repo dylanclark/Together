@@ -2,6 +2,7 @@
 #define editor_hpp
 
 #include <engine.hpp>
+#include <levels.hpp>
 #include <tiles.hpp>
 
 typedef enum Color {
@@ -9,13 +10,12 @@ typedef enum Color {
     COLOR_WHITE
 } Color;
 
-static const int NUM_PLACING_TYPES = 7;
+static const int NUM_PLACING_TYPES = 6;
 
 typedef enum PlacingType {
     PLACING_DELETE,
     PLACING_TILES,
-    PLACING_CHARS,
-    PLACING_LEVEL_ENDS,
+    PLACING_EXITS,
     PLACING_BUTTONS,
     PLACING_CRATES,
     PLACING_SPRINGS
@@ -78,6 +78,8 @@ class Object
 public:
     PlacingType type;
     int x, y;
+    // we'll only use this if necessary
+    ExitDir dir;
     Color color;
     SDL_Texture* tex;
 };
@@ -222,6 +224,19 @@ private:
     int m_zone_num;
 };
 
+class LevelThumbnailExit
+{
+public:
+    LevelThumbnailExit(int x, int y, ExitDir dir) { m_x = x; m_y = y; m_dir = dir; }
+    void move(int lvl_x, int lvl_y) { m_lvl_x = lvl_x; m_lvl_y = lvl_y; }
+    void draw(SDL_Renderer* rend, SDL_Rect cam_rect, int scr_w, int scr_h);
+
+private:
+    int m_x, m_y;
+    int m_lvl_x, m_lvl_y;
+    ExitDir m_dir;
+};
+
 class LevelThumbnail
 {
 public:
@@ -239,6 +254,7 @@ public:
     int m_w, m_h;
 
 private:
+    std::vector<LevelThumbnailExit*> exits;
 
     int m_lvl_num;
     // texture

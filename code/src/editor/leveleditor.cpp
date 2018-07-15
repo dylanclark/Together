@@ -217,19 +217,17 @@ void Tileset::draw(int scr_w, int scr_h, SDL_Rect cam_rect, SDL_Renderer* rend)
         }
     }
     for (int i = 0; i < objs.size(); i++) {
-        int x1 = (objs[i].x*TILE_WIDTH - cam_rect.x) / ((float) cam_rect.w / (float) scr_w) + 1;
-        int x2 = ((objs[i].x+1)*TILE_WIDTH - cam_rect.x) / ((float) cam_rect.w / (float) scr_w);
-        int y1 = (objs[i].y*TILE_WIDTH - cam_rect.y) / ((float) cam_rect.h / (float) scr_h) + 1;
-        int y2 = ((objs[i].y+1)*TILE_WIDTH - cam_rect.y) / ((float) cam_rect.h / (float) scr_h);
-        SDL_Rect render_rect = {x1, y1, x2-x1, y2-y1};
+        int x = (objs[i].x*TILE_WIDTH - cam_rect.x) / ((float) cam_rect.w / (float) scr_w) + 1;
+        int y = (objs[i].y*TILE_WIDTH - cam_rect.y) / ((float) cam_rect.h / (float) scr_h) + 1;
+        int w = TILE_WIDTH * ((float) scr_w / (float) cam_rect.w);
+        int h = TILE_WIDTH * ((float) scr_h / (float) cam_rect.h);
+        SDL_Rect render_rect = {x, y, w, h};
 
-        if (objs[i].type == PLACING_CHARS) {
-            SDL_Rect clip = {0, 0, TILE_WIDTH_TEX, TILE_WIDTH_TEX};
-            SDL_RenderCopyEx(rend, objs[i].tex, &clip, &render_rect, 0.0, NULL,
-                (SDL_RendererFlip) (objs[i].color == COLOR_BLACK ? SDL_FLIP_NONE : SDL_FLIP_VERTICAL));
-        } else if (objs[i].type == PLACING_LEVEL_ENDS) {
-            SDL_Rect clip = {objs[i].color * TILE_WIDTH_TEX, 0, TILE_WIDTH_TEX, TILE_WIDTH_TEX};
-            SDL_RenderCopy(rend, objs[i].tex, &clip, &render_rect);
+        if (objs[i].type == PLACING_EXITS) {
+            render_rect.w *= (1 + (objs[i].dir == EXIT_UP || objs[i].dir == EXIT_DOWN));
+            render_rect.h *= (1 + (objs[i].dir == EXIT_LEFT || objs[i].dir == EXIT_RIGHT));
+            SDL_SetRenderDrawColor(rend, 150, 150, 0, SDL_ALPHA_OPAQUE);
+            SDL_RenderFillRect(rend, &render_rect);
         }
     }
     // next we will draw all of the objects... eventually, bc we don't support textures yet
@@ -278,26 +276,31 @@ void Tileset::handle_event(Engine* game, SDL_Event e, int scr_w, int scr_h, SDL_
             if (tiles[y1][x1] == placing_color) {
                 printf("\a");
             }
-            if (placing == PLACING_CHARS || placing == PLACING_LEVEL_ENDS) {
-                for (int i = 0; i < objs.size(); i++) {
-                    if (objs[i].type == placing && objs[i].color == placing_color) {
-                        objs.erase(objs.begin() + i);
-                    }
-                }
+            if (placing == PLACING_EXITS) {
                 Object new_obj;
                 new_obj.x = x1;
                 new_obj.y = y1;
                 new_obj.type = placing;
                 new_obj.color = placing_color;
-                if (placing == PLACING_CHARS) {
-                    std::string color_str = placing_color == COLOR_BLACK ? "black" : "white";
-                    SDL_Surface* char_surf = IMG_Load(("resources/textures/char-sheet-"+color_str+".png").c_str());
-                    new_obj.tex = SDL_CreateTextureFromSurface(game->rend, char_surf);
-                    SDL_FreeSurface(char_surf);
+                if (x1 == 0) {
+                    new_obj.dir = EXIT_LEFT;
+                } else if (x1 == width-1) {
+                    new_obj.dir = EXIT_RIGHT;
+                } else if (y1 == 0) {
+                    new_obj.dir = EXIT_UP;
+                } else if (y1 == height-1) {
+                    new_obj.dir = EXIT_DOWN;
                 } else {
-                    SDL_Surface* lvlend_surf = IMG_Load("resources/textures/lvl-end.png");
-                    new_obj.tex = SDL_CreateTextureFromSurface(game->rend, lvlend_surf);
-                    SDL_FreeSurface(lvlend_surf);
+                    printf("\a");
+                    break;
+                }
+                if ((new_obj.dir == EXIT_LEFT || new_obj.dir == EXIT_RIGHT) && tiles[y1][x1] == tiles[y1+1][x1]) {
+                    printf("\a");
+                    break;
+                }
+                if ((new_obj.dir == EXIT_UP || new_obj.dir == EXIT_DOWN) && tiles[y1][x1] == tiles[y1][x1+1]) {
+                    printf("\a");
+                    break;
                 }
                 objs.push_back(new_obj);
             }
@@ -421,30 +424,18 @@ void LevelEditor::init(Engine* game)
             }
         }
 
-        // load the characters and their level ends!
-        int num_chars;
-        level_file >> num_chars;
-        for (int i = 0; i < num_chars; i++) {
-            Object new_char, new_lvl_end;
-            level_file >> new_char.x;
-            level_file >> new_char.y;
-            level_file >> new_lvl_end.x;
-            level_file >> new_lvl_end.y;
-            new_char.type = PLACING_CHARS;
-            new_lvl_end.type = PLACING_LEVEL_ENDS;
-            new_char.color = new_lvl_end.color = (Color) i;
-
-            std::string color_str = ((Color) i == COLOR_BLACK ? "black" : "white");
-            SDL_Surface* char_surf = IMG_Load(("resources/textures/char-sheet-"+color_str+".png").c_str());
-            new_char.tex = SDL_CreateTextureFromSurface(game->rend, char_surf);
-            SDL_FreeSurface(char_surf);
-
-            SDL_Surface* lvlend_surf = IMG_Load("resources/textures/lvl-end.png");
-            new_lvl_end.tex = SDL_CreateTextureFromSurface(game->rend, lvlend_surf);
-            SDL_FreeSurface(lvlend_surf);
-
-            objs.push_back(new_char);
-            objs.push_back(new_lvl_end);
+        // load all level exits
+        int num_exits;
+        level_file >> num_exits;
+        for (int i = 0; i < num_exits; i++) {
+            Object new_exit;
+            level_file >> new_exit.x;
+            level_file >> new_exit.y;
+            int dir;
+            level_file >> dir;
+            new_exit.dir = (ExitDir) dir;
+            new_exit.type = PLACING_EXITS;
+            objs.push_back(new_exit);
         }
         // TODO: load all objects!
         tileset = new Tileset(lvl_w, lvl_h, tiles, objs);
@@ -574,11 +565,8 @@ void LevelEditor::draw_UI(Engine* game, int scr_w, int scr_h)
     case PLACING_TILES:
         placing_str += "tiles";
         break;
-    case PLACING_CHARS:
-        placing_str += "chars";
-        break;
-    case PLACING_LEVEL_ENDS:
-        placing_str += "level ends";
+    case PLACING_EXITS:
+        placing_str += "exits";
         break;
     case PLACING_CRATES:
         placing_str += "crates";
@@ -1059,29 +1047,17 @@ void LevelEditor::write_level(Engine* game)
         level_file << std::endl;
     }
     std::vector<Object> objs = tileset->objs;
-    std::vector<Object> chars;
-    std::vector<Object> level_ends;
-    int num_chars = 0;
+    std::vector<Object> exits;
+    int num_exits = 0;
     for (int i = 0; i < objs.size(); i++) {
-        if (objs[i].type == PLACING_CHARS) {
-            num_chars++;
-            if (objs[i].color == COLOR_BLACK) {
-                chars.insert(chars.begin(), objs[i]);
-            } else {
-                chars.push_back(objs[i]);
-            }
-        } else if (objs[i].type == PLACING_LEVEL_ENDS) {
-            if (objs[i].color == COLOR_BLACK) {
-                level_ends.insert(level_ends.begin(), objs[i]);
-            } else {
-                level_ends.push_back(objs[i]);
-            }
+        if (objs[i].type == PLACING_EXITS) {
+            num_exits++;
+            exits.push_back(objs[i]);
         }
     }
-    level_file << num_chars << std::endl;
-    for (int i = 0; i < num_chars; i++) {
-        level_file << chars[i].x << " " << chars[i].y << std::endl;
-        level_file << level_ends[i].x << " " << level_ends[i].y << std::endl;
+    level_file << num_exits << std::endl;
+    for (int i = 0; i < num_exits; i++) {
+        level_file << exits[i].x << " " << exits[i].y << " " << exits[i].dir << std::endl;
     }
     level_file.close();
     game->pop_state();

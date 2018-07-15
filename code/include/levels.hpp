@@ -176,6 +176,7 @@ public:
 private:
     // level number
     int m_zone_num;
+    SDL_Color palette;
 
     Camera* camera;
     std::vector<Dot*> chars;

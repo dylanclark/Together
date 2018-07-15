@@ -1,0 +1,24 @@
+LEVEL FILES:
+
+lvl_w lvl_h
+[tile representation of level]
+num_exits
+exit0_x exit0_y exit0_dir
+exit1_x exit1_y exit1_dir
+...
+exit(n-1)_x exit(n-1)_y exit(n-1)_dir
+
+
+ZONE FILES:
+
+red green blue
+num_levels
+first_level
+char_coords
+lvl0_x lvl0_y
+lvl1_x lvl1_y
+lvl2_x lvl2_y
+...
+lvl(n-1)_x lvl(n-1)_y
+
+
