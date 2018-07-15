@@ -227,7 +227,7 @@ private:
 class LevelThumbnailExit
 {
 public:
-    LevelThumbnailExit(int x, int y, ExitDir dir) { m_x = x; m_y = y; m_dir = dir; }
+    LevelThumbnailExit(int x, int y, ExitDir dir, int lvl_x, int lvl_y) { m_x = x; m_y = y; m_dir = dir; m_lvl_x = lvl_x; m_lvl_y = lvl_y; }
     void move(int lvl_x, int lvl_y) { m_lvl_x = lvl_x; m_lvl_y = lvl_y; }
     void draw(SDL_Renderer* rend, SDL_Rect cam_rect, int scr_w, int scr_h);
 

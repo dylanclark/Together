@@ -607,7 +607,7 @@ LevelThumbnail::LevelThumbnail(Engine* game, int zone_num, int lvl_num, int x, i
     int exit_x, exit_y, exit_dir;
     for (int i = 0; i < num_exits; i++) {
         level_file >> exit_x >> exit_y >> exit_dir;
-        exits.push_back(new LevelThumbnailExit(exit_x*TILE_WIDTH, exit_y*TILE_WIDTH, (ExitDir) exit_dir));
+        exits.push_back(new LevelThumbnailExit(exit_x*TILE_WIDTH, exit_y*TILE_WIDTH, (ExitDir) exit_dir, x, y));
     }
     level_file.close();
 

@@ -224,8 +224,8 @@ void Tileset::draw(int scr_w, int scr_h, SDL_Rect cam_rect, SDL_Renderer* rend)
         SDL_Rect render_rect = {x, y, w, h};
 
         if (objs[i].type == PLACING_EXITS) {
-            render_rect.w *= (1 + (objs[i].dir == EXIT_UP || objs[i].dir == EXIT_DOWN));
-            render_rect.h *= (1 + (objs[i].dir == EXIT_LEFT || objs[i].dir == EXIT_RIGHT));
+            render_rect.w *= (2 + 2*(objs[i].dir == EXIT_UP || objs[i].dir == EXIT_DOWN));
+            render_rect.h *= (2 + 2*(objs[i].dir == EXIT_LEFT || objs[i].dir == EXIT_RIGHT));
             SDL_SetRenderDrawColor(rend, 150, 150, 0, SDL_ALPHA_OPAQUE);
             SDL_RenderFillRect(rend, &render_rect);
         }
@@ -284,21 +284,21 @@ void Tileset::handle_event(Engine* game, SDL_Event e, int scr_w, int scr_h, SDL_
                 new_obj.color = placing_color;
                 if (x1 == 0) {
                     new_obj.dir = EXIT_LEFT;
-                } else if (x1 == width-1) {
+                } else if (x1 == width-2) {
                     new_obj.dir = EXIT_RIGHT;
                 } else if (y1 == 0) {
                     new_obj.dir = EXIT_UP;
-                } else if (y1 == height-1) {
+                } else if (y1 == height-2) {
                     new_obj.dir = EXIT_DOWN;
                 } else {
                     printf("\a");
                     break;
                 }
-                if ((new_obj.dir == EXIT_LEFT || new_obj.dir == EXIT_RIGHT) && tiles[y1][x1] == tiles[y1+1][x1]) {
+                if ((new_obj.dir == EXIT_LEFT || new_obj.dir == EXIT_RIGHT) && tiles[y1+1][x1] == tiles[y1+2][x1]) {
                     printf("\a");
                     break;
                 }
-                if ((new_obj.dir == EXIT_UP || new_obj.dir == EXIT_DOWN) && tiles[y1][x1] == tiles[y1][x1+1]) {
+                if ((new_obj.dir == EXIT_UP || new_obj.dir == EXIT_DOWN) && tiles[y1][x1+1] == tiles[y1][x1+2]) {
                     printf("\a");
                     break;
                 }
