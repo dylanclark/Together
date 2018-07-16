@@ -831,7 +831,7 @@ void ZoneEditor::cleanup()
 
 void ZoneEditor::update(Engine* game)
 {
-    SDL_SetRenderDrawColor(game->rend, 255, 255, 255, SDL_ALPHA_OPAQUE);
+    SDL_SetRenderDrawColor(game->rend, 0, 10, 30, SDL_ALPHA_OPAQUE);
     SDL_RenderClear(game->rend);
     if (edited_level) {
         int x, y;
@@ -1006,12 +1006,12 @@ void ZoneEditor::draw(Engine* game)
         int color;
         if (x % (16*TILE_WIDTH) == 0) {
             // thick gridlines
-            color = 20;
+            color = 100;
         } else if (x % (4*TILE_WIDTH) == 0) {
             // thin gridlines
-            color = 200;
+            color = 50;
         } else {
-            color = 240;
+            color = 30;
         }
         int y1 = 0;
         int y2 = game->screen_height;
@@ -1027,12 +1027,12 @@ void ZoneEditor::draw(Engine* game)
         int color;
         if (y % (16*TILE_WIDTH) == 0) {
             // thick gridlines
-            color = 20;
+            color = 100;
         } else if (y % (4*TILE_WIDTH) == 0) {
             // thin gridlines
-            color = 200;
+            color = 50;
         } else {
-            color = 240;
+            color = 30;
         }
         int x1 = 0;
         int x2 = game->screen_width;

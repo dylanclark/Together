@@ -651,11 +651,11 @@ std::string get_str(Engine* game, std::string prompt, std::string result)
                 break;
             }
         }
-        SDL_SetRenderDrawColor(game->rend, 255, 255, 255, SDL_ALPHA_OPAQUE);
+        SDL_SetRenderDrawColor(game->rend, 0, 10, 30, SDL_ALPHA_OPAQUE);
         SDL_RenderClear(game->rend);
-        SDL_Color black = {0,0,0};
+        SDL_Color color = {255,255,255};
         std::string final_prompt = prompt + ": " + result;
-        SDL_Surface* prompt_surf = TTF_RenderText_Solid(game->font, final_prompt.c_str(), black);
+        SDL_Surface* prompt_surf = TTF_RenderText_Solid(game->font, final_prompt.c_str(), color);
         SDL_Texture* prompt_tex = SDL_CreateTextureFromSurface(game->rend, prompt_surf);
         int w, h;
         SDL_QueryTexture(prompt_tex, NULL, NULL, &w, &h);
@@ -669,12 +669,12 @@ std::string get_str(Engine* game, std::string prompt, std::string result)
 
 bool get_yes_no(Engine* game, std::string prompt)
 {
-    SDL_SetRenderDrawColor(game->rend, 255, 255, 255, SDL_ALPHA_OPAQUE);
+    SDL_SetRenderDrawColor(game->rend, 0, 10, 30, SDL_ALPHA_OPAQUE);
     SDL_RenderClear(game->rend);
 
     std::string final_prompt = prompt + " (y/n)";
-    SDL_Color black = {0,0,0};
-    SDL_Surface* prompt_surf = TTF_RenderText_Solid(game->font, final_prompt.c_str(), black);
+    SDL_Color color = {255,255,255};
+    SDL_Surface* prompt_surf = TTF_RenderText_Solid(game->font, final_prompt.c_str(), color);
     SDL_Texture* prompt_tex = SDL_CreateTextureFromSurface(game->rend, prompt_surf);
     int w, h;
     SDL_QueryTexture(prompt_tex, NULL, NULL, &w, &h);
