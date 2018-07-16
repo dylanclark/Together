@@ -28,14 +28,9 @@ TO-DO LIST
         + when chars exit a level they just move 3 tiles in that diraction and an animation plays
         + this means each level needs a border for both chars
     - level editor new features
-        + level there can be multiple level ends, and now they must touch the wall and touch adjacent white/black
         + level ends can't be in the corner
-        + for now, just draw them as one yellow block
-        + they have a direction and coordinates (which ID top left corner as always)
     - zone editor
-        + create new zone
-        + load levels from any zone or extra storage
-        + levels should "click" into place, their exits and entrances lining up
+        + levels should be invalid if none of their exits are connected
 
 
 LOGISTICS:

@@ -627,12 +627,14 @@ SDL_Rect LevelThumbnail::get_rect()
 
 void LevelThumbnail::draw(SDL_Renderer* rend, SDL_Rect cam_rect, int scr_w, int scr_h)
 {
+    // where do we draw it in the window?
     int x = (m_x - cam_rect.x) / ((float) cam_rect.w / (float) scr_w);
     int y = (m_y - cam_rect.y) / ((float) cam_rect.h / (float) scr_h);
     int w = m_w*TILE_WIDTH * ((float) scr_w / (float) cam_rect.w);
     int h = m_h*TILE_WIDTH * ((float) scr_h / (float) cam_rect.h);
     SDL_Rect render_rect = {x,y,w,h};
-    // TODO: we want the level to be reddish if it's not in a valid place
+
+    // we want the level to be reddish if it's not in a valid place
     if (valid) {
         SDL_SetTextureColorMod(m_tex, 255, 255, 255);
         SDL_SetTextureAlphaMod(m_tex, SDL_ALPHA_OPAQUE);
@@ -642,6 +644,7 @@ void LevelThumbnail::draw(SDL_Renderer* rend, SDL_Rect cam_rect, int scr_w, int 
     }
     SDL_RenderCopy(rend, m_tex, NULL, &render_rect);
 
+    // the outline of the level can be a few different things
     int thickness;
     if (selected) {
         if (valid) {
@@ -659,7 +662,7 @@ void LevelThumbnail::draw(SDL_Renderer* rend, SDL_Rect cam_rect, int scr_w, int 
         } else {
             SDL_SetRenderDrawColor(rend, 100, 0, 0, SDL_ALPHA_OPAQUE);
         }
-        thickness = 3;
+        thickness = 1;
     }
     SDL_Rect rect1 = {x,y,w,thickness};
     SDL_Rect rect2 = {x,y+h-thickness,w,thickness};
@@ -685,7 +688,7 @@ static float distance(LevelThumbnailExit* exit1, LevelThumbnailExit* exit2)
            (dir1 == EXIT_UP && dir2 == EXIT_DOWN) || (dir1 == EXIT_DOWN && dir2 == EXIT_UP))) {
         return std::numeric_limits<float>::infinity();
     }
-    // TODO these need to be adjusted
+    // exits are adjusted so their coords give coords of the center of the rectangle
     int x1 = exit1->m_x + exit1->m_lvl_x + 2*TILE_WIDTH*(dir1 != EXIT_LEFT);
     int x2 = exit2->m_x + exit2->m_lvl_x + 2*TILE_WIDTH*(dir2 != EXIT_LEFT);
     int y1 = exit1->m_y + exit1->m_lvl_y + 2*TILE_WIDTH*(dir1 != EXIT_UP);
@@ -701,7 +704,7 @@ void LevelThumbnail::move(int x, int y, std::vector<LevelThumbnail*> levels)
     for (int i = 0; i < exits.size(); i++) {
         exits[i]->move(m_x, m_y);
     }
-    valid = true;
+    valid = false;
     bool snapped = false;
 
     for (int i = 0; i < exits.size(); i++) {
@@ -713,6 +716,7 @@ void LevelThumbnail::move(int x, int y, std::vector<LevelThumbnail*> levels)
                 if (distance(exit, level->exits[k]) < MAX_SNAP_DISTANCE) {
                     // do the snapping!
                     snapped = true;
+                    valid = true;
                     if (exit->m_dir == EXIT_LEFT) {
                         m_x = level->m_x + level->m_w*TILE_WIDTH;
                         m_y = level->m_y + level->exits[k]->m_y - exit->m_y;
@@ -721,10 +725,10 @@ void LevelThumbnail::move(int x, int y, std::vector<LevelThumbnail*> levels)
                         m_y = level->m_y + level->exits[k]->m_y - exit->m_y;
                     } else if (exit->m_dir == EXIT_UP) {
                         m_x = level->m_x + level->exits[k]->m_x - exit->m_x;
-                        m_y = level->m_y + level->m_w*TILE_WIDTH;
+                        m_y = level->m_y + level->m_h*TILE_WIDTH;
                     } else if (exit->m_dir == EXIT_DOWN) {
                         m_x = level->m_x + level->exits[k]->m_x - exit->m_x;
-                        m_y = level->m_y - level->m_w*TILE_WIDTH;
+                        m_y = level->m_y - level->m_h*TILE_WIDTH;
                     }
                     for (int i = 0; i < exits.size(); i++) {
                         exits[i]->move(m_x, m_y);
@@ -788,12 +792,19 @@ void ZoneEditor::init(Engine* game)
         zone_file >> num_levels;
         zone_file >> start;
         int x, y;
+        std::vector<int> xs;
+        std::vector<int> ys;
 
         for (int i = 0; i < num_levels; i++) {
             zone_file >> x;
             zone_file >> y;
+            xs.push_back(x);
+            ys.push_back(y);
             levels.push_back(new LevelThumbnail(game, m_zone_num, i, x, y, levels));
             levels[i]->start = (start == i);
+        }
+        for (int i = 0; i < num_levels; i++) {
+            levels[i]->move(xs[i], ys[i], levels);
         }
     } else {
         r = g = b = 255;
@@ -804,9 +815,11 @@ void ZoneEditor::init(Engine* game)
         sum_x += levels[i]->m_x + levels[i]->m_w*TILE_WIDTH/2;
         sum_y += levels[i]->m_y + levels[i]->m_h*TILE_WIDTH/2;
     }
+    int avg_x, avg_y;
+    avg_x = avg_y = 0;
     if (levels.size() != 0) {
-        sum_x /= levels.size();
-        sum_y /= levels.size();
+        avg_x = sum_x / levels.size();
+        avg_y = sum_y / levels.size();
     }
     camera = new EditorCamera(game->screen_width*4, game->screen_height*4, sum_x, sum_y);
 }
@@ -826,6 +839,7 @@ void ZoneEditor::update(Engine* game)
         y = levels[selected]->m_y;
         levels.erase(levels.begin() + selected);
         levels.insert(levels.begin() + selected, new LevelThumbnail(game, m_zone_num, selected, x, y, levels));
+        levels[selected]->move(x, y, levels);
         edited_level = false;
         write_zone();
     }
