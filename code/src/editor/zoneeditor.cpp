@@ -1,6 +1,9 @@
 #include <limits>
 #include <math.h>
+#include <sys/stat.h>
+
 #include <editor.hpp>
+
 
 static const int SIDE_MARGIN = 100;
 static const int THUMB_MAX_WIDTH = 130;
@@ -158,13 +161,13 @@ ZoneList::ZoneList(Engine* game, int zone_num, int y)
 
     // create a text texture and get its dimensions
     SDL_Surface* text_surf;
-    SDL_Color black = {0,0,0};
+    SDL_Color color = {255,255,255};
     if (zone_num != -1) {
         char zone_name[7];
         snprintf(zone_name, 7, "zone %d", m_zone_num);
-        text_surf = TTF_RenderText_Solid(game->font, zone_name, black);
+        text_surf = TTF_RenderText_Solid(game->font, zone_name, color);
     } else {
-        text_surf = TTF_RenderText_Solid(game->font, "extra", black);
+        text_surf = TTF_RenderText_Solid(game->font, "extra", color);
     }
     SDL_Texture* text_tex = SDL_CreateTextureFromSurface(game->rend, text_surf);
     int text_w, text_h;
@@ -179,10 +182,10 @@ ZoneList::ZoneList(Engine* game, int zone_num, int y)
     SDL_SetRenderTarget(game->rend, m_tex);
 
     // draw rectangle
-    SDL_SetRenderDrawColor(game->rend, 200, 200, 200, SDL_ALPHA_OPAQUE);
+    SDL_SetRenderDrawColor(game->rend, 0, 100, 150, SDL_ALPHA_OPAQUE);
     SDL_Rect rect_rect = {0, 0, w, h};
     SDL_RenderFillRect(game->rend, &rect_rect);
-    SDL_SetRenderDrawColor(game->rend, 255, 255, 255, SDL_ALPHA_OPAQUE);
+    SDL_SetRenderDrawColor(game->rend, 0, 10, 40, SDL_ALPHA_OPAQUE);
 
     // draw text onto texture
     SDL_Rect render_rect = {TEXT_BORDER, TEXT_BORDER, text_w, text_h};
@@ -303,8 +306,8 @@ void LevelLoader::init(Engine* game)
     bool just_selected = false;
 
     // create a text texture and get its dimensions
-    SDL_Color black = {0,0,0};
-    SDL_Surface* text_surf = TTF_RenderText_Solid(game->font, "level loader", black);
+    SDL_Color color = {255,255,255};
+    SDL_Surface* text_surf = TTF_RenderText_Solid(game->font, "level loader", color);
     SDL_Texture* text_tex = SDL_CreateTextureFromSurface(game->rend, text_surf);
     int text_w, text_h;
     SDL_QueryTexture(text_tex, NULL, NULL, &text_w, &text_h);
@@ -318,7 +321,7 @@ void LevelLoader::init(Engine* game)
     SDL_SetRenderTarget(game->rend, m_tex);
 
     // draw rectangle
-    SDL_SetRenderDrawColor(game->rend, 200, 100, 255, SDL_ALPHA_OPAQUE);
+    SDL_SetRenderDrawColor(game->rend, 100, 0, 150, SDL_ALPHA_OPAQUE);
     SDL_Rect rect_rect = {0, 0, w, h};
     SDL_RenderFillRect(game->rend, &rect_rect);
     SDL_SetRenderDrawColor(game->rend, 255, 255, 255, SDL_ALPHA_OPAQUE);
@@ -445,6 +448,7 @@ void LevelLoader::handle_events(Engine* game)
 
 void LevelLoader::update(Engine* game)
 {
+    SDL_SetRenderDrawColor(game->rend, 0, 10, 40, SDL_ALPHA_OPAQUE);
     SDL_RenderClear(game->rend);
     int max_y;
     SDL_Rect cam_rect = camera->get_rect();
@@ -577,7 +581,7 @@ void LevelThumbnailExit::draw(SDL_Renderer* rend, SDL_Rect cam_rect, int scr_w, 
     SDL_RenderFillRect(rend, &render_rect);
 }
 
-LevelThumbnail::LevelThumbnail(Engine* game, int zone_num, int lvl_num, int x, int y, std::vector<LevelThumbnail*> levels)
+LevelThumbnail::LevelThumbnail(Engine* game, int zone_num, int lvl_num, int x, int y, std::vector<LevelThumbnail*> &levels)
 {
     m_lvl_num = lvl_num;
     start = false;
@@ -778,6 +782,8 @@ void ZoneEditor::init(Engine* game)
     mousedown = false;
     selected = -1;
     edited_level = created_level = loaded_level = false;
+    min_x = min_y = std::numeric_limits<int>::max();
+    max_x = max_y = std::numeric_limits<int>::min();
 
     if (loading) {
         m_zone_num = atoi(get_str(game, "zone number to load").c_str());
@@ -800,14 +806,43 @@ void ZoneEditor::init(Engine* game)
             zone_file >> y;
             xs.push_back(x);
             ys.push_back(y);
-            levels.push_back(new LevelThumbnail(game, m_zone_num, i, x, y, levels));
+            LevelThumbnail* new_level = new LevelThumbnail(game, m_zone_num, i, x, y, levels);
+            levels.push_back(new_level);
             levels[i]->start = (start == i);
         }
         for (int i = 0; i < num_levels; i++) {
             levels[i]->move(xs[i], ys[i], levels);
+            if (levels[i]->m_x < min_x) {
+                min_x = levels[i]->m_x;
+            } else if (levels[i]->m_x + levels[i]->m_w*TILE_WIDTH > max_x) {
+                max_x = levels[i]->m_x + levels[i]->m_w*TILE_WIDTH;
+            }
+            if (levels[i]->m_y < min_y) {
+                min_y = levels[i]->m_y;
+            } else if (levels[i]->m_y + levels[i]->m_h*TILE_WIDTH > max_y) {
+                max_y = levels[i]->m_y + levels[i]->m_h*TILE_WIDTH;
+            }
         }
     } else {
+        // read num-zones
+        std::ifstream num_zones_file("resources/level-files/num-zones");
+        int num_zones;
+        num_zones_file >> num_zones;
+        num_zones_file.close();
+
+        // create new zone
+        char new_zone_path[24];
+        snprintf(new_zone_path, 24, "resources/level-files/%d", num_zones);
+        mkdir(new_zone_path, 0777);
+
+        // create new zone file
+        std::string new_zone_path_cpp(new_zone_path);
+        std::string new_zone_file_path = new_zone_path_cpp+"/zone-file";
+        std::ofstream new_zone_file(new_zone_file_path.c_str());
         r = g = b = 255;
+        new_zone_file << r << " " << g << " " << b << std::endl;
+        new_zone_file << 0;
+        m_zone_num = num_zones;
     }
     int sum_x, sum_y;
     sum_x = sum_y = 0;
@@ -821,7 +856,7 @@ void ZoneEditor::init(Engine* game)
         avg_x = sum_x / levels.size();
         avg_y = sum_y / levels.size();
     }
-    camera = new EditorCamera(game->screen_width*4, game->screen_height*4, sum_x, sum_y);
+    camera = new EditorCamera(game->screen_width*4, game->screen_height*4, avg_x, avg_y);
 }
 
 void ZoneEditor::cleanup()
@@ -831,7 +866,7 @@ void ZoneEditor::cleanup()
 
 void ZoneEditor::update(Engine* game)
 {
-    SDL_SetRenderDrawColor(game->rend, 0, 10, 30, SDL_ALPHA_OPAQUE);
+    SDL_SetRenderDrawColor(game->rend, 0, 10, 40, SDL_ALPHA_OPAQUE);
     SDL_RenderClear(game->rend);
     if (edited_level) {
         int x, y;
@@ -882,7 +917,7 @@ void ZoneEditor::update(Engine* game)
             levels[selected]->move(target_x - x_offset, target_y - y_offset, levels);
         }
     }
-    camera->update(game);
+    camera->update(game, min_x, max_x, min_y, max_y);
 }
 
 void ZoneEditor::handle_events(Engine* game)
@@ -1001,17 +1036,14 @@ void ZoneEditor::draw(Engine* game)
     int scr_h = game->screen_height;
 
     // vertical gridlines
-    int x = (cam_rect.x / TILE_WIDTH) * TILE_WIDTH;
+    int x = (cam_rect.x / (TILE_WIDTH*4)) * TILE_WIDTH*4;
     while (x < cam_rect.x + cam_rect.w) {
         int color;
         if (x % (16*TILE_WIDTH) == 0) {
             // thick gridlines
             color = 100;
-        } else if (x % (4*TILE_WIDTH) == 0) {
-            // thin gridlines
-            color = 50;
         } else {
-            color = 30;
+            color = 50;
         }
         int y1 = 0;
         int y2 = game->screen_height;
@@ -1019,20 +1051,17 @@ void ZoneEditor::draw(Engine* game)
         SDL_SetRenderDrawColor(game->rend, color, color, color, SDL_ALPHA_OPAQUE);
         SDL_RenderDrawLine(game->rend, screen_x, y1, screen_x, y2);
 
-        x += TILE_WIDTH;
+        x += TILE_WIDTH*4;
     }
     // horizontal gridlines
-    int y = (cam_rect.y / TILE_WIDTH) * TILE_WIDTH;
+    int y = (cam_rect.y / (TILE_WIDTH*4)) * TILE_WIDTH*4;
     while (y < cam_rect.y + cam_rect.h) {
         int color;
         if (y % (16*TILE_WIDTH) == 0) {
             // thick gridlines
             color = 100;
-        } else if (y % (4*TILE_WIDTH) == 0) {
-            // thin gridlines
-            color = 50;
         } else {
-            color = 30;
+            color = 50;
         }
         int x1 = 0;
         int x2 = game->screen_width;
@@ -1040,7 +1069,7 @@ void ZoneEditor::draw(Engine* game)
         SDL_SetRenderDrawColor(game->rend, color, color, color, SDL_ALPHA_OPAQUE);
         SDL_RenderDrawLine(game->rend, x1, screen_y, x2, screen_y);
 
-        y += TILE_WIDTH;
+        y += TILE_WIDTH*4;
     }
 
     for (int i = 0; i < levels.size(); i++) {

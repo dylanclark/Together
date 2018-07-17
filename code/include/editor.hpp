@@ -30,7 +30,7 @@ public:
     EditorCamera(int w, int h, int lvlw, int lvlh);
 
     void handle_event(SDL_Event e);
-    void update(Engine* game);
+    void update(Engine* game, int min_x, int max_x, int min_y, int max_y);
 
     // return the rect for other draw functions
     SDL_Rect get_rect() { return true_rect; }
@@ -239,7 +239,7 @@ public:
 class LevelThumbnail
 {
 public:
-    LevelThumbnail(Engine* game, int zone_num, int lvl_num, int x, int y, std::vector<LevelThumbnail*> levels);
+    LevelThumbnail(Engine* game, int zone_num, int lvl_num, int x, int y, std::vector<LevelThumbnail*> &levels);
     ~LevelThumbnail();
 
     void draw(SDL_Renderer* rend, SDL_Rect cam_rect, int scr_w, int scr_h);
@@ -276,6 +276,8 @@ private:
     void write_zone();
 
     int m_zone_num;
+    int min_x, max_x;
+    int min_y, max_y;
     int r, g, b;
 
     // mouse drag controls

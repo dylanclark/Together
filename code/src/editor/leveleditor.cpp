@@ -1,5 +1,6 @@
 #include <algorithm>
 #include <cstdlib>
+#include <limits>
 
 #include <editor.hpp>
 #include <levels.hpp>
@@ -72,21 +73,33 @@ void EditorCamera::handle_event(SDL_Event e)
     }
 }
 
-void EditorCamera::update(Engine* game)
+void EditorCamera::update(Engine* game,
+    int min_x = std::numeric_limits<int>::max(),
+    int max_x = std::numeric_limits<int>::min(),
+    int min_y = std::numeric_limits<int>::max(),
+    int max_y = std::numeric_limits<int>::min())
 {
     int scr_w = game->screen_width;
     int scr_h = game->screen_height;
     if (up) {
-        center_rect.y -= EDITOR_CAMERA_SPEED*((float) center_rect.w / ((float)TILE_WIDTH*70));
+        if (center_rect.y - center_rect.h/2 > min_y) {
+            center_rect.y -= EDITOR_CAMERA_SPEED*((float) center_rect.w / ((float)TILE_WIDTH*70));
+        }
     }
     if (down) {
-        center_rect.y += EDITOR_CAMERA_SPEED*((float) center_rect.w / ((float)TILE_WIDTH*70));;
+        if (center_rect.y + center_rect.h/2 < max_y) {
+            center_rect.y += EDITOR_CAMERA_SPEED*((float) center_rect.w / ((float)TILE_WIDTH*70));;
+        }
     }
     if (left) {
-        center_rect.x -= EDITOR_CAMERA_SPEED*((float) center_rect.w / ((float)TILE_WIDTH*70));;
+        if (center_rect.x - center_rect.w/2 > min_x) {
+            center_rect.x -= EDITOR_CAMERA_SPEED*((float) center_rect.w / ((float)TILE_WIDTH*70));;
+        }
     }
     if (right) {
-        center_rect.x += EDITOR_CAMERA_SPEED*((float) center_rect.w / ((float)TILE_WIDTH*70));;
+        if (center_rect.x + center_rect.w/2 < max_x) {
+            center_rect.x += EDITOR_CAMERA_SPEED*((float) center_rect.w / ((float)TILE_WIDTH*70));;
+        }
     }
     if (zoomin) {
         if (center_rect.w > TILE_WIDTH*4) {
