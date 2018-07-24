@@ -60,7 +60,7 @@ private:
 
     bool crate_col(Levelstate* level, Engine* game);
     bool crate_col(Zonestate* zone, Engine* game);
-    bool tile_col(Tile* tileset[], int size, Engine* game);
+    bool tile_col(std::vector<Tile> tileset, int size, Engine* game);
 };
 
 class Vector

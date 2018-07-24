@@ -21,7 +21,7 @@ static SDL_Rect get_target(SDL_Rect active_char, int dir, int level_w, int level
     target.y = y;
     target.w = w;
     target.h = h;
-
+    /*
     // left bound
     if (target.x - target.w / 2 < 0) {
         int diff = -(target.x - target.w / 2);
@@ -42,15 +42,16 @@ static SDL_Rect get_target(SDL_Rect active_char, int dir, int level_w, int level
         int diff = target.y + target.h / 2 - level_h;
         target.y -= diff;
     }
+    */
 
     return target;
 }
 
-Camera::Camera(int scr_w, int scr_h, Level &level, SDL_Rect active_char, int char_dir)
+Camera::Camera(int scr_w, int scr_h, Level* level, SDL_Rect active_char, int char_dir)
 {
     // level dimensions
-    level_w = level.get_w();
-    level_h = level.get_h();
+    level_w = level->get_w();
+    level_h = level->get_h();
 
     // set width and height, they won't change
     display.w = scr_w / 2;
@@ -90,6 +91,10 @@ Camera::Camera(int scr_w, int scr_h, int lvl_w, int lvl_h, SDL_Rect active_char,
     display.y = loc_y - display.h / 2.0;
 }
 
+Camera::~Camera()
+{
+
+}
 
 SDL_Rect*
 Camera::get_display()
@@ -110,8 +115,8 @@ void Camera::update(SDL_Rect active_char, int dir)
     display.y = loc_y - display.h / 2.0;
 }
 
-void Camera::set_level(Level &level)
+void Camera::set_level(Level* level)
 {
-    level_w = level.get_w();
-    level_h = level.get_h();
+    level_w = level->get_w();
+    level_h = level->get_h();
 }

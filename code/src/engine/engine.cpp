@@ -78,7 +78,7 @@ bool Engine::init()
     SDL_SetRenderDrawColor(rend, 0xFF, 0xFF, 0xFF, 0xFF);
 
     // initialize PNG loading
-    int img_flags = IMG_INIT_PNG;
+    int img_flags = IMG_INIT_PNG | IMG_INIT_JPG;
     if(!(IMG_Init(img_flags) & img_flags)) {
         printf( "SDL_image could not initialize! SDL_image Error: %s\n", IMG_GetError() );
         success = false;

@@ -29,11 +29,12 @@ class Level;
 class Camera
 {
 public:
-    Camera (int scr_w, int scr_h, Level &level, SDL_Rect active_char, int dir);
+    Camera (int scr_w, int scr_h, Level* level, SDL_Rect active_char, int dir);
     Camera (int scr_w, int scr_h, int level_w, int level_h, SDL_Rect active_char, int dir);
+    ~Camera();
     void update (SDL_Rect active_char, int dir);
     SDL_Rect* get_display();
-    void set_level(Level &level);
+    void set_level(Level* level);
 
 private:
     SDL_Rect display;
@@ -133,6 +134,7 @@ class Level
 {
 public:
     Level(Engine* game, int zone_num, int lvl_num, int x, int y, SDL_Color palette);
+    ~Level();
     void load_level(Engine* game, int zone_num, int lvl_num, SDL_Color palette);
     int update(Zonestate* zone, std::vector<Dot> chars);
     void draw(Engine* game, SDL_Rect cam_rect, bool active_color);
@@ -143,7 +145,7 @@ public:
     int get_y() { return m_y; }
     int get_w() { return m_w; }
     int get_h() { return m_h; }
-    Tile** get_tileset() { return tileset; }
+    std::vector<Tile> get_tileset() { return tileset; }
 
 private:
     // level number
@@ -152,7 +154,6 @@ private:
 
     // these give the level's coords in the zone. they are by tile
     int m_x, m_y;
-    // tile dimensions of level
     int m_w, m_h;
 
     // chars and level endings!
@@ -161,7 +162,7 @@ private:
     int num_chars_ready;
 
     // tileset
-    Tile* tileset[MAX_SIZE];
+    std::vector<Tile> tileset;
     Texture tile_tex;
 
     // objects
@@ -177,9 +178,11 @@ class Zonestate : public Gamestate
 public:
     Zonestate(int zone_num) { m_zone_num = zone_num; }
     void init(Engine* game);
+
     void update(Engine* game);
     void draw(Engine* game);
     void handle_events(Engine* game);
+
     void cleanup();
 
     void pause(Engine* game);
@@ -199,7 +202,7 @@ private:
 
     Camera* camera;
     std::vector<Dot> chars;
-    std::vector<Level> levels;
+    std::vector<Level*> levels;
 };
 
 #endif /* levels_hpp */

@@ -62,7 +62,7 @@ endif
 define generateRules
 $(1)/%.o: %.cpp
 	@echo Building $$(subst $$(SOURCEDIR)/src/,,$$<)
-	$(HIDE)$(CC) -O3 -c -g -I$$(INCLUDES) -I/usr/local/include -o $$(subst /,$$(PSEP),$$@) $$(subst /,$$(PSEP),$$<) -MMD
+	$(HIDE)$(CC) -c -g -I$$(INCLUDES) -I/usr/local/include -o $$(subst /,$$(PSEP),$$@) $$(subst /,$$(PSEP),$$<) -MMD
 endef
 
 # indicate to make which targets are not files

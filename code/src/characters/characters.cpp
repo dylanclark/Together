@@ -376,6 +376,8 @@ bool Dot::handle_event(SDL_Event &e, Zonestate* zone, Engine* game)
                     up = false;
                     break;
             }
+        default:
+            break;
     }
     // success! (no quitting)
     return true;
@@ -467,9 +469,7 @@ void Dot::update_old(Levelstate* level, Engine* game)
     col_rect.y = (int) true_y;
 
     // deal with crate collisions using crate_col
-    if (!crate_col(level, game)) {
-        level->shiftable = tile_col(level->tileset, level->width * level->height, game);
-    }
+    // level->shiftable = tile_col(level->tileset, level->width * level->height, game);
 }
 
 void Dot::update(Zonestate* zone, Engine* game)
@@ -541,35 +541,33 @@ void Dot::update(Zonestate* zone, Engine* game)
     col_rect.y = (int) true_y;
 
     Level* level = zone->get_active_level();
-    // TODO crate collisions
     zone->shiftable = tile_col(level->get_tileset(), level->get_w() * level->get_h(), game);
 }
 
-
 // deal with tile collisions, return whether the dot can shift
-bool Dot::tile_col(Tile* tileset[], int size, Engine* game)
+bool Dot::tile_col(std::vector<Tile> tileset, int size, Engine* game)
 {
     Vector repos;
     bool shiftable;
     bool airborne = true;
 
-    for (int i = 0, n = size; i < n; i++) {
-        if (tileset[i]->my_color != my_color) {
+    for (int i = 0; i < size; i++) {
+        if (tileset[i].my_color != my_color) {
             continue;
         }
         // store reposition vector
-        if (check_collision(col_rect, tileset[i]->get_col_rect(), &repos)) {
+        if (check_collision(col_rect, tileset[i].get_col_rect(), &repos)) {
             // wall
-            if (tileset[i]->wall && !tileset[i]->floor && !tileset[i]->ceiling) {
+            if (tileset[i].wall && !tileset[i].floor && !tileset[i].ceiling) {
                 col_rect.x += repos.x;
-                SDL_Rect tile_rect = tileset[i]->get_col_rect();
+                SDL_Rect tile_rect = tileset[i].get_col_rect();
                 if ((repos.x > 0 && x_vel < 0 && col_rect.x > tile_rect.x) ||
                     (repos.x < 0 && x_vel > 0 && col_rect.x < tile_rect.x)) {
                     x_vel = 0;
                 }
             }
             // floor
-            else if (tileset[i]->floor && !tileset[i]->wall) {
+            else if (tileset[i].floor && !tileset[i].wall) {
                 // land!
                 if (status == CHAR_JUMP) {
                     status = CHAR_IDLE;
@@ -589,11 +587,11 @@ bool Dot::tile_col(Tile* tileset[], int size, Engine* game)
                 }
             }
             // floor edge
-            else if (tileset[i]->floor && tileset[i]->wall) {
-                SDL_Rect tile_rect = tileset[i]->get_col_rect();
+            else if (tileset[i].floor && tileset[i].wall) {
+                SDL_Rect tile_rect = tileset[i].get_col_rect();
                 if (abs(repos.x) <= abs(repos.y)) {
                     col_rect.x += repos.x;
-                    SDL_Rect tile_rect = tileset[i]->get_col_rect();
+                    SDL_Rect tile_rect = tileset[i].get_col_rect();
                     if ((repos.x > 0 && x_vel < 0 && col_rect.x > tile_rect.x) ||
                         (repos.x < 0 && x_vel > 0 && col_rect.x < tile_rect.x)) {
                         x_vel = 0;
@@ -620,7 +618,7 @@ bool Dot::tile_col(Tile* tileset[], int size, Engine* game)
                 }
             }
             // ceiling
-            else if (tileset[i]->ceiling && !tileset[i]->wall) {
+            else if (tileset[i].ceiling && !tileset[i].wall) {
                 if ((my_color == 0 && y_vel < 0) || (my_color == 1 && y_vel > 0)) {
                     // adjust y pos
                     col_rect.y += repos.y;
@@ -631,11 +629,11 @@ bool Dot::tile_col(Tile* tileset[], int size, Engine* game)
                 }
             }
             // ceiling edge
-            else if (tileset[i]->ceiling && tileset[i]->wall) {
+            else if (tileset[i].ceiling && tileset[i].wall) {
                 if (abs(repos.x) <= abs(repos.y)) {
                     // adjust x pos
                     col_rect.x += repos.x;
-                    SDL_Rect tile_rect = tileset[i]->get_col_rect();
+                    SDL_Rect tile_rect = tileset[i].get_col_rect();
                     if ((repos.x > 0 && x_vel < 0 && col_rect.x > tile_rect.x) ||
                         (repos.x < 0 && x_vel > 0 && col_rect.x < tile_rect.x)) {
                         x_vel = 0;
@@ -672,7 +670,7 @@ bool Dot::crate_col(Levelstate* level, Engine* game)
         if (check_collision(col_rect, level->crates[i]->get_col_rect(), &repos)) {
             if (my_color != level->crates[i]->my_color) {
                 level->shiftable = false;
-                tile_col(level->crates[i]->tileset, MAX_BORDER, game);
+                // tile_col(level->crates[i]->tileset, MAX_BORDER, game);
                 return true;
             } else {
                 // push and move the crate
@@ -741,6 +739,10 @@ void Dot::render(SDL_Rect* camera, Engine* game)
         case CHAR_JUMP:
             animation_speed = 100.0;
             animation_length = 5;
+            break;
+        default:
+            animation_speed = 100;
+            animation_length = 1;
             break;
     }
 

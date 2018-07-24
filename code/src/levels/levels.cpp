@@ -53,7 +53,9 @@ void Level::load_level(Engine* game, int zone_num, int lvl_num, SDL_Color palett
         cur_tile = -1;
 
         level_file >> cur_tile;
-        tileset[i] = new Tile(m_x + x, m_y + y, cur_tile);
+        Tile new_tile(m_x + x, m_y + y, cur_tile);
+        printf("tile creat = %d, %d\n", m_x + x, m_y + y);
+        tileset.push_back(new_tile);
 
         // iterate horizontally
         x += TILE_WIDTH;
@@ -85,8 +87,8 @@ void Level::load_level(Engine* game, int zone_num, int lvl_num, SDL_Color palett
 
 Level::Level(Engine* game, int zone_num, int lvl_num, int x, int y, SDL_Color palette)
 {
-    m_x = x;
-    m_y = y;
+    m_x = x*TILE_WIDTH;
+    m_y = y*TILE_WIDTH;
     m_zone_num = zone_num;
     m_lvl_num = lvl_num;
     num_chars_ready = 0;
@@ -97,6 +99,12 @@ Level::Level(Engine* game, int zone_num, int lvl_num, int x, int y, SDL_Color pa
     }
 
     load_level(game, zone_num, lvl_num, palette);
+    printf("tiles size = %d\n", tileset.size());
+}
+
+Level::~Level()
+{
+
 }
 
 // this function returns the number of chars on an exit
@@ -162,14 +170,10 @@ void Level::draw(Engine* game, SDL_Rect cam_rect, bool active_color)
 {
     // draw stuff to the screen!
     for (int i = 0; i < m_w * m_h; i++) {
-        tileset[i]->render(active_color, &cam_rect, game, &tile_tex);
+        tileset[i].render(active_color, &cam_rect, game, &tile_tex);
     }
     for (int i = 0; i < exits.size(); i++) {
         exits[i].render(game, cam_rect);
-    }
-    for (int i = 0; i < crates.size(); i++) {
-        // TODO: fix NULL here (crate->render)
-        crates[i]->render(active_color, &cam_rect, game, NULL);
     }
 }
 
@@ -192,10 +196,16 @@ void Zonestate::init(Engine* game)
     std::ifstream zone_file(path.c_str());
 
     // what's the rgb?
-    zone_file >> palette.r >> palette.g >> palette.b;
+    int r, g, b;
+    zone_file >> r >> g >> b;
+    palette.r = r;
+    palette.g = g;
+    palette.b = b;
+
     // how many lvls?
     int num_levels;
     zone_file >> num_levels;
+
     // where do we start?
     int first_level;
     zone_file >> first_level;
@@ -209,23 +219,29 @@ void Zonestate::init(Engine* game)
     int lvl_x, lvl_y;
     for (int i = 0; i < num_levels; i++) {
         zone_file >> lvl_x >> lvl_y;
-        Level new_level(game, m_zone_num, i, lvl_x, lvl_y, palette);
+        Level* new_level = new Level(game, m_zone_num, i, lvl_x, lvl_y, palette);
         levels.push_back(new_level);
     }
 
     // init chars
     int start_lvl_x, start_lvl_y;
-    start_lvl_x = levels[active_level].get_x();
-    start_lvl_y = levels[active_level].get_y();
-    Dot b_char(b_char_x + start_lvl_x, b_char_y + start_lvl_y, true, game->rend, &palette);
-    Dot w_char(w_char_x + start_lvl_x, w_char_y + start_lvl_y, false, game->rend, &palette);
+    start_lvl_x = levels[active_level]->get_x();
+    start_lvl_y = levels[active_level]->get_y();
+    Dot b_char(b_char_x + start_lvl_x/TILE_WIDTH, b_char_y + start_lvl_y/TILE_WIDTH, true, game->rend, &palette);
+    Dot w_char(w_char_x + start_lvl_x/TILE_WIDTH, w_char_y + start_lvl_y/TILE_WIDTH, false, game->rend, &palette);
     chars.push_back(b_char);
     chars.push_back(w_char);
-    active_color = true;
+    SDL_Rect char_rect = chars[0].get_rect();
+    SDL_Rect w_char_rect = chars[1].get_rect();
+    printf("b_char_rect = %d %d\n", char_rect.x, char_rect.y);
+    printf("b_char_rect = %d %d\n", w_char_rect.x, w_char_rect.y);
+    active_color = false;
 
     // init camera
     camera = new Camera(game->screen_width, game->screen_height, levels[active_level],
         chars[active_color].get_rect(), chars[active_color].get_dir());
+    SDL_Rect* cam_rect = camera->get_display();
+    printf("cam_rect = %d %d %d %d\n", cam_rect->x, cam_rect->y, cam_rect->w, cam_rect->h);
 }
 
 void Zonestate::update(Engine* game)
@@ -237,19 +253,21 @@ void Zonestate::update(Engine* game)
         chars[i].update(this, game);
     }
     camera->update(chars[active_color].get_rect(), chars[active_color].get_dir());
+
     int lvl_x, lvl_y, lvl_w, lvl_h;
     SDL_Rect char_rect = chars[0].get_rect();
-    if (levels[active_level].update(this, chars) == 2) {
+    if (levels[active_level]->update(this, chars) == 2) {
         // update active level
         int lvl_x, lvl_y, lvl_w, lvl_h;
         for (int i = 0; i < levels.size(); i++) {
-            lvl_x = levels[i].get_x()*TILE_WIDTH;
-            lvl_y = levels[i].get_y()*TILE_WIDTH;
-            lvl_w = levels[i].get_w()*TILE_WIDTH;
-            lvl_h = levels[i].get_h()*TILE_WIDTH;
+            lvl_x = levels[i]->get_x()*TILE_WIDTH;
+            lvl_y = levels[i]->get_y()*TILE_WIDTH;
+            lvl_w = levels[i]->get_w()*TILE_WIDTH;
+            lvl_h = levels[i]->get_h()*TILE_WIDTH;
             if (char_rect.x >= lvl_x && char_rect.x < lvl_x + lvl_w &&
                 char_rect.y >= lvl_y && char_rect.y < lvl_y + lvl_h) {
                 active_level = i;
+                camera->set_level(levels[active_level]);
                 break;
             }
         }
@@ -259,12 +277,8 @@ void Zonestate::update(Engine* game)
 void Zonestate::draw(Engine* game)
 {
     SDL_Rect* cam_rect = camera->get_display();
-    for (int i = 0; i < levels.size(); i++) {
-        levels[i].draw(game, *cam_rect, active_color);
-    }
-    for (int i = 0; i < chars.size(); i++) {
-        chars[i].render(cam_rect, game);
-    }
+    levels[active_level]->draw(game, *cam_rect, active_color);
+    chars[!active_color].render(cam_rect, game);
 
     SDL_RenderPresent(game->rend);
 }
@@ -272,18 +286,17 @@ void Zonestate::draw(Engine* game)
 void Zonestate::handle_events(Engine* game)
 {
     // event handler
-    SDL_Event event;
+    SDL_Event e;
 
     // handle those events, bruh
-    while (SDL_PollEvent(&event)) {
-        switch (event.type)
+    while (SDL_PollEvent(&e)) {
+        switch (e.type)
         {
         case SDL_QUIT:
             game->quit();
             break;
         }
-        // TODO: fix chars->handle_event
-        chars[active_color].handle_event(event, this, game);
+        chars[active_color].handle_event(e, this, game);
     }
     shiftable = true;
 }
@@ -309,6 +322,6 @@ void Zonestate::shift()
 
 Level* Zonestate::get_active_level()
 {
-    Level* level = &levels[active_level];
+    Level* level = levels[active_level];
     return level;
 }

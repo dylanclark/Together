@@ -15,6 +15,7 @@
 #include <engine.hpp>
 #include <states/menustate.hpp>
 #include <levels.hpp>
+#include <editor.hpp>
 
 // Let's do this.
 int main(void)

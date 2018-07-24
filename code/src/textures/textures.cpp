@@ -21,14 +21,10 @@ Texture::Texture()
 // deallocate
 Texture::~Texture()
 {
-    free();
 };
 
 bool Texture::load_object(int w, int h, std::string path, SDL_Renderer* rend, SDL_Color* palette)
 {
-    // ditch the last texture
-    free();
-
     // new texture!
     tex = NULL;
 
@@ -41,7 +37,7 @@ bool Texture::load_object(int w, int h, std::string path, SDL_Renderer* rend, SD
     }
     tex = SDL_CreateTextureFromSurface(rend, surface);
     if (tex == NULL) {
-        printf("Unable to create texture from image! SDL error: %s\n", SDL_GetError());
+        printf("Unable to create texture from image at %s! SDL error: %s\n", path.c_str(), SDL_GetError());
         return false;
     }
     if (palette != NULL) {
@@ -58,9 +54,6 @@ bool Texture::load_object(int w, int h, std::string path, SDL_Renderer* rend, SD
 
 bool Texture::load_tile_sheet(std::string path, SDL_Renderer* rend, SDL_Color* palette)
 {
-    // ditch the last texture
-    free();
-
     SDL_Surface* surface = IMG_Load(("resources/textures/"+path).c_str());
     if (surface == NULL) {
         printf("Unable to load image %s! SDL error: %s\n",
@@ -174,9 +167,6 @@ void Texture::angle_render(int x, int y, SDL_Rect *clip, SDL_Rect *camera, Engin
 
 bool Texture::load_message(int w, int h, std::string path, SDL_Renderer* rend)
 {
-        // ditch the last texture
-        free();
-
         SDL_Surface* surface = IMG_Load(path.c_str());
         if (surface == NULL)
         {
