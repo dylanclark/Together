@@ -30,7 +30,7 @@ public:
     EditorCamera(int w, int h, int lvlw, int lvlh);
 
     void handle_event(SDL_Event e);
-    void update(Engine* game, int min_x, int max_x, int min_y, int max_y);
+    void update(Engine* game);
 
     // return the rect for other draw functions
     SDL_Rect get_rect() { return true_rect; }
@@ -199,7 +199,7 @@ private:
     SDL_Texture* m_tex;
     int m_zone_num;
     int m_y;
-    std::vector<LevelLoaderThumbnail*> levels;
+    std::vector<LevelLoaderThumbnail> levels;
 };
 
 class LevelLoader : public Gamestate
@@ -239,11 +239,11 @@ public:
 class LevelThumbnail
 {
 public:
-    LevelThumbnail(Engine* game, int zone_num, int lvl_num, int x, int y, std::vector<LevelThumbnail*> &levels);
+    LevelThumbnail(Engine* game, int zone_num, int lvl_num, int x, int y, std::vector<LevelThumbnail> &levels);
     ~LevelThumbnail();
 
     void draw(SDL_Renderer* rend, SDL_Rect cam_rect, int scr_w, int scr_h);
-    void move(int x, int y, std::vector<LevelThumbnail*> valid_levels);
+    void move(int x, int y, std::vector<LevelThumbnail> &valid_levels);
     SDL_Rect get_rect();
 
     bool selected;
@@ -287,12 +287,15 @@ private:
     int selected;
     // which level do the chars start in?
     int start;
+    bool placing_chars;
+    int b_char_x, b_char_y;
+    int w_char_x, w_char_y;
 
     bool edited_level, created_level, loaded_level;
 
     EditorCamera* camera;
 
-    std::vector<LevelThumbnail*> levels;
+    std::vector<LevelThumbnail> levels;
 };
 
 #endif /* editor_hpp */

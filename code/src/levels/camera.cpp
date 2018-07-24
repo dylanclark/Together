@@ -46,20 +46,18 @@ static SDL_Rect get_target(SDL_Rect active_char, int dir, int level_w, int level
     return target;
 }
 
-Camera::Camera(int scr_w, int scr_h, int lev_w, int lev_h, SDL_Rect active_char, int char_dir)
+Camera::Camera(int scr_w, int scr_h, Level &level, SDL_Rect active_char, int char_dir)
 {
-    // level / screen dimensions
-    level_w = lev_w;
-    level_h = lev_h;
-    screen_w = scr_w / 2;
-    screen_h = scr_h / 2;
+    // level dimensions
+    level_w = level.get_w();
+    level_h = level.get_h();
 
     // set width and height, they won't change
-    display.w = screen_w;
-    display.h = screen_h;
+    display.w = scr_w / 2;
+    display.h = scr_h / 2;
 
     // we want to start by tracking the chars
-    SDL_Rect target = get_target(active_char, char_dir, level_w, level_h, screen_w, screen_h);
+    SDL_Rect target = get_target(active_char, char_dir, level_w, level_h, display.w, display.h);
 
     // initialize rectangle
     loc_x = target.x;
@@ -69,6 +67,29 @@ Camera::Camera(int scr_w, int scr_h, int lev_w, int lev_h, SDL_Rect active_char,
     display.x = loc_x - display.w / 2.0;
     display.y = loc_y - display.h / 2.0;
 }
+
+Camera::Camera(int scr_w, int scr_h, int lvl_w, int lvl_h, SDL_Rect active_char, int char_dir)
+{
+    // level dimensions
+    level_w = lvl_w;
+    level_h = lvl_h;
+
+    // set width and height, they won't change
+    display.w = scr_w / 2;
+    display.h = scr_h / 2;
+
+    // we want to start by tracking the chars
+    SDL_Rect target = get_target(active_char, char_dir, level_w, level_h, display.w, display.h);
+
+    // initialize rectangle
+    loc_x = target.x;
+    loc_y = target.y;
+
+    // update the proper SDL_Rect
+    display.x = loc_x - display.w / 2.0;
+    display.y = loc_y - display.h / 2.0;
+}
+
 
 SDL_Rect*
 Camera::get_display()
@@ -87,4 +108,10 @@ void Camera::update(SDL_Rect active_char, int dir)
     // update the proper SDL_Rect
     display.x = loc_x - display.w / 2.0;
     display.y = loc_y - display.h / 2.0;
+}
+
+void Camera::set_level(Level &level)
+{
+    level_w = level.get_w();
+    level_h = level.get_h();
 }

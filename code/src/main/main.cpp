@@ -26,7 +26,7 @@ int main(void)
     game.init();
 
     // initialize game state to main menu
-    game.change_state(new Levelstate(1));
+    game.change_state(new Zonestate(0));
 
     // run game
     while (game.running())

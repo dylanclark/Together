@@ -49,7 +49,7 @@ void Levelstate::handle_events(Engine* game)
                 game->quit();
                 break;
         }
-        chars[active_color]->handle_event(event, this, game);
+        chars[active_color]->handle_event_old(event, this, game);
     }
     shiftable = true;
 }
@@ -60,7 +60,7 @@ void Levelstate::update(Engine* game)
     SDL_RenderClear(game->rend);
 
     for (int i = 0; i < chars.size(); i++) {
-        chars[i]->update(this, game);
+        chars[i]->update_old(this, game);
     }
     for (int i = 0; i < crates.size(); i++) {
         crates[i]->update();
@@ -132,29 +132,7 @@ void Levelstate::draw(Engine* game)
 
 void Levelstate::cleanup()
 {
-    // iterate over all tiles and delete them all
-    for (int i = 0; i < width * height; i++) {
-        if (tileset[i] != NULL) {
-            delete tileset[i];
-            tileset[i] = NULL;
-        }
-    }
 
-    for (int i = 0; i < crates.size(); i++) {
-        if (crates[i] != NULL) {
-            delete crates[i];
-            crates.pop_back();
-        }
-    }
-
-    for (int i = 0; i < chars.size(); i++) {
-        if (chars[i] != NULL) {
-            delete chars[i];
-            chars.pop_back();
-        }
-    }
-    delete camera;
-    tile_tex.free();
 }
 
 void

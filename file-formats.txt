@@ -14,7 +14,8 @@ ZONE FILES:
 red green blue
 num_levels
 first_level
-char_coords
+b_char_coords
+w_char_coords
 lvl0_x lvl0_y
 lvl1_x lvl1_y
 lvl2_x lvl2_y

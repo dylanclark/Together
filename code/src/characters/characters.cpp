@@ -49,6 +49,7 @@ Dot::Dot(int x, int y, bool color, SDL_Renderer* rend, SDL_Color* palette)
     right = false;
     left = false;
     dir = 0;
+    snapped = false;
 
     // initiliaze gamepad
     controller = new class Controller;
@@ -78,7 +79,7 @@ Dot::Dot(int x, int y, bool color, SDL_Renderer* rend, SDL_Color* palette)
     true_y = col_rect.y;
 }
 
-bool Dot::handle_event(SDL_Event &e, Levelstate* level, Engine* game)
+bool Dot::handle_event_old(SDL_Event &e, Levelstate* level, Engine* game)
 {
     // handle those events, duder
     switch (e.type)
@@ -229,7 +230,159 @@ bool Dot::handle_event(SDL_Event &e, Levelstate* level, Engine* game)
     return true;
 }
 
-void Dot::update(Levelstate* level, Engine* game)
+bool Dot::handle_event(SDL_Event &e, Zonestate* zone, Engine* game)
+{
+    // handle those events, duder
+    switch (e.type)
+    {
+        case SDL_KEYDOWN:
+            switch (e.key.keysym.scancode)
+            {
+                case SDL_SCANCODE_UP:
+                case SDL_SCANCODE_W:
+                case SDL_SCANCODE_SPACE:
+                    up = true;
+                    break;
+                case SDL_SCANCODE_DOWN:
+                case SDL_SCANCODE_S:
+                    down = true;
+                    break;
+                case SDL_SCANCODE_LEFT:
+                case SDL_SCANCODE_A:
+                    left = true;
+                    break;
+                case SDL_SCANCODE_RIGHT:
+                case SDL_SCANCODE_D:
+                    right = true;
+                    break;
+                case SDL_SCANCODE_Q:
+                case SDL_SCANCODE_LSHIFT:
+                case SDL_SCANCODE_RSHIFT:
+                    if (zone->shiftable) {
+                        Mix_PlayChannel(-1, game->sound->level_switch_snd, 0);
+                        up = left = down = right = 0;
+                        zone->shift();
+                    }
+                    break;
+                case SDL_SCANCODE_R:
+                    game->restart_state();
+                    break;
+                case SDL_SCANCODE_E:
+                    game->change_state(new ZoneEditor());
+                    break;
+                case SDL_SCANCODE_ESCAPE:
+                    zone->pause(game);
+                    break;
+                default:
+                    break;
+            }
+            break;
+        case SDL_KEYUP:
+            switch (e.key.keysym.scancode)
+            {
+                case SDL_SCANCODE_UP:
+                case SDL_SCANCODE_W:
+                case SDL_SCANCODE_SPACE:
+                    up = false;
+                    break;
+                case SDL_SCANCODE_DOWN:
+                case SDL_SCANCODE_S:
+                    down = false;
+                    break;
+                case SDL_SCANCODE_LEFT:
+                case SDL_SCANCODE_A:
+                    left = false;
+                    break;
+                case SDL_SCANCODE_RIGHT:
+                case SDL_SCANCODE_D:
+                    right = false;
+                    break;
+                default:
+                    break;
+            }
+            break;
+        case SDL_JOYAXISMOTION:
+            if (e.jaxis.which == 0)
+            {
+                switch (e.jaxis.axis)
+                {
+                    case 0:
+                        if (e.jaxis.value > DEAD_ZONE)
+                        {
+                            right = true;
+                            left = false;
+                            break;
+                        }
+                        else if (e.jaxis.value < -(DEAD_ZONE))
+                        {
+                            left = true;
+                            right = false;
+                            break;
+                        }
+                        else
+                        {
+                            left = false;
+                            right = false;
+                            break;
+                        }
+                        break;
+                    case 1:
+                        if (e.jaxis.value > DEAD_ZONE)
+                        {
+                            down = true;
+                            break;
+                        }
+                        else if (e.jaxis.value < -(DEAD_ZONE))
+                        {
+                            // up = true;
+                            break;
+                        }
+                        else
+                        {
+                            // up = false;
+                            down = false;
+                            break;
+                        }
+                        break;
+                }
+            }
+            break;
+        case SDL_CONTROLLERBUTTONDOWN:
+            switch (e.cbutton.button)
+            {
+                case SDL_CONTROLLER_BUTTON_A:
+                    up = true;
+                    break;
+                case SDL_CONTROLLER_BUTTON_RIGHTSHOULDER:
+                case SDL_CONTROLLER_BUTTON_X:
+                    if (zone->shiftable)
+                    {
+                        Mix_PlayChannel(-1, game->sound->level_switch_snd, 0);
+                        status = (status + 1) % 4;
+                    }
+                    break;
+                case SDL_CONTROLLER_BUTTON_Y:
+                    game->restart_state();
+                    break;
+                case SDL_CONTROLLER_BUTTON_START:
+                    return false;
+                    break;
+            }
+            break;
+        case SDL_CONTROLLERBUTTONUP:
+            switch (e.cbutton.button)
+            {
+                case SDL_CONTROLLER_BUTTON_A:
+                    up = false;
+                    break;
+            }
+    }
+    // success! (no quitting)
+    return true;
+}
+
+
+void Dot::update_old(Levelstate* level, Engine* game)
 {
     if (level->active_color != my_color) {
         status = CHAR_INACTIVE;
@@ -317,6 +470,79 @@ void Dot::update(Levelstate* level, Engine* game)
     if (!crate_col(level, game)) {
         level->shiftable = tile_col(level->tileset, level->width * level->height, game);
     }
+}
+
+void Dot::update(Zonestate* zone, Engine* game)
+{
+    if (zone->active_color != my_color) {
+        status = CHAR_INACTIVE;
+        return;
+    }
+
+    if (status != CHAR_JUMP) {
+        short_hop = -1;
+    }
+
+    // update y velocity with gravity
+    if (status == CHAR_JUMP) {
+        int jump_duration = SDL_GetTicks() - jump_start;
+        if (jump_duration > 100 && jump_duration < 150) {
+            if (short_hop == -1) {
+                short_hop = !up;
+            }
+        } else if (jump_duration >= 150) {
+            short_hop = 0;
+        }
+    }
+    y_vel += (!my_color - my_color) * GRAVITY * ((short_hop > 0)*3.2 + 1);
+
+    // update x velocity
+    if (right && !left)
+        x_vel += DOT_ACC;
+    if (left && !right)
+        x_vel -= DOT_ACC;
+    if ((!right && !left) || (right && left)) {
+        if (x_vel < 0) {
+            x_vel += DOT_ACC;
+        } else if (x_vel > 0) {
+            x_vel -= DOT_ACC;
+        }
+    }
+
+    // if the char is moving slowly enough, stop it
+    if (x_vel < (DOT_ACC) && x_vel > -(DOT_ACC)) {
+        x_vel = 0;
+        if (status != CHAR_JUMP) {
+            status = CHAR_IDLE;
+        }
+    }
+
+    // limit top speed
+    if (x_vel > DOT_VEL) {
+        x_vel = DOT_VEL;
+    } else if (x_vel < -DOT_VEL)
+        x_vel = -DOT_VEL;
+
+    // set direction (for animation)
+    if (x_vel < 0) {
+        dir = DIR_LEFT;
+    } else if (x_vel > 0) {
+        dir = DIR_RIGHT;
+    }
+
+    if (x_vel != 0 && status != CHAR_JUMP) {
+        status = CHAR_RUN;
+    }
+
+    // move that Dot
+    col_rect.x += x_vel;
+    true_y += y_vel;
+
+    col_rect.y = (int) true_y;
+
+    Level* level = zone->get_active_level();
+    // TODO crate collisions
+    zone->shiftable = tile_col(level->get_tileset(), level->get_w() * level->get_h(), game);
 }
 
 
@@ -533,6 +759,19 @@ void Dot::render(SDL_Rect* camera, Engine* game)
     SDL_Rect frame_clip = {frame * 16, status * 16, 16, 16};
     tex.render(col_rect.x, col_rect.y, &frame_clip, camera, game, dir, my_color);
 };
+
+void Dot::move(int x, int y)
+{
+    col_rect.x += x;
+    col_rect.y += y;
+}
+
+void Dot::snap(SDL_Rect target)
+{
+    snapped = true;
+    col_rect.x = target.x;
+    col_rect.y = target.y;
+}
 
 // spring when sprung
 void Dot::spring(int x, int y, int direction)

@@ -24,20 +24,21 @@ typedef enum ExitDir
     EXIT_LEFT
 } ExitDir;
 
+class Level;
+
 class Camera
 {
 public:
-    Camera (int scr_w, int scr_h,
-            int lev_w, int lev_h,
-            SDL_Rect active_char, int dir);
+    Camera (int scr_w, int scr_h, Level &level, SDL_Rect active_char, int dir);
+    Camera (int scr_w, int scr_h, int level_w, int level_h, SDL_Rect active_char, int dir);
     void update (SDL_Rect active_char, int dir);
     SDL_Rect* get_display();
+    void set_level(Level &level);
 
 private:
     SDL_Rect display;
-    float loc_x, loc_y, loc_w, loc_h;
     int level_w, level_h;
-    int screen_w, screen_h;
+    float loc_x, loc_y;
     void track (SDL_Rect char1, SDL_Rect char2);
 };
 
@@ -59,10 +60,14 @@ class LevelExit
 {
 public:
     LevelExit(int x, int y, ExitDir dir, SDL_Renderer* rend, SDL_Color* palette);
-    bool check(std::vector<Dot*> chars);
+    int check(SDL_Rect char_rect);
     void render(Engine* game, SDL_Rect camera);
 
+    SDL_Rect get_rect() { return m_rect; }
+    ExitDir get_dir() { return m_dir; }
+
 private:
+    ExitDir m_dir;
     SDL_Rect m_rect;
     Texture m_tex;
 };
@@ -129,11 +134,16 @@ class Level
 public:
     Level(Engine* game, int zone_num, int lvl_num, int x, int y, SDL_Color palette);
     void load_level(Engine* game, int zone_num, int lvl_num, SDL_Color palette);
-    void update(std::vector<Dot*> chars);
+    int update(Zonestate* zone, std::vector<Dot> chars);
     void draw(Engine* game, SDL_Rect cam_rect, bool active_color);
     void cleanup();
 
     void shift();
+    int get_x() { return m_x; }
+    int get_y() { return m_y; }
+    int get_w() { return m_w; }
+    int get_h() { return m_h; }
+    Tile** get_tileset() { return tileset; }
 
 private:
     // level number
@@ -146,7 +156,9 @@ private:
     int m_w, m_h;
 
     // chars and level endings!
-    std::vector<LevelExit*> exits;
+    std::vector<LevelExit> exits;
+    int chosen_exit;
+    int num_chars_ready;
 
     // tileset
     Tile* tileset[MAX_SIZE];
@@ -173,18 +185,21 @@ public:
     void pause(Engine* game);
     void shift();
 
-private:
-    // level number
-    int m_zone_num;
-    SDL_Color palette;
-
-    Camera* camera;
-    std::vector<Dot*> chars;
-    std::vector<Level*> levels;
+    Level* get_active_level();
 
     // shifting info
     bool shiftable;
     bool active_color;
+
+private:
+    // level number
+    int m_zone_num;
+    int active_level;
+    SDL_Color palette;
+
+    Camera* camera;
+    std::vector<Dot> chars;
+    std::vector<Level> levels;
 };
 
 #endif /* levels_hpp */

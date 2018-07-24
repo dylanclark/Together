@@ -73,33 +73,21 @@ void EditorCamera::handle_event(SDL_Event e)
     }
 }
 
-void EditorCamera::update(Engine* game,
-    int min_x = std::numeric_limits<int>::max(),
-    int max_x = std::numeric_limits<int>::min(),
-    int min_y = std::numeric_limits<int>::max(),
-    int max_y = std::numeric_limits<int>::min())
+void EditorCamera::update(Engine* game)
 {
     int scr_w = game->screen_width;
     int scr_h = game->screen_height;
     if (up) {
-        if (center_rect.y - center_rect.h/2 > min_y) {
-            center_rect.y -= EDITOR_CAMERA_SPEED*((float) center_rect.w / ((float)TILE_WIDTH*70));
-        }
+        center_rect.y -= EDITOR_CAMERA_SPEED*((float) center_rect.w / ((float)TILE_WIDTH*70));
     }
     if (down) {
-        if (center_rect.y + center_rect.h/2 < max_y) {
-            center_rect.y += EDITOR_CAMERA_SPEED*((float) center_rect.w / ((float)TILE_WIDTH*70));;
-        }
+        center_rect.y += EDITOR_CAMERA_SPEED*((float) center_rect.w / ((float)TILE_WIDTH*70));;
     }
     if (left) {
-        if (center_rect.x - center_rect.w/2 > min_x) {
-            center_rect.x -= EDITOR_CAMERA_SPEED*((float) center_rect.w / ((float)TILE_WIDTH*70));;
-        }
+        center_rect.x -= EDITOR_CAMERA_SPEED*((float) center_rect.w / ((float)TILE_WIDTH*70));;
     }
     if (right) {
-        if (center_rect.x + center_rect.w/2 < max_x) {
-            center_rect.x += EDITOR_CAMERA_SPEED*((float) center_rect.w / ((float)TILE_WIDTH*70));;
-        }
+        center_rect.x += EDITOR_CAMERA_SPEED*((float) center_rect.w / ((float)TILE_WIDTH*70));;
     }
     if (zoomin) {
         if (center_rect.w > TILE_WIDTH*4) {
@@ -108,7 +96,7 @@ void EditorCamera::update(Engine* game,
         }
     }
     if (zoomout) {
-        if (center_rect.w < TILE_WIDTH*600) {
+        if (center_rect.w < TILE_WIDTH*1000) {
             center_rect.w *= 1.04;
             center_rect.h = center_rect.w * ((float) scr_h / (float) scr_w);
         }
