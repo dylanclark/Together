@@ -49,6 +49,7 @@ Dot::Dot(int x, int y, bool color, SDL_Renderer* rend, SDL_Color* palette)
     right = false;
     left = false;
     dir = 0;
+    ready = false;
     snapped = false;
 
     // initiliaze gamepad
@@ -764,15 +765,36 @@ void Dot::render(SDL_Rect* camera, Engine* game)
 
 void Dot::move(int x, int y)
 {
+    up = down = right = left = false;
+    x_vel = y_vel = 0;
+    status = CHAR_IDLE;
     col_rect.x += x;
     col_rect.y += y;
+    true_y = col_rect.y;
 }
 
-void Dot::snap(SDL_Rect target)
+void Dot::snap(LevelExit exit)
 {
+    up = down = right = left = false;
+    x_vel = y_vel = 0;
     snapped = true;
-    col_rect.x = target.x;
-    col_rect.y = target.y;
+    status = CHAR_IDLE;
+    ExitDir dir = exit.get_dir();
+    SDL_Rect exit_rect = exit.get_rect();
+    if (dir == EXIT_LEFT) {
+        col_rect.x = exit_rect.x + TILE_WIDTH;
+        col_rect.y = exit_rect.y + (1 + (my_color == true))*TILE_WIDTH;
+    } else if (dir == EXIT_RIGHT) {
+        col_rect.x = exit_rect.x;
+        col_rect.y = exit_rect.y + (1 + (my_color == true))*TILE_WIDTH;
+    } else if (dir == EXIT_UP) {
+        col_rect.x = exit_rect.x + (1 + (my_color == false))*TILE_WIDTH;
+        col_rect.y = exit_rect.y + TILE_WIDTH;
+    } else if (dir == EXIT_DOWN) {
+        col_rect.x = exit_rect.x + (1 + (my_color == false))*TILE_WIDTH;
+        col_rect.y = exit_rect.y;
+    }
+    true_y = col_rect.y;
 }
 
 // spring when sprung

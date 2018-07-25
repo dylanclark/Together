@@ -137,7 +137,7 @@ public:
     Level(Engine* game, int zone_num, int lvl_num, int x, int y, SDL_Color palette);
     ~Level();
     void load_level(Engine* game, int zone_num, int lvl_num, SDL_Color palette);
-    int update(Zonestate* zone, std::vector<Dot> chars);
+    int update(Zonestate* zone, std::vector<Dot> &chars);
     void draw(Engine* game, SDL_Rect cam_rect, bool active_color);
     void cleanup();
 

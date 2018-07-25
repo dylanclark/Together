@@ -1049,6 +1049,9 @@ void ZoneEditor::handle_events(Engine* game)
             case SDL_SCANCODE_C:
                 placing_chars = !placing_chars;
                 break;
+            case SDL_SCANCODE_ESCAPE:
+                game->change_state(new Zonestate(m_zone_num));
+                break;
             default:
                 break;
             }

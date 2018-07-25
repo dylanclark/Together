@@ -108,38 +108,36 @@ Level::~Level()
 }
 
 // this function returns the number of chars on an exit
-int Level::update(Zonestate* zone, std::vector<Dot> chars)
+int Level::update(Zonestate* zone, std::vector<Dot> &chars)
 {
-    // lol update crates i guess
-    for (int i = 0; i < crates.size(); i++) {
-        crates[i]->update();
-    }
     // check to see if the chars are on an exit
-    bool ready_flag = false;
+    bool ready_flag;
     for (int i = 0; i < chars.size(); i++) {
+        ready_flag = false;
         // we only want to snap them into place if they haven't been snapped
-        for (int j = 0; i < exits.size(); i++) {
+        for (int j = 0; j < exits.size(); j++) {
             if (exits[j].check(chars[i].get_rect())) {
                 ready_flag = true;
+                if (chars[i].snapped) {
+                    break;
+                }
+                chars[i].snap(exits[j]);
+                zone->shift();
                 // if this is the first
                 if (num_chars_ready == 0) {
                     num_chars_ready++;
                     chosen_exit = j;
+                    // if the char hasn't been snapped, snap it (and set snapped to true)
                 } else if (num_chars_ready == 1 && chosen_exit == j) {
                     num_chars_ready++;
                 }
-                // if the char hasn't been snapped, snap it (and set snapped to true)
-                if (!chars[i].snapped) {
-                    chars[i].snap(exits[j].get_rect());
-                    zone->shift();
-                    break;
-                }
+                break;
             }
         }
         if (!ready_flag && chars[i].snapped) {
             // this means the char was snapped but is no longer colliding
             chars[i].snapped = false;
-            num_chars_ready--;
+            num_chars_ready = 0;
         }
     }
     if (num_chars_ready == 2) {
@@ -148,20 +146,22 @@ int Level::update(Zonestate* zone, std::vector<Dot> chars)
         // move the chars in the correct direction
         if (dir == EXIT_UP) {
             new_x = 0;
-            new_y = -4*TILE_WIDTH;
+            new_y = -3*TILE_WIDTH;
         } else if (dir == EXIT_DOWN) {
             new_x = 0;
-            new_y = 4*TILE_WIDTH;
+            new_y = 3*TILE_WIDTH;
         } else if (dir == EXIT_LEFT) {
-            new_x = -4*TILE_WIDTH;
+            new_x = -3*TILE_WIDTH;
             new_y = 0;
         } else if (dir == EXIT_RIGHT) {
-            new_x = 4*TILE_WIDTH;
+            new_x = 3*TILE_WIDTH;
             new_y = 0;
         }
         for (int i = 0; i < chars.size(); i++) {
             chars[i].move(new_x, new_y);
         }
+        num_chars_ready = 0;
+        return 2;
     }
     return num_chars_ready;
 }
@@ -251,13 +251,16 @@ void Zonestate::update(Engine* game)
     camera->update(chars[active_color].get_rect(), chars[active_color].get_dir());
 
     int lvl_x, lvl_y, lvl_w, lvl_h;
-    SDL_Rect char_rect = chars[0].get_rect();
     if (levels[active_level]->update(this, chars) == 2) {
+        SDL_Rect char_rect = chars[0].get_rect();
         // update active level
         int lvl_x, lvl_y, lvl_w, lvl_h;
         for (int i = 0; i < levels.size(); i++) {
-            lvl_x = levels[i]->get_x()*TILE_WIDTH;
-            lvl_y = levels[i]->get_y()*TILE_WIDTH;
+            if (i == active_level) {
+                continue;
+            }
+            lvl_x = levels[i]->get_x();
+            lvl_y = levels[i]->get_y();
             lvl_w = levels[i]->get_w()*TILE_WIDTH;
             lvl_h = levels[i]->get_h()*TILE_WIDTH;
             if (char_rect.x >= lvl_x && char_rect.x < lvl_x + lvl_w &&

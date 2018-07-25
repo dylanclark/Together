@@ -14,6 +14,7 @@
 
 class Levelstate;
 class Zonestate;
+class LevelExit;
 
 class Dot
 {
@@ -29,7 +30,7 @@ public:
     void render(SDL_Rect* camera, Engine* game);
 
     void move(int x, int y);
-    void snap(SDL_Rect target);
+    void snap(LevelExit exit);
 
     SDL_Rect get_rect() { return col_rect; }
     int get_dir() { return dir; }
@@ -39,6 +40,8 @@ public:
     bool center(SDL_Rect* end_rect);
 
     bool snapped;
+    // ready for exit
+    bool ready;
 
 private:
     // status = idle, jump, run, inactive, etc.
