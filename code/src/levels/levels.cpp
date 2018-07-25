@@ -227,21 +227,17 @@ void Zonestate::init(Engine* game)
     int start_lvl_x, start_lvl_y;
     start_lvl_x = levels[active_level]->get_x();
     start_lvl_y = levels[active_level]->get_y();
-    Dot b_char(b_char_x + start_lvl_x/TILE_WIDTH, b_char_y + start_lvl_y/TILE_WIDTH, true, game->rend, &palette);
-    Dot w_char(w_char_x + start_lvl_x/TILE_WIDTH, w_char_y + start_lvl_y/TILE_WIDTH, false, game->rend, &palette);
+    Dot b_char(b_char_x + start_lvl_x/TILE_WIDTH, b_char_y + start_lvl_y/TILE_WIDTH, false, game->rend, &palette);
+    Dot w_char(w_char_x + start_lvl_x/TILE_WIDTH, w_char_y + start_lvl_y/TILE_WIDTH, true, game->rend, &palette);
     chars.push_back(b_char);
     chars.push_back(w_char);
     SDL_Rect char_rect = chars[0].get_rect();
     SDL_Rect w_char_rect = chars[1].get_rect();
-    printf("b_char_rect = %d %d\n", char_rect.x, char_rect.y);
-    printf("b_char_rect = %d %d\n", w_char_rect.x, w_char_rect.y);
-    active_color = false;
+    active_color = true;
 
     // init camera
     camera = new Camera(game->screen_width, game->screen_height, levels[active_level],
         chars[active_color].get_rect(), chars[active_color].get_dir());
-    SDL_Rect* cam_rect = camera->get_display();
-    printf("cam_rect = %d %d %d %d\n", cam_rect->x, cam_rect->y, cam_rect->w, cam_rect->h);
 }
 
 void Zonestate::update(Engine* game)
@@ -278,7 +274,9 @@ void Zonestate::draw(Engine* game)
 {
     SDL_Rect* cam_rect = camera->get_display();
     levels[active_level]->draw(game, *cam_rect, active_color);
-    chars[!active_color].render(cam_rect, game);
+    for (int i = 0; i < chars.size(); i++) {
+        chars[i].render(cam_rect, game);
+    }
 
     SDL_RenderPresent(game->rend);
 }
