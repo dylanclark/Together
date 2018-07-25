@@ -93,6 +93,7 @@ Level::Level(Engine* game, int zone_num, int lvl_num, int x, int y, SDL_Color pa
     m_zone_num = zone_num;
     m_lvl_num = lvl_num;
     num_chars_ready = 0;
+    just_exited = false;
     chosen_exit = -1;
 
     if (!tile_tex.load_tile_sheet("tiles.png", game->rend, &palette)) {
@@ -107,29 +108,34 @@ Level::~Level()
 
 }
 
-// this function returns the number of chars on an exit
-int Level::update(Zonestate* zone, std::vector<Dot> &chars)
+// this function returns true if the level has been exited
+bool Level::update(Zonestate* zone, std::vector<Dot> &chars)
 {
     // check to see if the chars are on an exit
     bool ready_flag;
+    bool done = false;
+    num_chars_ready = 0;
     for (int i = 0; i < chars.size(); i++) {
         ready_flag = false;
         // we only want to snap them into place if they haven't been snapped
         for (int j = 0; j < exits.size(); j++) {
             if (exits[j].check(chars[i].get_rect())) {
                 ready_flag = true;
-                if (chars[i].snapped) {
+                if (just_exited) {
                     break;
                 }
-                chars[i].snap(exits[j]);
-                zone->shift();
+                num_chars_ready++;
+                if (!chars[i].snapped) {
+                    chars[i].snap(exits[j]);
+                    zone->shift();
+                    break;
+                }
                 // if this is the first
-                if (num_chars_ready == 0) {
-                    num_chars_ready++;
-                    chosen_exit = j;
+                if (num_chars_ready == 1) {
                     // if the char hasn't been snapped, snap it (and set snapped to true)
-                } else if (num_chars_ready == 1 && chosen_exit == j) {
-                    num_chars_ready++;
+                    chosen_exit = j;
+                } else if (num_chars_ready == 2 && chosen_exit == j) {
+                    done = true;
                 }
                 break;
             }
@@ -137,10 +143,11 @@ int Level::update(Zonestate* zone, std::vector<Dot> &chars)
         if (!ready_flag && chars[i].snapped) {
             // this means the char was snapped but is no longer colliding
             chars[i].snapped = false;
-            num_chars_ready = 0;
+            just_exited = false;
+            return false;
         }
     }
-    if (num_chars_ready == 2) {
+    if (done) {
         ExitDir dir = exits[chosen_exit].get_dir();
         int new_x, new_y;
         // move the chars in the correct direction
@@ -251,7 +258,7 @@ void Zonestate::update(Engine* game)
     camera->update(chars[active_color].get_rect(), chars[active_color].get_dir());
 
     int lvl_x, lvl_y, lvl_w, lvl_h;
-    if (levels[active_level]->update(this, chars) == 2) {
+    if (levels[active_level]->update(this, chars)) {
         SDL_Rect char_rect = chars[0].get_rect();
         // update active level
         int lvl_x, lvl_y, lvl_w, lvl_h;
@@ -266,6 +273,7 @@ void Zonestate::update(Engine* game)
             if (char_rect.x >= lvl_x && char_rect.x < lvl_x + lvl_w &&
                 char_rect.y >= lvl_y && char_rect.y < lvl_y + lvl_h) {
                 active_level = i;
+                levels[active_level]->just_exited = true;
                 camera->set_level(levels[active_level]);
                 break;
             }
