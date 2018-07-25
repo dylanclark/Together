@@ -1,6 +1,7 @@
 
 #include <levels.hpp>
 #include <states/menustate.hpp>
+#include <char.hpp>
 
 /******************/
 /*   LEVEL EXIT   */
@@ -10,8 +11,8 @@ LevelExit::LevelExit(int x, int y, ExitDir dir, SDL_Renderer* rend, SDL_Color* p
 {
     m_rect.x = x;
     m_rect.y = y;
-    m_rect.w = (dir == EXIT_LEFT || dir == EXIT_RIGHT) ? TILE_WIDTH*2 : TILE_WIDTH;
-    m_rect.h = (dir == EXIT_UP || dir == EXIT_DOWN) ? TILE_WIDTH*2 : TILE_WIDTH;
+    m_rect.w = (dir == EXIT_LEFT || dir == EXIT_RIGHT) ? TILE_WIDTH*2 : TILE_WIDTH*4;
+    m_rect.h = (dir == EXIT_UP || dir == EXIT_DOWN) ? TILE_WIDTH*2 : TILE_WIDTH*4;
     m_dir = dir;
 
     m_tex.load_object(m_rect.w, m_rect.h, "black/level_end/black_end.png", rend, palette);
@@ -20,8 +21,9 @@ LevelExit::LevelExit(int x, int y, ExitDir dir, SDL_Renderer* rend, SDL_Color* p
 // returns the number of chars on the exit
 int LevelExit::check(SDL_Rect char_rect)
 {
-    // TODO
-    return false;
+    Vector repos;
+    bool collision_flag = check_collision(m_rect, char_rect, &repos);
+    return collision_flag;
 }
 
 void LevelExit::render(Engine* game, SDL_Rect camera)
@@ -54,7 +56,6 @@ void Level::load_level(Engine* game, int zone_num, int lvl_num, SDL_Color palett
 
         level_file >> cur_tile;
         Tile new_tile(m_x + x, m_y + y, cur_tile);
-        printf("tile creat = %d, %d\n", m_x + x, m_y + y);
         tileset.push_back(new_tile);
 
         // iterate horizontally
@@ -73,7 +74,7 @@ void Level::load_level(Engine* game, int zone_num, int lvl_num, SDL_Color palett
         level_file >> exit_x;
         level_file >> exit_y;
         level_file >> exit_dir;
-        LevelExit new_exit(m_x + exit_x, m_y + exit_y, (ExitDir) exit_dir, game->rend, &palette);
+        LevelExit new_exit(m_x + exit_x*TILE_WIDTH, m_y + exit_y*TILE_WIDTH, (ExitDir) exit_dir, game->rend, &palette);
         exits.push_back(new_exit);
     }
 
@@ -99,7 +100,6 @@ Level::Level(Engine* game, int zone_num, int lvl_num, int x, int y, SDL_Color pa
     }
 
     load_level(game, zone_num, lvl_num, palette);
-    printf("tiles size = %d\n", tileset.size());
 }
 
 Level::~Level()
@@ -273,7 +273,9 @@ void Zonestate::update(Engine* game)
 void Zonestate::draw(Engine* game)
 {
     SDL_Rect* cam_rect = camera->get_display();
-    levels[active_level]->draw(game, *cam_rect, active_color);
+    for (int i = 0; i < levels.size(); i++) {
+        levels[i]->draw(game, *cam_rect, active_color);
+    }
     for (int i = 0; i < chars.size(); i++) {
         chars[i].render(cam_rect, game);
     }

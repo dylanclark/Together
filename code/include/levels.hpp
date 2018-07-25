@@ -38,9 +38,10 @@ public:
 
 private:
     SDL_Rect display;
-    int level_w, level_h;
+    int m_lvl_x, m_lvl_y;
+    int m_lvl_w, m_lvl_h;
     float loc_x, loc_y;
-    void track (SDL_Rect char1, SDL_Rect char2);
+    SDL_Rect get_target(SDL_Rect active_char, int dir);
 };
 
 class LevelEnd

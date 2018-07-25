@@ -7,10 +7,6 @@
 #include <levels.hpp>
 #include <textures.hpp>
 
-// external variables
-extern Texture tile_tex;
-extern SDL_Rect tile_clips[];
-
 Tile::Tile(int x, int y, int tile_type)
 {
     // set position
