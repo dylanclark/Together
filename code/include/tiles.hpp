@@ -10,7 +10,7 @@
 #include <textures.hpp>
 
 // tile dimensions!
-static const int TILE_WIDTH = 16;
+static const int TILE_WIDTH = 8;
 static const int TILE_WIDTH_TEX = 16;
 
 typedef enum _tiletype {

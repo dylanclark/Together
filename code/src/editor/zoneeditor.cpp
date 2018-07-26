@@ -153,6 +153,10 @@ void LevelLoaderThumbnail::unselect()
     selected = false;
 }
 
+/****************/
+/*   ZONELIST   */
+/****************/
+
 ZoneList::ZoneList(Engine* game, int zone_num, int y)
 {
     m_zone_num = zone_num;
@@ -270,9 +274,9 @@ int ZoneList::get_tex_height()
     return h;
 }
 
-/********************/
-/*   LEVEL LOADER   */
-/********************/
+/*******************/
+/*   LEVELLOADER   */
+/*******************/
 
 void LevelLoader::init(Engine* game)
 {
@@ -579,9 +583,10 @@ void LevelThumbnailExit::draw(SDL_Renderer* rend, SDL_Rect cam_rect, int scr_w, 
     SDL_Rect render_rect;
     render_rect.x = (m_x*TILE_WIDTH + m_lvl_x*TILE_WIDTH - cam_rect.x) * ((float) scr_w / (float) cam_rect.w);
     render_rect.y = (m_y*TILE_WIDTH + m_lvl_y*TILE_WIDTH - cam_rect.y) * ((float) scr_h / (float) cam_rect.h);
-    render_rect.w = TILE_WIDTH*(2+2*(m_dir == EXIT_UP || m_dir == EXIT_DOWN)) * ((float) scr_w / (float) cam_rect.w);
-    render_rect.h = TILE_WIDTH*(2+2*(m_dir == EXIT_LEFT || m_dir == EXIT_RIGHT)) * ((float) scr_h / (float) cam_rect.h);
-    SDL_SetRenderDrawColor(rend, 255, 100, 0, SDL_ALPHA_OPAQUE);
+    render_rect.w = TILE_WIDTH*(2+4*(m_dir == EXIT_UP || m_dir == EXIT_DOWN)) * ((float) scr_w / (float) cam_rect.w);
+    render_rect.h = TILE_WIDTH*(2+4*(m_dir == EXIT_LEFT || m_dir == EXIT_RIGHT)) * ((float) scr_h / (float) cam_rect.h);
+    SDL_SetRenderDrawBlendMode(rend, SDL_BLENDMODE_BLEND);
+    SDL_SetRenderDrawColor(rend, 255, 100, 0, 170);
     SDL_RenderFillRect(rend, &render_rect);
 }
 
@@ -1050,6 +1055,8 @@ void ZoneEditor::handle_events(Engine* game)
                 placing_chars = !placing_chars;
                 break;
             case SDL_SCANCODE_ESCAPE:
+            case SDL_SCANCODE_RETURN:
+                write_zone();
                 game->change_state(new Zonestate(m_zone_num));
                 break;
             default:

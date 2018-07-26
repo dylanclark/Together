@@ -58,12 +58,13 @@ private:
     float true_y;
     bool up, down, left, right;
     Controller* controller;
-    Texture tex;
+    Texture m_tex;
     SDL_Rect col_rect;
 
     bool crate_col(Levelstate* level, Engine* game);
     bool crate_col(Zonestate* zone, Engine* game);
     bool tile_col(std::vector<Tile> tileset, int size, Engine* game);
+    bool tile_col_new(std::vector<Tile> tileset, int size, Engine* game);
 };
 
 class Vector
@@ -78,5 +79,6 @@ public:
 };
 
 bool check_collision(SDL_Rect a, SDL_Rect b, Vector* overlap);
+bool check_grounded(SDL_Rect a, SDL_Rect b, bool a_color);
 
 #endif /* char_hpp */

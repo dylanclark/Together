@@ -11,11 +11,11 @@ LevelExit::LevelExit(int x, int y, ExitDir dir, SDL_Renderer* rend, SDL_Color* p
 {
     m_rect.x = x;
     m_rect.y = y;
-    m_rect.w = (dir == EXIT_LEFT || dir == EXIT_RIGHT) ? TILE_WIDTH*2 : TILE_WIDTH*4;
-    m_rect.h = (dir == EXIT_UP || dir == EXIT_DOWN) ? TILE_WIDTH*2 : TILE_WIDTH*4;
+    m_rect.w = (dir == EXIT_LEFT || dir == EXIT_RIGHT) ? TILE_WIDTH*2 : TILE_WIDTH*6;
+    m_rect.h = (dir == EXIT_UP || dir == EXIT_DOWN) ? TILE_WIDTH*2 : TILE_WIDTH*6;
     m_dir = dir;
+    m_tex.load_object(m_rect.w, m_rect.h, "exit2.png", rend, palette);
 
-    m_tex.load_object(m_rect.w, m_rect.h, "black/level_end/black_end.png", rend, palette);
 }
 
 // returns the number of chars on the exit
@@ -28,9 +28,9 @@ int LevelExit::check(SDL_Rect char_rect)
 
 void LevelExit::render(Engine* game, SDL_Rect camera)
 {
-    m_tex.render(m_rect.x, m_rect.y, NULL, &camera, game);
+    int dir = (m_dir == EXIT_RIGHT);
+    m_tex.render(m_rect.x, m_rect.y, NULL, &camera, game, dir, 0);
 }
-
 
 /******************/
 /*   LOAD LEVEL   */

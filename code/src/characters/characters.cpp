@@ -58,14 +58,14 @@ Dot::Dot(int x, int y, bool color, SDL_Renderer* rend, SDL_Color* palette)
     my_color = color;
     if (my_color == 0) {
         status = CHAR_IDLE;
-        if (!tex.load_tile_sheet("char-sheet-black.png", rend, palette))
+        if (!m_tex.load_object(16, 16, "char-sheet-black.png", rend, palette))
         {
             printf("Failed to load black dot texture!\n");
             return;
         }
     } else {
         status = CHAR_INACTIVE;
-        if (!tex.load_tile_sheet("char-sheet-white.png", rend, palette))
+        if (!m_tex.load_object(16, 16, "char-sheet-white.png", rend, palette))
         {
             printf("Failed to load white dot texture!\n");
             return;
@@ -73,8 +73,8 @@ Dot::Dot(int x, int y, bool color, SDL_Renderer* rend, SDL_Color* palette)
     }
 
     // initialize collision rectangle
-    col_rect.w = TILE_WIDTH;
-    col_rect.h = TILE_WIDTH;
+    col_rect.w = 12;
+    col_rect.h = 15;
     col_rect.x = x*TILE_WIDTH;
     col_rect.y = y*TILE_WIDTH;
     true_y = col_rect.y;
@@ -121,6 +121,7 @@ bool Dot::handle_event_old(SDL_Event &e, Levelstate* level, Engine* game)
                     game->change_state(new ZoneEditor());
                     break;
                 case SDL_SCANCODE_ESCAPE:
+                    up = down = left = right = false;
                     level->pause(game);
                     break;
                 default:
@@ -446,6 +447,11 @@ void Dot::update_old(Levelstate* level, Engine* game)
     if (x_vel != 0 && status != CHAR_JUMP) {
         status = CHAR_RUN;
     }
+    if (y_vel > JUMP_VEL) {
+        y_vel = JUMP_VEL;
+    } else if (y_vel < -JUMP_VEL) {
+        y_vel = -JUMP_VEL;
+    }
 
     // move that Dot
     col_rect.x += x_vel;
@@ -535,14 +541,89 @@ void Dot::update(Zonestate* zone, Engine* game)
         status = CHAR_RUN;
     }
 
-    // move that Dot
-    col_rect.x += x_vel;
-    true_y += y_vel;
-
-    col_rect.y = (int) true_y;
+    if (y_vel > JUMP_VEL) {
+        y_vel = JUMP_VEL;
+    } else if (y_vel < -JUMP_VEL) {
+        y_vel = -JUMP_VEL;
+    }
 
     Level* level = zone->get_active_level();
-    zone->shiftable = tile_col(level->get_tileset(), level->get_w() * level->get_h(), game);
+    std::vector<Tile> tileset = level->get_tileset();
+
+    // move that Dot (x)
+    col_rect.x += x_vel;
+
+    // resolve x collisions
+    Vector repos;
+    int size = level->get_w()*level->get_h();
+    for (int i = 0; i < size; i++) {
+        if (tileset[i].my_color != my_color) {
+            continue;
+        }
+        if (check_collision(col_rect, tileset[i].get_col_rect(), &repos)) {
+            col_rect.x += repos.x;
+            SDL_Rect tile_rect = tileset[i].get_col_rect();
+            if ((repos.x > 0 && x_vel < 0) ||
+                (repos.x < 0 && x_vel > 0)) {
+                x_vel = 0;
+            }
+        }
+    }
+
+    // move that Dot (y)
+    true_y += y_vel;
+    col_rect.y = (int) true_y + (my_color == 0);
+
+    // resolve y collisions
+    bool shiftable;
+    bool airborne = true;
+    for (int i = 0; i < size; i++) {
+        if (tileset[i].my_color != my_color) {
+            continue;
+        }
+        if (check_collision(col_rect, tileset[i].get_col_rect(), &repos)) {
+            if ((my_color == 0 && repos.y < 0) ||
+                (my_color == 1 && repos.y > 0)) {
+                // land!
+                if (status == CHAR_JUMP) {
+                    status = CHAR_IDLE;
+                }
+                col_rect.y += repos.y;
+                true_y = col_rect.y;
+                y_vel = 0;
+                shiftable = true;
+                // jump!
+                if (up) {
+                    status = CHAR_JUMP;
+                    jump_start = SDL_GetTicks();
+                    y_vel = (my_color - !my_color) * JUMP_VEL;
+                    shiftable = false;
+                } else {
+                    airborne = false;
+                }
+            } else {
+                // ceiling
+                if ((my_color == 0 && y_vel < 0) || (my_color == 1 && y_vel > 0)) {
+                    // adjust y pos
+                    col_rect.y += repos.y;
+                    true_y = col_rect.y;
+                    y_vel = ((my_color == 0) - (my_color == 1)) * .1;
+                    short_hop = 0;
+                    shiftable = false;
+                    up = false;
+                }
+            }
+            if (airborne && check_grounded(col_rect, tileset[i].get_col_rect(), my_color)) {
+                airborne = false;
+            }
+        }
+    }
+    if (airborne && status != CHAR_JUMP) {
+        status = CHAR_JUMP;
+        jump_start = 0;
+    }
+
+    zone->shiftable = shiftable;
 }
 
 // deal with tile collisions, return whether the dot can shift
@@ -760,7 +841,9 @@ void Dot::render(SDL_Rect* camera, Engine* game)
 
     // relevant clips
     SDL_Rect frame_clip = {frame * 16, status * 16, 16, 16};
-    tex.render(col_rect.x, col_rect.y, &frame_clip, camera, game, dir, my_color);
+    int render_x = col_rect.x + (col_rect.w - m_tex.get_width()) / 2;
+    int render_y = col_rect.y + (my_color == 0) * (col_rect.h - m_tex.get_height());
+    m_tex.render(render_x, render_y, &frame_clip, camera, game, dir, my_color);
 };
 
 void Dot::move(int x, int y)
@@ -783,15 +866,15 @@ void Dot::snap(LevelExit exit)
     SDL_Rect exit_rect = exit.get_rect();
     if (dir == EXIT_LEFT) {
         col_rect.x = exit_rect.x + TILE_WIDTH;
-        col_rect.y = exit_rect.y + (1 + (my_color == true))*TILE_WIDTH;
+        col_rect.y = exit_rect.y + (2 + (my_color == true))*TILE_WIDTH;
     } else if (dir == EXIT_RIGHT) {
         col_rect.x = exit_rect.x;
-        col_rect.y = exit_rect.y + (1 + (my_color == true))*TILE_WIDTH;
+        col_rect.y = exit_rect.y + (2 + (my_color == true))*TILE_WIDTH;
     } else if (dir == EXIT_UP) {
-        col_rect.x = exit_rect.x + (1 + (my_color == false))*TILE_WIDTH;
+        col_rect.x = exit_rect.x + (2 + (my_color == false))*TILE_WIDTH;
         col_rect.y = exit_rect.y + TILE_WIDTH;
     } else if (dir == EXIT_DOWN) {
-        col_rect.x = exit_rect.x + (1 + (my_color == false))*TILE_WIDTH;
+        col_rect.x = exit_rect.x + (2 + (my_color == false))*TILE_WIDTH;
         col_rect.y = exit_rect.y;
     }
     true_y = col_rect.y;

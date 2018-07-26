@@ -127,7 +127,6 @@ void Engine::pop_state()
 
 void Engine::restart_state()
 {
-    states.back()->cleanup();
     states.back()->init(this);
 }
 
