@@ -557,7 +557,7 @@ void Dot::update(Zonestate* zone, Engine* game)
     Vector repos;
     int size = level->get_w()*level->get_h();
     for (int i = 0; i < size; i++) {
-        if (tileset[i].my_color != my_color) {
+        if (tileset[i].m_type != my_color) {
             continue;
         }
         if (check_collision(col_rect, tileset[i].get_col_rect(), &repos)) {
@@ -578,7 +578,7 @@ void Dot::update(Zonestate* zone, Engine* game)
     bool shiftable;
     bool airborne = true;
     for (int i = 0; i < size; i++) {
-        if (tileset[i].my_color != my_color) {
+        if (tileset[i].m_type != my_color) {
             continue;
         }
         if (check_collision(col_rect, tileset[i].get_col_rect(), &repos)) {
@@ -634,7 +634,7 @@ bool Dot::tile_col(std::vector<Tile> tileset, int size, Engine* game)
     bool airborne = true;
 
     for (int i = 0; i < size; i++) {
-        if (tileset[i].my_color != my_color) {
+        if (tileset[i].m_type != my_color) {
             continue;
         }
         // store reposition vector
@@ -866,10 +866,10 @@ void Dot::snap(LevelExit exit)
     SDL_Rect exit_rect = exit.get_rect();
     if (dir == EXIT_LEFT) {
         col_rect.x = exit_rect.x + TILE_WIDTH;
-        col_rect.y = exit_rect.y + (2 + (my_color == true))*TILE_WIDTH;
+        col_rect.y = exit_rect.y + (1 + 2*(my_color == true))*TILE_WIDTH + (my_color == 0)*(m_tex.get_height() - col_rect.h);
     } else if (dir == EXIT_RIGHT) {
-        col_rect.x = exit_rect.x;
-        col_rect.y = exit_rect.y + (2 + (my_color == true))*TILE_WIDTH;
+        col_rect.x = exit_rect.x - (col_rect.w - TILE_WIDTH);
+        col_rect.y = exit_rect.y + (1 + 2*(my_color == true))*TILE_WIDTH + (my_color == 0)*(m_tex.get_height() - col_rect.h);
     } else if (dir == EXIT_UP) {
         col_rect.x = exit_rect.x + (2 + (my_color == false))*TILE_WIDTH;
         col_rect.y = exit_rect.y + TILE_WIDTH;

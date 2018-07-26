@@ -55,7 +55,7 @@ void Level::load_level(Engine* game, int zone_num, int lvl_num, SDL_Color palett
         cur_tile = -1;
 
         level_file >> cur_tile;
-        Tile new_tile(m_x + x, m_y + y, cur_tile);
+        Tile new_tile(m_x + x, m_y + y, (TileType) cur_tile);
         tileset.push_back(new_tile);
 
         // iterate horizontally
@@ -168,9 +168,9 @@ bool Level::update(Zonestate* zone, std::vector<Dot> &chars)
             chars[i].move(new_x, new_y);
         }
         num_chars_ready = 0;
-        return 2;
+        return true;
     }
-    return num_chars_ready;
+    return false;
 }
 
 void Level::draw(Engine* game, SDL_Rect cam_rect, bool active_color)

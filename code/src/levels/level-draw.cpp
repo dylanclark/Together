@@ -56,7 +56,7 @@ bool load_level_from_file(Engine* game, Levelstate* lvl, std::string filename)
 
         if ((type >= 0) && (type < TOTAL_TILES))
         {
-            lvl->tileset[i] = new Tile(x, y, type);
+            lvl->tileset[i] = new Tile(x, y, (TileType) type);
         }
         else
         {
