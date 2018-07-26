@@ -95,7 +95,7 @@ void Crate::render(int status, SDL_Rect* camera, Engine* game, Levelstate* level
         }
 
         for (int i = 0; i < MAX_BORDER; i++) {
-            tileset[i]->render(status, camera, game, &level->tile_tex);
+            tileset[i]->render_bg(status, camera, game, &level->tile_tex);
         }
     }
 }

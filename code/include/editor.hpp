@@ -7,7 +7,8 @@
 
 typedef enum Color {
     COLOR_BLACK,
-    COLOR_WHITE
+    COLOR_WHITE,
+    COLOR_GRAY
 } Color;
 
 static const int NUM_PLACING_TYPES = 6;
@@ -89,7 +90,7 @@ class Tileset
 public:
     Tileset(int w, int h, std::vector<std::vector<int> > tiles_arg, std::vector<Object> objs);
     void draw(int scr_w, int scr_h, SDL_Rect cam_rect, SDL_Renderer* rend);
-    void handle_event(Engine* game, SDL_Event e, int scr_w, int scr_h, SDL_Rect cam_rect, PlacingType placing);
+    void handle_event(Engine* game, SDL_Event e, int scr_w, int scr_h, SDL_Rect cam_rect, PlacingType placing, bool shift);
 
     void add_row_top();
     void remove_row_top();
@@ -142,6 +143,7 @@ private:
     Tileset* tileset;
 
     PlacingType placing;
+    bool shift;
     int lvl_w, lvl_h;
     int m_zone_num, m_lvl_num;
 

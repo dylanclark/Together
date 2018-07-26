@@ -116,7 +116,7 @@ void Levelstate::draw(Engine* game)
 
     // draw stuff to the screen!
     for (int i = 0; i < (width * height); i++) {
-        tileset[i]->render(active_color, cam_rect, game, &tile_tex);
+        tileset[i]->render_bg(active_color, cam_rect, game, &tile_tex);
     }
     for (int i = 0; i < chars.size(); i++) {
         chars[i]->render(cam_rect, game);

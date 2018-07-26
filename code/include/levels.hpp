@@ -138,7 +138,8 @@ public:
     ~Level();
     void load_level(Engine* game, int zone_num, int lvl_num, SDL_Color palette);
     bool update(Zonestate* zone, std::vector<Dot> &chars);
-    void draw(Engine* game, SDL_Rect cam_rect, bool active_color);
+    void draw_bg(Engine* game, SDL_Rect cam_rect, bool active_color);
+    void draw_fg(Engine* game, SDL_Rect cam_rect, bool active_color);
     void cleanup();
 
     void shift();

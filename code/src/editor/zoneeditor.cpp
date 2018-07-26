@@ -96,7 +96,14 @@ LevelLoaderThumbnail::LevelLoaderThumbnail(Engine* game, int zone_num, int lvl_n
     for (int i = 0; i < w*h; i++) {
         int cur_tile;
         level_file >> cur_tile;
-        int color = (cur_tile) ? 255 : 0;
+        int color;
+        if (cur_tile == 0) {
+            color = 0;
+        } else if (cur_tile == 1) {
+            color = 255;
+        } else if (cur_tile == 2) {
+            color = 150;
+        }
         SDL_SetRenderDrawColor(game->rend, color, color, color, SDL_ALPHA_OPAQUE);
         SDL_Rect to_draw = {(i % w)*TILE_WIDTH, (i/w)*TILE_WIDTH, TILE_WIDTH, TILE_WIDTH};
         SDL_RenderFillRect(game->rend, &to_draw);
@@ -614,7 +621,14 @@ LevelThumbnail::LevelThumbnail(Engine* game, int zone_num, int lvl_num, int x, i
     for (int i = 0; i < m_w*m_h; i++) {
         int cur_tile;
         level_file >> cur_tile;
-        int color = (cur_tile) ? 255 : 0;
+        int color;
+        if (cur_tile == 0) {
+            color = 0;
+        } else if (cur_tile == 1) {
+            color = 255;
+        } else if (cur_tile == 2) {
+            color = 150;
+        }
         SDL_SetRenderDrawColor(game->rend, color, color, color, SDL_ALPHA_OPAQUE);
         SDL_Rect to_draw = {(i % m_w)*TILE_WIDTH, (i/m_w)*TILE_WIDTH, TILE_WIDTH, TILE_WIDTH};
         SDL_RenderFillRect(game->rend, &to_draw);

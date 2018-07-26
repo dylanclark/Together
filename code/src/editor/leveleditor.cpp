@@ -197,6 +197,18 @@ void Tileset::draw(int scr_w, int scr_h, SDL_Rect cam_rect, SDL_Renderer* rend)
                 to_draw.h = y2-y1;
                 SDL_SetRenderDrawColor(rend, 0, 0, 0, SDL_ALPHA_OPAQUE);
                 SDL_RenderFillRect(rend, &to_draw);
+            } else if (tiles[i][j] == COLOR_GRAY) {
+                int x1 = (j*TILE_WIDTH - cam_rect.x) / ((float) cam_rect.w / (float) scr_w);
+                int x2 = ((j+1)*TILE_WIDTH - cam_rect.x) / ((float) cam_rect.w / (float) scr_w);
+                int y1 = (i*TILE_WIDTH - cam_rect.y) / ((float) cam_rect.h / (float) scr_h);
+                int y2 = ((i+1)*TILE_WIDTH - cam_rect.y) / ((float) cam_rect.h / (float) scr_h);
+                SDL_Rect to_draw;
+                to_draw.x = x1;
+                to_draw.y = y1;
+                to_draw.w = x2-x1;
+                to_draw.h = y2-y1;
+                SDL_SetRenderDrawColor(rend, 100, 100, 100, SDL_ALPHA_OPAQUE);
+                SDL_RenderFillRect(rend, &to_draw);
             }
             if (clicked && click_x == j && click_y == i) {
                 int x1 = (j*TILE_WIDTH - cam_rect.x) / ((float) cam_rect.w / (float) scr_w);
@@ -210,8 +222,10 @@ void Tileset::draw(int scr_w, int scr_h, SDL_Rect cam_rect, SDL_Renderer* rend)
                 to_draw.h = y2-y1;
                 if (clicked_color == COLOR_BLACK) {
                     SDL_SetRenderDrawColor(rend, 0, 0, 255, SDL_ALPHA_OPAQUE);
-                } else {
+                } else if (clicked_color == COLOR_WHITE) {
                     SDL_SetRenderDrawColor(rend, 255, 255, 0, SDL_ALPHA_OPAQUE);
+                } else if (clicked_color == COLOR_GRAY) {
+                    SDL_SetRenderDrawColor(rend, 0, 255, 0, SDL_ALPHA_OPAQUE);
                 }
                 SDL_RenderFillRect(rend, &to_draw);
             }
@@ -235,7 +249,7 @@ void Tileset::draw(int scr_w, int scr_h, SDL_Rect cam_rect, SDL_Renderer* rend)
     // next we will draw all of the objects... eventually, bc we don't support textures yet
 }
 
-void Tileset::handle_event(Engine* game, SDL_Event e, int scr_w, int scr_h, SDL_Rect cam_rect, PlacingType placing)
+void Tileset::handle_event(Engine* game, SDL_Event e, int scr_w, int scr_h, SDL_Rect cam_rect, PlacingType placing, bool shift)
 {
     switch (e.type)
     {
@@ -257,7 +271,11 @@ void Tileset::handle_event(Engine* game, SDL_Event e, int scr_w, int scr_h, SDL_
                 click_x = x1;
                 click_y = y1;
                 clicked = true;
-                clicked_color = (e.button.button == SDL_BUTTON_LEFT) ? COLOR_BLACK : COLOR_WHITE;
+                if (shift) {
+                    clicked_color = COLOR_GRAY;
+                } else {
+                    clicked_color = (e.button.button == SDL_BUTTON_LEFT) ? COLOR_BLACK : COLOR_WHITE;
+                }
             } else {
                 // otherwise fill the rectangle that our clicks make!
                 fill_rect(clicked_color, x1, y1);
@@ -459,6 +477,10 @@ void LevelEditor::handle_events(Engine* game)
         case SDL_KEYDOWN:
             switch (e.key.keysym.scancode)
             {
+            case SDL_SCANCODE_LSHIFT:
+            case SDL_SCANCODE_RSHIFT:
+                shift = true;
+                break;
             case SDL_SCANCODE_ESCAPE:
                 game->pop_state();
                 break;
@@ -517,11 +539,20 @@ void LevelEditor::handle_events(Engine* game)
             default:
                 break;
             }
+            break;
+        case SDL_KEYUP:
+            switch (e.key.keysym.scancode)
+            {
+            case SDL_SCANCODE_LSHIFT:
+            case SDL_SCANCODE_RSHIFT:
+                shift = false;
+                break;
+            }
         default:
             break;
         }
         camera->handle_event(e);
-        tileset->handle_event(game, e, game->screen_width, game->screen_height, camera->get_rect(), placing);
+        tileset->handle_event(game, e, game->screen_width, game->screen_height, camera->get_rect(), placing, shift);
     }
 }
 
@@ -713,9 +744,8 @@ std::vector<std::vector<std::string> > LevelEditor::output_arr(std::vector<std::
     for (int i = 0; i < tiles.size(); i++) {
         std::vector<std::string> new_row;
         for (int j = 0; j < tiles[0].size(); j++) {
-            int fixed_tile = tiles[i][j] >= 13 ? 1 : 0;
             char new_tile[3];
-            snprintf(new_tile, 3, "%02d", fixed_tile);
+            snprintf(new_tile, 3, "%02d", tiles[i][j]);
             std::string new_tile_str(new_tile);
             new_row.push_back(new_tile_str);
         }

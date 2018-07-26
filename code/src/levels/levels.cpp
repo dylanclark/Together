@@ -173,14 +173,21 @@ bool Level::update(Zonestate* zone, std::vector<Dot> &chars)
     return false;
 }
 
-void Level::draw(Engine* game, SDL_Rect cam_rect, bool active_color)
+void Level::draw_bg(Engine* game, SDL_Rect cam_rect, bool active_color)
 {
     // draw stuff to the screen!
     for (int i = 0; i < m_w * m_h; i++) {
-        tileset[i].render(active_color, &cam_rect, game, &tile_tex);
+        tileset[i].render_bg(active_color, &cam_rect, game, &tile_tex);
     }
     for (int i = 0; i < exits.size(); i++) {
         exits[i].render(game, cam_rect);
+    }
+}
+
+void Level::draw_fg(Engine* game, SDL_Rect cam_rect, bool active_color)
+{
+    for (int i = 0; i < m_w * m_h; i++) {
+        tileset[i].render_fg(active_color, &cam_rect, game, &tile_tex);
     }
 }
 
@@ -285,10 +292,13 @@ void Zonestate::draw(Engine* game)
 {
     SDL_Rect* cam_rect = camera->get_display();
     for (int i = 0; i < levels.size(); i++) {
-        levels[i]->draw(game, *cam_rect, active_color);
+        levels[i]->draw_bg(game, *cam_rect, active_color);
     }
     for (int i = 0; i < chars.size(); i++) {
         chars[i].render(cam_rect, game);
+    }
+    for (int i = 0; i < levels.size(); i++) {
+        levels[i]->draw_fg(game, *cam_rect, active_color);
     }
 
     SDL_RenderPresent(game->rend);
