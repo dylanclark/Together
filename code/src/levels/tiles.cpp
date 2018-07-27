@@ -27,9 +27,9 @@ void Tile::render_bg(int active_color, SDL_Rect* camera, Engine* game, Texture* 
 {
     // activity clippers
     int clip_x;
-    if (m_type == BLACK_SOLID || m_type == WHITE_SOLID) {
+    if (m_type != TILE_GLASS) {
         clip_x = (2 * m_type + active_color) * TILE_WIDTH_TEX;
-    } else if (m_type == GLASS) {
+    } else if (m_type == TILE_GLASS) {
         clip_x = (2 - active_color) * TILE_WIDTH_TEX;
     }
     SDL_Rect active_clip = {clip_x, 0, TILE_WIDTH_TEX, TILE_WIDTH_TEX};
@@ -38,8 +38,8 @@ void Tile::render_bg(int active_color, SDL_Rect* camera, Engine* game, Texture* 
 
 void Tile::render_fg(int active_color, SDL_Rect* camera, Engine* game, Texture* tile_tex)
 {
-    if (m_type == GLASS) {
+    if (m_type == TILE_GLASS) {
         SDL_Rect active_clip = {(2*m_type + active_color) * TILE_WIDTH_TEX, 0, TILE_WIDTH_TEX, TILE_WIDTH_TEX};
-        tile_tex->render_tile(col_rect.x, col_rect.y, &active_clip, camera, game, 90);
+        tile_tex->render_tile(col_rect.x, col_rect.y, &active_clip, camera, game, 250);
     }
 }

@@ -14,9 +14,10 @@ static const int TILE_WIDTH = 8;
 static const int TILE_WIDTH_TEX = 8;
 
 typedef enum _TileType {
-    BLACK_SOLID = 0,
-    WHITE_SOLID,
-    GLASS
+    TILE_BLACK = 0,
+    TILE_WHITE,
+    TILE_GLASS,
+    TILE_BRICK
 } TileType;
 
 typedef enum _tilestatus {

@@ -76,7 +76,7 @@ Dot::Dot(int x, int y, bool color, SDL_Renderer* rend, SDL_Color* palette)
     col_rect.w = 12;
     col_rect.h = 15;
     col_rect.x = x*TILE_WIDTH;
-    col_rect.y = y*TILE_WIDTH;
+    col_rect.y = y*TILE_WIDTH - (my_color == 0)*(col_rect.h-TILE_WIDTH);;
     true_y = col_rect.y;
 }
 
@@ -557,7 +557,7 @@ void Dot::update(Zonestate* zone, Engine* game)
     Vector repos;
     int size = level->get_w()*level->get_h();
     for (int i = 0; i < size; i++) {
-        if (tileset[i].m_type != my_color) {
+        if (tileset[i].m_type != my_color && tileset[i].m_type != TILE_BRICK) {
             continue;
         }
         if (check_collision(col_rect, tileset[i].get_col_rect(), &repos)) {
@@ -578,7 +578,7 @@ void Dot::update(Zonestate* zone, Engine* game)
     bool shiftable;
     bool airborne = true;
     for (int i = 0; i < size; i++) {
-        if (tileset[i].m_type != my_color) {
+        if (tileset[i].m_type != my_color && tileset[i].m_type != TILE_BRICK) {
             continue;
         }
         if (check_collision(col_rect, tileset[i].get_col_rect(), &repos)) {
@@ -821,6 +821,10 @@ void Dot::render(SDL_Rect* camera, Engine* game)
         case CHAR_JUMP:
             animation_speed = 100.0;
             animation_length = 5;
+            break;
+        case CHAR_INACTIVE:
+            animation_speed = 150.0;
+            animation_length = 10;
             break;
         default:
             animation_speed = 100;

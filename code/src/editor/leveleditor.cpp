@@ -185,50 +185,53 @@ void Tileset::draw(int scr_w, int scr_h, SDL_Rect cam_rect, SDL_Renderer* rend)
     // first we will draw all of the tiles
     for (int i = 0; i < height; i++) {
         for (int j = 0; j < width; j++) {
-            if (tiles[i][j] == COLOR_BLACK) {
-                int x1 = (j*TILE_WIDTH - cam_rect.x) / ((float) cam_rect.w / (float) scr_w);
-                int x2 = ((j+1)*TILE_WIDTH - cam_rect.x) / ((float) cam_rect.w / (float) scr_w);
-                int y1 = (i*TILE_WIDTH - cam_rect.y) / ((float) cam_rect.h / (float) scr_h);
-                int y2 = ((i+1)*TILE_WIDTH - cam_rect.y) / ((float) cam_rect.h / (float) scr_h);
-                SDL_Rect to_draw;
-                to_draw.x = x1;
-                to_draw.y = y1;
-                to_draw.w = x2-x1;
-                to_draw.h = y2-y1;
+            int x1 = (j*TILE_WIDTH - cam_rect.x) / ((float) cam_rect.w / (float) scr_w);
+            int x2 = ((j+1)*TILE_WIDTH - cam_rect.x) / ((float) cam_rect.w / (float) scr_w);
+            int y1 = (i*TILE_WIDTH - cam_rect.y) / ((float) cam_rect.h / (float) scr_h);
+            int y2 = ((i+1)*TILE_WIDTH - cam_rect.y) / ((float) cam_rect.h / (float) scr_h);
+            SDL_Rect to_draw;
+            to_draw.x = x1;
+            to_draw.y = y1;
+            to_draw.w = x2-x1;
+            to_draw.h = y2-y1;
+            switch (tiles[i][j])
+            {
+            case COLOR_WHITE:
+                SDL_SetRenderDrawColor(rend, 255, 255, 255, SDL_ALPHA_OPAQUE);
+                break;
+            case COLOR_BLACK:
                 SDL_SetRenderDrawColor(rend, 0, 0, 0, SDL_ALPHA_OPAQUE);
-                SDL_RenderFillRect(rend, &to_draw);
-            } else if (tiles[i][j] == COLOR_GRAY) {
-                int x1 = (j*TILE_WIDTH - cam_rect.x) / ((float) cam_rect.w / (float) scr_w);
-                int x2 = ((j+1)*TILE_WIDTH - cam_rect.x) / ((float) cam_rect.w / (float) scr_w);
-                int y1 = (i*TILE_WIDTH - cam_rect.y) / ((float) cam_rect.h / (float) scr_h);
-                int y2 = ((i+1)*TILE_WIDTH - cam_rect.y) / ((float) cam_rect.h / (float) scr_h);
-                SDL_Rect to_draw;
-                to_draw.x = x1;
-                to_draw.y = y1;
-                to_draw.w = x2-x1;
-                to_draw.h = y2-y1;
+                break;
+            case COLOR_GLASS:
                 SDL_SetRenderDrawColor(rend, 100, 100, 100, SDL_ALPHA_OPAQUE);
-                SDL_RenderFillRect(rend, &to_draw);
+                break;
+            case COLOR_BRICK:
+                SDL_SetRenderDrawColor(rend, 0, 0, 150, SDL_ALPHA_OPAQUE);
+                break;
+            default:
+                SDL_SetRenderDrawColor(rend, 255, 0, 0, SDL_ALPHA_OPAQUE);
+                break;
             }
             if (clicked && click_x == j && click_y == i) {
-                int x1 = (j*TILE_WIDTH - cam_rect.x) / ((float) cam_rect.w / (float) scr_w);
-                int x2 = ((j+1)*TILE_WIDTH - cam_rect.x) / ((float) cam_rect.w / (float) scr_w);
-                int y1 = (i*TILE_WIDTH - cam_rect.y) / ((float) cam_rect.h / (float) scr_h);
-                int y2 = ((i+1)*TILE_WIDTH - cam_rect.y) / ((float) cam_rect.h / (float) scr_h);
-                SDL_Rect to_draw;
-                to_draw.x = x1;
-                to_draw.y = y1;
-                to_draw.w = x2-x1;
-                to_draw.h = y2-y1;
-                if (clicked_color == COLOR_BLACK) {
+                switch (clicked_color)
+                {
+                case COLOR_BLACK:
                     SDL_SetRenderDrawColor(rend, 0, 0, 255, SDL_ALPHA_OPAQUE);
-                } else if (clicked_color == COLOR_WHITE) {
+                    break;
+                case COLOR_WHITE:
                     SDL_SetRenderDrawColor(rend, 255, 255, 0, SDL_ALPHA_OPAQUE);
-                } else if (clicked_color == COLOR_GRAY) {
+                    break;
+                case COLOR_GLASS:
                     SDL_SetRenderDrawColor(rend, 0, 255, 0, SDL_ALPHA_OPAQUE);
+                    break;
+                case COLOR_BRICK:
+                    SDL_SetRenderDrawColor(rend, 255, 100, 0, SDL_ALPHA_OPAQUE);
+                    break;
+                default:
+                    break;
                 }
-                SDL_RenderFillRect(rend, &to_draw);
             }
+            SDL_RenderFillRect(rend, &to_draw);
         }
     }
     for (int i = 0; i < objs.size(); i++) {
@@ -249,7 +252,7 @@ void Tileset::draw(int scr_w, int scr_h, SDL_Rect cam_rect, SDL_Renderer* rend)
     // next we will draw all of the objects... eventually, bc we don't support textures yet
 }
 
-void Tileset::handle_event(Engine* game, SDL_Event e, int scr_w, int scr_h, SDL_Rect cam_rect, PlacingType placing, bool shift)
+void Tileset::handle_event(Engine* game, SDL_Event e, int scr_w, int scr_h, SDL_Rect cam_rect, PlacingType placing, bool lshift, bool rshift)
 {
     switch (e.type)
     {
@@ -271,8 +274,10 @@ void Tileset::handle_event(Engine* game, SDL_Event e, int scr_w, int scr_h, SDL_
                 click_x = x1;
                 click_y = y1;
                 clicked = true;
-                if (shift) {
-                    clicked_color = COLOR_GRAY;
+                if (lshift) {
+                    clicked_color = COLOR_GLASS;
+                } else if (rshift) {
+                    clicked_color = COLOR_BRICK;
                 } else {
                     clicked_color = (e.button.button == SDL_BUTTON_LEFT) ? COLOR_BLACK : COLOR_WHITE;
                 }
@@ -401,6 +406,7 @@ void Tileset::remove_col_right()
 
 void LevelEditor::init(Engine* game)
 {
+    lshift = rshift = false;
     bool loading;
     if (m_lvl_num == -1) {
         m_zone_num = atoi(get_str(game, "zone number").c_str());
@@ -478,8 +484,10 @@ void LevelEditor::handle_events(Engine* game)
             switch (e.key.keysym.scancode)
             {
             case SDL_SCANCODE_LSHIFT:
+                lshift = true;
+                break;
             case SDL_SCANCODE_RSHIFT:
-                shift = true;
+                rshift = true;
                 break;
             case SDL_SCANCODE_ESCAPE:
                 game->pop_state();
@@ -544,15 +552,19 @@ void LevelEditor::handle_events(Engine* game)
             switch (e.key.keysym.scancode)
             {
             case SDL_SCANCODE_LSHIFT:
+                lshift = false;
+                break;
             case SDL_SCANCODE_RSHIFT:
-                shift = false;
+                rshift = false;
+                break;
+            default:
                 break;
             }
         default:
             break;
         }
         camera->handle_event(e);
-        tileset->handle_event(game, e, game->screen_width, game->screen_height, camera->get_rect(), placing, shift);
+        tileset->handle_event(game, e, game->screen_width, game->screen_height, camera->get_rect(), placing, lshift, rshift);
     }
 }
 
