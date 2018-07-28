@@ -31,7 +31,6 @@ void LevelExit::render(Engine* game, SDL_Rect camera)
     int dir = (m_dir == EXIT_RIGHT);
     m_tex.render(m_rect.x, m_rect.y, NULL, &camera, game, dir, 0);
 }
-
 /******************/
 /*   LOAD LEVEL   */
 /******************/

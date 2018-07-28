@@ -13,6 +13,9 @@
 #include <char.hpp>
 #include <engine.hpp>
 
+// TODO
+class Object;
+
 typedef enum _buttonstatus {
     BUTT_INACTIVE = 0,
     BUTT_ACTIVATE = 1,
@@ -55,91 +58,5 @@ typedef enum _flipdir {
     FLIP_LEFT = 0,
     FLIP_RIGHT = 1
 } flipdir;
-
-static const int LOCATION = 0;
-static const int VELOCITY = 1;
-
-class Button
-{
-public:
-    Button();
-    void render(SDL_Rect* camera, Engine* game);
-
-    SDL_Rect col_rect;
-    double angle;
-    SDL_Point* center;
-    SDL_RendererFlip flip;
-
-    Texture tex;
-
-    bool check(SDL_Rect dot_rect);
-
-    bool activated;
-    bool single;
-    bool used;
-    int direction;
-    int status;
-    int frame;
-};
-
-class Crate
-{
-public:
-    Crate(int x, int y, int type, bool color, SDL_Renderer* rend);
-    SDL_Rect get_col_rect() { return col_rect; };
-    void render(int status, SDL_Rect* camera, Engine* game, Levelstate* level);
-    bool check_col(SDL_Rect crate, Levelstate* level, Vector* repos);
-    void update();
-
-    Texture tex;
-    int crate_type;
-    bool my_color;
-    bool pushed;
-    float x_vel;
-
-
-    Tile* tileset[MAX_BORDER];
-    void create_tiles(int b_status, Levelstate* level);
-    bool generating;
-
-    int tile_type_top(int type);
-    int tile_type_bottom(int type);
-    int tile_type_left(int type);
-    int tile_type_right(int type);
-
-    SDL_Rect col_rect;
-};
-
-class Springboard
-{
-public:
-    Springboard();
-
-    void render(SDL_Rect* camera, Engine* game);
-    SDL_Rect col_rect;
-    Texture tex;
-
-    bool check(SDL_Rect dot_rect);
-
-    bool activated;
-    bool show;
-    int direction;
-    int status;
-    int frame;
-
-    // type. can be LOCATION for defualt jumping or VELOCITY for jumping the
-    // abount of the dot doing the springing
-    int type;
-    double angle;
-    SDL_Point* center;
-    SDL_RendererFlip flip_type;
-
-    float x_spring;
-    float y_spring;
-
-    // // cross-layer spring logic
-    // void cross_spring(Dot* springer, Dot* springee, int type);
-
-};
 
 #endif /* object_hpp */

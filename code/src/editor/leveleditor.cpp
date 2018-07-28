@@ -733,8 +733,7 @@ bool get_yes_no(Engine* game, std::string prompt)
                 switch (e.key.keysym.scancode)
                 {
                 case SDL_SCANCODE_ESCAPE:
-                    game->change_state(new Levelstate(1));
-                    return true;
+                    return false;
                     break;
                 case SDL_SCANCODE_Y:
                     return true;

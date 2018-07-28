@@ -12,9 +12,34 @@
 #include <engine.hpp>
 #include <tiles.hpp>
 
-class Levelstate;
+class Vector
+{
+public:
+    // init
+    Vector();
+
+    // coords
+    int x;
+    int y;
+};
+
+bool check_collision(SDL_Rect a, SDL_Rect b, Vector* overlap);
+bool check_grounded(SDL_Rect a, SDL_Rect b, bool a_color);
+
 class Zonestate;
 class LevelExit;
+
+typedef enum _CharDir {
+    DIR_RIGHT = 0,
+    DIR_LEFT
+} CharDir;
+
+typedef enum _CharStatus {
+    CHAR_IDLE = 0,
+    CHAR_RUN,
+    CHAR_JUMP,
+    CHAR_INACTIVE
+} CharStatus;
 
 class Dot
 {
@@ -23,9 +48,7 @@ public:
 
     bool my_color;
 
-    bool handle_event_old(SDL_Event &e, Levelstate* level, Engine* game);
     bool handle_event(SDL_Event &e, Zonestate* zone, Engine* game);
-    void update_old(Levelstate* level, Engine* game);
     void update(Zonestate* zone, Engine* game);
     void render(SDL_Rect* camera, Engine* game);
 
@@ -45,9 +68,9 @@ public:
 
 private:
     // status = idle, jump, run, inactive, etc.
-    int status;
+    CharStatus status;
     // which way is the dot facing?
-    int dir;
+    CharDir dir;
     // what animation frame is the dot on?
     int jump_start;
 
@@ -61,24 +84,7 @@ private:
     Texture m_tex;
     SDL_Rect col_rect;
 
-    bool crate_col(Levelstate* level, Engine* game);
     bool crate_col(Zonestate* zone, Engine* game);
-    bool tile_col(std::vector<Tile> tileset, int size, Engine* game);
-    bool tile_col_new(std::vector<Tile> tileset, int size, Engine* game);
 };
-
-class Vector
-{
-public:
-    // init
-    Vector();
-
-    // coords
-    int x;
-    int y;
-};
-
-bool check_collision(SDL_Rect a, SDL_Rect b, Vector* overlap);
-bool check_grounded(SDL_Rect a, SDL_Rect b, bool a_color);
 
 #endif /* char_hpp */

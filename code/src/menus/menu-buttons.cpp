@@ -38,8 +38,7 @@ void ContinueButton::select(Engine* game)
         Mix_PlayChannel(-1, game->sound->menu_exit_snd, 0);
     } else {
         Mix_PlayChannel(-1, game->sound->menu_select_snd, 0);
-        game->change_state(new Levelstate(level));
-        game->push_state(new IntroState);
+        // TODO select zone
     }
 }
 
@@ -96,8 +95,7 @@ void YesNewGameButton::select(Engine* game)
     Mix_FadeOutMusic(200);
     game->save(0);
     game->pop_state();
-    game->change_state(new Levelstate(1));
-    game->push_state(new IntroState);
+    game->change_state(new Zonestate(0));
 }
 
 NoButton::NoButton(int x, int y, int w, int h, SDL_Renderer* rend) : MenuButton(x,y,w,h)
@@ -218,6 +216,5 @@ void LevelSlider::select(Engine* game)
 {
     Mix_PlayChannel(-1, game->sound->menu_select_snd, 0);
     Mix_FadeOutMusic(200);
-    game->change_state(new Levelstate(cur_frame + 1));
-    game->push_state(new IntroState);
+    game->change_state(new Zonestate(cur_frame + 1));
 }
