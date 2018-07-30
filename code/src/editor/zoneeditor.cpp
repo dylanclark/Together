@@ -765,7 +765,7 @@ void LevelThumbnail::move(int x, int y, std::vector<LevelThumbnail> &levels)
     for (int i = 0; i < exits.size(); i++) {
         exits[i]->move(m_x, m_y);
     }
-    valid = false;
+    valid = true;
     bool snapped = false;
 
     for (int i = 0; i < exits.size(); i++) {

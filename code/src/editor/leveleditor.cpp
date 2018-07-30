@@ -182,13 +182,14 @@ Tileset::Tileset(int w, int h, std::vector<std::vector<TileType> > tiles_arg=std
 
 void Tileset::draw(int scr_w, int scr_h, SDL_Rect cam_rect, SDL_Renderer* rend)
 {
+    float aspect_ratio = ((float) scr_w / (float) cam_rect.w);
     // first we will draw all of the tiles
     for (int i = 0; i < height; i++) {
         for (int j = 0; j < width; j++) {
-            int x1 = (j*TILE_WIDTH - cam_rect.x) / ((float) cam_rect.w / (float) scr_w);
-            int x2 = ((j+1)*TILE_WIDTH - cam_rect.x) / ((float) cam_rect.w / (float) scr_w);
-            int y1 = (i*TILE_WIDTH - cam_rect.y) / ((float) cam_rect.h / (float) scr_h);
-            int y2 = ((i+1)*TILE_WIDTH - cam_rect.y) / ((float) cam_rect.h / (float) scr_h);
+            int x1 = (j*TILE_WIDTH - cam_rect.x) * aspect_ratio;
+            int x2 = ((j+1)*TILE_WIDTH - cam_rect.x) * aspect_ratio;
+            int y1 = (i*TILE_WIDTH - cam_rect.y) * aspect_ratio;
+            int y2 = ((i+1)*TILE_WIDTH - cam_rect.y) * aspect_ratio;
             int black_height;
             bool platform_flag = false;
             SDL_Rect to_draw = {x1, y1, x2-x1, y2-y1};
@@ -223,7 +224,6 @@ void Tileset::draw(int scr_w, int scr_h, SDL_Rect cam_rect, SDL_Renderer* rend)
                 SDL_SetRenderDrawColor(rend, 255, 100, 0, SDL_ALPHA_OPAQUE);
             }
             if (platform_flag) {
-                float aspect_ratio = ((float) scr_w / (float) cam_rect.w);
                 black_height *= aspect_ratio;
                 SDL_Rect black_rect = {to_draw.x, to_draw.y, to_draw.w, black_height};
                 SDL_Rect white_rect = {to_draw.x, to_draw.y+black_height + 1, to_draw.w, TILE_WIDTH*aspect_ratio - black_height};
@@ -237,21 +237,20 @@ void Tileset::draw(int scr_w, int scr_h, SDL_Rect cam_rect, SDL_Renderer* rend)
         }
     }
     for (int i = 0; i < objs.size(); i++) {
-        int x = (objs[i].x*TILE_WIDTH - cam_rect.x) / ((float) cam_rect.w / (float) scr_w) + 1;
-        int y = (objs[i].y*TILE_WIDTH - cam_rect.y) / ((float) cam_rect.h / (float) scr_h) + 1;
-        int w = (1 + (objs[i].type == PLACING_SPRINGS)) * TILE_WIDTH * ((float) scr_w / (float) cam_rect.w);
-        int h = TILE_WIDTH * ((float) scr_h / (float) cam_rect.h);
+        int x = (objs[i].x*TILE_WIDTH - cam_rect.x) * aspect_ratio;
+        int y = (objs[i].y*TILE_WIDTH - cam_rect.y) * aspect_ratio;
+        int w = (1 + (objs[i].type == PLACING_SPRINGS)) * TILE_WIDTH * aspect_ratio;
+        int h = TILE_WIDTH * aspect_ratio;
         SDL_Rect render_rect = {x, y, w, h};
 
         if (objs[i].type == PLACING_SPRINGS) {
             SDL_SetRenderDrawColor(rend, 255, 255, 0, SDL_ALPHA_OPAQUE);
             SDL_RenderFillRect(rend, &render_rect);
-            int arrow_w = TILE_WIDTH/2 * ((float) scr_w / (float) cam_rect.w);
-            int arrow_h = TILE_WIDTH*objs[i].spring_height * ((float) scr_w / (float) cam_rect.w);
-            int arrow_x = (((float) objs[i].x+3./4.)*TILE_WIDTH - cam_rect.x) * ((float) scr_w / (float) cam_rect.w);
-            int arrow_y = ((objs[i].y + (objs[i].color == 0)) * TILE_WIDTH - cam_rect.y) * ((float) scr_w / (float) cam_rect.w) - (!objs[i].color * arrow_h);
+            int arrow_w = TILE_WIDTH/2 * aspect_ratio;
+            int arrow_h = TILE_WIDTH*objs[i].spring_height * aspect_ratio;
+            int arrow_x = (((float) objs[i].x+3./4.)*TILE_WIDTH - cam_rect.x) * aspect_ratio;
+            int arrow_y = ((objs[i].y + (objs[i].color == 0)) * TILE_WIDTH - cam_rect.y) * aspect_ratio - (!objs[i].color * arrow_h);
             SDL_Rect arrow_rect = {arrow_x, arrow_y, arrow_w, arrow_h};
-            printf("arrow x y w h = %d %d %d %d\n", arrow_x, arrow_y, arrow_w, arrow_h);
             SDL_SetRenderDrawColor(rend, 255, 0, 0, SDL_ALPHA_OPAQUE);
             SDL_RenderFillRect(rend, &arrow_rect);
         }
@@ -261,6 +260,7 @@ void Tileset::draw(int scr_w, int scr_h, SDL_Rect cam_rect, SDL_Renderer* rend)
 
 void Tileset::handle_event(Engine* game, SDL_Event e, int scr_w, int scr_h, SDL_Rect cam_rect, PlacingType placing)
 {
+    bool click_color;
     switch (e.type)
     {
     case SDL_MOUSEBUTTONDOWN:
@@ -306,6 +306,11 @@ void Tileset::handle_event(Engine* game, SDL_Event e, int scr_w, int scr_h, SDL_
             break;
         // we're placing objects
         case PLACING_SPRINGS:
+            click_color = (e.button.button == SDL_BUTTON_LEFT) ? COLOR_BLACK : COLOR_WHITE;
+            if (!click_color != tiles[y1][x1]) {
+                printf("\a");
+                return;
+            }
             for (int i = 0; i < objs.size(); i++) {
                 if (x1 == objs[i].x && y1 == objs[i].y) {
                     objs[i].spring_height = atoi(get_str(game, "spring height").c_str());
@@ -316,30 +321,11 @@ void Tileset::handle_event(Engine* game, SDL_Event e, int scr_w, int scr_h, SDL_
             new_obj.x = x1;
             new_obj.y = y1;
             new_obj.type = placing;
-            new_obj.color = (e.button.button == SDL_BUTTON_LEFT) ? COLOR_BLACK : COLOR_WHITE;
+            new_obj.color = (Color) click_color;
             new_obj.spring_height = atoi(get_str(game, "spring height").c_str());
             objs.push_back(new_obj);
             break;
         default:
-            if (placing == PLACING_EXITS) {
-                EditorObject new_obj;
-                new_obj.x = x1;
-                new_obj.y = y1;
-                new_obj.type = placing;
-                if (x1 == 0) {
-                    new_obj.dir = EXIT_LEFT;
-                } else if (x1 == width-2) {
-                    new_obj.dir = EXIT_RIGHT;
-                } else if (y1 == 0) {
-                    new_obj.dir = EXIT_UP;
-                } else if (y1 == height-2) {
-                    new_obj.dir = EXIT_DOWN;
-                } else {
-                    printf("\a");
-                    break;
-                }
-                objs.push_back(new_obj);
-            }
             break;
         }
     }
@@ -427,7 +413,7 @@ int get_height(float v0)
 {
     float res;
     res = pow(v0, 2) / (2.*GRAVITY) / TILE_WIDTH;
-    return res;
+    return round(res);
 }
 
 void LevelEditor::init(Engine* game)
