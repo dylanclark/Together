@@ -40,9 +40,8 @@ typedef enum _CharStatus {
     CHAR_IDLE = 0,
     CHAR_RUN,
     CHAR_JUMP,
-    CHAR_ENTERING,
-    CHAR_EXITING,
-    CHAR_INACTIVE
+    CHAR_INACTIVE,
+    CHAR_EXITED,
 } CharStatus;
 
 typedef enum _ExitDir {
@@ -61,7 +60,7 @@ public:
 
     bool handle_event(SDL_Event &e, Zonestate* zone, Engine* game);
     void update(Zonestate* zone, Engine* game);
-    void render(SDL_Rect* camera, Engine* game);
+    void render(Engine* game, SDL_Rect* camera, Level* lvl);
 
     void move(int x, int y);
 

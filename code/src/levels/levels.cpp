@@ -225,7 +225,7 @@ void Zonestate::draw(Engine* game)
         levels[i]->draw_bg(game, *cam_rect, active_color);
     }
     for (int i = 0; i < chars.size(); i++) {
-        chars[i].render(cam_rect, game);
+        chars[i].render(game, cam_rect, levels[active_level]);
     }
     for (int i = 0; i < levels.size(); i++) {
         levels[i]->draw_fg(game, *cam_rect, active_color);
@@ -284,7 +284,6 @@ void Zonestate::check_exit()
     if (chars[0].get_exit_dir() == chars[1].get_exit_dir()) {
         // determine new active level
         for (int i = 0; i < levels.size(); i++) {
-            printf("level %d\n", i);
             if (i == active_level) {
                 continue;
             }

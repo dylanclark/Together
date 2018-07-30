@@ -224,16 +224,17 @@ bool Dot::handle_event(SDL_Event &e, Zonestate* zone, Engine* game)
 
 void Dot::update(Zonestate* zone, Engine* game)
 {
-    if (zone->active_color != m_color) {
-        m_status = CHAR_INACTIVE;
-        return;
-    }
-
     if (exited) {
         zone->check_exit();
         if (exited) {
             enter();
         }
+        return;
+    }
+
+    if (zone->active_color != m_color) {
+        m_status = entering ? CHAR_EXITED : CHAR_INACTIVE;
+        return;
     }
 
     // update x velocity
@@ -485,6 +486,7 @@ void Dot::exit(ExitDir dir)
 
 void Dot::enter()
 {
+    m_status = CHAR_IDLE;
     exiting = exited = false;
     entering = true;
     switch (exit_dir)
@@ -510,6 +512,12 @@ void Dot::good_exit()
 {
     exiting = exited = entering = false;
     up = down = left = right = false;
+    m_xvel = m_yvel = 0;
+    if (exit_dir == EXIT_UP && m_color == 0) {
+        m_yvel = -5;
+    } else if (exit_dir == EXIT_DOWN && m_color == 1) {
+        m_yvel = 5;
+    }
     return;
 }
 
@@ -523,7 +531,7 @@ bool Dot::in_level(Level* lvl)
             col_rect.y + col_rect.h > lvl_y && col_rect.y < lvl_y + lvl_h);
 }
 
-void Dot::render(SDL_Rect* camera, Engine* game)
+void Dot::render(Engine* game, SDL_Rect* camera, Level* lvl)
 {
     int animation_length;
     double animation_speed;
@@ -544,9 +552,13 @@ void Dot::render(SDL_Rect* camera, Engine* game)
             animation_speed = 150.0;
             animation_length = 10;
             break;
+        case CHAR_EXITED:
+            animation_speed = 150.0;
+            animation_length = 10;
+            break;
         default:
             animation_speed = 100;
-            animation_length = 1;
+            animation_length = 2;
             break;
     }
 
@@ -565,7 +577,27 @@ void Dot::render(SDL_Rect* camera, Engine* game)
     SDL_Rect frame_clip = {frame * 16, m_status * 16, 16, 16};
     int render_x = col_rect.x + (col_rect.w - m_tex.get_width()) / 2;
     int render_y = col_rect.y + (m_color == 0) * (col_rect.h - m_tex.get_height());
-    m_tex.render(render_x, render_y, &frame_clip, camera, game, dir, m_color);
+    float angle = 0.0;
+    if (m_status == CHAR_EXITED) {
+        int lvl_x = lvl->get_x();
+        int lvl_y = lvl->get_y();
+        int lvl_w = lvl->get_w()*TILE_WIDTH;
+        int lvl_h = lvl->get_h()*TILE_WIDTH;
+        if (exit_dir == EXIT_LEFT) {
+            render_x = lvl_x;
+        } else if (exit_dir == EXIT_RIGHT) {
+            render_x = lvl_x + lvl_w - m_tex.get_width();
+        } else if (exit_dir == EXIT_UP) {
+            render_y = lvl_y;
+            angle = 90.0;
+            dir = DIR_LEFT;
+        } else if (exit_dir == EXIT_DOWN) {
+            render_y = lvl_y + lvl_h - m_tex.get_height();
+            angle = 270.0;
+            dir = DIR_LEFT;
+        }
+    }
+    m_tex.render(render_x, render_y, &frame_clip, camera, game, dir, m_color, angle);
 };
 
 void Dot::move(int x, int y)

@@ -239,7 +239,7 @@ void Tileset::draw(int scr_w, int scr_h, SDL_Rect cam_rect, SDL_Renderer* rend)
     for (int i = 0; i < objs.size(); i++) {
         int x = (objs[i].x*TILE_WIDTH - cam_rect.x) / ((float) cam_rect.w / (float) scr_w) + 1;
         int y = (objs[i].y*TILE_WIDTH - cam_rect.y) / ((float) cam_rect.h / (float) scr_h) + 1;
-        int w = TILE_WIDTH * ((float) scr_w / (float) cam_rect.w);
+        int w = (1 + (objs[i].type == PLACING_SPRINGS)) * TILE_WIDTH * ((float) scr_w / (float) cam_rect.w);
         int h = TILE_WIDTH * ((float) scr_h / (float) cam_rect.h);
         SDL_Rect render_rect = {x, y, w, h};
 
@@ -249,7 +249,7 @@ void Tileset::draw(int scr_w, int scr_h, SDL_Rect cam_rect, SDL_Renderer* rend)
             int arrow_w = TILE_WIDTH/2 * ((float) scr_w / (float) cam_rect.w);
             int arrow_h = TILE_WIDTH*objs[i].spring_height * ((float) scr_w / (float) cam_rect.w);
             int arrow_x = (((float) objs[i].x+3./4.)*TILE_WIDTH - cam_rect.x) * ((float) scr_w / (float) cam_rect.w);
-            int arrow_y = (objs[i].y * TILE_WIDTH - cam_rect.y) * ((float) scr_w / (float) cam_rect.w) - (!objs[i].color * arrow_h);
+            int arrow_y = ((objs[i].y + (objs[i].color == 0)) * TILE_WIDTH - cam_rect.y) * ((float) scr_w / (float) cam_rect.w) - (!objs[i].color * arrow_h);
             SDL_Rect arrow_rect = {arrow_x, arrow_y, arrow_w, arrow_h};
             printf("arrow x y w h = %d %d %d %d\n", arrow_x, arrow_y, arrow_w, arrow_h);
             SDL_SetRenderDrawColor(rend, 255, 0, 0, SDL_ALPHA_OPAQUE);
@@ -306,12 +306,18 @@ void Tileset::handle_event(Engine* game, SDL_Event e, int scr_w, int scr_h, SDL_
             break;
         // we're placing objects
         case PLACING_SPRINGS:
+            for (int i = 0; i < objs.size(); i++) {
+                if (x1 == objs[i].x && y1 == objs[i].y) {
+                    objs[i].spring_height = atoi(get_str(game, "spring height").c_str());
+                    return;
+                }
+            }
             EditorObject new_obj;
             new_obj.x = x1;
             new_obj.y = y1;
             new_obj.type = placing;
             new_obj.color = (e.button.button == SDL_BUTTON_LEFT) ? COLOR_BLACK : COLOR_WHITE;
-            new_obj.spring_height = atoi(get_str(game, "spring speed").c_str());
+            new_obj.spring_height = atoi(get_str(game, "spring height").c_str());
             objs.push_back(new_obj);
             break;
         default:
