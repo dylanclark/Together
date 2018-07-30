@@ -618,37 +618,55 @@ LevelThumbnail::LevelThumbnail(Engine* game, int zone_num, int lvl_num, int x, i
     Uint32 format = SDL_GetWindowPixelFormat(game->win);
     m_tex = SDL_CreateTexture(game->rend, format, SDL_TEXTUREACCESS_TARGET, m_w*TILE_WIDTH, m_h*TILE_WIDTH);
     SDL_SetRenderTarget(game->rend, m_tex);
+    int cur_tile;
+    bool platform_flag;
     for (int i = 0; i < m_w*m_h; i++) {
-        int cur_tile;
         level_file >> cur_tile;
-        int color;
+        platform_flag = false;
         switch (cur_tile)
         {
-        case TILE_BLACK:
+        case TILE_BLACK_SOLID:
             SDL_SetRenderDrawColor(game->rend, 0, 0, 0, SDL_ALPHA_OPAQUE);
             break;
-        case TILE_WHITE:
+        case TILE_WHITE_SOLID:
             SDL_SetRenderDrawColor(game->rend, 255, 255, 255, SDL_ALPHA_OPAQUE);
             break;
-        case TILE_GLASS:
+        case TILE_CLEAR:
             SDL_SetRenderDrawColor(game->rend, 150, 150, 150, SDL_ALPHA_OPAQUE);
             break;
-        case TILE_BRICK:
+        case TILE_SOLID:
             SDL_SetRenderDrawColor(game->rend, 0, 0, 150, SDL_ALPHA_OPAQUE);
+            break;
+        case TILE_BLACK_PLATFORM:
+        case TILE_WHITE_PLATFORM:
+            platform_flag = true;
             break;
         default:
             SDL_SetRenderDrawColor(game->rend, 255, 0, 0, SDL_ALPHA_OPAQUE);
             break;
         }
-        SDL_Rect to_draw = {(i % m_w)*TILE_WIDTH, (i/m_w)*TILE_WIDTH, TILE_WIDTH, TILE_WIDTH};
-        SDL_RenderFillRect(game->rend, &to_draw);
+        if (platform_flag) {
+            int black_height;
+            if (cur_tile == TILE_BLACK_PLATFORM) {
+                black_height = TILE_WIDTH/4;
+            } else {
+                black_height = TILE_WIDTH*3/4;
+            }
+            SDL_Rect black_rect = {(i % m_w)*TILE_WIDTH, (i/m_w)*TILE_WIDTH, TILE_WIDTH, black_height};
+            SDL_Rect white_rect = {(i % m_w)*TILE_WIDTH, (i/m_w)*TILE_WIDTH+black_height, TILE_WIDTH, TILE_WIDTH-black_height};
+            SDL_SetRenderDrawColor(game->rend, 0, 0, 0, SDL_ALPHA_OPAQUE);
+            SDL_RenderFillRect(game->rend, &black_rect);
+            SDL_SetRenderDrawColor(game->rend, 255, 255, 255, SDL_ALPHA_OPAQUE);
+            SDL_RenderFillRect(game->rend, &white_rect);
+        } else {
+            SDL_Rect to_draw = {(i % m_w)*TILE_WIDTH, (i/m_w)*TILE_WIDTH, TILE_WIDTH, TILE_WIDTH};
+            SDL_RenderFillRect(game->rend, &to_draw);
+        }
     }
-    int num_exits;
-    level_file >> num_exits;
-    int exit_x, exit_y, exit_dir;
-    for (int i = 0; i < num_exits; i++) {
-        level_file >> exit_x >> exit_y >> exit_dir;
-        exits.push_back(new LevelThumbnailExit(exit_x, exit_y, (ExitDir) exit_dir, x, y));
+    // TODO objects
+    int num_objs;
+    level_file >> num_objs;
+    for (int i = 0; i < num_objs; i++) {
     }
     level_file.close();
 

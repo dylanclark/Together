@@ -12,6 +12,8 @@
 #include <engine.hpp>
 #include <tiles.hpp>
 
+static const float GRAVITY = .25;
+
 class Vector
 {
 public:
@@ -57,9 +59,9 @@ public:
 
     SDL_Rect get_rect() { return col_rect; }
     int get_dir() { return dir; }
-    float get_y_vel() { return y_vel; }
+    float get_yvel() { return m_yvel; }
 
-    void spring(int x, int y, int direction);
+    void spring_me(float yvel);
     bool center(SDL_Rect* end_rect);
 
     bool snapped;
@@ -74,12 +76,12 @@ private:
     // what animation frame is the dot on?
     int jump_start;
 
-
     // is the dot jumping?
     int short_hop;
-    float x_vel, y_vel;
+    float m_xvel, m_yvel;
     float true_y;
     bool up, down, left, right;
+    bool platform_drop;
     Controller* controller;
     Texture m_tex;
     SDL_Rect col_rect;

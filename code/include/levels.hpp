@@ -77,6 +77,7 @@ public:
     int get_w() { return m_w; }
     int get_h() { return m_h; }
     std::vector<Tile> get_tileset() { return tileset; }
+    std::vector<Object*> get_objects() { return objects; }
 
     bool just_exited;
 
@@ -96,10 +97,8 @@ private:
 
     // tileset
     std::vector<Tile> tileset;
+    std::vector<Object*> objects;
     Texture tile_tex;
-
-    // TODO
-    // std::vector<Object> objects;
 };
 
 

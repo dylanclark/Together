@@ -13,50 +13,45 @@
 #include <char.hpp>
 #include <engine.hpp>
 
-// TODO
-class Object;
+typedef enum _ObjectType {
+    OBJECT_SPRING = 0,
+    OBJECT_BLOCK,
+} ObjectType;
 
-typedef enum _buttonstatus {
-    BUTT_INACTIVE = 0,
-    BUTT_ACTIVATE = 1,
-    BUTT_ACTIVE = 2,
-    BUTT_INACTIVATE = 3
-} buttonstatus;
+typedef enum _SpringStatus {
+    SPRING_IDLE,
+    SPRING_SPRUNG,
+    SPRING_INACTIVE
+} SpringStatus;
 
-static const int BUTT_ANIMATION_LENGTH = 4;
+class Object
+{
+public:
+    Object() { };
 
-typedef enum _directions {
-    UP = 0,
-    RIGHT = 1,
-    DOWN = 2,
-    LEFT = 3
-} directions;
+    virtual void render(Engine* game, SDL_Rect cam_rect, bool active_color) = 0;
 
-typedef enum _cratetype {
-    FOUR_BY_TWO = 0,
-    FOUR_BY_ONE = 1,
-    TWO_BY_TWO = 2,
-    THREE_BY_TWO = 3
-} cratetype;
+    ObjectType get_type() { return m_type; }
+    SDL_Rect get_rect() { return m_rect; }
 
-// max number of tiles that this crate will need to render
-static const int MAX_BORDER = 12;
+    SDL_Rect m_rect;
+    ObjectType m_type;
+    Texture m_tex;
+    bool m_color;
+};
 
-typedef enum _springstatus {
-    BOARD_INACTIVE = 0,
-    BOARD_ACTIVATE = 1,
-    BOARD_ACTIVE = 2,
-    BOARD_INACTIVATE = 3
-} springstatus;
+class Spring : public Object
+{
+public:
+    Spring(Engine* game, int x, int y, bool color, float y_vel, SDL_Color palette);
+    void render(Engine* game, SDL_Rect cam_rect, bool active_color);
+    float get_yvel() { return m_yvel; }
+    void spring();
 
-static const int BOARD_ANIMATION_LENGTH = 7;
-static const int SPRING_X_VEL = 0;
-static const int SPRING_Y_VEL = 10;
-
-// direction
-typedef enum _flipdir {
-    FLIP_LEFT = 0,
-    FLIP_RIGHT = 1
-} flipdir;
+private:
+    SpringStatus m_status;
+    float m_yvel;
+    int spring_start;
+};
 
 #endif /* object_hpp */

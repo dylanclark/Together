@@ -8,20 +8,20 @@
 typedef enum Color {
     COLOR_BLACK,
     COLOR_WHITE,
-    COLOR_GLASS,
-    COLOR_BRICK
+    COLOR_CLEAR,
+    COLOR_SOLID
 } Color;
 
-static const int NUM_PLACING_TYPES = 6;
 
 typedef enum PlacingType {
-    PLACING_DELETE,
-    PLACING_TILES,
+    PLACING_TILES_BW,
+    PLACING_TILES_CS,
+    PLACING_PLATFORMS,
+    PLACING_SPRINGS,
     PLACING_EXITS,
-    PLACING_BUTTONS,
-    PLACING_CRATES,
-    PLACING_SPRINGS
+    PLACING_DELETE
 } PlacingType;
+static const int NUM_PLACING_TYPES = PLACING_DELETE + 1;
 
 static const int EDITOR_CAMERA_SPEED = 10;
 
@@ -75,13 +75,15 @@ private:
     int width, height;
 };
 
-class Object
+class EditorObject
 {
 public:
     PlacingType type;
     int x, y;
     // we'll only use this if necessary
     ExitDir dir;
+    // and this
+    int spring_height;
     Color color;
     SDL_Texture* tex;
 };
@@ -89,9 +91,9 @@ public:
 class Tileset
 {
 public:
-    Tileset(int w, int h, std::vector<std::vector<int> > tiles_arg, std::vector<Object> objs);
+    Tileset(int w, int h, std::vector<std::vector<TileType> > tiles_arg, std::vector<EditorObject> objs);
     void draw(int scr_w, int scr_h, SDL_Rect cam_rect, SDL_Renderer* rend);
-    void handle_event(Engine* game, SDL_Event e, int scr_w, int scr_h, SDL_Rect cam_rect, PlacingType placing, bool lshift, bool rshift);
+    void handle_event(Engine* game, SDL_Event e, int scr_w, int scr_h, SDL_Rect cam_rect, PlacingType placing);
 
     void add_row_top();
     void remove_row_top();
@@ -102,11 +104,11 @@ public:
     void add_col_right();
     void remove_col_right();
 
-    std::vector<std::vector<int> > tiles;
-    std::vector<Object> objs;
+    std::vector<std::vector<TileType> > tiles;
+    std::vector<EditorObject> objs;
 
 private:
-    void fill_rect(Color color, int x, int y);
+    void fill_rect(TileType type, int x, int y);
 
     // tiles and objects we want to keep track of
     int width, height;
@@ -114,7 +116,7 @@ private:
     // these are for remembering two clicks when drawing tile rects
     int click_x, click_y;
     bool clicked;
-    Color clicked_color;
+    TileType clicked_type;
 };
 
 std::string get_str(Engine* game, std::string prompt, std::string result = "");
@@ -135,7 +137,7 @@ public:
 private:
     // helper functions for the editor
     void draw_UI(Engine* game, int scr_w, int scr_h);
-    std::vector<std::vector<std::string> > output_arr(std::vector<std::vector<int> > tiles);
+    std::vector<std::vector<std::string> > output_arr(std::vector<std::vector<TileType> > tiles);
     void write_level(Engine* game);
 
     EditorCamera* camera;
@@ -144,7 +146,6 @@ private:
     Tileset* tileset;
 
     PlacingType placing;
-    bool lshift, rshift;
     int lvl_w, lvl_h;
     int m_zone_num, m_lvl_num;
 

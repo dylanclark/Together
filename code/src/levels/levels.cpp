@@ -15,7 +15,6 @@ LevelExit::LevelExit(int x, int y, ExitDir dir, SDL_Renderer* rend, SDL_Color* p
     m_rect.h = (dir == EXIT_UP || dir == EXIT_DOWN) ? TILE_WIDTH*2 : TILE_WIDTH*6;
     m_dir = dir;
     m_tex.load_object(m_rect.w, m_rect.h, "exit2.png", rend, palette);
-
 }
 
 // returns the number of chars on the exit
@@ -66,15 +65,25 @@ void Level::load_level(Engine* game, int zone_num, int lvl_num, SDL_Color palett
         }
     }
 
-    int num_exits;
-    level_file >> num_exits;
-    int exit_x, exit_y, exit_dir;
-    for (int i = 0; i < num_exits; i++) {
-        level_file >> exit_x;
-        level_file >> exit_y;
-        level_file >> exit_dir;
-        LevelExit new_exit(m_x + exit_x*TILE_WIDTH, m_y + exit_y*TILE_WIDTH, (ExitDir) exit_dir, game->rend, &palette);
-        exits.push_back(new_exit);
+    int num_objs;
+    level_file >> num_objs;
+    int obj_type;
+    int obj_x, obj_y;
+    bool obj_color;
+    float spring_vel;
+    Spring* new_spring;
+    for (int i = 0; i < num_objs; i++) {
+        level_file >> obj_type >> obj_x >> obj_y >> obj_color;
+        switch (obj_type)
+        {
+        case OBJECT_SPRING:
+            level_file >> spring_vel;
+            new_spring = new Spring(game, m_x + obj_x*TILE_WIDTH, m_y + obj_y*TILE_WIDTH, obj_color, spring_vel, palette);
+            objects.push_back(new_spring);
+            break;
+        default:
+            break;
+        }
     }
 
     // close the file
@@ -180,6 +189,11 @@ void Level::draw_bg(Engine* game, SDL_Rect cam_rect, bool active_color)
     }
     for (int i = 0; i < exits.size(); i++) {
         exits[i].render(game, cam_rect);
+    }
+
+    // draw objects
+    for (int i = 0; i < objects.size(); i++) {
+        objects[i]->render(game, cam_rect, active_color);
     }
 }
 

@@ -161,7 +161,7 @@ void Gridlines::draw(int scr_w, int scr_h, SDL_Rect cam_rect, SDL_Renderer* rend
     }
 }
 
-Tileset::Tileset(int w, int h, std::vector<std::vector<int> > tiles_arg=std::vector<std::vector<int> >(), std::vector<Object> objs_arg=std::vector<Object>())
+Tileset::Tileset(int w, int h, std::vector<std::vector<TileType> > tiles_arg=std::vector<std::vector<TileType> >(), std::vector<EditorObject> objs_arg=std::vector<EditorObject>())
 {
     clicked = 0;
     click_x = click_y = 0;
@@ -169,9 +169,9 @@ Tileset::Tileset(int w, int h, std::vector<std::vector<int> > tiles_arg=std::vec
     height = h;
     if (tiles_arg.size() == 0) {
         for (int i = 0; i < height; i++) {
-            tiles.push_back(std::vector<int>());
+            tiles.push_back(std::vector<TileType>());
             for (int j = 0; j < width; j++) {
-                tiles[i].push_back(COLOR_WHITE);
+                tiles[i].push_back(TILE_WHITE_SOLID);
             }
         }
     } else {
@@ -189,49 +189,51 @@ void Tileset::draw(int scr_w, int scr_h, SDL_Rect cam_rect, SDL_Renderer* rend)
             int x2 = ((j+1)*TILE_WIDTH - cam_rect.x) / ((float) cam_rect.w / (float) scr_w);
             int y1 = (i*TILE_WIDTH - cam_rect.y) / ((float) cam_rect.h / (float) scr_h);
             int y2 = ((i+1)*TILE_WIDTH - cam_rect.y) / ((float) cam_rect.h / (float) scr_h);
-            SDL_Rect to_draw;
-            to_draw.x = x1;
-            to_draw.y = y1;
-            to_draw.w = x2-x1;
-            to_draw.h = y2-y1;
+            int black_height;
+            bool platform_flag = false;
+            SDL_Rect to_draw = {x1, y1, x2-x1, y2-y1};
             switch (tiles[i][j])
             {
-            case COLOR_WHITE:
+            case TILE_WHITE_SOLID:
                 SDL_SetRenderDrawColor(rend, 255, 255, 255, SDL_ALPHA_OPAQUE);
                 break;
-            case COLOR_BLACK:
+            case TILE_BLACK_SOLID:
                 SDL_SetRenderDrawColor(rend, 0, 0, 0, SDL_ALPHA_OPAQUE);
                 break;
-            case COLOR_GLASS:
+            case TILE_CLEAR:
                 SDL_SetRenderDrawColor(rend, 100, 100, 100, SDL_ALPHA_OPAQUE);
                 break;
-            case COLOR_BRICK:
+            case TILE_SOLID:
                 SDL_SetRenderDrawColor(rend, 0, 0, 150, SDL_ALPHA_OPAQUE);
+                break;
+            case TILE_BLACK_PLATFORM:
+                black_height = TILE_WIDTH/4;
+                platform_flag = true;
+                break;
+            case TILE_WHITE_PLATFORM:
+                black_height = TILE_WIDTH*3/4;
+                platform_flag = true;
                 break;
             default:
                 SDL_SetRenderDrawColor(rend, 255, 0, 0, SDL_ALPHA_OPAQUE);
                 break;
             }
             if (clicked && click_x == j && click_y == i) {
-                switch (clicked_color)
-                {
-                case COLOR_BLACK:
-                    SDL_SetRenderDrawColor(rend, 0, 0, 255, SDL_ALPHA_OPAQUE);
-                    break;
-                case COLOR_WHITE:
-                    SDL_SetRenderDrawColor(rend, 255, 255, 0, SDL_ALPHA_OPAQUE);
-                    break;
-                case COLOR_GLASS:
-                    SDL_SetRenderDrawColor(rend, 0, 255, 0, SDL_ALPHA_OPAQUE);
-                    break;
-                case COLOR_BRICK:
-                    SDL_SetRenderDrawColor(rend, 255, 100, 0, SDL_ALPHA_OPAQUE);
-                    break;
-                default:
-                    break;
-                }
+                platform_flag = false;
+                SDL_SetRenderDrawColor(rend, 255, 100, 0, SDL_ALPHA_OPAQUE);
             }
-            SDL_RenderFillRect(rend, &to_draw);
+            if (platform_flag) {
+                float aspect_ratio = ((float) scr_w / (float) cam_rect.w);
+                black_height *= aspect_ratio;
+                SDL_Rect black_rect = {to_draw.x, to_draw.y, to_draw.w, black_height};
+                SDL_Rect white_rect = {to_draw.x, to_draw.y+black_height + 1, to_draw.w, TILE_WIDTH*aspect_ratio - black_height};
+                SDL_SetRenderDrawColor(rend, 0, 0, 0, SDL_ALPHA_OPAQUE);
+                SDL_RenderFillRect(rend, &black_rect);
+                SDL_SetRenderDrawColor(rend, 255, 255, 255, SDL_ALPHA_OPAQUE);
+                SDL_RenderFillRect(rend, &white_rect);
+            } else {
+                SDL_RenderFillRect(rend, &to_draw);
+            }
         }
     }
     for (int i = 0; i < objs.size(); i++) {
@@ -241,18 +243,23 @@ void Tileset::draw(int scr_w, int scr_h, SDL_Rect cam_rect, SDL_Renderer* rend)
         int h = TILE_WIDTH * ((float) scr_h / (float) cam_rect.h);
         SDL_Rect render_rect = {x, y, w, h};
 
-        if (objs[i].type == PLACING_EXITS) {
-            render_rect.w *= (2 + 4*(objs[i].dir == EXIT_UP || objs[i].dir == EXIT_DOWN));
-            render_rect.h *= (2 + 4*(objs[i].dir == EXIT_LEFT || objs[i].dir == EXIT_RIGHT));
-            SDL_SetRenderDrawBlendMode(rend, SDL_BLENDMODE_BLEND);
-            SDL_SetRenderDrawColor(rend, 150, 150, 0, 150);
+        if (objs[i].type == PLACING_SPRINGS) {
+            SDL_SetRenderDrawColor(rend, 255, 255, 0, SDL_ALPHA_OPAQUE);
             SDL_RenderFillRect(rend, &render_rect);
+            int arrow_w = TILE_WIDTH/2 * ((float) scr_w / (float) cam_rect.w);
+            int arrow_h = TILE_WIDTH*objs[i].spring_height * ((float) scr_w / (float) cam_rect.w);
+            int arrow_x = (((float) objs[i].x+3./4.)*TILE_WIDTH - cam_rect.x) * ((float) scr_w / (float) cam_rect.w);
+            int arrow_y = (objs[i].y * TILE_WIDTH - cam_rect.y) * ((float) scr_w / (float) cam_rect.w) - (!objs[i].color * arrow_h);
+            SDL_Rect arrow_rect = {arrow_x, arrow_y, arrow_w, arrow_h};
+            printf("arrow x y w h = %d %d %d %d\n", arrow_x, arrow_y, arrow_w, arrow_h);
+            SDL_SetRenderDrawColor(rend, 255, 0, 0, SDL_ALPHA_OPAQUE);
+            SDL_RenderFillRect(rend, &arrow_rect);
         }
     }
     // next we will draw all of the objects... eventually, bc we don't support textures yet
 }
 
-void Tileset::handle_event(Engine* game, SDL_Event e, int scr_w, int scr_h, SDL_Rect cam_rect, PlacingType placing, bool lshift, bool rshift)
+void Tileset::handle_event(Engine* game, SDL_Event e, int scr_w, int scr_h, SDL_Rect cam_rect, PlacingType placing)
 {
     switch (e.type)
     {
@@ -268,22 +275,24 @@ void Tileset::handle_event(Engine* game, SDL_Event e, int scr_w, int scr_h, SDL_
         switch (placing)
         {
         // we're placing tiles
-        case PLACING_TILES:
+        case PLACING_TILES_BW:
+        case PLACING_TILES_CS:
+        case PLACING_PLATFORMS:
             if (!clicked) {
                 // if we haven't clicked before, save the click
                 click_x = x1;
                 click_y = y1;
                 clicked = true;
-                if (lshift) {
-                    clicked_color = COLOR_GLASS;
-                } else if (rshift) {
-                    clicked_color = COLOR_BRICK;
-                } else {
-                    clicked_color = (e.button.button == SDL_BUTTON_LEFT) ? COLOR_BLACK : COLOR_WHITE;
+                if (placing == PLACING_TILES_BW) {
+                    clicked_type = (e.button.button == SDL_BUTTON_LEFT) ? TILE_BLACK_SOLID : TILE_WHITE_SOLID;
+                } else if (placing == PLACING_TILES_CS) {
+                    clicked_type = (e.button.button == SDL_BUTTON_LEFT) ? TILE_CLEAR : TILE_SOLID;
+                } else if (placing == PLACING_PLATFORMS) {
+                    clicked_type = (e.button.button == SDL_BUTTON_LEFT) ? TILE_BLACK_PLATFORM : TILE_WHITE_PLATFORM;
                 }
             } else {
                 // otherwise fill the rectangle that our clicks make!
-                fill_rect(clicked_color, x1, y1);
+                fill_rect(clicked_type, x1, y1);
             }
             break;
         // we're deleting stuff
@@ -296,17 +305,21 @@ void Tileset::handle_event(Engine* game, SDL_Event e, int scr_w, int scr_h, SDL_
             }
             break;
         // we're placing objects
+        case PLACING_SPRINGS:
+            EditorObject new_obj;
+            new_obj.x = x1;
+            new_obj.y = y1;
+            new_obj.type = placing;
+            new_obj.color = (e.button.button == SDL_BUTTON_LEFT) ? COLOR_BLACK : COLOR_WHITE;
+            new_obj.spring_height = atoi(get_str(game, "spring speed").c_str())*(new_obj.color - !new_obj.color);
+            objs.push_back(new_obj);
+            break;
         default:
-            Color placing_color = e.button.button == SDL_BUTTON_LEFT ? COLOR_BLACK : COLOR_WHITE;
-            if (tiles[y1][x1] == placing_color) {
-                printf("\a");
-            }
             if (placing == PLACING_EXITS) {
-                Object new_obj;
+                EditorObject new_obj;
                 new_obj.x = x1;
                 new_obj.y = y1;
                 new_obj.type = placing;
-                new_obj.color = placing_color;
                 if (x1 == 0) {
                     new_obj.dir = EXIT_LEFT;
                 } else if (x1 == width-2) {
@@ -326,7 +339,7 @@ void Tileset::handle_event(Engine* game, SDL_Event e, int scr_w, int scr_h, SDL_
     }
 }
 
-void Tileset::fill_rect(Color color, int x, int y)
+void Tileset::fill_rect(TileType type, int x, int y)
 {
     int x1 = std::min(click_x, x);
     int x2 = std::max(click_x, x);
@@ -334,7 +347,7 @@ void Tileset::fill_rect(Color color, int x, int y)
     int y2 = std::max(click_y, y);
     for (int i = y1; i <= y2; i++) {
         for (int j = x1; j <= x2; j++) {
-            tiles[i][j] = color;
+            tiles[i][j] = type;
         }
     }
     clicked = false;
@@ -343,9 +356,9 @@ void Tileset::fill_rect(Color color, int x, int y)
 void Tileset::add_row_top()
 {
     height++;
-    std::vector<int> new_row = std::vector<int>();
+    std::vector<TileType> new_row = std::vector<TileType>();
     for (int j = 0; j < width; j++) {
-        new_row.push_back(COLOR_WHITE);
+        new_row.push_back(TILE_WHITE_SOLID);
     }
     tiles.insert(tiles.begin(), new_row);
 }
@@ -359,9 +372,9 @@ void Tileset::remove_row_top()
 void Tileset::add_row_bottom()
 {
     height++;
-    std::vector<int> new_row = std::vector<int>();
+    std::vector<TileType> new_row = std::vector<TileType>();
     for (int j = 0; j < width; j++) {
-        new_row.push_back(COLOR_WHITE);
+        new_row.push_back(TILE_WHITE_SOLID);
     }
     tiles.push_back(new_row);
 }
@@ -376,7 +389,7 @@ void Tileset::add_col_left()
 {
     width++;
     for (int i = 0; i < height; i++) {
-        tiles[i].insert(tiles[i].begin(), COLOR_WHITE);
+        tiles[i].insert(tiles[i].begin(), TILE_WHITE_SOLID);
     }
 }
 
@@ -392,7 +405,7 @@ void Tileset::add_col_right()
 {
     width++;
     for (int i = 0; i < height; i++) {
-        tiles[i].push_back(COLOR_WHITE);
+        tiles[i].push_back(TILE_WHITE_SOLID);
     }
 }
 
@@ -404,9 +417,15 @@ void Tileset::remove_col_right()
     }
 }
 
+int get_height(float v0)
+{
+    float res;
+    res = pow(v0, 2) / (2.*GRAVITY) / TILE_WIDTH;
+    return res + 1;
+}
+
 void LevelEditor::init(Engine* game)
 {
-    lshift = rshift = false;
     bool loading;
     if (m_lvl_num == -1) {
         m_zone_num = atoi(get_str(game, "zone number").c_str());
@@ -429,36 +448,49 @@ void LevelEditor::init(Engine* game)
         level_file >> lvl_w;
         level_file >> lvl_h;
 
-        std::vector<std::vector<int> > tiles;
-        std::vector<Object> objs;
+        std::vector<std::vector<TileType> > tiles;
+        std::vector<EditorObject> objs;
 
         // load all the tiles
         int cur_tile;
         for (int i = 0; i < lvl_h; i++) {
-            tiles.push_back(std::vector<int>());
+            tiles.push_back(std::vector<TileType>());
             for (int j = 0; j < lvl_w; j++) {
                 level_file >> cur_tile;
-                tiles[i].push_back(cur_tile);
+                tiles[i].push_back((TileType) cur_tile);
             }
         }
 
         // load all level exits
-        int num_exits;
-        level_file >> num_exits;
-        for (int i = 0; i < num_exits; i++) {
-            Object new_exit;
-            level_file >> new_exit.x;
-            level_file >> new_exit.y;
-            int dir;
-            level_file >> dir;
-            new_exit.dir = (ExitDir) dir;
-            new_exit.type = PLACING_EXITS;
-            objs.push_back(new_exit);
-        }
+        int num_objs;
+        level_file >> num_objs;
+        int obj_type;
+        int obj_x, obj_y;
+        bool obj_color;
+        float obj_springvel;
+        EditorObject new_obj;
+
         // TODO: load all objects!
+        for (int i = 0; i < num_objs; i++) {
+            level_file >> obj_type >> obj_x >> obj_y >> obj_color;
+            new_obj.x = obj_x;
+            new_obj.y = obj_y;
+            new_obj.color = (Color) obj_color;
+            switch ((ObjectType) obj_type)
+            {
+            case OBJECT_SPRING:
+                new_obj.type = PLACING_SPRINGS;
+                level_file >> obj_springvel;
+                new_obj.spring_height = get_height(obj_springvel);
+                break;
+            default:
+                break;
+            }
+            objs.push_back(new_obj);
+        }
         tileset = new Tileset(lvl_w, lvl_h, tiles, objs);
     }
-    placing = PLACING_TILES;
+    placing = PLACING_TILES_BW;
 
     border = new Border(lvl_w, lvl_h);
     grid = new Gridlines(lvl_w, lvl_h);
@@ -483,12 +515,6 @@ void LevelEditor::handle_events(Engine* game)
         case SDL_KEYDOWN:
             switch (e.key.keysym.scancode)
             {
-            case SDL_SCANCODE_LSHIFT:
-                lshift = true;
-                break;
-            case SDL_SCANCODE_RSHIFT:
-                rshift = true;
-                break;
             case SDL_SCANCODE_ESCAPE:
                 game->pop_state();
                 break;
@@ -548,23 +574,11 @@ void LevelEditor::handle_events(Engine* game)
                 break;
             }
             break;
-        case SDL_KEYUP:
-            switch (e.key.keysym.scancode)
-            {
-            case SDL_SCANCODE_LSHIFT:
-                lshift = false;
-                break;
-            case SDL_SCANCODE_RSHIFT:
-                rshift = false;
-                break;
-            default:
-                break;
-            }
         default:
             break;
         }
         camera->handle_event(e);
-        tileset->handle_event(game, e, game->screen_width, game->screen_height, camera->get_rect(), placing, lshift, rshift);
+        tileset->handle_event(game, e, game->screen_width, game->screen_height, camera->get_rect(), placing);
     }
 }
 
@@ -599,20 +613,20 @@ void LevelEditor::draw_UI(Engine* game, int scr_w, int scr_h)
     std::string placing_str = "placing:\n";
     switch (placing)
     {
-    case PLACING_TILES:
-        placing_str += "tiles";
+    case PLACING_TILES_BW:
+        placing_str += "tiles (black/white)";
         break;
-    case PLACING_EXITS:
-        placing_str += "exits";
+    case PLACING_TILES_CS:
+        placing_str += "tiles (clear/solid)";
         break;
-    case PLACING_CRATES:
-        placing_str += "crates";
-        break;
-    case PLACING_BUTTONS:
-        placing_str += "buttons";
+    case PLACING_PLATFORMS:
+        placing_str += "tiles (platforms)";
         break;
     case PLACING_SPRINGS:
         placing_str += "springs";
+        break;
+    case PLACING_EXITS:
+        placing_str += "exits";
         break;
     case PLACING_DELETE:
         placing_str = "deleting";
@@ -749,20 +763,28 @@ bool get_yes_no(Engine* game, std::string prompt)
     }
 }
 
-std::vector<std::vector<std::string> > LevelEditor::output_arr(std::vector<std::vector<int> > tiles)
+std::vector<std::vector<std::string> > LevelEditor::output_arr(std::vector<std::vector<TileType> > tiles)
 {
     std::vector<std::vector<std::string> > result;
     for (int i = 0; i < tiles.size(); i++) {
         std::vector<std::string> new_row;
         for (int j = 0; j < tiles[0].size(); j++) {
             char new_tile[3];
-            snprintf(new_tile, 3, "%02d", tiles[i][j]);
+            snprintf(new_tile, 3, "%02d", (int) tiles[i][j]);
             std::string new_tile_str(new_tile);
             new_row.push_back(new_tile_str);
         }
         result.push_back(new_row);
     }
     return result;
+}
+
+// this determines the spring velocity from the ideal spring height
+static double get_v0(int x)
+{
+    double height = TILE_WIDTH*x;
+    double v0 = pow((float) height * 2.* GRAVITY,.5);
+    return v0;
 }
 
 void LevelEditor::write_level(Engine* game)
@@ -789,19 +811,34 @@ void LevelEditor::write_level(Engine* game)
         }
         level_file << std::endl;
     }
-    std::vector<Object> objs = tileset->objs;
-    std::vector<Object> exits;
-    int num_exits = 0;
+    std::vector<EditorObject> objs = tileset->objs;
+    level_file << objs.size() << std::endl;
     for (int i = 0; i < objs.size(); i++) {
-        if (objs[i].type == PLACING_EXITS) {
-            num_exits++;
-            exits.push_back(objs[i]);
+        ObjectType obj_type;
+        switch (objs[i].type)
+        {
+        case PLACING_SPRINGS:
+            obj_type = OBJECT_SPRING;
+            break;
+        default:
+            obj_type = OBJECT_SPRING;
+            break;
         }
+
+        level_file << obj_type << " " << objs[i].x << " " << objs[i].y << " " << objs[i].color << " ";
+        switch (obj_type)
+        {
+        case OBJECT_SPRING:
+            level_file << get_v0(objs[i].spring_height);
+            break;
+        default:
+            break;
+        }
+
+        level_file << std::endl;
     }
-    level_file << num_exits << std::endl;
-    for (int i = 0; i < num_exits; i++) {
-        level_file << exits[i].x << " " << exits[i].y << " " << exits[i].dir << std::endl;
-    }
+
     level_file.close();
     game->pop_state();
 }
+

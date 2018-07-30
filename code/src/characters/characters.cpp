@@ -18,14 +18,13 @@ static const int DEAD_ZONE = 8000;
 static const int DOT_VEL = 3;
 static const int JUMP_VEL = 6;
 static const float DOT_ACC = .5;
-static const float GRAVITY = .25;
 static const int PUSH_VEL = 2;
 
 Dot::Dot(int x, int y, bool color, SDL_Renderer* rend, SDL_Color* palette)
 {
     // initialize velocity
-    x_vel = 0;
-    y_vel = 0;
+    m_xvel = 0;
+    m_yvel = 0;
 
     // initialize controllers
     up = false;
@@ -95,6 +94,7 @@ bool Dot::handle_event(SDL_Event &e, Zonestate* zone, Engine* game)
                     if (zone->shiftable) {
                         Mix_PlayChannel(-1, game->sound->level_switch_snd, 0);
                         up = left = down = right = 0;
+                        m_xvel = 0;
                         zone->shift();
                     }
                     break;
@@ -240,89 +240,95 @@ void Dot::update(Zonestate* zone, Engine* game)
             short_hop = 0;
         }
     }
-    y_vel += (!my_color - my_color) * GRAVITY * ((short_hop > 0)*3.2 + 1);
+    m_yvel += (!my_color - my_color) * GRAVITY * ((short_hop > 0)*3.2 + 1);
 
     // update x velocity
     if (right && !left)
-        x_vel += DOT_ACC;
+        m_xvel += DOT_ACC;
     if (left && !right)
-        x_vel -= DOT_ACC;
+        m_xvel -= DOT_ACC;
     if ((!right && !left) || (right && left)) {
-        if (x_vel < 0) {
-            x_vel += DOT_ACC;
-        } else if (x_vel > 0) {
-            x_vel -= DOT_ACC;
+        if (m_xvel < 0) {
+            m_xvel += DOT_ACC;
+        } else if (m_xvel > 0) {
+            m_xvel -= DOT_ACC;
         }
     }
 
     // if the char is moving slowly enough, stop it
-    if (x_vel < (DOT_ACC) && x_vel > -(DOT_ACC)) {
-        x_vel = 0;
+    if (m_xvel < (DOT_ACC) && m_xvel > -(DOT_ACC)) {
+        m_xvel = 0;
         if (status != CHAR_JUMP) {
             status = CHAR_IDLE;
         }
     }
 
     // limit top speed
-    if (x_vel > DOT_VEL) {
-        x_vel = DOT_VEL;
-    } else if (x_vel < -DOT_VEL)
-        x_vel = -DOT_VEL;
+    if (m_xvel > DOT_VEL) {
+        m_xvel = DOT_VEL;
+    } else if (m_xvel < -DOT_VEL)
+        m_xvel = -DOT_VEL;
 
     // set direction (for animation)
-    if (x_vel < 0) {
+    if (m_xvel < 0) {
         dir = DIR_LEFT;
-    } else if (x_vel > 0) {
+    } else if (m_xvel > 0) {
         dir = DIR_RIGHT;
     }
 
-    if (x_vel != 0 && status != CHAR_JUMP) {
+    if (m_xvel != 0 && status != CHAR_JUMP) {
         status = CHAR_RUN;
     }
 
-    if (y_vel > JUMP_VEL) {
-        y_vel = JUMP_VEL;
-    } else if (y_vel < -JUMP_VEL) {
-        y_vel = -JUMP_VEL;
-    }
 
     Level* level = zone->get_active_level();
     std::vector<Tile> tileset = level->get_tileset();
 
     // move that Dot (x)
-    col_rect.x += x_vel;
+    col_rect.x += m_xvel;
 
     // resolve x collisions
     Vector repos;
     int size = level->get_w()*level->get_h();
     for (int i = 0; i < size; i++) {
         TileType type = tileset[i].get_type();
-        if (type != my_color && type != TILE_BRICK) {
+        if (type == TILE_BLACK_SOLID + !my_color ||  type == TILE_CLEAR) {
             continue;
         }
         if (check_collision(col_rect, tileset[i].get_col_rect(), &repos)) {
+            if (type == TILE_BLACK_PLATFORM + my_color) {
+                platform_drop = true;
+                continue;
+            }
             col_rect.x += repos.x;
             SDL_Rect tile_rect = tileset[i].get_col_rect();
-            if ((repos.x > 0 && x_vel < 0) ||
-                (repos.x < 0 && x_vel > 0)) {
-                x_vel = 0;
+            if ((repos.x > 0 && m_xvel < 0) ||
+                (repos.x < 0 && m_xvel > 0)) {
+                m_xvel = 0;
             }
         }
     }
 
     // move that Dot (y)
-    true_y += y_vel;
+    true_y += m_yvel;
     col_rect.y = (int) true_y + (my_color == 0);
 
     // resolve y collisions
     bool shiftable;
     bool airborne = true;
+    bool platform_col = false;
     for (int i = 0; i < size; i++) {
         TileType type = tileset[i].get_type();
-        if (type != my_color && type != TILE_BRICK) {
+        if (type == TILE_BLACK_SOLID + !my_color || type == TILE_CLEAR) {
             continue;
         }
         if (check_collision(col_rect, tileset[i].get_col_rect(), &repos)) {
+            if (type == TILE_BLACK_PLATFORM + my_color) {
+                platform_col = true;
+                if (platform_drop || (!my_color - my_color)*m_yvel < 0) {
+                    continue;
+                }
+            }
             if ((my_color == 0 && repos.y < 0) ||
                 (my_color == 1 && repos.y > 0)) {
                 // land!
@@ -331,24 +337,26 @@ void Dot::update(Zonestate* zone, Engine* game)
                 }
                 col_rect.y += repos.y;
                 true_y = col_rect.y;
-                y_vel = 0;
+                m_yvel = 0;
                 shiftable = true;
                 // jump!
                 if (up) {
                     status = CHAR_JUMP;
                     jump_start = SDL_GetTicks();
-                    y_vel = (my_color - !my_color) * JUMP_VEL;
+                    m_yvel = (my_color - !my_color) * JUMP_VEL;
                     shiftable = false;
+                } else if (down) {
+                    platform_drop = true;
                 } else {
                     airborne = false;
                 }
             } else {
                 // ceiling
-                if ((my_color == 0 && y_vel < 0) || (my_color == 1 && y_vel > 0)) {
+                if ((my_color == 0 && m_yvel < 0) || (my_color == 1 && m_yvel > 0)) {
                     // adjust y pos
                     col_rect.y += repos.y;
                     true_y = col_rect.y;
-                    y_vel = ((my_color == 0) - (my_color == 1)) * .1;
+                    m_yvel = ((my_color == 0) - (my_color == 1)) * .1;
                     short_hop = 0;
                     shiftable = false;
                     up = false;
@@ -362,6 +370,26 @@ void Dot::update(Zonestate* zone, Engine* game)
     if (airborne && status != CHAR_JUMP) {
         status = CHAR_JUMP;
         jump_start = 0;
+    }
+    if (!platform_col) {
+        platform_drop = false;
+    }
+
+    std::vector<Object*> objects = level->get_objects();
+    Spring* spring;
+    for (int i = 0; i < objects.size(); i++) {
+        if (check_collision(col_rect, objects[i]->get_rect(), &repos)) {
+            switch (objects[i]->get_type())
+            {
+            case OBJECT_SPRING:
+                spring = (Spring*) objects[i];
+                spring->spring();
+                spring_me(spring->get_yvel());
+                break;
+            default:
+                break;
+            }
+        }
     }
 
     zone->shiftable = shiftable;
@@ -415,7 +443,7 @@ void Dot::render(SDL_Rect* camera, Engine* game)
 void Dot::move(int x, int y)
 {
     up = down = right = left = false;
-    x_vel = y_vel = 0;
+    m_xvel = m_yvel = 0;
     status = CHAR_IDLE;
     col_rect.x += x;
     col_rect.y += y;
@@ -425,7 +453,7 @@ void Dot::move(int x, int y)
 void Dot::snap(LevelExit exit)
 {
     up = down = right = left = false;
-    x_vel = y_vel = 0;
+    m_xvel = m_yvel = 0;
     snapped = true;
     status = CHAR_IDLE;
     ExitDir dir = exit.get_dir();
@@ -446,30 +474,7 @@ void Dot::snap(LevelExit exit)
     true_y = col_rect.y;
 }
 
-// spring when sprung
-void Dot::spring(int x, int y, int direction)
+void Dot::spring_me(float yvel)
 {
-    // spring the right way
-    y_vel = 0;
-    my_color ? y_vel -= y * 2 : y_vel += y * 2;
-
-    // deal with any horizontal springing
-    if (direction == FLIP_RIGHT)
-    {
-        x_vel += x;
-    }
-    else
-    {
-        x_vel -= x;
-    }
-    return;
-}
-
-// center Dot on an object
-bool Dot::center(SDL_Rect* end_rect)
-{
-    col_rect.x = end_rect->x;
-    col_rect.y = end_rect->y;
-
-    return true;
+    m_yvel = yvel;
 }
