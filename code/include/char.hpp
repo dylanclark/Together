@@ -40,15 +40,24 @@ typedef enum _CharStatus {
     CHAR_IDLE = 0,
     CHAR_RUN,
     CHAR_JUMP,
+    CHAR_ENTERING,
+    CHAR_EXITING,
     CHAR_INACTIVE
 } CharStatus;
+
+typedef enum _ExitDir {
+    EXIT_LEFT = 0,
+    EXIT_RIGHT,
+    EXIT_UP,
+    EXIT_DOWN
+} ExitDir;
 
 class Dot
 {
 public:
     Dot(int x, int y, bool color, SDL_Renderer* rend, SDL_Color* palette = NULL);
 
-    bool my_color;
+    bool m_color;
 
     bool handle_event(SDL_Event &e, Zonestate* zone, Engine* game);
     void update(Zonestate* zone, Engine* game);
@@ -62,6 +71,8 @@ public:
     float get_yvel() { return m_yvel; }
 
     void spring_me(float yvel);
+    void exit(ExitDir dir);
+    void enter();
     bool center(SDL_Rect* end_rect);
 
     bool snapped;
@@ -69,8 +80,8 @@ public:
     bool ready;
 
 private:
-    // status = idle, jump, run, inactive, etc.
-    CharStatus status;
+    // m_status = idle, jump, run, inactive, etc.
+    CharStatus m_status;
     // which way is the dot facing?
     CharDir dir;
     // what animation frame is the dot on?
@@ -82,6 +93,8 @@ private:
     float true_y;
     bool up, down, left, right;
     bool platform_drop;
+    bool exiting, exited, entering;
+    ExitDir exit_dir;
     Controller* controller;
     Texture m_tex;
     SDL_Rect col_rect;

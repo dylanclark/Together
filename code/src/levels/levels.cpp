@@ -4,33 +4,6 @@
 #include <char.hpp>
 
 /******************/
-/*   LEVEL EXIT   */
-/******************/
-
-LevelExit::LevelExit(int x, int y, ExitDir dir, SDL_Renderer* rend, SDL_Color* palette)
-{
-    m_rect.x = x;
-    m_rect.y = y;
-    m_rect.w = (dir == EXIT_LEFT || dir == EXIT_RIGHT) ? TILE_WIDTH*2 : TILE_WIDTH*6;
-    m_rect.h = (dir == EXIT_UP || dir == EXIT_DOWN) ? TILE_WIDTH*2 : TILE_WIDTH*6;
-    m_dir = dir;
-    m_tex.load_object(m_rect.w, m_rect.h, "exit2.png", rend, palette);
-}
-
-// returns the number of chars on the exit
-int LevelExit::check(SDL_Rect char_rect)
-{
-    Vector repos;
-    bool collision_flag = check_collision(m_rect, char_rect, &repos);
-    return collision_flag;
-}
-
-void LevelExit::render(Engine* game, SDL_Rect camera)
-{
-    int dir = (m_dir == EXIT_RIGHT);
-    m_tex.render(m_rect.x, m_rect.y, NULL, &camera, game, dir, 0);
-}
-/******************/
 /*   LOAD LEVEL   */
 /******************/
 
@@ -101,8 +74,6 @@ Level::Level(Engine* game, int zone_num, int lvl_num, int x, int y, SDL_Color pa
     m_zone_num = zone_num;
     m_lvl_num = lvl_num;
     num_chars_ready = 0;
-    just_exited = false;
-    chosen_exit = -1;
 
     if (!tile_tex.load_tile_sheet("tiles.png", game->rend, &palette)) {
         printf("Failed to load tile sheet texture!\n");
@@ -125,58 +96,7 @@ bool Level::update(Zonestate* zone, std::vector<Dot> &chars)
     num_chars_ready = 0;
     for (int i = 0; i < chars.size(); i++) {
         ready_flag = false;
-        // we only want to snap them into place if they haven't been snapped
-        for (int j = 0; j < exits.size(); j++) {
-            if (exits[j].check(chars[i].get_rect())) {
-                ready_flag = true;
-                if (just_exited) {
-                    break;
-                }
-                num_chars_ready++;
-                if (!chars[i].snapped) {
-                    chars[i].snap(exits[j]);
-                    zone->shift();
-                    break;
-                }
-                // if this is the first
-                if (num_chars_ready == 1) {
-                    // if the char hasn't been snapped, snap it (and set snapped to true)
-                    chosen_exit = j;
-                } else if (num_chars_ready == 2 && chosen_exit == j) {
-                    done = true;
-                }
-                break;
-            }
-        }
-        if (!ready_flag && chars[i].snapped) {
-            // this means the char was snapped but is no longer colliding
-            chars[i].snapped = false;
-            just_exited = false;
-            return false;
-        }
-    }
-    if (done) {
-        ExitDir dir = exits[chosen_exit].get_dir();
-        int new_x, new_y;
-        // move the chars in the correct direction
-        if (dir == EXIT_UP) {
-            new_x = 0;
-            new_y = -3*TILE_WIDTH;
-        } else if (dir == EXIT_DOWN) {
-            new_x = 0;
-            new_y = 3*TILE_WIDTH;
-        } else if (dir == EXIT_LEFT) {
-            new_x = -3*TILE_WIDTH;
-            new_y = 0;
-        } else if (dir == EXIT_RIGHT) {
-            new_x = 3*TILE_WIDTH;
-            new_y = 0;
-        }
-        for (int i = 0; i < chars.size(); i++) {
-            chars[i].move(new_x, new_y);
-        }
-        num_chars_ready = 0;
-        return true;
+        // TODO check exiting
     }
     return false;
 }
@@ -186,9 +106,6 @@ void Level::draw_bg(Engine* game, SDL_Rect cam_rect, bool active_color)
     // draw stuff to the screen!
     for (int i = 0; i < m_w * m_h; i++) {
         tileset[i].render_bg(active_color, &cam_rect, game, &tile_tex);
-    }
-    for (int i = 0; i < exits.size(); i++) {
-        exits[i].render(game, cam_rect);
     }
 
     // draw objects

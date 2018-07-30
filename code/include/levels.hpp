@@ -16,13 +16,6 @@
 static const int MAX_SIZE = 50 * 50;
 static const int MAX_CRATES = 10;
 
-typedef enum ExitDir {
-    EXIT_UP,
-    EXIT_RIGHT,
-    EXIT_DOWN,
-    EXIT_LEFT
-} ExitDir;
-
 class Level;
 
 class Camera
@@ -40,22 +33,6 @@ private:
     int m_lvl_w, m_lvl_h;
     float loc_x, loc_y;
     SDL_Rect get_target(SDL_Rect active_char, int dir);
-};
-
-class LevelExit
-{
-public:
-    LevelExit(int x, int y, ExitDir dir, SDL_Renderer* rend, SDL_Color* palette);
-    int check(SDL_Rect char_rect);
-    void render(Engine* game, SDL_Rect camera);
-
-    SDL_Rect get_rect() { return m_rect; }
-    ExitDir get_dir() { return m_dir; }
-
-private:
-    ExitDir m_dir;
-    SDL_Rect m_rect;
-    Texture m_tex;
 };
 
 class Tile;
@@ -91,8 +68,6 @@ private:
     int m_w, m_h;
 
     // chars and level endings!
-    std::vector<LevelExit> exits;
-    int chosen_exit;
     int num_chars_ready;
 
     // tileset

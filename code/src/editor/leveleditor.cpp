@@ -421,7 +421,7 @@ int get_height(float v0)
 {
     float res;
     res = pow(v0, 2) / (2.*GRAVITY) / TILE_WIDTH;
-    return res + 1;
+    return res;
 }
 
 void LevelEditor::init(Engine* game)

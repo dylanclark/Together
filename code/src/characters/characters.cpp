@@ -34,20 +34,21 @@ Dot::Dot(int x, int y, bool color, SDL_Renderer* rend, SDL_Color* palette)
     dir = DIR_RIGHT;
     ready = false;
     snapped = false;
+    exiting = exited = entering = false;
 
     // initiliaze gamepad
     controller = new class Controller;
 
-    my_color = color;
-    if (my_color == 0) {
-        status = CHAR_IDLE;
+    m_color = color;
+    if (m_color == 0) {
+        m_status = CHAR_IDLE;
         if (!m_tex.load_object(16, 16, "char-sheet-black.png", rend, palette))
         {
             printf("Failed to load black dot texture!\n");
             return;
         }
     } else {
-        status = CHAR_INACTIVE;
+        m_status = CHAR_INACTIVE;
         if (!m_tex.load_object(16, 16, "char-sheet-white.png", rend, palette))
         {
             printf("Failed to load white dot texture!\n");
@@ -59,12 +60,15 @@ Dot::Dot(int x, int y, bool color, SDL_Renderer* rend, SDL_Color* palette)
     col_rect.w = 12;
     col_rect.h = 15;
     col_rect.x = x*TILE_WIDTH;
-    col_rect.y = y*TILE_WIDTH - (my_color == 0)*(col_rect.h-TILE_WIDTH);;
+    col_rect.y = y*TILE_WIDTH - (m_color == 0)*(col_rect.h-TILE_WIDTH);;
     true_y = col_rect.y;
 }
 
 bool Dot::handle_event(SDL_Event &e, Zonestate* zone, Engine* game)
 {
+    if (exiting || entering) {
+        return true;
+    }
     // handle those events, duder
     switch (e.type)
     {
@@ -220,27 +224,14 @@ bool Dot::handle_event(SDL_Event &e, Zonestate* zone, Engine* game)
 
 void Dot::update(Zonestate* zone, Engine* game)
 {
-    if (zone->active_color != my_color) {
-        status = CHAR_INACTIVE;
+    if (zone->active_color != m_color) {
+        m_status = CHAR_INACTIVE;
         return;
     }
 
-    if (status != CHAR_JUMP) {
-        short_hop = -1;
+    if (exited) {
+        enter();
     }
-
-    // update y velocity with gravity
-    if (status == CHAR_JUMP) {
-        int jump_duration = SDL_GetTicks() - jump_start;
-        if (jump_duration > 100 && jump_duration < 150) {
-            if (short_hop == -1) {
-                short_hop = !up;
-            }
-        } else if (jump_duration >= 150) {
-            short_hop = 0;
-        }
-    }
-    m_yvel += (!my_color - my_color) * GRAVITY * ((short_hop > 0)*3.2 + 1);
 
     // update x velocity
     if (right && !left)
@@ -258,8 +249,8 @@ void Dot::update(Zonestate* zone, Engine* game)
     // if the char is moving slowly enough, stop it
     if (m_xvel < (DOT_ACC) && m_xvel > -(DOT_ACC)) {
         m_xvel = 0;
-        if (status != CHAR_JUMP) {
-            status = CHAR_IDLE;
+        if (m_status != CHAR_JUMP) {
+            m_status = CHAR_IDLE;
         }
     }
 
@@ -276,10 +267,13 @@ void Dot::update(Zonestate* zone, Engine* game)
         dir = DIR_RIGHT;
     }
 
-    if (m_xvel != 0 && status != CHAR_JUMP) {
-        status = CHAR_RUN;
+    if (m_xvel != 0 && m_status != CHAR_JUMP) {
+        m_status = CHAR_RUN;
     }
 
+    if (m_status != CHAR_JUMP) {
+        short_hop = -1;
+    }
 
     Level* level = zone->get_active_level();
     std::vector<Tile> tileset = level->get_tileset();
@@ -287,16 +281,44 @@ void Dot::update(Zonestate* zone, Engine* game)
     // move that Dot (x)
     col_rect.x += m_xvel;
 
+    if (entering && (exit_dir == EXIT_LEFT || exit_dir == EXIT_RIGHT)) {
+        int lvl_x = level->get_x();
+        int lvl_y = level->get_y();
+        int lvl_w = level->get_w()*TILE_WIDTH;
+        int lvl_h = level->get_h()*TILE_WIDTH;
+        if (col_rect.x > lvl_x && col_rect.x + col_rect.w < lvl_x + lvl_w &&
+            col_rect.y > lvl_y && col_rect.y + col_rect.h < lvl_y + lvl_h) {
+            entering = false;
+            up = down = left = right = false;
+        } else {
+            return;
+        }
+    }
+
+    if (exiting) {
+        int lvl_x = level->get_x();
+        int lvl_y = level->get_y();
+        int lvl_w = level->get_w()*TILE_WIDTH;
+        int lvl_h = level->get_h()*TILE_WIDTH;
+        if (col_rect.x + col_rect.w < lvl_x || col_rect.x > lvl_x + lvl_w) {
+            exiting = false;
+            exited = true;
+            printf("exited!\n");
+            zone->shift();
+        }
+        return;
+    }
+
     // resolve x collisions
     Vector repos;
     int size = level->get_w()*level->get_h();
     for (int i = 0; i < size; i++) {
         TileType type = tileset[i].get_type();
-        if (type == TILE_BLACK_SOLID + !my_color ||  type == TILE_CLEAR) {
+        if (type == TILE_BLACK_SOLID + !m_color ||  type == TILE_CLEAR) {
             continue;
         }
         if (check_collision(col_rect, tileset[i].get_col_rect(), &repos)) {
-            if (type == TILE_BLACK_PLATFORM + my_color) {
+            if (type == TILE_BLACK_PLATFORM + m_color) {
                 platform_drop = true;
                 continue;
             }
@@ -309,9 +331,36 @@ void Dot::update(Zonestate* zone, Engine* game)
         }
     }
 
+    // update y velocity with gravity
+    if (m_status == CHAR_JUMP) {
+        int jump_duration = SDL_GetTicks() - jump_start;
+        if (jump_duration > 100 && jump_duration < 150) {
+            if (short_hop == -1) {
+                short_hop = !up;
+            }
+        } else if (jump_duration >= 150) {
+            short_hop = 0;
+        }
+    }
+    m_yvel += (!m_color - m_color) * GRAVITY * ((short_hop > 0)*3.2 + 1);
+
     // move that Dot (y)
     true_y += m_yvel;
-    col_rect.y = (int) true_y + (my_color == 0);
+    col_rect.y = (int) true_y + (m_color == 0);
+
+    if (entering) {
+        int lvl_x = level->get_x();
+        int lvl_y = level->get_y();
+        int lvl_w = level->get_w()*TILE_WIDTH;
+        int lvl_h = level->get_h()*TILE_WIDTH;
+        if (col_rect.x > lvl_x && col_rect.x + col_rect.w < lvl_x + lvl_w &&
+            col_rect.y > lvl_y && col_rect.y + col_rect.h < lvl_y + lvl_h) {
+            entering = false;
+            up = down = left = right = false;
+        } else {
+            return;
+        }
+    }
 
     // resolve y collisions
     bool shiftable;
@@ -319,21 +368,21 @@ void Dot::update(Zonestate* zone, Engine* game)
     bool platform_col = false;
     for (int i = 0; i < size; i++) {
         TileType type = tileset[i].get_type();
-        if (type == TILE_BLACK_SOLID + !my_color || type == TILE_CLEAR) {
+        if (type == TILE_BLACK_SOLID + !m_color || type == TILE_CLEAR) {
             continue;
         }
         if (check_collision(col_rect, tileset[i].get_col_rect(), &repos)) {
-            if (type == TILE_BLACK_PLATFORM + my_color) {
+            if (type == TILE_BLACK_PLATFORM + m_color) {
                 platform_col = true;
-                if (platform_drop || (!my_color - my_color)*m_yvel < 0) {
+                if (platform_drop || (!m_color - m_color)*m_yvel < 0) {
                     continue;
                 }
             }
-            if ((my_color == 0 && repos.y < 0) ||
-                (my_color == 1 && repos.y > 0)) {
+            if ((m_color == 0 && repos.y < 0) ||
+                (m_color == 1 && repos.y > 0)) {
                 // land!
-                if (status == CHAR_JUMP) {
-                    status = CHAR_IDLE;
+                if (m_status == CHAR_JUMP) {
+                    m_status = CHAR_IDLE;
                 }
                 col_rect.y += repos.y;
                 true_y = col_rect.y;
@@ -341,9 +390,9 @@ void Dot::update(Zonestate* zone, Engine* game)
                 shiftable = true;
                 // jump!
                 if (up) {
-                    status = CHAR_JUMP;
+                    m_status = CHAR_JUMP;
                     jump_start = SDL_GetTicks();
-                    m_yvel = (my_color - !my_color) * JUMP_VEL;
+                    m_yvel = (m_color - !m_color) * JUMP_VEL;
                     shiftable = false;
                 } else if (down) {
                     platform_drop = true;
@@ -352,23 +401,23 @@ void Dot::update(Zonestate* zone, Engine* game)
                 }
             } else {
                 // ceiling
-                if ((my_color == 0 && m_yvel < 0) || (my_color == 1 && m_yvel > 0)) {
+                if ((m_color == 0 && m_yvel < 0) || (m_color == 1 && m_yvel > 0)) {
                     // adjust y pos
                     col_rect.y += repos.y;
                     true_y = col_rect.y;
-                    m_yvel = ((my_color == 0) - (my_color == 1)) * .1;
+                    m_yvel = ((m_color == 0) - (m_color == 1)) * .1;
                     short_hop = 0;
                     shiftable = false;
                     up = false;
                 }
             }
-            if (airborne && check_grounded(col_rect, tileset[i].get_col_rect(), my_color)) {
+            if (airborne && check_grounded(col_rect, tileset[i].get_col_rect(), m_color)) {
                 airborne = false;
             }
         }
     }
-    if (airborne && status != CHAR_JUMP) {
-        status = CHAR_JUMP;
+    if (airborne && m_status != CHAR_JUMP) {
+        m_status = CHAR_JUMP;
         jump_start = 0;
     }
     if (!platform_col) {
@@ -392,14 +441,76 @@ void Dot::update(Zonestate* zone, Engine* game)
         }
     }
 
+    int lvl_x = level->get_x();
+    int lvl_y = level->get_y();
+    int lvl_w = level->get_w()*TILE_WIDTH;
+    int lvl_h = level->get_h()*TILE_WIDTH;
+    if (col_rect.x < lvl_x) {
+        exit(EXIT_LEFT);
+    } else if (col_rect.x + col_rect.w > lvl_x + lvl_w) {
+        exit(EXIT_RIGHT);
+    } else if (col_rect.y + col_rect.h < lvl_y) {
+        exit(EXIT_UP);
+        zone->shift();
+    } else if (col_rect.y > lvl_y + lvl_h) {
+        exit(EXIT_DOWN);
+        zone->shift();
+    }
+
     zone->shiftable = shiftable;
+}
+
+void Dot::exit(ExitDir dir)
+{
+    exiting = true;
+    exit_dir = dir;
+    switch (exit_dir)
+    {
+    case EXIT_LEFT:
+        left = true;
+        right = up = down = false;
+        break;
+    case EXIT_RIGHT:
+        right = true;
+        left = up = down = false;
+        break;
+    case EXIT_UP:
+    case EXIT_DOWN:
+        exited = true;
+        m_yvel = m_xvel = 0;
+        left = right = up = down = false;
+        break;
+    }
+}
+
+void Dot::enter()
+{
+    exiting = exited = false;
+    entering = true;
+    switch (exit_dir)
+    {
+    case EXIT_LEFT:
+        right = true;
+        left = up = down = false;
+        break;
+    case EXIT_RIGHT:
+        left = true;
+        right = up = down = false;
+        break;
+    case EXIT_DOWN:
+        m_yvel = (m_color == 0)*-5;
+        break;
+    case EXIT_UP:
+        m_yvel = (m_color == 1)*5;
+        break;
+    }
 }
 
 void Dot::render(SDL_Rect* camera, Engine* game)
 {
     int animation_length;
     double animation_speed;
-    switch (status) {
+    switch (m_status) {
         case CHAR_IDLE:
             animation_speed = 100.0;
             animation_length = 6;
@@ -423,7 +534,7 @@ void Dot::render(SDL_Rect* camera, Engine* game)
     }
 
     int frame;
-    if (status != CHAR_JUMP) {
+    if (m_status != CHAR_JUMP) {
         frame = ((int) ((float) SDL_GetTicks() / animation_speed)) % animation_length;
     } else {
         frame = ((int) (((float) SDL_GetTicks() - (float) jump_start)
@@ -434,43 +545,19 @@ void Dot::render(SDL_Rect* camera, Engine* game)
     }
 
     // relevant clips
-    SDL_Rect frame_clip = {frame * 16, status * 16, 16, 16};
+    SDL_Rect frame_clip = {frame * 16, m_status * 16, 16, 16};
     int render_x = col_rect.x + (col_rect.w - m_tex.get_width()) / 2;
-    int render_y = col_rect.y + (my_color == 0) * (col_rect.h - m_tex.get_height());
-    m_tex.render(render_x, render_y, &frame_clip, camera, game, dir, my_color);
+    int render_y = col_rect.y + (m_color == 0) * (col_rect.h - m_tex.get_height());
+    m_tex.render(render_x, render_y, &frame_clip, camera, game, dir, m_color);
 };
 
 void Dot::move(int x, int y)
 {
     up = down = right = left = false;
     m_xvel = m_yvel = 0;
-    status = CHAR_IDLE;
+    m_status = CHAR_IDLE;
     col_rect.x += x;
     col_rect.y += y;
-    true_y = col_rect.y;
-}
-
-void Dot::snap(LevelExit exit)
-{
-    up = down = right = left = false;
-    m_xvel = m_yvel = 0;
-    snapped = true;
-    status = CHAR_IDLE;
-    ExitDir dir = exit.get_dir();
-    SDL_Rect exit_rect = exit.get_rect();
-    if (dir == EXIT_LEFT) {
-        col_rect.x = exit_rect.x + TILE_WIDTH;
-        col_rect.y = exit_rect.y + (1 + 2*(my_color == true))*TILE_WIDTH + (my_color == 0)*(m_tex.get_height() - col_rect.h);
-    } else if (dir == EXIT_RIGHT) {
-        col_rect.x = exit_rect.x - (col_rect.w - TILE_WIDTH);
-        col_rect.y = exit_rect.y + (1 + 2*(my_color == true))*TILE_WIDTH + (my_color == 0)*(m_tex.get_height() - col_rect.h);
-    } else if (dir == EXIT_UP) {
-        col_rect.x = exit_rect.x + (2 + (my_color == false))*TILE_WIDTH;
-        col_rect.y = exit_rect.y + TILE_WIDTH;
-    } else if (dir == EXIT_DOWN) {
-        col_rect.x = exit_rect.x + (2 + (my_color == false))*TILE_WIDTH;
-        col_rect.y = exit_rect.y;
-    }
     true_y = col_rect.y;
 }
 
