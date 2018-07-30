@@ -25,11 +25,11 @@ public:
     int y;
 };
 
+class Zonestate;
+class Level;
+
 bool check_collision(SDL_Rect a, SDL_Rect b, Vector* overlap);
 bool check_grounded(SDL_Rect a, SDL_Rect b, bool a_color);
-
-class Zonestate;
-class LevelExit;
 
 typedef enum _CharDir {
     DIR_RIGHT = 0,
@@ -64,15 +64,19 @@ public:
     void render(SDL_Rect* camera, Engine* game);
 
     void move(int x, int y);
-    void snap(LevelExit exit);
 
     SDL_Rect get_rect() { return col_rect; }
     int get_dir() { return dir; }
     float get_yvel() { return m_yvel; }
+    int get_exit_dir() { return (exited || entering) ? (int) exit_dir : -1; }
 
     void spring_me(float yvel);
+
     void exit(ExitDir dir);
     void enter();
+    void good_exit();
+    bool in_level(Level* lvl);
+
     bool center(SDL_Rect* end_rect);
 
     bool snapped;

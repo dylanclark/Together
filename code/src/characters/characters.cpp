@@ -230,7 +230,10 @@ void Dot::update(Zonestate* zone, Engine* game)
     }
 
     if (exited) {
-        enter();
+        zone->check_exit();
+        if (exited) {
+            enter();
+        }
     }
 
     // update x velocity
@@ -303,8 +306,6 @@ void Dot::update(Zonestate* zone, Engine* game)
         if (col_rect.x + col_rect.w < lvl_x || col_rect.x > lvl_x + lvl_w) {
             exiting = false;
             exited = true;
-            printf("exited!\n");
-            zone->shift();
         }
         return;
     }
@@ -451,10 +452,8 @@ void Dot::update(Zonestate* zone, Engine* game)
         exit(EXIT_RIGHT);
     } else if (col_rect.y + col_rect.h < lvl_y) {
         exit(EXIT_UP);
-        zone->shift();
     } else if (col_rect.y > lvl_y + lvl_h) {
         exit(EXIT_DOWN);
-        zone->shift();
     }
 
     zone->shiftable = shiftable;
@@ -464,21 +463,22 @@ void Dot::exit(ExitDir dir)
 {
     exiting = true;
     exit_dir = dir;
+    up = down = false;
     switch (exit_dir)
     {
     case EXIT_LEFT:
         left = true;
-        right = up = down = false;
+        right = false;
         break;
     case EXIT_RIGHT:
         right = true;
-        left = up = down = false;
+        left = false;
         break;
     case EXIT_UP:
     case EXIT_DOWN:
         exited = true;
         m_yvel = m_xvel = 0;
-        left = right = up = down = false;
+        left = right = false;
         break;
     }
 }
@@ -504,6 +504,23 @@ void Dot::enter()
         m_yvel = (m_color == 1)*5;
         break;
     }
+}
+
+void Dot::good_exit()
+{
+    exiting = exited = entering = false;
+    up = down = left = right = false;
+    return;
+}
+
+bool Dot::in_level(Level* lvl)
+{
+    int lvl_x = lvl->get_x();
+    int lvl_y = lvl->get_y();
+    int lvl_w = lvl->get_w()*TILE_WIDTH;
+    int lvl_h = lvl->get_h()*TILE_WIDTH;
+    return (col_rect.x + col_rect.w > lvl_x && col_rect.x < lvl_x + lvl_w &&
+            col_rect.y + col_rect.h > lvl_y && col_rect.y < lvl_y + lvl_h);
 }
 
 void Dot::render(SDL_Rect* camera, Engine* game)
@@ -563,5 +580,6 @@ void Dot::move(int x, int y)
 
 void Dot::spring_me(float yvel)
 {
+    jump_start = SDL_GetTicks();
     m_yvel = yvel;
 }

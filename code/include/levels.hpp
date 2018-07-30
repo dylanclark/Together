@@ -93,6 +93,7 @@ public:
     void shift();
 
     Level* get_active_level();
+    void check_exit();
 
     // shifting info
     bool shiftable;

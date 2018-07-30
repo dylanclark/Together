@@ -51,7 +51,6 @@ void Level::load_level(Engine* game, int zone_num, int lvl_num, SDL_Color palett
         {
         case OBJECT_SPRING:
             level_file >> spring_vel;
-            printf("vel, color %f %d\n", spring_vel, obj_color);
             new_spring = new Spring(game, m_x + obj_x*TILE_WIDTH, m_y + (obj_y - (obj_color == 0))*TILE_WIDTH, obj_color, spring_vel*(obj_color - !obj_color), palette);
             objects.push_back(new_spring);
             break;
@@ -276,4 +275,31 @@ Level* Zonestate::get_active_level()
 {
     Level* level = levels[active_level];
     return level;
+}
+
+void Zonestate::check_exit()
+{
+    int result = -1;
+    // check that chars exited same way
+    if (chars[0].get_exit_dir() == chars[1].get_exit_dir()) {
+        // determine new active level
+        for (int i = 0; i < levels.size(); i++) {
+            printf("level %d\n", i);
+            if (i == active_level) {
+                continue;
+            }
+            if (chars[0].in_level(levels[i])) {
+                result = i;
+                break;
+            }
+        }
+    }
+    if (result == -1) {
+        shift();
+    } else {
+        chars[0].good_exit();
+        chars[1].good_exit();
+        active_level = result;
+        camera->set_level(levels[active_level]);
+    }
 }
