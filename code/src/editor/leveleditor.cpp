@@ -311,7 +311,7 @@ void Tileset::handle_event(Engine* game, SDL_Event e, int scr_w, int scr_h, SDL_
             new_obj.y = y1;
             new_obj.type = placing;
             new_obj.color = (e.button.button == SDL_BUTTON_LEFT) ? COLOR_BLACK : COLOR_WHITE;
-            new_obj.spring_height = atoi(get_str(game, "spring speed").c_str())*(new_obj.color - !new_obj.color);
+            new_obj.spring_height = atoi(get_str(game, "spring speed").c_str());
             objs.push_back(new_obj);
             break;
         default:

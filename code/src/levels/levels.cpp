@@ -51,7 +51,8 @@ void Level::load_level(Engine* game, int zone_num, int lvl_num, SDL_Color palett
         {
         case OBJECT_SPRING:
             level_file >> spring_vel;
-            new_spring = new Spring(game, m_x + obj_x*TILE_WIDTH, m_y + obj_y*TILE_WIDTH, obj_color, spring_vel, palette);
+            printf("vel, color %f %d\n", spring_vel, obj_color);
+            new_spring = new Spring(game, m_x + obj_x*TILE_WIDTH, m_y + (obj_y - (obj_color == 0))*TILE_WIDTH, obj_color, spring_vel*(obj_color - !obj_color), palette);
             objects.push_back(new_spring);
             break;
         default:
