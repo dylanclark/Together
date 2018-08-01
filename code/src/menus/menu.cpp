@@ -20,16 +20,16 @@ MenuButton::MenuButton(int x, int y, int w, int h)
     rect.h = h;
 }
 
-void MenuButton::render(SDL_Renderer* rend)
+void MenuButton::render()
 {
     // determine which chunk of the texture to render
     SDL_Rect active_clip = {tex.get_width(), 0, tex.get_width(), tex.get_height()};
     SDL_Rect inactive_clip = {0, 0, tex.get_width(), tex.get_height()};
 
     if (selected) {
-        tex.render_button(&rect, &active_clip, rend);
+        tex.render_button(&rect, &active_clip);
     } else {
-        tex.render_button(&rect, &inactive_clip, rend);
+        tex.render_button(&rect, &inactive_clip);
     }
 }
 
@@ -47,7 +47,7 @@ MenuSlider::MenuSlider(int num_states, bool is_permanent, int x, int y, int w, i
     rect.h = h;
 }
 
-void MenuSlider::render(SDL_Renderer* rend)
+void MenuSlider::render()
 {
     // determine which chunk of the texture to render
     SDL_Rect active_clip = {tex.get_width() * (cur_frame * 2 + 1), 0, tex.get_width(), tex.get_height()};
@@ -55,9 +55,9 @@ void MenuSlider::render(SDL_Renderer* rend)
 
     // render based on char status
     if (selected) {
-        tex.render_button(&rect, &active_clip, rend);
+        tex.render_button(&rect, &active_clip);
     } else {
-        tex.render_button(&rect, &inactive_clip, rend);
+        tex.render_button(&rect, &inactive_clip);
     }
 }
 
@@ -69,13 +69,13 @@ Title::Title(int x, int y, int w, int h)
     rect.h = h;
 }
 
-void Title::render(SDL_Renderer* rend)
+void Title::render()
 {
     SDL_Rect active_clip = {0, 0, tex.get_width(), tex.get_height()};
-    tex.render_button(&rect, &active_clip, rend);
+    tex.render_button(&rect, &active_clip);
 }
 
-FadeIn::FadeIn(Engine* game, int time)
+FadeIn::FadeIn(int time)
 {
     rect.x = 0;
     rect.y = 0;
@@ -84,17 +84,17 @@ FadeIn::FadeIn(Engine* game, int time)
     alpha = 255;
 
     timer = time;
-    if (tex.load_object(16, 16, "white/background/white_back.png", game->rend)) {
+    if (tex.load_object(16, 16, "white/background/white_back.png")) {
         printf("failed to load fade-in object!\n");
     }
     tex.set_blend_mode(SDL_BLENDMODE_BLEND);
 }
 
-void FadeIn::render(SDL_Renderer* rend)
+void FadeIn::render()
 {
     SDL_Rect clip = {0, 0, tex.get_width(), tex.get_height()};
     SDL_Rect render_rect = {rect.x + rect.w / 2, rect.y + rect.h / 2, rect.w, rect.h};
-    tex.render_button(&render_rect, &clip, rend);
+    tex.render_button(&render_rect, &clip);
 }
 
 void FadeIn::update()
@@ -125,7 +125,7 @@ Menu::Menu()
     up = down = right = left = false;
 }
 
-void Menu::handle_events(Engine* game)
+void Menu::handle_events()
 {
     // event handler
     SDL_Event e;
@@ -161,7 +161,7 @@ void Menu::handle_events(Engine* game)
                         break;
                     case SDL_SCANCODE_SPACE:
                     case SDL_SCANCODE_RETURN:
-                        items[selector]->select(game);
+                        items[selector]->select();
                         break;
                     case SDL_SCANCODE_ESCAPE:
                         Mix_ResumeMusic();
@@ -176,7 +176,7 @@ void Menu::handle_events(Engine* game)
                 switch (e.cbutton.button)
                 {
                     case SDL_CONTROLLER_BUTTON_A:
-                        items[selector]->select(game);
+                        items[selector]->select();
                         break;
                     case SDL_CONTROLLER_BUTTON_DPAD_UP:
                         up = true;
@@ -201,7 +201,7 @@ void Menu::handle_events(Engine* game)
     }
 }
 
-void Menu::update(Engine* game)
+void Menu::update()
 {
     // change selector based on controller inputs
     if (down || up) {
@@ -214,7 +214,7 @@ void Menu::update(Engine* game)
             MenuSlider* slider = static_cast<MenuSlider*>(items[selector]);
             slider->cur_frame = (slider->cur_frame + slider->frames + (right - left)) % slider->frames;
             if (slider->permanent) {
-                slider->select(game);
+                slider->select();
             }
             Mix_PlayChannel(-1, game->sound->menu_choose_snd, 0);
         }
@@ -235,18 +235,18 @@ void Menu::update(Engine* game)
     }
 }
 
-void Menu::draw(Engine* game)
+void Menu::draw()
 {
     if (title) {
-        title->render(game->rend);
+        title->render();
     }
 
     for (int i = 0; i < items.size(); i++) {
-        items[i]->render(game->rend);
+        items[i]->render();
     }
 
     if (fade_in) {
-        fade_in->render(game->rend);
+        fade_in->render();
     }
 
     SDL_RenderPresent(game->rend);

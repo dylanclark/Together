@@ -73,7 +73,7 @@ void EditorCamera::handle_event(SDL_Event e)
     }
 }
 
-void EditorCamera::update(Engine* game)
+void EditorCamera::update()
 {
     int scr_w = game->screen_width;
     int scr_h = game->screen_height;
@@ -120,15 +120,15 @@ void Border::update(int w, int h)
     rect.h = h * TILE_WIDTH;
 }
 
-void Border::draw(int scr_w, int scr_h, SDL_Rect cam_rect, SDL_Renderer* rend)
+void Border::draw(int scr_w, int scr_h, SDL_Rect cam_rect)
 {
     int x = (rect.x - cam_rect.x) / ((float) cam_rect.w / (float) scr_w);
     int y = (rect.y - cam_rect.y) / ((float) cam_rect.h / (float) scr_h);
     int w = rect.w * ((float) scr_w / (float) cam_rect.w);
     int h = rect.h * ((float) scr_h / (float) cam_rect.h);
     SDL_Rect to_draw = {x, y, w, h};
-    SDL_SetRenderDrawColor(rend, 255, 0, 0, SDL_ALPHA_OPAQUE);
-    SDL_RenderDrawRect(rend, &to_draw);
+    SDL_SetRenderDrawColor(game->rend, 255, 0, 0, SDL_ALPHA_OPAQUE);
+    SDL_RenderDrawRect(game->rend, &to_draw);
 }
 
 Gridlines::Gridlines(int w, int h)
@@ -143,21 +143,21 @@ void Gridlines::update(int w, int h)
     height = h;
 }
 
-void Gridlines::draw(int scr_w, int scr_h, SDL_Rect cam_rect, SDL_Renderer* rend)
+void Gridlines::draw(int scr_w, int scr_h, SDL_Rect cam_rect)
 {
     for (int i = 1; i < width; i++) {
         int x = (i*TILE_WIDTH - cam_rect.x) / (cam_rect.w / (float) scr_w);
         int y1 = (-cam_rect.y) / (cam_rect.h / (float) scr_h);
         int y2 = (height*TILE_WIDTH - cam_rect.y) / (cam_rect.h / (float) scr_h);
-        SDL_SetRenderDrawColor(rend, 0, 200, 0, SDL_ALPHA_OPAQUE);
-        SDL_RenderDrawLine(rend, x, y1, x, y2);
+        SDL_SetRenderDrawColor(game->rend, 0, 200, 0, SDL_ALPHA_OPAQUE);
+        SDL_RenderDrawLine(game->rend, x, y1, x, y2);
     }
     for (int i = 1; i < height; i++) {
         int y = (i*TILE_WIDTH - cam_rect.y) / (cam_rect.h / (float) scr_h);
         int x1 = (-cam_rect.x) / (cam_rect.w / (float) scr_w);
         int x2 = (width*TILE_WIDTH - cam_rect.x) / (cam_rect.w / (float) scr_w);
-        SDL_SetRenderDrawColor(rend, 0, 200, 0, SDL_ALPHA_OPAQUE);
-        SDL_RenderDrawLine(rend, x1, y, x2, y);
+        SDL_SetRenderDrawColor(game->rend, 0, 200, 0, SDL_ALPHA_OPAQUE);
+        SDL_RenderDrawLine(game->rend, x1, y, x2, y);
     }
 }
 
@@ -180,7 +180,7 @@ Tileset::Tileset(int w, int h, std::vector<std::vector<TileType> > tiles_arg=std
     objs = objs_arg;
 }
 
-void Tileset::draw(int scr_w, int scr_h, SDL_Rect cam_rect, SDL_Renderer* rend)
+void Tileset::draw(int scr_w, int scr_h, SDL_Rect cam_rect)
 {
     float aspect_ratio = ((float) scr_w / (float) cam_rect.w);
     // first we will draw all of the tiles
@@ -196,16 +196,16 @@ void Tileset::draw(int scr_w, int scr_h, SDL_Rect cam_rect, SDL_Renderer* rend)
             switch (tiles[i][j])
             {
             case TILE_WHITE_SOLID:
-                SDL_SetRenderDrawColor(rend, 255, 255, 255, SDL_ALPHA_OPAQUE);
+                SDL_SetRenderDrawColor(game->rend, 255, 255, 255, SDL_ALPHA_OPAQUE);
                 break;
             case TILE_BLACK_SOLID:
-                SDL_SetRenderDrawColor(rend, 0, 0, 0, SDL_ALPHA_OPAQUE);
+                SDL_SetRenderDrawColor(game->rend, 0, 0, 0, SDL_ALPHA_OPAQUE);
                 break;
             case TILE_CLEAR:
-                SDL_SetRenderDrawColor(rend, 100, 100, 100, SDL_ALPHA_OPAQUE);
+                SDL_SetRenderDrawColor(game->rend, 100, 100, 100, SDL_ALPHA_OPAQUE);
                 break;
             case TILE_SOLID:
-                SDL_SetRenderDrawColor(rend, 0, 0, 150, SDL_ALPHA_OPAQUE);
+                SDL_SetRenderDrawColor(game->rend, 0, 0, 150, SDL_ALPHA_OPAQUE);
                 break;
             case TILE_BLACK_PLATFORM:
                 black_height = TILE_WIDTH/4;
@@ -216,23 +216,23 @@ void Tileset::draw(int scr_w, int scr_h, SDL_Rect cam_rect, SDL_Renderer* rend)
                 platform_flag = true;
                 break;
             default:
-                SDL_SetRenderDrawColor(rend, 255, 0, 0, SDL_ALPHA_OPAQUE);
+                SDL_SetRenderDrawColor(game->rend, 255, 0, 0, SDL_ALPHA_OPAQUE);
                 break;
             }
             if (clicked && click_x == j && click_y == i) {
                 platform_flag = false;
-                SDL_SetRenderDrawColor(rend, 255, 100, 0, SDL_ALPHA_OPAQUE);
+                SDL_SetRenderDrawColor(game->rend, 255, 100, 0, SDL_ALPHA_OPAQUE);
             }
             if (platform_flag) {
                 black_height *= aspect_ratio;
                 SDL_Rect black_rect = {to_draw.x, to_draw.y, to_draw.w, black_height};
                 SDL_Rect white_rect = {to_draw.x, to_draw.y+black_height + 1, to_draw.w, TILE_WIDTH*aspect_ratio - black_height};
-                SDL_SetRenderDrawColor(rend, 0, 0, 0, SDL_ALPHA_OPAQUE);
-                SDL_RenderFillRect(rend, &black_rect);
-                SDL_SetRenderDrawColor(rend, 255, 255, 255, SDL_ALPHA_OPAQUE);
-                SDL_RenderFillRect(rend, &white_rect);
+                SDL_SetRenderDrawColor(game->rend, 0, 0, 0, SDL_ALPHA_OPAQUE);
+                SDL_RenderFillRect(game->rend, &black_rect);
+                SDL_SetRenderDrawColor(game->rend, 255, 255, 255, SDL_ALPHA_OPAQUE);
+                SDL_RenderFillRect(game->rend, &white_rect);
             } else {
-                SDL_RenderFillRect(rend, &to_draw);
+                SDL_RenderFillRect(game->rend, &to_draw);
             }
         }
     }
@@ -244,21 +244,21 @@ void Tileset::draw(int scr_w, int scr_h, SDL_Rect cam_rect, SDL_Renderer* rend)
         SDL_Rect render_rect = {x, y, w, h};
 
         if (objs[i].type == PLACING_SPRINGS) {
-            SDL_SetRenderDrawColor(rend, 255, 255, 0, SDL_ALPHA_OPAQUE);
-            SDL_RenderFillRect(rend, &render_rect);
+            SDL_SetRenderDrawColor(game->rend, 255, 255, 0, SDL_ALPHA_OPAQUE);
+            SDL_RenderFillRect(game->rend, &render_rect);
             int arrow_w = TILE_WIDTH/2 * aspect_ratio;
             int arrow_h = TILE_WIDTH*objs[i].spring_height * aspect_ratio;
             int arrow_x = (((float) objs[i].x+3./4.)*TILE_WIDTH - cam_rect.x) * aspect_ratio;
             int arrow_y = ((objs[i].y + (objs[i].color == 0)) * TILE_WIDTH - cam_rect.y) * aspect_ratio - (!objs[i].color * arrow_h);
             SDL_Rect arrow_rect = {arrow_x, arrow_y, arrow_w, arrow_h};
-            SDL_SetRenderDrawColor(rend, 255, 0, 0, SDL_ALPHA_OPAQUE);
-            SDL_RenderFillRect(rend, &arrow_rect);
+            SDL_SetRenderDrawColor(game->rend, 255, 0, 0, SDL_ALPHA_OPAQUE);
+            SDL_RenderFillRect(game->rend, &arrow_rect);
         }
     }
     // next we will draw all of the objects... eventually, bc we don't support textures yet
 }
 
-void Tileset::handle_event(Engine* game, SDL_Event e, int scr_w, int scr_h, SDL_Rect cam_rect, PlacingType placing)
+void Tileset::handle_event(SDL_Event e, int scr_w, int scr_h, SDL_Rect cam_rect, PlacingType placing)
 {
     bool click_color;
     switch (e.type)
@@ -313,7 +313,7 @@ void Tileset::handle_event(Engine* game, SDL_Event e, int scr_w, int scr_h, SDL_
             }
             for (int i = 0; i < objs.size(); i++) {
                 if (x1 == objs[i].x && y1 == objs[i].y) {
-                    objs[i].spring_height = atoi(get_str(game, "spring height").c_str());
+                    objs[i].spring_height = atoi(get_str("spring height").c_str());
                     return;
                 }
             }
@@ -322,7 +322,7 @@ void Tileset::handle_event(Engine* game, SDL_Event e, int scr_w, int scr_h, SDL_
             new_obj.y = y1;
             new_obj.type = placing;
             new_obj.color = (Color) click_color;
-            new_obj.spring_height = atoi(get_str(game, "spring height").c_str());
+            new_obj.spring_height = atoi(get_str("spring height").c_str());
             objs.push_back(new_obj);
             break;
         default:
@@ -416,12 +416,12 @@ int get_height(float v0)
     return round(res);
 }
 
-void LevelEditor::init(Engine* game)
+void LevelEditor::init()
 {
     bool loading;
     if (m_lvl_num == -1) {
-        m_zone_num = atoi(get_str(game, "zone number").c_str());
-        m_lvl_num = atoi(get_str(game, "level number").c_str());
+        m_zone_num = atoi(get_str("zone number").c_str());
+        m_lvl_num = atoi(get_str("level number").c_str());
     }
     char lvl_cstr[5];
     snprintf(lvl_cstr, 5, "%d-%02d", m_zone_num, m_lvl_num);
@@ -494,7 +494,7 @@ void LevelEditor::cleanup()
 
 }
 
-void LevelEditor::handle_events(Engine* game)
+void LevelEditor::handle_events()
 {
     SDL_Event e;
 
@@ -511,7 +511,7 @@ void LevelEditor::handle_events(Engine* game)
                 game->pop_state();
                 break;
             case SDL_SCANCODE_RETURN:
-                write_level(game);
+                write_level();
                 break;
             case SDL_SCANCODE_S:
                 tileset->add_row_bottom();
@@ -570,35 +570,35 @@ void LevelEditor::handle_events(Engine* game)
             break;
         }
         camera->handle_event(e);
-        tileset->handle_event(game, e, game->screen_width, game->screen_height, camera->get_rect(), placing);
+        tileset->handle_event(e, game->screen_width, game->screen_height, camera->get_rect(), placing);
     }
 }
 
-void LevelEditor::update(Engine* game)
+void LevelEditor::update()
 {
     SDL_SetRenderDrawColor(game->rend, 255, 255, 255, SDL_ALPHA_OPAQUE);
     SDL_RenderClear(game->rend);
 
-    camera->update(game);
+    camera->update();
     border->update(lvl_w, lvl_h);
     grid->update(lvl_w, lvl_h);
 }
 
-void LevelEditor::draw(Engine* game)
+void LevelEditor::draw()
 {
     int scr_w = game->screen_width;
     int scr_h = game->screen_height;
     SDL_Rect cam_rect = camera->get_rect();
 
-    tileset->draw(scr_w, scr_h, cam_rect, game->rend);
-    border->draw(scr_w, scr_h, cam_rect, game->rend);
-    grid->draw(scr_w, scr_h, cam_rect, game->rend);
-    draw_UI(game, scr_w, scr_h);
+    tileset->draw(scr_w, scr_h, cam_rect);
+    border->draw(scr_w, scr_h, cam_rect);
+    grid->draw(scr_w, scr_h, cam_rect);
+    draw_UI(scr_w, scr_h);
 
     SDL_RenderPresent(game->rend);
 }
 
-void LevelEditor::draw_UI(Engine* game, int scr_w, int scr_h)
+void LevelEditor::draw_UI(int scr_w, int scr_h)
 {
     SDL_SetRenderDrawColor(game->rend, 255, 255, 255, SDL_ALPHA_OPAQUE);
     SDL_Color black = {0,0,0};
@@ -637,7 +637,7 @@ void LevelEditor::draw_UI(Engine* game, int scr_w, int scr_h)
     SDL_RenderCopy(game->rend, text_tex, NULL, &render_rect);
 }
 
-std::string get_str(Engine* game, std::string prompt, std::string result)
+std::string get_str(std::string prompt, std::string result)
 {
     while (1) {
         SDL_Event e;
@@ -710,7 +710,7 @@ std::string get_str(Engine* game, std::string prompt, std::string result)
     }
 }
 
-bool get_yes_no(Engine* game, std::string prompt)
+bool get_yes_no(std::string prompt)
 {
     SDL_SetRenderDrawColor(game->rend, 0, 10, 30, SDL_ALPHA_OPAQUE);
     SDL_RenderClear(game->rend);
@@ -779,12 +779,12 @@ static double get_v0(int x)
     return v0;
 }
 
-void LevelEditor::write_level(Engine* game)
+void LevelEditor::write_level()
 {
     std::vector<std::vector<std::string> > result = output_arr(tileset->tiles);
 
     if (m_lvl_num == -1) {
-        m_lvl_num = atoi(get_str(game, "level number", std::to_string(m_lvl_num)).c_str());
+        m_lvl_num = atoi(get_str("level number", std::to_string(m_lvl_num)).c_str());
     }
 
     char lvl_cstr[5];

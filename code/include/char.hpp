@@ -54,13 +54,13 @@ typedef enum _ExitDir {
 class Dot
 {
 public:
-    Dot(int x, int y, bool color, SDL_Renderer* rend, SDL_Color* palette = NULL);
+    Dot(int x, int y, bool color, SDL_Color* palette = NULL);
 
     bool m_color;
 
-    bool handle_event(SDL_Event &e, Zonestate* zone, Engine* game);
-    void update(Zonestate* zone, Engine* game);
-    void render(Engine* game, SDL_Rect* camera, Level* lvl);
+    bool handle_event(SDL_Event &e, Zonestate* zone);
+    void update(Zonestate* zone);
+    void render(SDL_Rect* camera, Level* lvl);
 
     void move(int x, int y);
 
@@ -102,7 +102,7 @@ private:
     Texture m_tex;
     SDL_Rect col_rect;
 
-    bool crate_col(Zonestate* zone, Engine* game);
+    bool crate_col(Zonestate* zone);
 };
 
 #endif /* char_hpp */

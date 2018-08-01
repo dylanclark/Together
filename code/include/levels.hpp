@@ -40,12 +40,12 @@ class Tile;
 class Level
 {
 public:
-    Level(Engine* game, int zone_num, int lvl_num, int x, int y, SDL_Color palette);
+    Level(int zone_num, int lvl_num, int x, int y, SDL_Color palette);
     ~Level();
-    void load_level(Engine* game, int zone_num, int lvl_num, SDL_Color palette);
+    void load_level(int zone_num, int lvl_num, SDL_Color palette);
     bool update(Zonestate* zone, std::vector<Dot> &chars);
-    void draw_bg(Engine* game, SDL_Rect cam_rect, bool active_color);
-    void draw_fg(Engine* game, SDL_Rect cam_rect, bool active_color);
+    void draw_bg(SDL_Rect cam_rect, bool active_color);
+    void draw_fg(SDL_Rect cam_rect, bool active_color);
     void cleanup();
 
     void shift();
@@ -81,15 +81,15 @@ class Zonestate : public Gamestate
 {
 public:
     Zonestate(int zone_num) { m_zone_num = zone_num; }
-    void init(Engine* game);
+    void init();
 
-    void update(Engine* game);
-    void draw(Engine* game);
-    void handle_events(Engine* game);
+    void update();
+    void draw();
+    void handle_events();
 
     void cleanup();
 
-    void pause(Engine* game);
+    void pause();
     void shift();
 
     Level* get_active_level();

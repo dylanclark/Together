@@ -29,7 +29,7 @@ class Object
 public:
     Object() { };
 
-    virtual void render(Engine* game, SDL_Rect cam_rect, bool active_color) = 0;
+    virtual void render(SDL_Rect cam_rect, bool active_color) = 0;
 
     ObjectType get_type() { return m_type; }
     SDL_Rect get_rect() { return m_rect; }
@@ -43,8 +43,8 @@ public:
 class Spring : public Object
 {
 public:
-    Spring(Engine* game, int x, int y, bool color, float y_vel, SDL_Color palette);
-    void render(Engine* game, SDL_Rect cam_rect, bool active_color);
+    Spring(int x, int y, bool color, float y_vel, SDL_Color palette);
+    void render(SDL_Rect cam_rect, bool active_color);
     float get_yvel() { return m_yvel; }
     void spring();
 

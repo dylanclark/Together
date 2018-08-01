@@ -11,6 +11,8 @@
 // include headers
 #include <engine.hpp>
 
+Engine* game = NULL;
+
 bool Engine::init()
 {
     bool success = true;
@@ -107,13 +109,13 @@ void Engine::change_state(Gamestate* state)
     }
 
     states.push_back(state);
-    states.back()->init(this);
+    states.back()->init();
 }
 
 void Engine::push_state(Gamestate* state)
 {
     states.push_back(state);
-    states.back()->init(this);
+    states.back()->init();
 }
 
 void Engine::pop_state()
@@ -127,22 +129,22 @@ void Engine::pop_state()
 
 void Engine::restart_state()
 {
-    states.back()->init(this);
+    states.back()->init();
 }
 
 void Engine::handle_events()
 {
-    states.back()->handle_events(this);
+    states.back()->handle_events();
 }
 
 void Engine::update()
 {
-    states.back()->update(this);
+    states.back()->update();
 }
 
 void Engine::draw()
 {
-    states.back()->draw(this);
+    states.back()->draw();
 }
 
 bool Engine::save(int level)

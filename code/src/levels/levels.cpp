@@ -7,7 +7,7 @@
 /*   LOAD LEVEL   */
 /******************/
 
-void Level::load_level(Engine* game, int zone_num, int lvl_num, SDL_Color palette)
+void Level::load_level(int zone_num, int lvl_num, SDL_Color palette)
 {
     char lvl_cstr[5];
     snprintf(lvl_cstr, 5, "%d-%02d", m_zone_num, m_lvl_num);
@@ -51,7 +51,7 @@ void Level::load_level(Engine* game, int zone_num, int lvl_num, SDL_Color palett
         {
         case OBJECT_SPRING:
             level_file >> spring_vel;
-            new_spring = new Spring(game, m_x + obj_x*TILE_WIDTH, m_y + (obj_y - (obj_color == 0))*TILE_WIDTH, obj_color, spring_vel*(obj_color - !obj_color), palette);
+            new_spring = new Spring(m_x + obj_x*TILE_WIDTH, m_y + (obj_y - (obj_color == 0))*TILE_WIDTH, obj_color, spring_vel*(obj_color - !obj_color), palette);
             objects.push_back(new_spring);
             break;
         default:
@@ -67,7 +67,7 @@ void Level::load_level(Engine* game, int zone_num, int lvl_num, SDL_Color palett
 /*   LEVEL   */
 /*************/
 
-Level::Level(Engine* game, int zone_num, int lvl_num, int x, int y, SDL_Color palette)
+Level::Level(int zone_num, int lvl_num, int x, int y, SDL_Color palette)
 {
     m_x = x*TILE_WIDTH;
     m_y = y*TILE_WIDTH;
@@ -75,11 +75,11 @@ Level::Level(Engine* game, int zone_num, int lvl_num, int x, int y, SDL_Color pa
     m_lvl_num = lvl_num;
     num_chars_ready = 0;
 
-    if (!tile_tex.load_tile_sheet("tiles.png", game->rend, &palette)) {
+    if (!tile_tex.load_tile_sheet("tiles.png", &palette)) {
         printf("Failed to load tile sheet texture!\n");
     }
 
-    load_level(game, zone_num, lvl_num, palette);
+    load_level(zone_num, lvl_num, palette);
 }
 
 Level::~Level()
@@ -101,23 +101,23 @@ bool Level::update(Zonestate* zone, std::vector<Dot> &chars)
     return false;
 }
 
-void Level::draw_bg(Engine* game, SDL_Rect cam_rect, bool active_color)
+void Level::draw_bg(SDL_Rect cam_rect, bool active_color)
 {
     // draw stuff to the screen!
     for (int i = 0; i < m_w * m_h; i++) {
-        tileset[i].render_bg(active_color, &cam_rect, game, &tile_tex);
+        tileset[i].render_bg(active_color, &cam_rect, &tile_tex);
     }
 
     // draw objects
     for (int i = 0; i < objects.size(); i++) {
-        objects[i]->render(game, cam_rect, active_color);
+        objects[i]->render(cam_rect, active_color);
     }
 }
 
-void Level::draw_fg(Engine* game, SDL_Rect cam_rect, bool active_color)
+void Level::draw_fg(SDL_Rect cam_rect, bool active_color)
 {
     for (int i = 0; i < m_w * m_h; i++) {
-        tileset[i].render_fg(active_color, &cam_rect, game, &tile_tex);
+        tileset[i].render_fg(active_color, &cam_rect, &tile_tex);
     }
 }
 
@@ -130,7 +130,7 @@ void Level::cleanup()
 /*   ZONESTATE   */
 /*****************/
 
-void Zonestate::init(Engine* game)
+void Zonestate::init()
 {
     // first, read the zone-file
     char zone_num_cstr[2];
@@ -163,7 +163,7 @@ void Zonestate::init(Engine* game)
     int lvl_x, lvl_y;
     for (int i = 0; i < num_levels; i++) {
         zone_file >> lvl_x >> lvl_y;
-        Level* new_level = new Level(game, m_zone_num, i, lvl_x, lvl_y, palette);
+        Level* new_level = new Level(m_zone_num, i, lvl_x, lvl_y, palette);
         levels.push_back(new_level);
     }
 
@@ -171,8 +171,8 @@ void Zonestate::init(Engine* game)
     int start_lvl_x, start_lvl_y;
     start_lvl_x = levels[active_level]->get_x();
     start_lvl_y = levels[active_level]->get_y();
-    Dot b_char(b_char_x + start_lvl_x/TILE_WIDTH, b_char_y + start_lvl_y/TILE_WIDTH, false, game->rend, &palette);
-    Dot w_char(w_char_x + start_lvl_x/TILE_WIDTH, w_char_y + start_lvl_y/TILE_WIDTH, true, game->rend, &palette);
+    Dot b_char(b_char_x + start_lvl_x/TILE_WIDTH, b_char_y + start_lvl_y/TILE_WIDTH, false, &palette);
+    Dot w_char(w_char_x + start_lvl_x/TILE_WIDTH, w_char_y + start_lvl_y/TILE_WIDTH, true, &palette);
     chars.push_back(b_char);
     chars.push_back(w_char);
     SDL_Rect char_rect = chars[0].get_rect();
@@ -184,13 +184,13 @@ void Zonestate::init(Engine* game)
         chars[active_color].get_rect(), chars[active_color].get_dir());
 }
 
-void Zonestate::update(Engine* game)
+void Zonestate::update()
 {
     // clear the window
     SDL_RenderClear(game->rend);
 
     for (int i = 0; i < chars.size(); i++) {
-        chars[i].update(this, game);
+        chars[i].update(this);
     }
     camera->update(chars[active_color].get_rect(), chars[active_color].get_dir());
 
@@ -218,23 +218,23 @@ void Zonestate::update(Engine* game)
     }
 }
 
-void Zonestate::draw(Engine* game)
+void Zonestate::draw()
 {
     SDL_Rect* cam_rect = camera->get_display();
     for (int i = 0; i < levels.size(); i++) {
-        levels[i]->draw_bg(game, *cam_rect, active_color);
+        levels[i]->draw_bg(*cam_rect, active_color);
     }
     for (int i = 0; i < chars.size(); i++) {
-        chars[i].render(game, cam_rect, levels[active_level]);
+        chars[i].render(cam_rect, levels[active_level]);
     }
     for (int i = 0; i < levels.size(); i++) {
-        levels[i]->draw_fg(game, *cam_rect, active_color);
+        levels[i]->draw_fg(*cam_rect, active_color);
     }
 
     SDL_RenderPresent(game->rend);
 }
 
-void Zonestate::handle_events(Engine* game)
+void Zonestate::handle_events()
 {
     // event handler
     SDL_Event e;
@@ -247,7 +247,7 @@ void Zonestate::handle_events(Engine* game)
             game->quit();
             break;
         }
-        chars[active_color].handle_event(e, this, game);
+        chars[active_color].handle_event(e, this);
     }
     shiftable = true;
 }
@@ -257,7 +257,7 @@ void Zonestate::cleanup()
 
 }
 
-void Zonestate::pause(Engine* game)
+void Zonestate::pause()
 {
     Mix_PauseMusic();
     Mix_PlayChannel(-1, game->sound->menu_exit_snd, 0);

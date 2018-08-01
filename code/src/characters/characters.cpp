@@ -20,7 +20,7 @@ static const int JUMP_VEL = 6;
 static const float DOT_ACC = .5;
 static const int PUSH_VEL = 2;
 
-Dot::Dot(int x, int y, bool color, SDL_Renderer* rend, SDL_Color* palette)
+Dot::Dot(int x, int y, bool color, SDL_Color* palette)
 {
     // initialize velocity
     m_xvel = 0;
@@ -42,14 +42,14 @@ Dot::Dot(int x, int y, bool color, SDL_Renderer* rend, SDL_Color* palette)
     m_color = color;
     if (m_color == 0) {
         m_status = CHAR_IDLE;
-        if (!m_tex.load_object(16, 16, "char-sheet-black.png", rend, palette))
+        if (!m_tex.load_object(16, 16, "char-sheet-black.png", palette))
         {
             printf("Failed to load black dot texture!\n");
             return;
         }
     } else {
         m_status = CHAR_INACTIVE;
-        if (!m_tex.load_object(16, 16, "char-sheet-white.png", rend, palette))
+        if (!m_tex.load_object(16, 16, "char-sheet-white.png", palette))
         {
             printf("Failed to load white dot texture!\n");
             return;
@@ -64,7 +64,7 @@ Dot::Dot(int x, int y, bool color, SDL_Renderer* rend, SDL_Color* palette)
     true_y = col_rect.y;
 }
 
-bool Dot::handle_event(SDL_Event &e, Zonestate* zone, Engine* game)
+bool Dot::handle_event(SDL_Event &e, Zonestate* zone)
 {
     if (exiting || entering) {
         return true;
@@ -109,7 +109,7 @@ bool Dot::handle_event(SDL_Event &e, Zonestate* zone, Engine* game)
                     game->change_state(new ZoneEditor());
                     break;
                 case SDL_SCANCODE_ESCAPE:
-                    zone->pause(game);
+                    zone->pause();
                     break;
                 default:
                     break;
@@ -222,7 +222,7 @@ bool Dot::handle_event(SDL_Event &e, Zonestate* zone, Engine* game)
     return true;
 }
 
-void Dot::update(Zonestate* zone, Engine* game)
+void Dot::update(Zonestate* zone)
 {
     if (exited) {
         zone->check_exit();
@@ -531,7 +531,7 @@ bool Dot::in_level(Level* lvl)
             col_rect.y + col_rect.h > lvl_y && col_rect.y < lvl_y + lvl_h);
 }
 
-void Dot::render(Engine* game, SDL_Rect* camera, Level* lvl)
+void Dot::render(SDL_Rect* camera, Level* lvl)
 {
     int animation_length;
     double animation_speed;
@@ -597,7 +597,7 @@ void Dot::render(Engine* game, SDL_Rect* camera, Level* lvl)
             dir = DIR_LEFT;
         }
     }
-    m_tex.render(render_x, render_y, &frame_clip, camera, game, dir, m_color, angle);
+    m_tex.render(render_x, render_y, &frame_clip, camera, dir, m_color, angle);
 };
 
 void Dot::move(int x, int y)

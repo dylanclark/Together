@@ -20,23 +20,22 @@
 // Let's do this.
 int main(void)
 {
-    // create engine
-    Engine game;
+    game = new Engine();
 
     // initialize screen
-    game.init();
+    game->init();
 
     // initialize game state to main menu
-    game.change_state(new Zonestate(0));
+    game->change_state(new Zonestate(0));
 
     // run game
-    while (game.running())
+    while (game->running())
     {
-        game.handle_events();
-        game.update();
-        game.draw();
+        game->handle_events();
+        game->update();
+        game->draw();
     }
 
     // shutdown
-    game.cleanup();
+    game->cleanup();
 }

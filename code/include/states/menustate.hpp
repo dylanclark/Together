@@ -7,37 +7,37 @@
 class MainMenuState : public Menu
 {
 public:
-    void init(Engine* game);
+    void init();
 };
 
 class NewGameMenuState : public Menu
 {
 public:
-    void init(Engine* game);
+    void init();
 };
 
 class OptionsMenuState : public Menu
 {
 public:
-    void init(Engine* game);
+    void init();
 };
 
 class LevelSelectMenuState : public Menu
 {
 public:
-    void init(Engine* game);
+    void init();
 };
 
 class QuitMenuState : public Menu
 {
 public:
-    void init(Engine* game);
+    void init();
 };
 
 class PauseMenuState : public Menu
 {
 public:
-    void init(Engine* game);
+    void init();
 };
 
 #endif /* menustate_hpp */

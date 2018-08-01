@@ -55,19 +55,21 @@ private:
     bool running_flag;
 };
 
+extern Engine* game;
+
 class Gamestate
 {
 public:
     Gamestate() { };
 
-    virtual void init(Engine* game) = 0;
+    virtual void init() = 0;
     virtual void cleanup() = 0;
 
-    virtual void handle_events(Engine* game) = 0;
-    virtual void update(Engine* game) = 0;
-    virtual void draw(Engine* game) = 0;
+    virtual void handle_events() = 0;
+    virtual void update() = 0;
+    virtual void draw() = 0;
 
-    void change_state(Engine* game, Gamestate* state)
+    void change_state(Gamestate* state)
     {
         game->change_state(state);
     }

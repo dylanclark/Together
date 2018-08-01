@@ -18,7 +18,7 @@ void IntroState::update(Engine* game)
 
     // update the levelstate if the intro state is still active
     if (game->states.size() > 1) {
-        game->states.rbegin()[1]->update(game);
+        game->states.rbegin()[1]->update();
     }
 
     SDL_RenderClear(game->rend);

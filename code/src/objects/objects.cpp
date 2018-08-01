@@ -4,14 +4,14 @@
 
 #include <objects.hpp>
 
-Spring::Spring(Engine* game, int x, int y, bool color, float y_vel, SDL_Color palette)
+Spring::Spring(int x, int y, bool color, float y_vel, SDL_Color palette)
 {
     m_color = color;
     m_yvel = y_vel;
     if (m_color == 0) {
-        m_tex.load_object(16, 16, "spring-sheet-black.png", game->rend, &palette);
+        m_tex.load_object(16, 16, "spring-sheet-black.png", &palette);
     } else {
-        m_tex.load_object(16, 16, "spring-sheet-white.png", game->rend, &palette);
+        m_tex.load_object(16, 16, "spring-sheet-white.png", &palette);
     }
     m_status = SPRING_IDLE;
 
@@ -22,7 +22,7 @@ Spring::Spring(Engine* game, int x, int y, bool color, float y_vel, SDL_Color pa
     m_rect.y = y + (m_color == 0)*(m_tex.get_height()-m_rect.h);
 }
 
-void Spring::render(Engine* game, SDL_Rect cam_rect, bool active_color)
+void Spring::render(SDL_Rect cam_rect, bool active_color)
 {
     int frame;
     int animation_length = 12;
@@ -42,7 +42,7 @@ void Spring::render(Engine* game, SDL_Rect cam_rect, bool active_color)
     int render_x = m_rect.x - (tex_w-m_rect.w)/2;
     int render_y = m_rect.y - (m_color == 0)*(m_tex.get_height()-m_rect.h);
     SDL_Rect frame_clip = {frame*tex_w, m_status*tex_h, tex_w, tex_h};
-    m_tex.render(render_x, render_y, &frame_clip, &cam_rect, game, 0, m_color);
+    m_tex.render(render_x, render_y, &frame_clip, &cam_rect, 0, m_color);
 }
 
 void Spring::spring()

@@ -24,14 +24,14 @@ typedef enum MenuItemType {
 class FadeIn
 {
 public:
-    FadeIn(Engine* game, int time);
+    FadeIn(int time);
 
     SDL_Rect rect;
     Texture tex;
     Uint8 alpha;
     int timer;
 
-    void render(SDL_Renderer* rend);
+    void render();
     void update();
 };
 
@@ -43,8 +43,8 @@ public:
     SDL_Rect rect;
     Texture tex;
 
-    virtual void render(SDL_Renderer* rend) = 0;
-    virtual void select(Engine* game) = 0;
+    virtual void render() = 0;
+    virtual void select() = 0;
 };
 
 class MenuButton : public MenuItem
@@ -52,8 +52,8 @@ class MenuButton : public MenuItem
 public:
     MenuButton(int x, int y, int w, int h);
 
-    void render(SDL_Renderer* rend);
-    virtual void select(Engine* game) = 0;
+    void render();
+    virtual void select() = 0;
 };
 
 class MenuSlider : public MenuItem
@@ -61,8 +61,8 @@ class MenuSlider : public MenuItem
 public:
     MenuSlider(int length, bool permanent, int x, int y, int w, int h);
 
-    void render(SDL_Renderer* rend);
-    virtual void select(Engine* game) = 0;
+    void render();
+    virtual void select() = 0;
 
     int frames;
     int cur_frame;
@@ -78,7 +78,7 @@ public:
     SDL_Rect rect;
     Texture tex;
 
-    void render(SDL_Renderer* rend);
+    void render();
 };
 
 class Menu : public Gamestate
@@ -87,7 +87,7 @@ public:
     Menu();
 
     // init and shutdown
-    virtual void init(Engine* game) = 0;
+    virtual void init() = 0;
     void cleanup();
 
     // pause and resume
@@ -95,9 +95,9 @@ public:
     void resume();
 
     // handling control of screen
-    void handle_events(Engine* game);
-    void update(Engine* game);
-    void draw(Engine* game);
+    void handle_events();
+    void update();
+    void draw();
 
     // controller stuff
     int selector;
@@ -113,85 +113,85 @@ public:
 class NewGameButton : public MenuButton
 {
 public:
-    NewGameButton(int x, int y, int w, int h, SDL_Renderer* rend);
-    void select(Engine* game);
+    NewGameButton(int x, int y, int w, int h);
+    void select();
 };
 
 class ContinueButton : public MenuButton
 {
 public:
-    ContinueButton(int x, int y, int w, int h, SDL_Renderer* rend);
-    void select(Engine* game);
+    ContinueButton(int x, int y, int w, int h);
+    void select();
 };
 
 class OptionsButton : public MenuButton
 {
 public:
-    OptionsButton(int x, int y, int w, int h, SDL_Renderer* rend);
-    void select(Engine* game);
+    OptionsButton(int x, int y, int w, int h);
+    void select();
 };
 
 class QuitButton : public MenuButton
 {
 public:
-    QuitButton(int x, int y, int w, int h, SDL_Renderer* rend);
-    void select(Engine* game);
+    QuitButton(int x, int y, int w, int h);
+    void select();
 };
 
 class YesQuitButton : public MenuButton
 {
 public:
-    YesQuitButton(int x, int y, int w, int h, SDL_Renderer* rend);
-    void select(Engine* game);
+    YesQuitButton(int x, int y, int w, int h);
+    void select();
 };
 
 class YesNewGameButton : public MenuButton
 {
 public:
-    YesNewGameButton(int x, int y, int w, int h, SDL_Renderer* rend);
-    void select(Engine* game);
+    YesNewGameButton(int x, int y, int w, int h);
+    void select();
 };
 
 class NoButton : public MenuButton
 {
 public:
-    NoButton(int x, int y, int w, int h, SDL_Renderer* rend);
-    void select(Engine* game);
+    NoButton(int x, int y, int w, int h);
+    void select();
 };
 
 class ResumeButton : public MenuButton
 {
 public:
-    ResumeButton(int x, int y, int w, int h, SDL_Renderer* rend);
-    void select(Engine* game);
+    ResumeButton(int x, int y, int w, int h);
+    void select();
 };
 
 class LevelSelectButton : public MenuButton
 {
 public:
-    LevelSelectButton(int x, int y, int w, int h, SDL_Renderer* rend);
-    void select(Engine* game);
+    LevelSelectButton(int x, int y, int w, int h);
+    void select();
 };
 
 class SaveAndQuitButton : public MenuButton
 {
 public:
-    SaveAndQuitButton(int x, int y, int w, int h, SDL_Renderer* rend);
-    void select(Engine* game);
+    SaveAndQuitButton(int x, int y, int w, int h);
+    void select();
 };
 
 class ControlsButton : public MenuButton
 {
 public:
-    ControlsButton(int x, int y, int w, int h, SDL_Renderer* rend);
-    void select(Engine* game);
+    ControlsButton(int x, int y, int w, int h);
+    void select();
 };
 
 class BackButton : public MenuButton
 {
 public:
-    BackButton(int x, int y, int w, int h, SDL_Renderer* rend);
-    void select(Engine* game);
+    BackButton(int x, int y, int w, int h);
+    void select();
 };
 
 // SLIDERS
@@ -199,22 +199,22 @@ public:
 class VolumeSlider : public MenuSlider
 {
 public:
-    VolumeSlider(int length, bool permanent, int x, int y, int w, int h, SDL_Renderer* rend);
-    void select(Engine* game);
+    VolumeSlider(int length, bool permanent, int x, int y, int w, int h);
+    void select();
 };
 
 class SfxSlider : public MenuSlider
 {
 public:
-    SfxSlider(int length, bool permanent, int x, int y, int w, int h, SDL_Renderer* rend);
-    void select(Engine* game);
+    SfxSlider(int length, bool permanent, int x, int y, int w, int h);
+    void select();
 };
 
 class LevelSlider : public MenuSlider
 {
 public:
-    LevelSlider(int length, bool permanent, int x, int y, int w, int h, SDL_Renderer* rend);
-    void select(Engine* game);
+    LevelSlider(int length, bool permanent, int x, int y, int w, int h);
+    void select();
 };
 
 #endif /* menu_hpp */
