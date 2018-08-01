@@ -1,5 +1,4 @@
 BUG LIST
-    - white char can get stuck if exactly one tile to the right of a left flooredge
 
 WORLD 0 (intro)
     - black and white
@@ -21,26 +20,15 @@ WORLD 7 (forge/factory)
     - red
 
 TO-DO LIST
-    - implement "zones": groups of levels that can be navigated like a Metroid map
-        + replace level_ends with exits - 2-tile rects that must touch wall and one black and white square
-        + camera stays on one level until you reach exit, then pans smoothly to the next level
-        + zone-file must have a) starting level and b) characters' starting coordinates. and coordinates of all levels, and palette
-        + when chars exit a level they just move 3 tiles in that diraction and an animation plays
-        + this means each level needs a border for both chars
-    - level editor new features
-        + level ends can't be in the corner
     - zone editor
         + levels should be invalid if none of their exits are connected
-
+    - a block that one char must stand on to make it the other color
 
 LOGISTICS:
-  - general object class, each level can then have a list of objects
-  - maybe there's a way to void passing the engine around everywhere?
-  - change initialization functions for Dot and things like it: should take arguments (x, y, etc.) and initialize traits
+  - maybe engine should be a global object
 
 GAMEPLAY:
   - more objects: waterfall? decorative objects, like grass/insects/flowers/what else?
-  - water? perhaps a gray tiles that both dots can swim in: something like this:
   - variable blocks - switches change them instantly from black to white. easy!
   - each of the level sets should have a gimmick:
       + water
