@@ -132,6 +132,8 @@ void Level::cleanup()
 
 void Zonestate::init()
 {
+    controls_frozen = false;
+
     // first, read the zone-file
     char zone_num_cstr[2];
     snprintf(zone_num_cstr, 2, "%d", m_zone_num);
@@ -175,9 +177,14 @@ void Zonestate::init()
     Dot w_char(w_char_x + start_lvl_x/TILE_WIDTH, w_char_y + start_lvl_y/TILE_WIDTH, true, &palette);
     chars.push_back(b_char);
     chars.push_back(w_char);
-    SDL_Rect char_rect = chars[0].get_rect();
-    SDL_Rect w_char_rect = chars[1].get_rect();
-    active_color = true;
+    active_color = false;
+
+    bchar_lvl_x = chars[0].get_x();
+    bchar_lvl_y = chars[0].get_y();
+    bchar_lvl_yvel = chars[0].get_yvel();
+    wchar_lvl_x = chars[1].get_x();
+    wchar_lvl_y = chars[1].get_y();
+    wchar_lvl_yvel = chars[1].get_yvel();
 
     // init camera
     camera = new Camera(game->screen_width, game->screen_height, levels[active_level],
@@ -189,11 +196,19 @@ void Zonestate::update()
     // clear the window
     SDL_RenderClear(game->rend);
 
+    if (controls_frozen) {
+        freeze_duration--;
+    }
+    if (freeze_duration == 0) {
+        controls_frozen = false;
+    }
+
     for (int i = 0; i < chars.size(); i++) {
         chars[i].update(this);
     }
     camera->update(chars[active_color].get_rect(), chars[active_color].get_dir());
 
+    /*
     int lvl_x, lvl_y, lvl_w, lvl_h;
     if (levels[active_level]->update(this, chars)) {
         SDL_Rect char_rect = chars[0].get_rect();
@@ -216,6 +231,7 @@ void Zonestate::update()
             }
         }
     }
+    */
 }
 
 void Zonestate::draw()
@@ -236,6 +252,10 @@ void Zonestate::draw()
 
 void Zonestate::handle_events()
 {
+    if (controls_frozen) {
+        return;
+    }
+
     // event handler
     SDL_Event e;
 
@@ -298,7 +318,31 @@ void Zonestate::check_exit()
     } else {
         chars[0].good_exit();
         chars[1].good_exit();
+        bchar_lvl_x = chars[0].get_x();
+        bchar_lvl_y = chars[0].get_y();
+        bchar_lvl_yvel = chars[0].get_yvel();
+        wchar_lvl_x = chars[1].get_x();
+        wchar_lvl_y = chars[1].get_y();
+        wchar_lvl_yvel = chars[1].get_yvel();
         active_level = result;
-        camera->set_level(levels[active_level]);
+        int transition_duration = 25;
+        SDL_Rect char_rect = chars[active_color].get_rect();
+        int char_dir = chars[active_color].get_dir();
+        camera->set_level(levels[active_level], char_rect, char_dir, transition_duration);
+        freeze_controls(transition_duration);
     }
+}
+
+void Zonestate::freeze_controls(int duration)
+{
+    controls_frozen = true;
+    freeze_duration = duration;
+}
+
+void Zonestate::reset_level()
+{
+    int transition_duration = 10;
+    freeze_controls(transition_duration);
+    chars[0].reset(bchar_lvl_x, bchar_lvl_y, bchar_lvl_yvel);
+    chars[1].reset(wchar_lvl_x, wchar_lvl_y, wchar_lvl_yvel);
 }

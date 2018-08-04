@@ -23,9 +23,15 @@ TO-DO LIST
     - zone editor
         + levels should be invalid if none of their exits are connected
     - a block that one char must stand on to make it the other color
+    - buttons
+        + create buttons (like in old cs50 demo)
+        + toggle on/off buttons (maybe that move something)
+        + toggle this/that buttons (switch between two states, maybe change color of pushable block)
+    - keys and doors
+    - pushable blocks
+    - changeable gravity
 
 LOGISTICS:
-  - maybe engine should be a global object
 
 GAMEPLAY:
   - more objects: waterfall? decorative objects, like grass/insects/flowers/what else?

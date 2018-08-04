@@ -19,7 +19,9 @@ typedef enum _TileType {
     TILE_CLEAR,
     TILE_SOLID,
     TILE_BLACK_PLATFORM,
-    TILE_WHITE_PLATFORM
+    TILE_WHITE_PLATFORM,
+    TILE_SPIKES_BLACK,
+    TILE_SPIKES_WHITE,
 } TileType;
 
 // class definition
@@ -31,6 +33,7 @@ public:
     void render_bg(int active_color, SDL_Rect* camera, Texture* tile_tex);
     void render_fg(int active_color, SDL_Rect* camera, Texture* tile_tex);
     TileType get_type() { return m_type; }
+    void set_type(TileType type) { m_type = type; }
     SDL_Rect get_col_rect() { return col_rect; }
 
 private:

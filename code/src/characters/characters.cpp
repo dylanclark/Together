@@ -32,8 +32,6 @@ Dot::Dot(int x, int y, bool color, SDL_Color* palette)
     right = false;
     left = false;
     dir = DIR_RIGHT;
-    ready = false;
-    snapped = false;
     exiting = exited = entering = false;
 
     // initiliaze gamepad
@@ -280,7 +278,7 @@ void Dot::update(Zonestate* zone)
     }
 
     Level* level = zone->get_active_level();
-    std::vector<Tile> tileset = level->get_tileset();
+    std::vector<Tile> tileset = *level->get_tileset();
 
     // move that Dot (x)
     col_rect.x += m_xvel;
@@ -307,6 +305,7 @@ void Dot::update(Zonestate* zone)
         if (col_rect.x + col_rect.w < lvl_x || col_rect.x > lvl_x + lvl_w) {
             exiting = false;
             exited = true;
+            m_xvel = 0;
         }
         return;
     }
@@ -374,6 +373,11 @@ void Dot::update(Zonestate* zone)
             continue;
         }
         if (check_collision(col_rect, tileset[i].get_col_rect(), &repos)) {
+            if (type == TILE_SPIKES_BLACK || type == TILE_SPIKES_WHITE) {
+                m_status = CHAR_DIE;
+                zone->reset_level();
+                return;
+            }
             if (type == TILE_BLACK_PLATFORM + m_color) {
                 platform_col = true;
                 if (platform_drop || (!m_color - m_color)*m_yvel < 0) {
@@ -600,13 +604,14 @@ void Dot::render(SDL_Rect* camera, Level* lvl)
     m_tex.render(render_x, render_y, &frame_clip, camera, dir, m_color, angle);
 };
 
-void Dot::move(int x, int y)
+void Dot::reset(int x, int y, float y_vel)
 {
     up = down = right = left = false;
-    m_xvel = m_yvel = 0;
+    m_xvel = 0;
+    m_yvel = y_vel;
     m_status = CHAR_IDLE;
-    col_rect.x += x;
-    col_rect.y += y;
+    col_rect.x = x;
+    col_rect.y = y;
     true_y = col_rect.y;
 }
 

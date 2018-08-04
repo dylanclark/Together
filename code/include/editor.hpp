@@ -12,13 +12,16 @@ typedef enum Color {
     COLOR_SOLID
 } Color;
 
-
 typedef enum PlacingType {
     PLACING_TILES_BW,
     PLACING_TILES_CS,
+    PLACING_SPIKES,
     PLACING_PLATFORMS,
+    PLACING_BLOCKS,
     PLACING_SPRINGS,
-    PLACING_EXITS,
+    PLACING_BUTTONS,
+    PLACING_KEYS,
+    PLACING_DOORS,
     PLACING_DELETE
 } PlacingType;
 static const int NUM_PLACING_TYPES = PLACING_DELETE + 1;
@@ -117,6 +120,8 @@ private:
     int click_x, click_y;
     bool clicked;
     TileType clicked_type;
+
+    Texture m_tiletex;
 };
 
 std::string get_str(std::string prompt, std::string result = "");

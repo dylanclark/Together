@@ -5,6 +5,7 @@
 #include <editor.hpp>
 #include <levels.hpp>
 #include <tiles.hpp>
+#include <textures.hpp>
 
 EditorCamera::EditorCamera(int scr_w, int scr_h, int x, int y)
 {
@@ -163,6 +164,7 @@ void Gridlines::draw(int scr_w, int scr_h, SDL_Rect cam_rect)
 
 Tileset::Tileset(int w, int h, std::vector<std::vector<TileType> > tiles_arg=std::vector<std::vector<TileType> >(), std::vector<EditorObject> objs_arg=std::vector<EditorObject>())
 {
+    m_tiletex.load_tile_sheet("tiles.png", NULL);
     clicked = 0;
     click_x = click_y = 0;
     width = w;
@@ -182,10 +184,15 @@ Tileset::Tileset(int w, int h, std::vector<std::vector<TileType> > tiles_arg=std
 
 void Tileset::draw(int scr_w, int scr_h, SDL_Rect cam_rect)
 {
+    SDL_Rect clip_rect;
+    clip_rect.y = 0;
+    clip_rect.w = TILE_WIDTH;
+    clip_rect.h = TILE_WIDTH;
     float aspect_ratio = ((float) scr_w / (float) cam_rect.w);
     // first we will draw all of the tiles
     for (int i = 0; i < height; i++) {
         for (int j = 0; j < width; j++) {
+            clip_rect.x = tiles[i][j] * TILE_WIDTH * 2;
             int x1 = (j*TILE_WIDTH - cam_rect.x) * aspect_ratio;
             int x2 = ((j+1)*TILE_WIDTH - cam_rect.x) * aspect_ratio;
             int y1 = (i*TILE_WIDTH - cam_rect.y) * aspect_ratio;
@@ -216,12 +223,13 @@ void Tileset::draw(int scr_w, int scr_h, SDL_Rect cam_rect)
                 platform_flag = true;
                 break;
             default:
-                SDL_SetRenderDrawColor(game->rend, 255, 0, 0, SDL_ALPHA_OPAQUE);
                 break;
             }
             if (clicked && click_x == j && click_y == i) {
                 platform_flag = false;
                 SDL_SetRenderDrawColor(game->rend, 255, 100, 0, SDL_ALPHA_OPAQUE);
+                SDL_RenderFillRect(game->rend, &to_draw);
+                continue;
             }
             if (platform_flag) {
                 black_height *= aspect_ratio;
@@ -232,7 +240,7 @@ void Tileset::draw(int scr_w, int scr_h, SDL_Rect cam_rect)
                 SDL_SetRenderDrawColor(game->rend, 255, 255, 255, SDL_ALPHA_OPAQUE);
                 SDL_RenderFillRect(game->rend, &white_rect);
             } else {
-                SDL_RenderFillRect(game->rend, &to_draw);
+                m_tiletex.render(j*TILE_WIDTH, i*TILE_WIDTH, &clip_rect, &cam_rect);
             }
         }
     }
@@ -277,6 +285,7 @@ void Tileset::handle_event(SDL_Event e, int scr_w, int scr_h, SDL_Rect cam_rect,
         // we're placing tiles
         case PLACING_TILES_BW:
         case PLACING_TILES_CS:
+        case PLACING_SPIKES:
         case PLACING_PLATFORMS:
             if (!clicked) {
                 // if we haven't clicked before, save the click
@@ -289,6 +298,8 @@ void Tileset::handle_event(SDL_Event e, int scr_w, int scr_h, SDL_Rect cam_rect,
                     clicked_type = (e.button.button == SDL_BUTTON_LEFT) ? TILE_CLEAR : TILE_SOLID;
                 } else if (placing == PLACING_PLATFORMS) {
                     clicked_type = (e.button.button == SDL_BUTTON_LEFT) ? TILE_BLACK_PLATFORM : TILE_WHITE_PLATFORM;
+                } else if (placing == PLACING_SPIKES) {
+                    clicked_type = (e.button.button == SDL_BUTTON_LEFT) ? TILE_SPIKES_BLACK : TILE_SPIKES_WHITE;
                 }
             } else {
                 // otherwise fill the rectangle that our clicks make!
@@ -614,11 +625,11 @@ void LevelEditor::draw_UI(int scr_w, int scr_h)
     case PLACING_PLATFORMS:
         placing_str += "tiles (platforms)";
         break;
+    case PLACING_SPIKES:
+        placing_str += "tiles (spikes)";
+        break;
     case PLACING_SPRINGS:
         placing_str += "springs";
-        break;
-    case PLACING_EXITS:
-        placing_str += "exits";
         break;
     case PLACING_DELETE:
         placing_str = "deleting";

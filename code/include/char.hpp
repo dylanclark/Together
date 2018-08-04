@@ -42,6 +42,7 @@ typedef enum _CharStatus {
     CHAR_JUMP,
     CHAR_INACTIVE,
     CHAR_EXITED,
+    CHAR_DIE,
 } CharStatus;
 
 typedef enum _ExitDir {
@@ -62,9 +63,11 @@ public:
     void update(Zonestate* zone);
     void render(SDL_Rect* camera, Level* lvl);
 
-    void move(int x, int y);
+    void reset(int x, int y, float y_vel);
 
     SDL_Rect get_rect() { return col_rect; }
+    int get_x() { return col_rect.x; }
+    int get_y() { return col_rect.y; }
     int get_dir() { return dir; }
     float get_yvel() { return m_yvel; }
     int get_exit_dir() { return (exited || entering) ? (int) exit_dir : -1; }
@@ -76,33 +79,25 @@ public:
     void good_exit();
     bool in_level(Level* lvl);
 
-    bool center(SDL_Rect* end_rect);
-
-    bool snapped;
-    // ready for exit
-    bool ready;
-
 private:
-    // m_status = idle, jump, run, inactive, etc.
-    CharStatus m_status;
-    // which way is the dot facing?
-    CharDir dir;
-    // what animation frame is the dot on?
-    int jump_start;
+    Texture m_tex;
 
-    // is the dot jumping?
-    int short_hop;
-    float m_xvel, m_yvel;
+    CharStatus m_status;
+
+    SDL_Rect col_rect;
     float true_y;
+    float m_xvel, m_yvel;
+    CharDir dir;
+
+    Controller* controller;
     bool up, down, left, right;
+
+    int jump_start;
+    int short_hop;
     bool platform_drop;
+
     bool exiting, exited, entering;
     ExitDir exit_dir;
-    Controller* controller;
-    Texture m_tex;
-    SDL_Rect col_rect;
-
-    bool crate_col(Zonestate* zone);
 };
 
 #endif /* char_hpp */

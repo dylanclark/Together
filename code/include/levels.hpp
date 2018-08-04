@@ -12,10 +12,6 @@
 #include <objects.hpp>
 #include <tiles.hpp>
 
-// max level size
-static const int MAX_SIZE = 50 * 50;
-static const int MAX_CRATES = 10;
-
 class Level;
 
 class Camera
@@ -25,7 +21,7 @@ public:
     ~Camera();
     void update (SDL_Rect active_char, int dir);
     SDL_Rect* get_display() { return &display; }
-    void set_level(Level* level);
+    void set_level(Level* level, SDL_Rect active_char, int dir, int transition_duration);
 
 private:
     SDL_Rect display;
@@ -33,9 +29,16 @@ private:
     int m_lvl_w, m_lvl_h;
     float loc_x, loc_y;
     SDL_Rect get_target(SDL_Rect active_char, int dir);
+
+    bool splining;
+    int spline_duration;
+    int spline_timestep;
+    SDL_Rect spline_start;
+    SDL_Rect spline_end;
 };
 
 class Tile;
+class Object;
 
 class Level
 {
@@ -53,7 +56,7 @@ public:
     int get_y() { return m_y; }
     int get_w() { return m_w; }
     int get_h() { return m_h; }
-    std::vector<Tile> get_tileset() { return tileset; }
+    std::vector<Tile>* get_tileset() { return &tileset; }
     std::vector<Object*> get_objects() { return objects; }
 
     bool just_exited;
@@ -76,7 +79,6 @@ private:
     Texture tile_tex;
 };
 
-
 class Zonestate : public Gamestate
 {
 public:
@@ -93,17 +95,30 @@ public:
     void shift();
 
     Level* get_active_level();
+
     void check_exit();
+    void reset_level();
+
+    void freeze_controls(int duration);
 
     // shifting info
     bool shiftable;
     bool active_color;
 
 private:
+    SDL_Color palette;
+
     // level number
     int m_zone_num;
     int active_level;
-    SDL_Color palette;
+
+    // where did the chars start the level?
+    int bchar_lvl_x, bchar_lvl_y, bchar_lvl_yvel;
+    int wchar_lvl_x, wchar_lvl_y, wchar_lvl_yvel;
+
+    // for level transitions
+    int freeze_duration;
+    bool controls_frozen;
 
     Camera* camera;
     std::vector<Dot> chars;
