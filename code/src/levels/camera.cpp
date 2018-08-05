@@ -1,5 +1,6 @@
 // using SDL and standard IO
 #include <stdio.h>
+#include <time.h>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 
@@ -10,9 +11,12 @@
 // camera constants
 static const float BUFFER = 50;
 static const float CAM_ACC = 0.05;
+static const float SHAKE = 20;
 
 Camera::Camera(int scr_w, int scr_h, Level* level, SDL_Rect active_char, int char_dir)
 {
+    srand(time(0));
+    m_trauma = 0;
     splining = false;
 
     // level dimensions
@@ -44,8 +48,8 @@ Camera::~Camera()
 
 SDL_Rect Camera::get_target(SDL_Rect active_char, int dir)
 {
-    int x = active_char.x + active_char.w / 2;
-    int y = active_char.y + active_char.h / 2;
+    int x = round(active_char.x + active_char.w / 2.0);
+    int y = round(active_char.y + active_char.h / 2.0);
 
     SDL_Rect target;
     target.x = x + BUFFER * (!dir - dir);
@@ -73,22 +77,43 @@ SDL_Rect Camera::get_target(SDL_Rect active_char, int dir)
     return target;
 }
 
+void Camera::spline_update()
+{
+    float s = (float) spline_timestep / (float) spline_duration;
+    float t = 1 - s;
+    loc_x = round(pow(s, 2) * (1 + 2.0*t) * spline_start.x) + round(pow(t, 2) * (1 + 2.0*s) * spline_end.x);
+    loc_y = round(pow(s, 2) * (1 + 2.0*t) * spline_start.y) + round(pow(t, 2) * (1 + 2.0*s) * spline_end.y);
+    if (abs(loc_x - spline_end.x) <= 2) {
+        loc_x = spline_end.x;
+    }
+    if (abs(loc_y - spline_end.y) <= 2) {
+        loc_y = spline_end.y;
+    }
+    display.x = loc_x - display.w / 2.0;
+    display.y = loc_y - display.h / 2.0;
+    spline_timestep--;
+}
+
+float get_rand_from_negone_to_one()
+{
+    return (float) rand() / (float) RAND_MAX * 2.0 - 1;
+}
+
 void Camera::update(SDL_Rect active_char, int dir)
 {
-    if (spline_timestep == 0) {
+    if (splining && spline_timestep == 0) {
         splining = false;
-        loc_x = display.x + display.w / 2;
-        loc_y = display.y + display.h / 2;
+        loc_x = display.x + display.w / 2.0;
+        loc_y = display.y + display.h / 2.0;
     }
     if (splining) {
-        float s = (float) spline_timestep / (float) spline_duration;
-        float t = 1 - s;
-        loc_x = pow(s, 2) * (1 + 2*t) * spline_start.x + pow(t, 2) * (1 + 2*s) * spline_end.x;
-        loc_y = pow(s, 2) * (1 + 2*t) * spline_start.y + pow(t, 2) * (1 + 2*s) * spline_end.y;
-        display.x = loc_x - display.w / 2.0;
-        display.y = loc_y - display.h / 2.0;
-        spline_timestep--;
-        return;
+        spline_update();
+    }
+
+    m_trauma -= 0.02;
+
+    if (m_trauma < 0) {
+        m_trauma = 0;
     }
 
     SDL_Rect target = get_target(active_char, dir);
@@ -98,8 +123,8 @@ void Camera::update(SDL_Rect active_char, int dir)
     loc_y += ((float) target.y - loc_y) * CAM_ACC;
 
     // update the proper SDL_Rect
-    display.x = loc_x - display.w / 2.0;
-    display.y = loc_y - display.h / 2.0;
+    display.x = loc_x - display.w / 2.0 + pow(m_trauma, 2) * get_rand_from_negone_to_one() * SHAKE;
+    display.y = loc_y - display.h / 2.0 + pow(m_trauma, 2) * get_rand_from_negone_to_one() * SHAKE;
 }
 
 void Camera::set_level(Level* level, SDL_Rect active_char, int dir, int transition_duration)

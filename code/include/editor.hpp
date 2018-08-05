@@ -15,7 +15,8 @@ typedef enum Color {
 typedef enum PlacingType {
     PLACING_TILES_BW,
     PLACING_TILES_CS,
-    PLACING_SPIKES,
+    PLACING_SPIKES_FC,
+    PLACING_SPIKES_RL,
     PLACING_PLATFORMS,
     PLACING_BLOCKS,
     PLACING_SPRINGS,

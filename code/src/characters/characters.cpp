@@ -60,6 +60,8 @@ Dot::Dot(int x, int y, bool color, SDL_Color* palette)
     col_rect.x = x*TILE_WIDTH;
     col_rect.y = y*TILE_WIDTH - (m_color == 0)*(col_rect.h-TILE_WIDTH);;
     true_y = col_rect.y;
+
+    save_state();
 }
 
 bool Dot::handle_event(SDL_Event &e, Zonestate* zone)
@@ -319,6 +321,11 @@ void Dot::update(Zonestate* zone)
             continue;
         }
         if (check_collision(col_rect, tileset[i].get_col_rect(), &repos)) {
+            if (type == TILE_SPIKES_LEFT || type == TILE_SPIKES_RIGHT) {
+                m_status = CHAR_DIE;
+                zone->reset_level();
+                return;
+            }
             if (type == TILE_BLACK_PLATFORM + m_color) {
                 platform_drop = true;
                 continue;
@@ -373,7 +380,7 @@ void Dot::update(Zonestate* zone)
             continue;
         }
         if (check_collision(col_rect, tileset[i].get_col_rect(), &repos)) {
-            if (type == TILE_SPIKES_BLACK || type == TILE_SPIKES_WHITE) {
+            if (type == TILE_SPIKES_FLOOR || type == TILE_SPIKES_CEILING) {
                 m_status = CHAR_DIE;
                 zone->reset_level();
                 return;
@@ -604,15 +611,25 @@ void Dot::render(SDL_Rect* camera, Level* lvl)
     m_tex.render(render_x, render_y, &frame_clip, camera, dir, m_color, angle);
 };
 
-void Dot::reset(int x, int y, float y_vel)
+void Dot::save_state()
+{
+    saved_yvel = m_yvel;
+    saved_col_rect = col_rect;
+    saved_dir = dir;
+    saved_status = m_status;
+}
+
+void Dot::reset(Zonestate* zone)
 {
     up = down = right = left = false;
+    exited = entering = exiting = false;
     m_xvel = 0;
-    m_yvel = y_vel;
-    m_status = CHAR_IDLE;
-    col_rect.x = x;
-    col_rect.y = y;
-    true_y = col_rect.y;
+    m_yvel = saved_yvel;
+    m_status = saved_status;
+    dir = saved_dir;
+    col_rect = saved_col_rect;
+    true_y = round(col_rect.y);
+    update(zone);
 }
 
 void Dot::spring_me(float yvel)

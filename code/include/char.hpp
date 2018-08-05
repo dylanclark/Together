@@ -63,11 +63,10 @@ public:
     void update(Zonestate* zone);
     void render(SDL_Rect* camera, Level* lvl);
 
-    void reset(int x, int y, float y_vel);
+    void save_state();
+    void reset(Zonestate* zone);
 
     SDL_Rect get_rect() { return col_rect; }
-    int get_x() { return col_rect.x; }
-    int get_y() { return col_rect.y; }
     int get_dir() { return dir; }
     float get_yvel() { return m_yvel; }
     int get_exit_dir() { return (exited || entering) ? (int) exit_dir : -1; }
@@ -98,6 +97,11 @@ private:
 
     bool exiting, exited, entering;
     ExitDir exit_dir;
+
+    SDL_Rect saved_col_rect;
+    float saved_yvel;
+    CharStatus saved_status;
+    CharDir saved_dir;
 };
 
 #endif /* char_hpp */

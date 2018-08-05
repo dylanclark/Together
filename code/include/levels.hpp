@@ -22,14 +22,18 @@ public:
     void update (SDL_Rect active_char, int dir);
     SDL_Rect* get_display() { return &display; }
     void set_level(Level* level, SDL_Rect active_char, int dir, int transition_duration);
+    void traumatize(float trauma) { m_trauma = trauma; }
 
 private:
+    SDL_Rect get_target(SDL_Rect active_char, int dir);
+
     SDL_Rect display;
     int m_lvl_x, m_lvl_y;
     int m_lvl_w, m_lvl_h;
     float loc_x, loc_y;
-    SDL_Rect get_target(SDL_Rect active_char, int dir);
+    float m_trauma;
 
+    void spline_update();
     bool splining;
     int spline_duration;
     int spline_timestep;
@@ -111,10 +115,6 @@ private:
     // level number
     int m_zone_num;
     int active_level;
-
-    // where did the chars start the level?
-    int bchar_lvl_x, bchar_lvl_y, bchar_lvl_yvel;
-    int wchar_lvl_x, wchar_lvl_y, wchar_lvl_yvel;
 
     // for level transitions
     int freeze_duration;

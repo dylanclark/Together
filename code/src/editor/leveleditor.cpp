@@ -285,7 +285,8 @@ void Tileset::handle_event(SDL_Event e, int scr_w, int scr_h, SDL_Rect cam_rect,
         // we're placing tiles
         case PLACING_TILES_BW:
         case PLACING_TILES_CS:
-        case PLACING_SPIKES:
+        case PLACING_SPIKES_FC:
+        case PLACING_SPIKES_RL:
         case PLACING_PLATFORMS:
             if (!clicked) {
                 // if we haven't clicked before, save the click
@@ -298,8 +299,10 @@ void Tileset::handle_event(SDL_Event e, int scr_w, int scr_h, SDL_Rect cam_rect,
                     clicked_type = (e.button.button == SDL_BUTTON_LEFT) ? TILE_CLEAR : TILE_SOLID;
                 } else if (placing == PLACING_PLATFORMS) {
                     clicked_type = (e.button.button == SDL_BUTTON_LEFT) ? TILE_BLACK_PLATFORM : TILE_WHITE_PLATFORM;
-                } else if (placing == PLACING_SPIKES) {
-                    clicked_type = (e.button.button == SDL_BUTTON_LEFT) ? TILE_SPIKES_BLACK : TILE_SPIKES_WHITE;
+                } else if (placing == PLACING_SPIKES_FC) {
+                    clicked_type = (e.button.button == SDL_BUTTON_LEFT) ? TILE_SPIKES_FLOOR : TILE_SPIKES_CEILING;
+                } else if (placing == PLACING_SPIKES_RL) {
+                    clicked_type = (e.button.button == SDL_BUTTON_LEFT) ? TILE_SPIKES_LEFT : TILE_SPIKES_RIGHT;
                 }
             } else {
                 // otherwise fill the rectangle that our clicks make!
@@ -622,11 +625,26 @@ void LevelEditor::draw_UI(int scr_w, int scr_h)
     case PLACING_TILES_CS:
         placing_str += "tiles (clear/solid)";
         break;
-    case PLACING_PLATFORMS:
-        placing_str += "tiles (platforms)";
+    case PLACING_SPIKES_FC:
+        placing_str += "spikes (floor/ceiling)";
         break;
-    case PLACING_SPIKES:
-        placing_str += "tiles (spikes)";
+    case PLACING_SPIKES_RL:
+        placing_str += "spikes (left/right wall)";
+        break;
+    case PLACING_PLATFORMS:
+        placing_str += "platforms (black/white)";
+        break;
+    case PLACING_BLOCKS:
+        placing_str += "blocks";
+        break;
+    case PLACING_KEYS:
+        placing_str += "keys";
+        break;
+    case PLACING_DOORS:
+        placing_str += "doors";
+        break;
+    case PLACING_BUTTONS:
+        placing_str += "buttons";
         break;
     case PLACING_SPRINGS:
         placing_str += "springs";

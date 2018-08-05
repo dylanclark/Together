@@ -20,8 +20,10 @@ typedef enum _TileType {
     TILE_SOLID,
     TILE_BLACK_PLATFORM,
     TILE_WHITE_PLATFORM,
-    TILE_SPIKES_BLACK,
-    TILE_SPIKES_WHITE,
+    TILE_SPIKES_FLOOR,
+    TILE_SPIKES_CEILING,
+    TILE_SPIKES_LEFT,
+    TILE_SPIKES_RIGHT,
 } TileType;
 
 // class definition

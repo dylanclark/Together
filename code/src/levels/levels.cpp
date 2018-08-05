@@ -179,13 +179,6 @@ void Zonestate::init()
     chars.push_back(w_char);
     active_color = false;
 
-    bchar_lvl_x = chars[0].get_x();
-    bchar_lvl_y = chars[0].get_y();
-    bchar_lvl_yvel = chars[0].get_yvel();
-    wchar_lvl_x = chars[1].get_x();
-    wchar_lvl_y = chars[1].get_y();
-    wchar_lvl_yvel = chars[1].get_yvel();
-
     // init camera
     camera = new Camera(game->screen_width, game->screen_height, levels[active_level],
         chars[active_color].get_rect(), chars[active_color].get_dir());
@@ -194,6 +187,7 @@ void Zonestate::init()
 void Zonestate::update()
 {
     // clear the window
+    SDL_SetRenderDrawColor(game->rend, palette.r, palette.g, palette.b, SDL_ALPHA_OPAQUE);
     SDL_RenderClear(game->rend);
 
     if (controls_frozen) {
@@ -318,12 +312,8 @@ void Zonestate::check_exit()
     } else {
         chars[0].good_exit();
         chars[1].good_exit();
-        bchar_lvl_x = chars[0].get_x();
-        bchar_lvl_y = chars[0].get_y();
-        bchar_lvl_yvel = chars[0].get_yvel();
-        wchar_lvl_x = chars[1].get_x();
-        wchar_lvl_y = chars[1].get_y();
-        wchar_lvl_yvel = chars[1].get_yvel();
+        chars[0].save_state();
+        chars[1].save_state();
         active_level = result;
         int transition_duration = 25;
         SDL_Rect char_rect = chars[active_color].get_rect();
@@ -343,6 +333,7 @@ void Zonestate::reset_level()
 {
     int transition_duration = 10;
     freeze_controls(transition_duration);
-    chars[0].reset(bchar_lvl_x, bchar_lvl_y, bchar_lvl_yvel);
-    chars[1].reset(wchar_lvl_x, wchar_lvl_y, wchar_lvl_yvel);
+    camera->traumatize(.7);
+    chars[0].reset(this);
+    chars[1].reset(this);
 }
