@@ -24,7 +24,15 @@ typedef enum _TileType {
     TILE_SPIKES_CEILING,
     TILE_SPIKES_LEFT,
     TILE_SPIKES_RIGHT,
+    TILE_SLOPE_2_UP_A,
+    TILE_SLOPE_2_UP_B,
+    TILE_SLOPE_2_DOWN_A,
+    TILE_SLOPE_2_DOWN_B,
+    TILE_SLOPE_PAD_BLACK,
+    TILE_SLOPE_PAD_WHITE,
 } TileType;
+
+bool tiletype_isslope(TileType type);
 
 // class definition
 class Tile

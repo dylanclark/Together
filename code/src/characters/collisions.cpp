@@ -70,6 +70,56 @@ bool check_collision(SDL_Rect a, SDL_Rect b, Vector* repos)
     return true;
 }
 
+bool check_point_in_triangle(int x, int y, bool color, SDL_Rect triangle, bool down, Vector* repos)
+{
+    if (x < triangle.x) {
+        return false;
+    }
+    if (x >= triangle.x + triangle.w) {
+        return false;
+    }
+
+    int x_rel = x - triangle.x;
+    if (!down) {
+        x_rel = triangle.w - x_rel;
+    }
+
+    if (color == false) {
+        if (y < triangle.y + x_rel / (triangle.w / triangle.h)) {
+            return false;
+        }
+        repos->x = 0;
+        repos->y = triangle.y + x_rel / (triangle.w / triangle.h) - y;
+        return true;
+    } else {
+        if (y > triangle.y + x_rel / (triangle.w / triangle.h)) {
+            return false;
+        }
+        repos->x = 0;
+        repos->y = triangle.y + x_rel / (triangle.w / triangle.h) - y;
+        return true;
+    }
+}
+
+bool check_point_in_rect(int x, int y, bool color, SDL_Rect rect, Vector* repos)
+{
+    if (x < rect.x) {
+        return false;
+    }
+    if (x >= rect.x + rect.w) {
+        return false;
+    }
+    if (color == 0 && y < rect.y) {
+        return false;
+    }
+    if (color == 1 && y + 1 >= rect.y + rect.h) {
+        return false;
+    }
+    repos->x = 0;
+    repos->y = (color == 0) ? rect.y - y : rect.y + rect.h - y - 1;
+    return true;
+}
+
 bool check_grounded(SDL_Rect a, SDL_Rect b, bool a_color)
 {
     // the sides of the rectangles

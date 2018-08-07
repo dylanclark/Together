@@ -8,6 +8,12 @@
 #include <textures.hpp>
 #include <tiles.hpp>
 
+bool tiletype_isslope(TileType type)
+{
+    return (type == TILE_SLOPE_2_DOWN_A || type == TILE_SLOPE_2_DOWN_B ||
+            type == TILE_SLOPE_2_UP_A || type == TILE_SLOPE_2_UP_B);
+}
+
 Tile::Tile(int x, int y, TileType tile_type)
 {
     // set position

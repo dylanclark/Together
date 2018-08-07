@@ -287,6 +287,7 @@ void Tileset::handle_event(SDL_Event e, int scr_w, int scr_h, SDL_Rect cam_rect,
         case PLACING_TILES_CS:
         case PLACING_SPIKES_FC:
         case PLACING_SPIKES_RL:
+        case PLACING_SLOPE_2:
         case PLACING_PLATFORMS:
             if (!clicked) {
                 // if we haven't clicked before, save the click
@@ -303,6 +304,8 @@ void Tileset::handle_event(SDL_Event e, int scr_w, int scr_h, SDL_Rect cam_rect,
                     clicked_type = (e.button.button == SDL_BUTTON_LEFT) ? TILE_SPIKES_FLOOR : TILE_SPIKES_CEILING;
                 } else if (placing == PLACING_SPIKES_RL) {
                     clicked_type = (e.button.button == SDL_BUTTON_LEFT) ? TILE_SPIKES_LEFT : TILE_SPIKES_RIGHT;
+                } else if (placing == PLACING_SLOPE_2) {
+                    clicked_type = (e.button.button == SDL_BUTTON_LEFT) ? TILE_SLOPE_2_UP_A : TILE_SLOPE_2_DOWN_A;
                 }
             } else {
                 // otherwise fill the rectangle that our clicks make!
@@ -347,16 +350,40 @@ void Tileset::handle_event(SDL_Event e, int scr_w, int scr_h, SDL_Rect cam_rect,
 
 void Tileset::fill_rect(TileType type, int x, int y)
 {
+    clicked = false;
     int x1 = std::min(click_x, x);
     int x2 = std::max(click_x, x);
     int y1 = std::min(click_y, y);
     int y2 = std::max(click_y, y);
-    for (int i = y1; i <= y2; i++) {
-        for (int j = x1; j <= x2; j++) {
-            tiles[i][j] = type;
+    if (type == TILE_SLOPE_2_UP_A || type == TILE_SLOPE_2_DOWN_A) {
+        if (x2-x1+1 != 2*(y2-y1+1)) {
+            return;
+        }
+        for (int i = y1; i <= y2; i++) {
+            for (int j = x1; j <= x2; j++) {
+                if (i - y1 == (j - x1) / 2) {
+                    tiles[i][j] = (TileType) ((int) type + ((j-x1) % 2));
+                } else if (i - y1 == (j - x1 - 1) / 2) {
+                    tiles[i][j] = TILE_SLOPE_PAD_WHITE;
+                } else if (i - y1 == (j - x1 + 1) / 2) {
+                    tiles[i][j] = TILE_SLOPE_PAD_BLACK;
+                }
+            }
+        }
+        if (type == TILE_SLOPE_2_UP_A) {
+            tiles[y2][x1-1] = TILE_SLOPE_PAD_WHITE;
+            tiles[y1][x2+1] = TILE_SLOPE_PAD_BLACK;
+        } else {
+            tiles[y1][x1-1] = TILE_SLOPE_PAD_BLACK;
+            tiles[y2][x2+1] = TILE_SLOPE_PAD_WHITE;
+        }
+    } else {
+        for (int i = y1; i <= y2; i++) {
+            for (int j = x1; j <= x2; j++) {
+                tiles[i][j] = type;
+            }
         }
     }
-    clicked = false;
 }
 
 void Tileset::add_row_top()
@@ -630,6 +657,9 @@ void LevelEditor::draw_UI(int scr_w, int scr_h)
         break;
     case PLACING_SPIKES_RL:
         placing_str += "spikes (left/right wall)";
+        break;
+    case PLACING_SLOPE_2:
+        placing_str += "slope 1/2 (up/down)";
         break;
     case PLACING_PLATFORMS:
         placing_str += "platforms (black/white)";

@@ -29,6 +29,8 @@ class Zonestate;
 class Level;
 
 bool check_collision(SDL_Rect a, SDL_Rect b, Vector* overlap);
+bool check_point_in_triangle(int x, int y, bool color, SDL_Rect triangle, bool down, Vector* repos);
+bool check_point_in_rect(int x, int y, bool color, SDL_Rect rect, Vector* repos);
 bool check_grounded(SDL_Rect a, SDL_Rect b, bool a_color);
 
 typedef enum _CharDir {

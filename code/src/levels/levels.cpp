@@ -201,31 +201,6 @@ void Zonestate::update()
         chars[i].update(this);
     }
     camera->update(chars[active_color].get_rect(), chars[active_color].get_dir());
-
-    /*
-    int lvl_x, lvl_y, lvl_w, lvl_h;
-    if (levels[active_level]->update(this, chars)) {
-        SDL_Rect char_rect = chars[0].get_rect();
-        // update active level
-        int lvl_x, lvl_y, lvl_w, lvl_h;
-        for (int i = 0; i < levels.size(); i++) {
-            if (i == active_level) {
-                continue;
-            }
-            lvl_x = levels[i]->get_x();
-            lvl_y = levels[i]->get_y();
-            lvl_w = levels[i]->get_w()*TILE_WIDTH;
-            lvl_h = levels[i]->get_h()*TILE_WIDTH;
-            if (char_rect.x >= lvl_x && char_rect.x < lvl_x + lvl_w &&
-                char_rect.y >= lvl_y && char_rect.y < lvl_y + lvl_h) {
-                active_level = i;
-                levels[active_level]->just_exited = true;
-                camera->set_level(levels[active_level]);
-                break;
-            }
-        }
-    }
-    */
 }
 
 void Zonestate::draw()

@@ -321,6 +321,12 @@ void Dot::update(Zonestate* zone)
             continue;
         }
         if (check_collision(col_rect, tileset[i].get_col_rect(), &repos)) {
+            if (tiletype_isslope(type)) {
+                continue;
+            }
+            if (type == TILE_SLOPE_PAD_BLACK || type == TILE_SLOPE_PAD_WHITE) {
+                continue;
+            }
             if (type == TILE_SPIKES_LEFT || type == TILE_SPIKES_RIGHT) {
                 m_status = CHAR_DIE;
                 zone->reset_level();
@@ -350,6 +356,7 @@ void Dot::update(Zonestate* zone)
             short_hop = 0;
         }
     }
+
     m_yvel += (!m_color - m_color) * GRAVITY * ((short_hop > 0)*3.2 + 1);
 
     // move that Dot (y)
@@ -374,22 +381,58 @@ void Dot::update(Zonestate* zone)
     bool shiftable;
     bool airborne = true;
     bool platform_col = false;
+    SDL_Rect tile_rect;
+    // first pass for non-slope tiles
     for (int i = 0; i < size; i++) {
         TileType type = tileset[i].get_type();
         if (type == TILE_BLACK_SOLID + !m_color || type == TILE_CLEAR) {
             continue;
         }
-        if (check_collision(col_rect, tileset[i].get_col_rect(), &repos)) {
+        if (type == TILE_SLOPE_PAD_BLACK && m_color == 1) {
+            continue;
+        }
+        if (type == TILE_SLOPE_PAD_WHITE && m_color == 0) {
+            continue;
+        }
+        tile_rect = tileset[i].get_col_rect();
+        int point_x = col_rect.x + col_rect.w / 2;
+        int point_y = col_rect.y + (m_color == 0)*col_rect.h;
+        if (check_collision(col_rect, tile_rect, &repos)) {
             if (type == TILE_SPIKES_FLOOR || type == TILE_SPIKES_CEILING) {
                 m_status = CHAR_DIE;
                 zone->reset_level();
                 return;
+            }
+            if (tiletype_isslope(type)) {
+                continue;
             }
             if (type == TILE_BLACK_PLATFORM + m_color) {
                 platform_col = true;
                 if (platform_drop || (!m_color - m_color)*m_yvel < 0) {
                     continue;
                 }
+            }
+            if ((type == TILE_SLOPE_PAD_BLACK && m_color == 0) ||
+              (type == TILE_SLOPE_PAD_WHITE && m_color == 1)) {
+                if (check_point_in_rect(point_x, point_y, m_color, tile_rect, &repos)) {
+                    if (m_status == CHAR_JUMP) {
+                        m_status = CHAR_IDLE;
+                    }
+                    col_rect.y += repos.y;
+                    true_y = col_rect.y;
+                    m_yvel = 0;
+                    shiftable = true;
+                    // jump!
+                    if (up) {
+                        m_status = CHAR_JUMP;
+                        jump_start = SDL_GetTicks();
+                        m_yvel = (m_color - !m_color) * JUMP_VEL;
+                        shiftable = false;
+                    } else {
+                        airborne = false;
+                    }
+                }
+                continue;
             }
             if ((m_color == 0 && repos.y < 0) ||
                 (m_color == 1 && repos.y > 0)) {
@@ -435,6 +478,53 @@ void Dot::update(Zonestate* zone)
     }
     if (!platform_col) {
         platform_drop = false;
+    }
+    // second pass for slopes
+    for (int i = 0; i < size; i++) {
+        TileType type = tileset[i].get_type();
+        SDL_Rect tile_rect = tileset[i].get_col_rect();
+        int point_x = col_rect.x + col_rect.w / 2;
+        int point_y = col_rect.y + (m_color == 0)*col_rect.h;
+        if (check_collision(col_rect, tile_rect, &repos)) {
+            if (tiletype_isslope(type)) {
+                // if necessary, check collision with rectangular half of slope tile
+                SDL_Rect half_rect = {tile_rect.x, tile_rect.y, tile_rect.w, tile_rect.h / 2};
+                bool half_color = !(type == TILE_SLOPE_2_DOWN_A || type == TILE_SLOPE_2_UP_B);
+                half_rect.y += (half_color == 0) * tile_rect.h / 2;
+                if (m_color == half_color && check_point_in_rect(point_x, point_y, m_color, half_rect, &repos)) {
+                    if (m_status == CHAR_JUMP) {
+                        m_status = CHAR_IDLE;
+                    }
+                    col_rect.y += repos.y;
+                    true_y = col_rect.y;
+                    m_yvel = 0;
+                    shiftable = true;
+                    airborne = false;
+                }
+                SDL_Rect tri_rect = {tile_rect.x, tile_rect.y, tile_rect.w, tile_rect.h / 2};
+                tri_rect.y += (half_color == 1) * tile_rect.h / 2;
+                bool down = (type == TILE_SLOPE_2_DOWN_A || type == TILE_SLOPE_2_DOWN_B);
+                if (check_point_in_triangle(point_x, point_y, m_color, tri_rect, down, &repos)) {
+                    if (m_status == CHAR_JUMP) {
+                        m_status = CHAR_IDLE;
+                    }
+                    col_rect.y += repos.y;
+                    true_y = col_rect.y;
+                    m_yvel = 0;
+                    shiftable = true;
+                    // jump!
+                    if (up) {
+                        m_status = CHAR_JUMP;
+                        jump_start = SDL_GetTicks();
+                        m_yvel = (m_color - !m_color) * JUMP_VEL;
+                        shiftable = false;
+                    } else {
+                        airborne = false;
+                    }
+                }
+                continue;
+            }
+        }
     }
 
     std::vector<Object*> objects = level->get_objects();
