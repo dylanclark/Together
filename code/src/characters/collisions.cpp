@@ -106,13 +106,13 @@ bool check_point_in_rect(int x, int y, bool color, SDL_Rect rect, Vector* repos)
     if (x < rect.x) {
         return false;
     }
-    if (x >= rect.x + rect.w) {
+    if (x > rect.x + rect.w) {
         return false;
     }
-    if (color == 0 && y < rect.y) {
+    if (y < rect.y) {
         return false;
     }
-    if (color == 1 && y > rect.y + rect.h) {
+    if (y > rect.y + rect.h) {
         return false;
     }
     repos->x = 0;

@@ -359,14 +359,28 @@ void Tileset::fill_rect(TileType type, int x, int y)
         if (x2-x1+1 != 2*(y2-y1+1)) {
             return;
         }
-        for (int i = y1; i <= y2; i++) {
-            for (int j = x1; j <= x2; j++) {
-                if (i - y1 == (j - x1) / 2) {
-                    tiles[i][j] = (TileType) ((int) type + ((j-x1) % 2));
-                } else if (i - y1 == (j - x1 - 1) / 2) {
-                    tiles[i][j] = TILE_SLOPE_PAD_WHITE;
-                } else if (i - y1 == (j - x1 + 1) / 2) {
-                    tiles[i][j] = TILE_SLOPE_PAD_BLACK;
+        if (type == TILE_SLOPE_2_DOWN_A) {
+            for (int i = y1; i <= y2; i++) {
+                for (int j = x1; j <= x2; j++) {
+                    if (i - y1 == (j - x1) / 2) {
+                        tiles[i][j] = (TileType) ((int) type + ((j-x1) % 2));
+                    } else if (i - y1 == (j - x1 - 1) / 2) {
+                        tiles[i][j] = TILE_SLOPE_PAD_WHITE;
+                    } else if (i - y1 == (j - x1 + 1) / 2) {
+                        tiles[i][j] = TILE_SLOPE_PAD_BLACK;
+                    }
+                }
+            }
+        } else {
+            for (int i = y2; i >= y1; i--) {
+                for (int j = x1; j <= x2; j++) {
+                    if (y2 - i == (j - x1) / 2) {
+                        tiles[i][j] = (TileType) ((int) type + ((j-x1) % 2));
+                    } else if (y2 - i == (j - x1 + 1) / 2) {
+                        tiles[i][j] = TILE_SLOPE_PAD_WHITE;
+                    } else if (y2 - i == (j - x1 - 1) / 2) {
+                        tiles[i][j] = TILE_SLOPE_PAD_BLACK;
+                    }
                 }
             }
         }
