@@ -92,11 +92,11 @@ bool check_point_in_triangle(int x, int y, bool color, SDL_Rect triangle, bool d
         repos->y = triangle.y + x_rel / (triangle.w / triangle.h) - y;
         return true;
     } else {
-        if (y > triangle.y + x_rel / (triangle.w / triangle.h)) {
+        if (y > triangle.y + x_rel / (triangle.w / triangle.h) + 1) {
             return false;
         }
         repos->x = 0;
-        repos->y = triangle.y + x_rel / (triangle.w / triangle.h) - y;
+        repos->y = triangle.y + x_rel / (triangle.w / triangle.h) + 1 - y;
         return true;
     }
 }
@@ -112,11 +112,11 @@ bool check_point_in_rect(int x, int y, bool color, SDL_Rect rect, Vector* repos)
     if (color == 0 && y < rect.y) {
         return false;
     }
-    if (color == 1 && y + 1 >= rect.y + rect.h) {
+    if (color == 1 && y > rect.y + rect.h) {
         return false;
     }
     repos->x = 0;
-    repos->y = (color == 0) ? rect.y - y : rect.y + rect.h - y - 1;
+    repos->y = (color == 0) ? rect.y - y : rect.y + rect.h - y;
     return true;
 }
 

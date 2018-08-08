@@ -472,10 +472,6 @@ void Dot::update(Zonestate* zone)
             }
         }
     }
-    if (airborne && m_status != CHAR_JUMP) {
-        m_status = CHAR_JUMP;
-        jump_start = 0;
-    }
     if (!platform_col) {
         platform_drop = false;
     }
@@ -488,9 +484,9 @@ void Dot::update(Zonestate* zone)
         if (check_collision(col_rect, tile_rect, &repos)) {
             if (tiletype_isslope(type)) {
                 // if necessary, check collision with rectangular half of slope tile
-                SDL_Rect half_rect = {tile_rect.x, tile_rect.y, tile_rect.w, tile_rect.h / 2};
+                SDL_Rect half_rect = {tile_rect.x, tile_rect.y, tile_rect.w, tile_rect.h / 2 - 1};
                 bool half_color = !(type == TILE_SLOPE_2_DOWN_A || type == TILE_SLOPE_2_UP_B);
-                half_rect.y += (half_color == 0) * tile_rect.h / 2;
+                half_rect.y += (half_color == 0) * (tile_rect.h / 2 + 1);
                 if (m_color == half_color && check_point_in_rect(point_x, point_y, m_color, half_rect, &repos)) {
                     if (m_status == CHAR_JUMP) {
                         m_status = CHAR_IDLE;
@@ -525,6 +521,10 @@ void Dot::update(Zonestate* zone)
                 continue;
             }
         }
+    }
+    if (airborne && m_status != CHAR_JUMP) {
+        m_status = CHAR_JUMP;
+        jump_start = 0;
     }
 
     std::vector<Object*> objects = level->get_objects();
