@@ -63,6 +63,7 @@ public:
 
     bool handle_event(SDL_Event &e, Zonestate* zone);
     void update(Zonestate* zone);
+    void check_for_platforms(Zonestate* zone);
     void render(SDL_Rect* camera, Level* lvl);
 
     void save_state();
@@ -88,6 +89,9 @@ private:
     SDL_Rect col_rect;
     float true_y;
     float m_xvel, m_yvel;
+    bool on_moving_platform;
+    int moving_platform_idx;
+    int platform_x, platform_y;
     CharDir dir;
 
     Controller* controller;

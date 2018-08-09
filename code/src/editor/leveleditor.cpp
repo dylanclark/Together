@@ -164,6 +164,7 @@ void Gridlines::draw(int scr_w, int scr_h, SDL_Rect cam_rect)
 
 Tileset::Tileset(int w, int h, std::vector<std::vector<TileType> > tiles_arg=std::vector<std::vector<TileType> >(), std::vector<EditorObject> objs_arg=std::vector<EditorObject>())
 {
+    moving_platforms = 0;
     m_tiletex.load_tile_sheet("tiles.png", NULL);
     clicked = 0;
     click_x = click_y = 0;
@@ -247,11 +248,21 @@ void Tileset::draw(int scr_w, int scr_h, SDL_Rect cam_rect)
     for (int i = 0; i < objs.size(); i++) {
         int x = (objs[i].x*TILE_WIDTH - cam_rect.x) * aspect_ratio;
         int y = (objs[i].y*TILE_WIDTH - cam_rect.y) * aspect_ratio;
-        int w = (1 + (objs[i].type == PLACING_SPRINGS)) * TILE_WIDTH * aspect_ratio;
-        int h = TILE_WIDTH * aspect_ratio;
+        int w, h;
+        if (objs[i].type == OBJECT_SPRING) {
+            w = (1 + (objs[i].type == OBJECT_SPRING)) * TILE_WIDTH * aspect_ratio;
+            h = TILE_WIDTH * aspect_ratio;
+        } else if (objs[i].type == OBJECT_MOVING_PLATFORM) {
+            w = objs[i].w * TILE_WIDTH * aspect_ratio;
+            h = objs[i].h * TILE_WIDTH * aspect_ratio;
+            if (i == objs.size() - 1 && moving_platforms == 1) {
+                w = TILE_WIDTH * aspect_ratio;
+                h = TILE_WIDTH * aspect_ratio;
+            }
+        }
         SDL_Rect render_rect = {x, y, w, h};
 
-        if (objs[i].type == PLACING_SPRINGS) {
+        if (objs[i].type == OBJECT_SPRING) {
             SDL_SetRenderDrawColor(game->rend, 255, 255, 0, SDL_ALPHA_OPAQUE);
             SDL_RenderFillRect(game->rend, &render_rect);
             int arrow_w = TILE_WIDTH/2 * aspect_ratio;
@@ -261,6 +272,21 @@ void Tileset::draw(int scr_w, int scr_h, SDL_Rect cam_rect)
             SDL_Rect arrow_rect = {arrow_x, arrow_y, arrow_w, arrow_h};
             SDL_SetRenderDrawColor(game->rend, 255, 0, 0, SDL_ALPHA_OPAQUE);
             SDL_RenderFillRect(game->rend, &arrow_rect);
+        } else if (objs[i].type == OBJECT_MOVING_PLATFORM) {
+            SDL_SetRenderDrawBlendMode(game->rend, SDL_BLENDMODE_BLEND);
+            if (objs[i].color == 0) {
+                SDL_SetRenderDrawColor(game->rend, 0, 0, 0, 100);
+            } else {
+                SDL_SetRenderDrawColor(game->rend, 255, 255, 255, 100);
+            }
+            SDL_RenderFillRect(game->rend, &render_rect);
+            if (i == objs.size() - 1 && moving_platforms == 2) {
+                break;
+            }
+            int x2 = (objs[i].x2*TILE_WIDTH - cam_rect.x) * aspect_ratio;
+            int y2 = (objs[i].y2*TILE_WIDTH - cam_rect.y) * aspect_ratio;
+            SDL_Rect next_rect = {x2, y2, w, h};
+            SDL_RenderFillRect(game->rend, &next_rect);
         }
     }
     // next we will draw all of the objects... eventually, bc we don't support textures yet
@@ -268,6 +294,7 @@ void Tileset::draw(int scr_w, int scr_h, SDL_Rect cam_rect)
 
 void Tileset::handle_event(SDL_Event e, int scr_w, int scr_h, SDL_Rect cam_rect, PlacingType placing)
 {
+    int idx;
     bool click_color;
     switch (e.type)
     {
@@ -337,10 +364,35 @@ void Tileset::handle_event(SDL_Event e, int scr_w, int scr_h, SDL_Rect cam_rect,
             EditorObject new_obj;
             new_obj.x = x1;
             new_obj.y = y1;
-            new_obj.type = placing;
+            new_obj.type = OBJECT_SPRING;
             new_obj.color = (Color) click_color;
             new_obj.spring_height = atoi(get_str("spring height").c_str());
             objs.push_back(new_obj);
+            break;
+        case PLACING_MOVING_PLATFORMS:
+            click_color = (e.button.button == SDL_BUTTON_LEFT) ? COLOR_BLACK : COLOR_WHITE;
+            idx = objs.size() - 1;
+            if (moving_platforms == 0) {
+                EditorObject new_obj;
+                new_obj.x = x1;
+                new_obj.y = y1;
+                new_obj.type = OBJECT_MOVING_PLATFORM;
+                new_obj.color = (Color) click_color;
+                objs.push_back(new_obj);
+                moving_platforms = 1;
+            } else if (moving_platforms == 1) {
+                objs[idx].w = abs(x1 - objs[idx].x + 1);
+                objs[idx].h = abs(y1 - objs[idx].y + 1);
+                objs[idx].x = std::min(x1, objs[idx].x);
+                objs[idx].y = std::min(y1, objs[idx].y);
+                moving_platforms = 2;
+            } else {
+                objs[idx].x2 = x1;
+                objs[idx].y2 = y1;
+                objs[idx].pause_length = atoi(get_str("pause time").c_str());
+                objs[idx].move_length = atoi(get_str("move time").c_str());
+                moving_platforms = 0;
+            }
             break;
         default:
             break;
@@ -513,22 +565,38 @@ void LevelEditor::init()
         level_file >> num_objs;
         int obj_type;
         int obj_x, obj_y;
+        int obj_w, obj_h;
+        int obj_x2, obj_y2;
+        int obj_pause_length, obj_move_length;
         bool obj_color;
         float obj_springvel;
         EditorObject new_obj;
 
         // TODO: load all objects!
         for (int i = 0; i < num_objs; i++) {
-            level_file >> obj_type >> obj_x >> obj_y >> obj_color;
-            new_obj.x = obj_x;
-            new_obj.y = obj_y;
-            new_obj.color = (Color) obj_color;
-            switch ((ObjectType) obj_type)
+            level_file >> obj_type;
+            new_obj.type = (ObjectType) obj_type;
+            switch (obj_type)
             {
             case OBJECT_SPRING:
-                new_obj.type = PLACING_SPRINGS;
+                level_file >> obj_x >> obj_y >> obj_color;
                 level_file >> obj_springvel;
+                new_obj.x = obj_x;
+                new_obj.y = obj_y;
+                new_obj.color = (Color) obj_color;
                 new_obj.spring_height = get_height(obj_springvel);
+                break;
+            case OBJECT_MOVING_PLATFORM:
+                level_file >> obj_color >> obj_w >> obj_h >> obj_x >> obj_y >> obj_x2 >> obj_y2 >> obj_pause_length >> obj_move_length;
+                new_obj.x = obj_x;
+                new_obj.y = obj_y;
+                new_obj.color = (Color) obj_color;
+                new_obj.x2 = obj_x2;
+                new_obj.y2 = obj_y2;
+                new_obj.w = obj_w;
+                new_obj.h = obj_h;
+                new_obj.pause_length = obj_pause_length;
+                new_obj.move_length = obj_move_length;
                 break;
             default:
                 break;
@@ -692,6 +760,9 @@ void LevelEditor::draw_UI(int scr_w, int scr_h)
         break;
     case PLACING_SPRINGS:
         placing_str += "springs";
+        break;
+    case PLACING_MOVING_PLATFORMS:
+        placing_str += "moving platforms (black/white)";
         break;
     case PLACING_DELETE:
         placing_str = "deleting";
@@ -879,31 +950,24 @@ void LevelEditor::write_level()
     std::vector<EditorObject> objs = tileset->objs;
     level_file << objs.size() << std::endl;
     for (int i = 0; i < objs.size(); i++) {
-        ObjectType obj_type;
+
+        level_file << objs[i].type << " ";
         switch (objs[i].type)
         {
-        case PLACING_SPRINGS:
-            obj_type = OBJECT_SPRING;
-            break;
-        default:
-            obj_type = OBJECT_SPRING;
-            break;
-        }
-
-        level_file << obj_type << " " << objs[i].x << " " << objs[i].y << " " << objs[i].color << " ";
-        switch (obj_type)
-        {
         case OBJECT_SPRING:
-            level_file << get_v0(objs[i].spring_height);
+            level_file << objs[i].x << " " << objs[i].y << " " << objs[i].color << " " << get_v0(objs[i].spring_height);
+            break;
+        case OBJECT_MOVING_PLATFORM:
+            level_file << objs[i].color << " " << objs[i].w << " " << objs[i].h << " ";
+            level_file << objs[i].x << " " << objs[i].y << " " << objs[i].x2 << " " << objs[i].y2 << " ";
+            level_file << objs[i].pause_length << " " << objs[i].move_length;
             break;
         default:
             break;
         }
-
         level_file << std::endl;
     }
 
     level_file.close();
     game->pop_state();
 }
-

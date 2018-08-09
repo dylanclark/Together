@@ -76,6 +76,26 @@ bool Texture::load_tile_sheet(std::string path, SDL_Color* palette)
     return true;
 };
 
+void Texture::create_square(bool color, int w, int h, SDL_Color* palette)
+{
+    Uint32 format = SDL_GetWindowPixelFormat(game->win);
+    tex = SDL_CreateTexture(game->rend, format, SDL_TEXTUREACCESS_TARGET, w*TILE_WIDTH, h*TILE_WIDTH);
+    SDL_SetRenderTarget(game->rend, tex);
+    if (color) {
+        SDL_SetRenderDrawColor(game->rend, 255, 255, 255, SDL_ALPHA_OPAQUE);
+    } else {
+        SDL_SetRenderDrawColor(game->rend, 0, 0, 0, SDL_ALPHA_OPAQUE);
+    }
+    SDL_Rect render_rect = {0, 0, w*TILE_WIDTH, h*TILE_WIDTH};
+    SDL_RenderFillRect(game->rend, &render_rect);
+    if (palette != NULL) {
+        SDL_SetTextureColorMod(tex, palette->r, palette->g, palette->b);
+    }
+    width = w*TILE_WIDTH;
+    height = h*TILE_WIDTH;
+    SDL_SetRenderTarget(game->rend, NULL);
+}
+
 void Texture::set_blend_mode(SDL_BlendMode blending)
 {
     SDL_SetTextureBlendMode(tex, blending);

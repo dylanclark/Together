@@ -55,6 +55,105 @@ void Spring::spring()
     m_status = SPRING_SPRUNG;
 }
 
+/***********************/
+/*   MOVING PLATFORM   */
+/***********************/
+
+MovingPlatform::MovingPlatform(int x1, int y1, int x2, int y2, int w, int h, bool color, bool automatic, int move_length, int pause_length, SDL_Color palette)
+{
+    m_type = OBJECT_MOVING_PLATFORM;
+    m_status = PLATFORM_PAUSE_A;
+    m_move_length = move_length;
+    m_pause_length = pause_length;
+    m_x1 = x1;
+    m_y1 = y1;
+    m_x2 = x2;
+    m_y2 = y2;
+    m_auto = automatic;
+    m_timestep = 0;
+    m_color = color;
+
+    m_rect.x = x1;
+    m_rect.y = y1;
+    m_rect.w = w*TILE_WIDTH;
+    m_rect.h = h*TILE_WIDTH;
+
+    m_tex.create_square(color, w, h, &palette);
+}
+
+void MovingPlatform::update()
+{
+    m_timestep++;
+    if (m_auto && (m_status == PLATFORM_PAUSE_A || m_status == PLATFORM_PAUSE_B) && (m_timestep >= m_pause_length)) {
+        m_status = (PlatformStatus) (((int) m_status + 1) % 4);
+        m_timestep = 0;
+    }
+    if ((m_status == PLATFORM_MOVETO_A || m_status == PLATFORM_MOVETO_B) && (m_timestep >= m_move_length)) {
+        m_status = (PlatformStatus) (((int) m_status + 1) % 4);
+        m_timestep = 0;
+    }
+    if (m_status == PLATFORM_PAUSE_A) {
+        m_rect.x = m_x1;
+        m_rect.y = m_y1;
+    } else if (m_status == PLATFORM_PAUSE_B) {
+        m_rect.x = m_x2;
+        m_rect.y = m_y2;
+    } else {
+        float t = (float) m_timestep / (float) m_move_length;
+        if (m_status == PLATFORM_MOVETO_A) {
+            t = 1 - t;
+        }
+        float s = 1 - t;
+        m_rect.x = round(pow(s, 2.0) * (1.0 + 2.0*t) * (float) m_x1 + pow(t, 2.0) * (1.0 + 2.0*s) * (float) m_x2);
+        m_rect.y = round(pow(s, 2.0) * (1.0 + 2.0*t) * (float) m_y1 + pow(t, 2.0) * (1.0 + 2.0*s) * (float) m_y2);
+    }
+}
+
+void MovingPlatform::render(SDL_Rect cam_rect, bool active_color)
+{
+    m_tex.render(m_rect.x, m_rect.y, NULL, &cam_rect);
+}
+
+void MovingPlatform::trigger()
+{
+    m_status = PLATFORM_MOVETO_B;
+}
+
+void MovingPlatform::untrigger()
+{
+    m_status = PLATFORM_MOVETO_A;
+}
+
+int MovingPlatform::get_xvel()
+{
+    if (m_timestep == 0 || m_status == PLATFORM_PAUSE_A || m_status == PLATFORM_PAUSE_B) {
+        return 0.0;
+    } else {
+        float t = ((float) (m_timestep - 1)) / (float) m_move_length;
+        if (m_status == PLATFORM_MOVETO_A) {
+            t = 1 - t;
+        }
+        float s = 1 - t;
+        int old_x = round(pow(s, 2.0) * (1.0 + 2.0*t) * (float) m_x1 + pow(t, 2.0) * (1.0 + 2.0*s) * (float) m_x2);
+        return m_rect.x - old_x;
+    }
+}
+
+int MovingPlatform::get_yvel()
+{
+    if (m_timestep == 0 || m_status == PLATFORM_PAUSE_A || m_status == PLATFORM_PAUSE_B) {
+        return 0.0;
+    } else {
+        float t = ((float) (m_timestep - 1)) / (float) m_move_length;
+        if (m_status == PLATFORM_MOVETO_A) {
+            t = 1 - t;
+        }
+        float s = 1 - t;
+        int old_y = round(pow(s, 2.0) * (1.0 + 2.0*t) * (float) m_y1 + pow(t, 2.0) * (1.0 + 2.0*s) * (float) m_y2);
+        return m_rect.y - old_y;
+    }
+}
+
 /*************/
 /*   BLOCK   */
 /*************/

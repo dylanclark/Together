@@ -14,9 +14,14 @@
 #include <engine.hpp>
 #include <levels.hpp>
 
+/**************/
+/*   OBJECT   */
+/**************/
+
 typedef enum _ObjectType {
     OBJECT_SPRING = 0,
     OBJECT_BLOCK,
+    OBJECT_MOVING_PLATFORM,
     OBJECT_BUTTON,
     OBJECT_KEY,
     OBJECT_DOOR,
@@ -28,15 +33,23 @@ public:
     Object() { };
 
     virtual void render(SDL_Rect cam_rect, bool active_color) = 0;
+    virtual void update() = 0;
+    void trigger();
+    void untrigger();
 
     ObjectType get_type() { return m_type; }
     SDL_Rect get_rect() { return m_rect; }
+    bool get_color() { return m_color; }
 
     SDL_Rect m_rect;
     ObjectType m_type;
     Texture m_tex;
     bool m_color;
 };
+
+/**************/
+/*   SPRING   */
+/**************/
 
 typedef enum _SpringStatus {
     SPRING_IDLE,
@@ -49,6 +62,7 @@ class Spring : public Object
 public:
     Spring(int x, int y, bool color, float y_vel, SDL_Color palette);
     void render(SDL_Rect cam_rect, bool active_color);
+    void update() { }
     float get_yvel() { return m_yvel; }
     void spring();
 
@@ -56,6 +70,41 @@ private:
     SpringStatus m_status;
     float m_yvel;
     int spring_start;
+};
+
+/***********************/
+/*   MOVING PLATFORM   */
+/***********************/
+
+typedef enum _PlatformStatus {
+    PLATFORM_PAUSE_A,
+    PLATFORM_MOVETO_B,
+    PLATFORM_PAUSE_B,
+    PLATFORM_MOVETO_A,
+} PlatformStatus;
+
+class MovingPlatform : public Object
+{
+public:
+    MovingPlatform(int x1, int y1, int x2, int y2, int w, int h, bool color, bool automatic, int move_length, int pause_length, SDL_Color palette);
+    ~MovingPlatform() { }
+    void update();
+    void render(SDL_Rect cam_rect, bool active_color);
+    void trigger();
+    void untrigger();
+
+    int get_xvel();
+    int get_yvel();
+
+private:
+    int m_x1, m_y1, m_x2, m_y2;
+    int m_timestep;
+
+    std::vector<Tile> m_tiles;
+    PlatformStatus m_status;
+    bool m_auto;
+    int m_move_length;
+    int m_pause_length;
 };
 
 class Block : public Object

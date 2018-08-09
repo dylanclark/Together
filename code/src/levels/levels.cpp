@@ -42,17 +42,27 @@ void Level::load_level(int zone_num, int lvl_num, SDL_Color palette)
     level_file >> num_objs;
     int obj_type;
     int obj_x, obj_y;
+    int obj_w, obj_h;
+    int obj_x2, obj_y2;
+    int obj_pause_length, obj_move_length;
     bool obj_color;
     float spring_vel;
     Spring* new_spring;
+    MovingPlatform* new_platform;
     for (int i = 0; i < num_objs; i++) {
-        level_file >> obj_type >> obj_x >> obj_y >> obj_color;
+        level_file >> obj_type;
         switch (obj_type)
         {
         case OBJECT_SPRING:
+            level_file >> obj_x >> obj_y >> obj_color;
             level_file >> spring_vel;
             new_spring = new Spring(m_x + obj_x*TILE_WIDTH, m_y + (obj_y - (obj_color == 0))*TILE_WIDTH, obj_color, spring_vel*(obj_color - !obj_color), palette);
             objects.push_back(new_spring);
+            break;
+        case OBJECT_MOVING_PLATFORM:
+            level_file >> obj_color >> obj_w >> obj_h >> obj_x >> obj_y >> obj_x2 >> obj_y2 >> obj_pause_length >> obj_move_length;
+            new_platform = new MovingPlatform(m_x + obj_x*TILE_WIDTH, m_y + (obj_y*TILE_WIDTH), m_x + obj_x2*TILE_WIDTH, m_y + obj_y2*TILE_WIDTH, obj_w, obj_h, obj_color, true, obj_move_length, obj_pause_length, palette);
+            objects.push_back(new_platform);
             break;
         default:
             break;
@@ -88,17 +98,11 @@ Level::~Level()
 }
 
 // this function returns true if the level has been exited
-bool Level::update(Zonestate* zone, std::vector<Dot> &chars)
+void Level::update()
 {
-    // check to see if the chars are on an exit
-    bool ready_flag;
-    bool done = false;
-    num_chars_ready = 0;
-    for (int i = 0; i < chars.size(); i++) {
-        ready_flag = false;
-        // TODO check exiting
+    for (int i = 0; i < objects.size(); i++) {
+        objects[i]->update();
     }
-    return false;
 }
 
 void Level::draw_bg(SDL_Rect cam_rect, bool active_color)
@@ -144,9 +148,10 @@ void Zonestate::init()
     // what's the rgb?
     int r, g, b;
     zone_file >> r >> g >> b;
-    palette.r = r;
-    palette.g = g;
-    palette.b = b;
+    srand(time(NULL));
+    palette.r = (int) ((float) rand() / (float) RAND_MAX * 255);
+    palette.g = (int) ((float) rand() / (float) RAND_MAX * 255);
+    palette.b = (int) ((float) rand() / (float) RAND_MAX * 255);
 
     // how many lvls?
     int num_levels;
@@ -197,6 +202,10 @@ void Zonestate::update()
         controls_frozen = false;
     }
 
+    for (int i = 0; i < chars.size(); i++) {
+        chars[i].check_for_platforms(this);
+    }
+    levels[active_level]->update();
     for (int i = 0; i < chars.size(); i++) {
         chars[i].update(this);
     }

@@ -23,8 +23,9 @@ static const int PUSH_VEL = 2;
 Dot::Dot(int x, int y, bool color, SDL_Color* palette)
 {
     // initialize velocity
-    m_xvel = 0;
-    m_yvel = 0;
+    m_xvel = m_yvel = 0;
+    on_moving_platform = false;
+    moving_platform_idx = 0;
 
     // initialize controllers
     up = false;
@@ -222,6 +223,28 @@ bool Dot::handle_event(SDL_Event &e, Zonestate* zone)
     return true;
 }
 
+void Dot::check_for_platforms(Zonestate* zone)
+{
+    Level* level = zone->get_active_level();
+    std::vector<Object*> objects = level->get_objects();
+    on_moving_platform = false;
+    for (int i = 0; i < objects.size(); i++) {
+        if (objects[i]->get_type() != OBJECT_MOVING_PLATFORM) {
+            continue;
+        }
+        if (objects[i]->get_color() != m_color) {
+            continue;
+        }
+        if (check_grounded(col_rect, objects[i]->get_rect(), m_color)) {
+            on_moving_platform = true;
+            moving_platform_idx = i;
+            platform_x = objects[i]->get_rect().x;
+            platform_y = objects[i]->get_rect().y;
+            break;
+        }
+    }
+}
+
 void Dot::update(Zonestate* zone)
 {
     if (exited) {
@@ -281,6 +304,63 @@ void Dot::update(Zonestate* zone)
 
     Level* level = zone->get_active_level();
     std::vector<Tile> tileset = *level->get_tileset();
+    std::vector<Object*> objects = level->get_objects();
+    Vector repos;
+
+    bool pushed_left, pushed_right, pushed_up, pushed_down;
+    pushed_left = pushed_right = pushed_up = pushed_down = false;
+
+    int ext_xvel, ext_yvel;
+    ext_xvel = ext_yvel = 0;
+    MovingPlatform* platform;
+    if (on_moving_platform) {
+        platform = (MovingPlatform*) objects[moving_platform_idx];
+        int new_x = objects[moving_platform_idx]->get_rect().x;
+        int new_y = objects[moving_platform_idx]->get_rect().y;
+        ext_xvel = new_x - platform_x;
+        ext_yvel = new_y - platform_y;
+        if (ext_xvel < 0) {
+            pushed_left = true;
+        } else {
+            pushed_right = true;
+        }
+        if (ext_yvel < 0) {
+            pushed_up = true;
+        } else {
+            pushed_down = true;
+        }
+    }
+    col_rect.x += ext_xvel;
+    col_rect.y += ext_yvel;
+    true_y = col_rect.y;
+
+    for (int i = 0; i < objects.size(); i++) {
+        if (objects[i]->get_type() != OBJECT_MOVING_PLATFORM) {
+            continue;
+        }
+        if (objects[i]->get_color() != m_color) {
+            continue;
+        }
+        if (check_collision(col_rect, objects[i]->get_rect(), &repos)) {
+            on_moving_platform = true;
+            if (abs(repos.x) <= abs(repos.y)) {
+                col_rect.x += repos.x;
+                if (repos.x < 0) {
+                    pushed_left = true;
+                } else {
+                    pushed_right = true;
+                }
+            } else {
+                col_rect.y += repos.y;
+                true_y = col_rect.y;
+                if (repos.y < 0) {
+                    pushed_up = true;
+                } else {
+                    pushed_down = true;
+                }
+            }
+        }
+    }
 
     // move that Dot (x)
     col_rect.x += m_xvel;
@@ -313,7 +393,6 @@ void Dot::update(Zonestate* zone)
     }
 
     // resolve x collisions
-    Vector repos;
     int size = level->get_w()*level->get_h();
     for (int i = 0; i < size; i++) {
         TileType type = tileset[i].get_type();
@@ -336,11 +415,46 @@ void Dot::update(Zonestate* zone)
                 platform_drop = true;
                 continue;
             }
+            printf("repos.x repos.y %d %d\n", repos.x, repos.y);
+            printf("%d %d %d %d\n", pushed_left, pushed_right, pushed_up, pushed_down);
+            if (repos.y < 0 && pushed_down) {
+                m_status = CHAR_DIE;
+                zone->reset_level();
+                return;
+            }
+            if (repos.y > 0 && pushed_up) {
+                m_status = CHAR_DIE;
+                zone->reset_level();
+                return;
+            }
+            if (repos.x < 0 && pushed_right) {
+                m_status = CHAR_DIE;
+                zone->reset_level();
+                return;
+            }
+            if (repos.x > 0 && pushed_left) {
+                m_status = CHAR_DIE;
+                zone->reset_level();
+                return;
+            }
             col_rect.x += repos.x;
-            SDL_Rect tile_rect = tileset[i].get_col_rect();
             if ((repos.x > 0 && m_xvel < 0) ||
                 (repos.x < 0 && m_xvel > 0)) {
                 m_xvel = 0;
+            }
+        }
+    }
+    for (int i = 0; i < objects.size(); i++) {
+        if (objects[i]->get_color() != m_color) {
+            continue;
+        }
+        if (objects[i]->get_type() == OBJECT_MOVING_PLATFORM) {
+            if (check_collision(col_rect, objects[i]->get_rect(), &repos)) {
+                col_rect.x += repos.x;
+                if ((repos.x > 0 && m_xvel < 0) ||
+                    (repos.x < 0 && m_xvel > 0)) {
+                    m_xvel = 0;
+                }
             }
         }
     }
@@ -436,6 +550,16 @@ void Dot::update(Zonestate* zone)
             }
             if ((m_color == 0 && repos.y < 0) ||
                 (m_color == 1 && repos.y > 0)) {
+                if (repos.y < 0 && pushed_down) {
+                    m_status = CHAR_DIE;
+                    zone->reset_level();
+                    return;
+                }
+                if (repos.y > 0 && pushed_up) {
+                    m_status = CHAR_DIE;
+                    zone->reset_level();
+                    return;
+                }
                 // land!
                 if (m_status == CHAR_JUMP) {
                     m_status = CHAR_IDLE;
@@ -509,12 +633,60 @@ void Dot::update(Zonestate* zone)
             }
         }
     }
+    for (int i = 0; i < objects.size(); i++) {
+        if (objects[i]->get_color() != m_color) {
+            continue;
+        }
+        if (objects[i]->get_type() == OBJECT_MOVING_PLATFORM) {
+            if (check_collision(col_rect, objects[i]->get_rect(), &repos)) {
+                if ((m_color == 0 && repos.y < 0) ||
+                    (m_color == 1 && repos.y > 0)) {
+                    // land!
+                    if (m_status == CHAR_JUMP) {
+                        m_status = CHAR_IDLE;
+                    }
+                    col_rect.y += repos.y;
+                    true_y = col_rect.y;
+                    m_yvel = 0;
+                    shiftable = true;
+                    // jump!
+                    if (up) {
+                        m_status = CHAR_JUMP;
+                        jump_start = SDL_GetTicks();
+                        m_yvel = (m_color - !m_color) * JUMP_VEL + ext_yvel;
+                        m_xvel += ext_xvel;
+                        shiftable = false;
+                    } else if (down) {
+                        platform_drop = true;
+                    } else {
+                        airborne = false;
+                    }
+                } else {
+                    // ceiling
+                    if ((m_color == 0 && m_yvel < 0) || (m_color == 1 && m_yvel > 0)) {
+                        // adjust y pos
+                        col_rect.y += repos.y;
+                        true_y = col_rect.y;
+                        m_yvel = ((m_color == 0) - (m_color == 1)) * .1;
+                        short_hop = 0;
+                        shiftable = false;
+                        up = false;
+                    }
+                }
+                if (airborne && check_grounded(col_rect, tileset[i].get_col_rect(), m_color)) {
+                    airborne = false;
+                }
+            }
+        }
+    }
+    if (on_moving_platform) {
+        airborne = false;
+    }
     if (airborne && m_status != CHAR_JUMP) {
         m_status = CHAR_JUMP;
         jump_start = 0;
     }
 
-    std::vector<Object*> objects = level->get_objects();
     Spring* spring;
     for (int i = 0; i < objects.size(); i++) {
         if (check_collision(col_rect, objects[i]->get_rect(), &repos)) {
@@ -706,6 +878,7 @@ void Dot::reset(Zonestate* zone)
     dir = saved_dir;
     col_rect = saved_col_rect;
     true_y = round(col_rect.y);
+    on_moving_platform = false;
     update(zone);
 }
 

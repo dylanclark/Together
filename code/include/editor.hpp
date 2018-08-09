@@ -21,6 +21,7 @@ typedef enum PlacingType {
     PLACING_PLATFORMS,
     PLACING_BLOCKS,
     PLACING_SPRINGS,
+    PLACING_MOVING_PLATFORMS,
     PLACING_BUTTONS,
     PLACING_KEYS,
     PLACING_DOORS,
@@ -83,11 +84,13 @@ private:
 class EditorObject
 {
 public:
-    PlacingType type;
+    ObjectType type;
     int x, y;
-    // we'll only use this if necessary
-    ExitDir dir;
-    // and this
+    // for moving platforms
+    int w, h;
+    int x2, y2;
+    int pause_length, move_length;
+    // for springs
     int spring_height;
     Color color;
     SDL_Texture* tex;
@@ -122,6 +125,8 @@ private:
     int click_x, click_y;
     bool clicked;
     TileType clicked_type;
+
+    int moving_platforms;
 
     Texture m_tiletex;
 };
