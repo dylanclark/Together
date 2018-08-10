@@ -339,7 +339,7 @@ void Dot::update_x(Zonestate* zone)
             continue;
         }
         if (objects[i]->get_color() != m_color) {
-            break;
+            continue;
         } else {
             platform = (MovingPlatform*) objects[i];
             SDL_Rect x_rect = objects[i]->get_rect();

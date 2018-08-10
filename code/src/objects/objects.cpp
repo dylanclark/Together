@@ -150,10 +150,10 @@ std::vector<MovingPlatformWall> MovingPlatform::get_walls(std::vector<Tile> &til
     std::vector<MovingPlatformWall> result;
     int platform_w = TILE_WIDTH;
     int platform_h = TILE_WIDTH;
-    MovingPlatformWall left_wall(m_rect.x - platform_w, m_rect.y, platform_w, m_rect.h, PLATFORM_WALL_LEFT);
-    MovingPlatformWall right_wall(m_rect.x + m_rect.w, m_rect.y, platform_w, m_rect.h, PLATFORM_WALL_RIGHT);
-    MovingPlatformWall top_wall(m_rect.x, m_rect.y - platform_h, m_rect.w, platform_h, PLATFORM_WALL_TOP);
-    MovingPlatformWall bottom_wall(m_rect.x, m_rect.y + m_rect.h, m_rect.w, platform_h, PLATFORM_WALL_BOTTOM);
+    MovingPlatformWall left_wall(m_rect.x - platform_w, m_rect.y - platform_h, platform_w, m_rect.h + 2*platform_h, PLATFORM_WALL_LEFT);
+    MovingPlatformWall right_wall(m_rect.x + m_rect.w, m_rect.y - platform_h, platform_w, m_rect.h + 2*platform_h, PLATFORM_WALL_RIGHT);
+    MovingPlatformWall top_wall(m_rect.x - platform_w, m_rect.y - platform_h, m_rect.w + 2*platform_w, platform_h, PLATFORM_WALL_TOP);
+    MovingPlatformWall bottom_wall(m_rect.x - platform_w, m_rect.y + m_rect.h, m_rect.w + 2*platform_w, platform_h, PLATFORM_WALL_BOTTOM);
 
     bool left_flag, right_flag, top_flag, bottom_flag;
     left_flag = right_flag = top_flag = bottom_flag = true;
@@ -165,16 +165,28 @@ std::vector<MovingPlatformWall> MovingPlatform::get_walls(std::vector<Tile> &til
         if (m_color == 1 && tiles[i].get_type() != TILE_WHITE_SOLID) {
             continue;
         }
-        if (check_full_overlap(left_wall.get_rect(), tiles[i].get_col_rect())) {
+        SDL_Rect left_rect = left_wall.get_rect();
+        left_rect.y += platform_h;
+        left_rect.h -= platform_h*2;
+        if (check_full_overlap(left_rect, tiles[i].get_col_rect())) {
             left_flag = false;
         }
-        if (check_full_overlap(right_wall.get_rect(), tiles[i].get_col_rect())) {
+        SDL_Rect right_rect = right_wall.get_rect();
+        right_rect.y += platform_h;
+        right_rect.h -= platform_h*2;
+        if (check_full_overlap(right_rect, tiles[i].get_col_rect())) {
             right_flag = false;
         }
-        if (check_full_overlap(top_wall.get_rect(), tiles[i].get_col_rect())) {
+        SDL_Rect top_rect = top_wall.get_rect();
+        top_rect.x += platform_w;
+        top_rect.w -= platform_w*2;
+        if (check_full_overlap(top_rect, tiles[i].get_col_rect())) {
             top_flag = false;
         }
-        if (check_full_overlap(bottom_wall.get_rect(), tiles[i].get_col_rect())) {
+        SDL_Rect bottom_rect = bottom_wall.get_rect();
+        bottom_rect.x += platform_w;
+        bottom_rect.w -= platform_w*2;
+        if (check_full_overlap(bottom_rect, tiles[i].get_col_rect())) {
             bottom_flag = false;
         }
     }
