@@ -163,3 +163,82 @@ bool check_grounded(SDL_Rect a, SDL_Rect b, bool a_color)
 
     return true;
 }
+
+bool check_full_overlap(SDL_Rect a, SDL_Rect b)
+{
+    // the sides of the rectangles
+    int leftA, leftB;
+    int rightA, rightB;
+    int topA, topB;
+    int bottomA, bottomB;
+
+    // calculate the sides of rect A
+    leftA = a.x;
+    rightA = a.x + a.w;
+    topA = a.y;
+    bottomA = a.y + a.h;
+
+    // calculate the sides of rect B
+    leftB = b.x;
+    rightB = b.x + b.w;
+    topB = b.y;
+    bottomB = b.y + b.h;
+
+    if (topB < topA) {
+        return false;
+    }
+    if (bottomB > bottomA) {
+        return false;
+    }
+    if (rightB > rightA) {
+        return false;
+    }
+    if (leftB < leftA) {
+        return false;
+    }
+    return true;
+}
+
+bool check_in_platform(SDL_Rect a, SDL_Rect b)
+{
+    // the sides of the rectangles
+    int leftA, leftB;
+    int rightA, rightB;
+    int topA, topB;
+    int bottomA, bottomB;
+
+    // calculate the sides of rect A
+    leftA = a.x;
+    rightA = a.x + a.w;
+    topA = a.y;
+    bottomA = a.y + a.h;
+
+    // calculate the sides of rect B
+    leftB = b.x;
+    rightB = b.x + b.w;
+    topB = b.y;
+    bottomB = b.y + b.h;
+
+    if (bottomA < topB) {
+        return false;
+    }
+
+    if (topA > bottomB) {
+        return false;
+    }
+
+    if (rightA < leftB) {
+        return false;
+    }
+
+    if (leftA > rightB) {
+        return false;
+    }
+
+    if (leftA >= leftB && rightA <= rightB) {
+        return true;
+    } else if (topA >= topB && bottomA <= bottomB) {
+        return true;
+    }
+    return false;
+}

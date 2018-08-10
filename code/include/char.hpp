@@ -32,6 +32,8 @@ bool check_collision(SDL_Rect a, SDL_Rect b, Vector* overlap);
 bool check_point_in_triangle(int x, int y, bool color, SDL_Rect triangle, bool down, Vector* repos);
 bool check_point_in_rect(int x, int y, bool color, SDL_Rect rect, Vector* repos);
 bool check_grounded(SDL_Rect a, SDL_Rect b, bool a_color);
+bool check_full_overlap(SDL_Rect a, SDL_Rect b);
+bool check_in_platform(SDL_Rect a, SDL_Rect b);
 
 typedef enum _CharDir {
     DIR_RIGHT = 0,
@@ -53,6 +55,8 @@ typedef enum _ExitDir {
     EXIT_UP,
     EXIT_DOWN
 } ExitDir;
+
+class MovingPlatformWall;
 
 class Dot
 {
@@ -90,10 +94,16 @@ private:
     SDL_Rect col_rect;
     float true_y;
     float m_xvel, m_yvel;
-    bool on_moving_platform;
-    int moving_platform_idx;
-    int platform_x, platform_y;
     CharDir dir;
+
+    bool on_moving_platform;
+    int on_moving_platform_idx;
+    int on_platform_x, on_platform_y;
+
+    bool in_moving_platform;
+    int in_moving_platform_idx;
+    int in_platform_x, in_platform_y;
+    std::vector<MovingPlatformWall> walls;
 
     Controller* controller;
     bool up, down, left, right;

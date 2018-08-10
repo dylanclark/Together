@@ -25,7 +25,9 @@ Dot::Dot(int x, int y, bool color, SDL_Color* palette)
     // initialize velocity
     m_xvel = m_yvel = 0;
     on_moving_platform = false;
-    moving_platform_idx = 0;
+    on_moving_platform_idx = 0;
+    in_moving_platform = false;
+    in_moving_platform_idx = 0;
 
     // initialize controllers
     up = false;
@@ -227,19 +229,26 @@ void Dot::check_for_platforms(Zonestate* zone)
     Level* level = zone->get_active_level();
     std::vector<Object*> objects = level->get_objects();
     on_moving_platform = false;
+    in_moving_platform = false;
     for (int i = 0; i < objects.size(); i++) {
         if (objects[i]->get_type() != OBJECT_MOVING_PLATFORM) {
             continue;
         }
         if (objects[i]->get_color() != m_color) {
-            continue;
-        }
-        if (check_grounded(col_rect, objects[i]->get_rect(), m_color)) {
-            on_moving_platform = true;
-            moving_platform_idx = i;
-            platform_x = objects[i]->get_rect().x;
-            platform_y = objects[i]->get_rect().y;
-            break;
+            if (check_in_platform(col_rect, objects[i]->get_rect())) {
+                in_moving_platform = true;
+                in_moving_platform_idx = i;
+                in_platform_x = objects[i]->get_rect().x;
+                in_platform_y = objects[i]->get_rect().y;
+            }
+        } else {
+            if (check_grounded(col_rect, objects[i]->get_rect(), m_color)) {
+                on_moving_platform = true;
+                on_moving_platform_idx = i;
+                on_platform_x = objects[i]->get_rect().x;
+                on_platform_y = objects[i]->get_rect().y;
+                break;
+            }
         }
     }
 }
@@ -309,9 +318,13 @@ void Dot::update_x(Zonestate* zone)
     int ext_xvel = 0;
     MovingPlatform* platform;
     if (on_moving_platform) {
-        platform = (MovingPlatform*) objects[moving_platform_idx];
-        int new_x = objects[moving_platform_idx]->get_rect().x;
-        ext_xvel = new_x - platform_x;
+        platform = (MovingPlatform*) objects[on_moving_platform_idx];
+        int new_x = objects[on_moving_platform_idx]->get_rect().x;
+        ext_xvel = new_x - on_platform_x;
+    } else if (in_moving_platform) {
+        platform = (MovingPlatform*) objects[in_moving_platform_idx];
+        int new_x = objects[in_moving_platform_idx]->get_rect().x;
+        ext_xvel = new_x - in_platform_x;
     }
     col_rect.x += ext_xvel;
 
@@ -326,20 +339,35 @@ void Dot::update_x(Zonestate* zone)
             continue;
         }
         if (objects[i]->get_color() != m_color) {
-            continue;
-        }
-        platform = (MovingPlatform*) objects[i];
-        SDL_Rect x_rect = objects[i]->get_rect();
-        if (check_collision(col_rect, x_rect, &repos)) {
-            col_rect.x += repos.x;
-            if ((repos.x > 0 && m_xvel < 0) ||
-                (repos.x < 0 && m_xvel > 0)) {
-                m_xvel = 0;
+            break;
+        } else {
+            platform = (MovingPlatform*) objects[i];
+            SDL_Rect x_rect = objects[i]->get_rect();
+            if (check_collision(col_rect, x_rect, &repos)) {
+                col_rect.x += repos.x;
+                if ((repos.x > 0 && m_xvel < 0) ||
+                    (repos.x < 0 && m_xvel > 0)) {
+                    m_xvel = 0;
+                }
+                if (repos.x < 0) {
+                    pushed_left = true;
+                } else if (repos.x > 0) {
+                    pushed_right = true;
+                }
             }
-            if (repos.x < 0) {
-                pushed_left = true;
-            } else if (repos.x > 0) {
-                pushed_right = true;
+        }
+    }
+
+    if (in_moving_platform) {
+        platform = (MovingPlatform*) objects[in_moving_platform_idx];
+        walls = platform->get_walls(tileset);
+        for (int i = 0; i < walls.size(); i++) {
+            if (walls[i].get_side() != PLATFORM_WALL_LEFT && walls[i].get_side() != PLATFORM_WALL_RIGHT) {
+                continue;
+            }
+            if (check_collision(col_rect, walls[i].get_rect(), &repos)) {
+                col_rect.x += repos.x;
+                m_xvel = 0;
             }
         }
     }
@@ -374,6 +402,9 @@ void Dot::update_x(Zonestate* zone)
     // resolve x collisions
     int size = level->get_w()*level->get_h();
     for (int i = 0; i < size; i++) {
+        if (in_moving_platform) {
+            break;
+        }
         TileType type = tileset[i].get_type();
         if (type == TILE_BLACK_SOLID + !m_color ||  type == TILE_CLEAR) {
             continue;
@@ -426,9 +457,13 @@ void Dot::update_y(Zonestate* zone)
     int ext_yvel = 0;
     MovingPlatform* platform;
     if (on_moving_platform) {
-        platform = (MovingPlatform*) objects[moving_platform_idx];
-        int new_y = objects[moving_platform_idx]->get_rect().y;
-        ext_yvel = new_y - platform_y;
+        platform = (MovingPlatform*) objects[on_moving_platform_idx];
+        int new_y = objects[on_moving_platform_idx]->get_rect().y;
+        ext_yvel = new_y - on_platform_y;
+    } else if (in_moving_platform) {
+        platform = (MovingPlatform*) objects[in_moving_platform_idx];
+        int new_y = objects[in_moving_platform_idx]->get_rect().y;
+        ext_yvel = new_y - in_platform_y;
     }
 
     col_rect.y += ext_yvel;
@@ -500,7 +535,51 @@ void Dot::update_y(Zonestate* zone)
                 pushed_up = true;
             } else if (repos.y > 0) {
                 pushed_down = true;
-                printf("pushed_down\n");
+            }
+        }
+    }
+
+    if (in_moving_platform) {
+        platform = (MovingPlatform*) objects[in_moving_platform_idx];
+        walls = platform->get_walls(tileset);
+        for (int i = 0; i < walls.size(); i++) {
+            if (walls[i].get_side() != PLATFORM_WALL_TOP && walls[i].get_side() != PLATFORM_WALL_BOTTOM) {
+                continue;
+            }
+            if (check_collision(col_rect, walls[i].get_rect(), &repos)) {
+                if ((m_color == 0 && repos.y < 0) ||
+                    (m_color == 1 && repos.y > 0)) {
+                    // land!
+                    if (m_status == CHAR_JUMP) {
+                        m_status = CHAR_IDLE;
+                    }
+                    col_rect.y += repos.y;
+                    true_y = col_rect.y;
+                    m_yvel = 0;
+                    shiftable = true;
+                    // jump!
+                    if (up) {
+                        m_status = CHAR_JUMP;
+                        jump_start = SDL_GetTicks();
+                        m_yvel = (m_color - !m_color) * JUMP_VEL;
+                        shiftable = false;
+                    } else if (down) {
+                        platform_drop = true;
+                    } else {
+                        airborne = false;
+                    }
+                } else {
+                    // ceiling
+                    if ((m_color == 0 && m_yvel < 0) || (m_color == 1 && m_yvel > 0)) {
+                        // adjust y pos
+                        col_rect.y += repos.y;
+                        true_y = col_rect.y;
+                        m_yvel = ((m_color == 0) - (m_color == 1)) * .1;
+                        short_hop = 0;
+                        shiftable = false;
+                        up = false;
+                    }
+                }
             }
         }
     }
@@ -525,6 +604,9 @@ void Dot::update_y(Zonestate* zone)
     int size = level->get_w()*level->get_h();
     // first pass for non-slope tiles
     for (int i = 0; i < size; i++) {
+        if (in_moving_platform) {
+            break;
+        }
         TileType type = tileset[i].get_type();
         if (type == TILE_BLACK_SOLID + !m_color || type == TILE_CLEAR) {
             continue;
@@ -580,12 +662,10 @@ void Dot::update_y(Zonestate* zone)
                 if (repos.y < 0 && pushed_down) {
                     m_status = CHAR_DIE;
                     zone->reset_level();
-                    printf("crushed by floor\n");
                     return;
                 }
                 if (repos.y > 0 && pushed_up) {
                     m_status = CHAR_DIE;
-                    printf("crushed by ceiling\n");
                     zone->reset_level();
                     return;
                 }
@@ -612,12 +692,10 @@ void Dot::update_y(Zonestate* zone)
                 if (repos.y < 0 && pushed_down) {
                     m_status = CHAR_DIE;
                     zone->reset_level();
-                    printf("crushed by floor\n");
                     return;
                 }
                 if (repos.y > 0 && pushed_up) {
                     m_status = CHAR_DIE;
-                    printf("crushed by ceiling\n");
                     zone->reset_level();
                     return;
                 }
@@ -676,6 +754,24 @@ void Dot::update_y(Zonestate* zone)
     }
     if (on_moving_platform) {
         airborne = false;
+    }
+    if (in_moving_platform) {
+        SDL_Rect floor;
+        MovingPlatformWallSide side;
+        if (m_color == 0) {
+            side = PLATFORM_WALL_BOTTOM;
+        } else {
+            side = PLATFORM_WALL_TOP;
+        }
+        for (int i = 0; i < walls.size(); i++) {
+            if (walls[i].get_side() == side) {
+                floor = walls[i].get_rect();
+                break;
+            }
+        }
+        if (check_grounded(col_rect, floor, m_color)) {
+            airborne = false;
+        }
     }
     if (airborne && m_status != CHAR_JUMP && m_status != CHAR_INACTIVE) {
         m_status = CHAR_JUMP;

@@ -58,6 +58,14 @@ void Spring::spring()
 /***********************/
 /*   MOVING PLATFORM   */
 /***********************/
+MovingPlatformWall::MovingPlatformWall(int x, int y, int w, int h, MovingPlatformWallSide side)
+{
+    m_rect.x = x;
+    m_rect.y = y;
+    m_rect.w = w;
+    m_rect.h = h;
+    m_side = side;
+}
 
 MovingPlatform::MovingPlatform(int x1, int y1, int x2, int y2, int w, int h, bool color, bool automatic, int move_length, int pause_length, SDL_Color palette)
 {
@@ -137,34 +145,53 @@ void MovingPlatform::untrigger()
     m_status = PLATFORM_MOVETO_A;
 }
 
-int MovingPlatform::get_xvel()
+std::vector<MovingPlatformWall> MovingPlatform::get_walls(std::vector<Tile> &tiles)
 {
-    if (m_timestep == 0 || m_status == PLATFORM_PAUSE_A || m_status == PLATFORM_PAUSE_B) {
-        return 0.0;
-    } else {
-        float t = ((float) (m_timestep - 1)) / (float) m_move_length;
-        if (m_status == PLATFORM_MOVETO_A) {
-            t = 1 - t;
-        }
-        float s = 1 - t;
-        int old_x = round(pow(s, 2.0) * (1.0 + 2.0*t) * (float) m_x1 + pow(t, 2.0) * (1.0 + 2.0*s) * (float) m_x2);
-        return m_rect.x - old_x;
-    }
-}
+    std::vector<MovingPlatformWall> result;
+    int platform_w = TILE_WIDTH;
+    int platform_h = TILE_WIDTH;
+    MovingPlatformWall left_wall(m_rect.x - platform_w, m_rect.y, platform_w, m_rect.h, PLATFORM_WALL_LEFT);
+    MovingPlatformWall right_wall(m_rect.x + m_rect.w, m_rect.y, platform_w, m_rect.h, PLATFORM_WALL_RIGHT);
+    MovingPlatformWall top_wall(m_rect.x, m_rect.y - platform_h, m_rect.w, platform_h, PLATFORM_WALL_TOP);
+    MovingPlatformWall bottom_wall(m_rect.x, m_rect.y + m_rect.h, m_rect.w, platform_h, PLATFORM_WALL_BOTTOM);
 
-int MovingPlatform::get_yvel()
-{
-    if (m_timestep == 0 || m_status == PLATFORM_PAUSE_A || m_status == PLATFORM_PAUSE_B) {
-        return 0.0;
-    } else {
-        float t = ((float) (m_timestep - 1)) / (float) m_move_length;
-        if (m_status == PLATFORM_MOVETO_A) {
-            t = 1 - t;
+    bool left_flag, right_flag, top_flag, bottom_flag;
+    left_flag = right_flag = top_flag = bottom_flag = true;
+
+    for (int i = 0; i < tiles.size(); i++) {
+        if (m_color == 0 && tiles[i].get_type() != TILE_BLACK_SOLID) {
+            continue;
         }
-        float s = 1 - t;
-        int old_y = round(pow(s, 2.0) * (1.0 + 2.0*t) * (float) m_y1 + pow(t, 2.0) * (1.0 + 2.0*s) * (float) m_y2);
-        return m_rect.y - old_y;
+        if (m_color == 1 && tiles[i].get_type() != TILE_WHITE_SOLID) {
+            continue;
+        }
+        if (check_full_overlap(left_wall.get_rect(), tiles[i].get_col_rect())) {
+            left_flag = false;
+        }
+        if (check_full_overlap(right_wall.get_rect(), tiles[i].get_col_rect())) {
+            right_flag = false;
+        }
+        if (check_full_overlap(top_wall.get_rect(), tiles[i].get_col_rect())) {
+            top_flag = false;
+        }
+        if (check_full_overlap(bottom_wall.get_rect(), tiles[i].get_col_rect())) {
+            bottom_flag = false;
+        }
     }
+
+    if (left_flag) {
+        result.push_back(left_wall);
+    }
+    if (right_flag) {
+        result.push_back(right_wall);
+    }
+    if (top_flag) {
+        result.push_back(top_wall);
+    }
+    if (bottom_flag) {
+        result.push_back(bottom_wall);
+    }
+    return result;
 }
 
 /*************/

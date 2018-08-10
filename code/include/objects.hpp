@@ -85,6 +85,27 @@ typedef enum _PlatformStatus {
     PLATFORM_MOVETO_A,
 } PlatformStatus;
 
+typedef enum _MovingPlatformWallSide {
+    PLATFORM_WALL_LEFT,
+    PLATFORM_WALL_RIGHT,
+    PLATFORM_WALL_TOP,
+    PLATFORM_WALL_BOTTOM,
+} MovingPlatformWallSide;
+
+class MovingPlatformWall
+{
+public:
+    MovingPlatformWall(int x, int y, int w, int h, MovingPlatformWallSide m_side);
+    ~MovingPlatformWall() { }
+
+    SDL_Rect get_rect() { return m_rect; }
+    MovingPlatformWallSide get_side() { return m_side; }
+
+private:
+    SDL_Rect m_rect;
+    MovingPlatformWallSide m_side;
+};
+
 class MovingPlatform : public Object
 {
 public:
@@ -96,8 +117,7 @@ public:
     void trigger();
     void untrigger();
 
-    int get_xvel();
-    int get_yvel();
+    std::vector<MovingPlatformWall> get_walls(std::vector<Tile> &tiles);
 
 private:
     int m_x1, m_y1, m_x2, m_y2;
