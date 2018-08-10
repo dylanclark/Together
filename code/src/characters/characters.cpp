@@ -266,7 +266,9 @@ void Dot::update_x(Zonestate* zone)
     if (zone->active_color != m_color) {
         m_status = entering ? CHAR_EXITED : CHAR_INACTIVE;
     } else {
-        m_status = CHAR_IDLE;
+        if (m_status == CHAR_INACTIVE) {
+            m_status = CHAR_IDLE;
+        }
     }
 
     // update x velocity
@@ -301,10 +303,6 @@ void Dot::update_x(Zonestate* zone)
 
     if (m_xvel != 0 && m_status != CHAR_JUMP && m_status != CHAR_INACTIVE) {
         m_status = CHAR_RUN;
-    }
-
-    if (m_status != CHAR_JUMP) {
-        short_hop = -1;
     }
 
     Level* level = zone->get_active_level();
@@ -466,8 +464,11 @@ void Dot::update_y(Zonestate* zone)
         ext_yvel = new_y - in_platform_y;
     }
 
-    col_rect.y += ext_yvel;
-    true_y = col_rect.y;
+    if (m_status != CHAR_JUMP) {
+        short_hop = -1;
+    }
+
+    true_y += ext_yvel;
 
     // update y velocity with gravity
     if (m_status == CHAR_JUMP) {
