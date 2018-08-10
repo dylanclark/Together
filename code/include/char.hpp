@@ -62,7 +62,8 @@ public:
     bool m_color;
 
     bool handle_event(SDL_Event &e, Zonestate* zone);
-    void update(Zonestate* zone);
+    void update_x(Zonestate* zone);
+    void update_y(Zonestate* zone);
     void check_for_platforms(Zonestate* zone);
     void render(SDL_Rect* camera, Level* lvl);
 

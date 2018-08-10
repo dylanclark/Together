@@ -19,7 +19,7 @@ class Camera
 public:
     Camera (int scr_w, int scr_h, Level* level, SDL_Rect active_char, int dir);
     ~Camera();
-    void update (SDL_Rect active_char, int dir);
+    void update(SDL_Rect active_char, int dir);
     SDL_Rect* get_display() { return &display; }
     void set_level(Level* level, SDL_Rect active_char, int dir, int transition_duration);
     void traumatize(float trauma) { m_trauma = trauma; }
@@ -50,7 +50,8 @@ public:
     Level(int zone_num, int lvl_num, int x, int y, SDL_Color palette);
     ~Level();
     void load_level(int zone_num, int lvl_num, SDL_Color palette);
-    void update();
+    void update_x();
+    void update_y();
     void draw_bg(SDL_Rect cam_rect, bool active_color);
     void draw_fg(SDL_Rect cam_rect, bool active_color);
     void cleanup();

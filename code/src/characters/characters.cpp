@@ -97,7 +97,6 @@ bool Dot::handle_event(SDL_Event &e, Zonestate* zone)
                 case SDL_SCANCODE_LSHIFT:
                 case SDL_SCANCODE_RSHIFT:
                     if (zone->shiftable) {
-                        Mix_PlayChannel(-1, game->sound->level_switch_snd, 0);
                         up = left = down = right = 0;
                         m_xvel = 0;
                         zone->shift();
@@ -245,7 +244,7 @@ void Dot::check_for_platforms(Zonestate* zone)
     }
 }
 
-void Dot::update(Zonestate* zone)
+void Dot::update_x(Zonestate* zone)
 {
     if (exited) {
         zone->check_exit();
@@ -257,14 +256,17 @@ void Dot::update(Zonestate* zone)
 
     if (zone->active_color != m_color) {
         m_status = entering ? CHAR_EXITED : CHAR_INACTIVE;
-        return;
+    } else {
+        m_status = CHAR_IDLE;
     }
 
     // update x velocity
-    if (right && !left)
+    if (right && !left && m_xvel < DOT_VEL) {
         m_xvel += DOT_ACC;
-    if (left && !right)
+    }
+    if (left && !right && m_xvel > -(DOT_VEL)) {
         m_xvel -= DOT_ACC;
+    }
     if ((!right && !left) || (right && left)) {
         if (m_xvel < 0) {
             m_xvel += DOT_ACC;
@@ -276,16 +278,10 @@ void Dot::update(Zonestate* zone)
     // if the char is moving slowly enough, stop it
     if (m_xvel < (DOT_ACC) && m_xvel > -(DOT_ACC)) {
         m_xvel = 0;
-        if (m_status != CHAR_JUMP) {
+        if (m_status != CHAR_JUMP && m_status != CHAR_INACTIVE) {
             m_status = CHAR_IDLE;
         }
     }
-
-    // limit top speed
-    if (m_xvel > DOT_VEL) {
-        m_xvel = DOT_VEL;
-    } else if (m_xvel < -DOT_VEL)
-        m_xvel = -DOT_VEL;
 
     // set direction (for animation)
     if (m_xvel < 0) {
@@ -294,7 +290,7 @@ void Dot::update(Zonestate* zone)
         dir = DIR_RIGHT;
     }
 
-    if (m_xvel != 0 && m_status != CHAR_JUMP) {
+    if (m_xvel != 0 && m_status != CHAR_JUMP && m_status != CHAR_INACTIVE) {
         m_status = CHAR_RUN;
     }
 
@@ -307,56 +303,38 @@ void Dot::update(Zonestate* zone)
     std::vector<Object*> objects = level->get_objects();
     Vector repos;
 
-    bool pushed_left, pushed_right, pushed_up, pushed_down;
-    pushed_left = pushed_right = pushed_up = pushed_down = false;
+    bool pushed_left, pushed_right;
+    pushed_left = pushed_right = false;
 
-    int ext_xvel, ext_yvel;
-    ext_xvel = ext_yvel = 0;
+    int ext_xvel = 0;
     MovingPlatform* platform;
     if (on_moving_platform) {
         platform = (MovingPlatform*) objects[moving_platform_idx];
         int new_x = objects[moving_platform_idx]->get_rect().x;
-        int new_y = objects[moving_platform_idx]->get_rect().y;
         ext_xvel = new_x - platform_x;
-        ext_yvel = new_y - platform_y;
-        if (ext_xvel < 0) {
-            pushed_left = true;
-        } else {
-            pushed_right = true;
-        }
-        if (ext_yvel < 0) {
-            pushed_up = true;
-        } else {
-            pushed_down = true;
-        }
     }
     col_rect.x += ext_xvel;
-    col_rect.y += ext_yvel;
-    true_y = col_rect.y;
 
     for (int i = 0; i < objects.size(); i++) {
+        if (on_moving_platform) {
+            break;
+        }
         if (objects[i]->get_type() != OBJECT_MOVING_PLATFORM) {
             continue;
         }
         if (objects[i]->get_color() != m_color) {
             continue;
         }
-        if (check_collision(col_rect, objects[i]->get_rect(), &repos)) {
-            on_moving_platform = true;
-            if (abs(repos.x) <= abs(repos.y)) {
+        platform = (MovingPlatform*) objects[i];
+        SDL_Rect x_rect = objects[i]->get_rect();
+        x_rect.y -= platform->get_yvel();
+        if (check_collision(col_rect, x_rect, &repos)) {
+            if (platform->get_xvel() != 0) {
                 col_rect.x += repos.x;
                 if (repos.x < 0) {
                     pushed_left = true;
-                } else {
+                } else if (repos.x > 0) {
                     pushed_right = true;
-                }
-            } else {
-                col_rect.y += repos.y;
-                true_y = col_rect.y;
-                if (repos.y < 0) {
-                    pushed_up = true;
-                } else {
-                    pushed_down = true;
                 }
             }
         }
@@ -415,25 +393,15 @@ void Dot::update(Zonestate* zone)
                 platform_drop = true;
                 continue;
             }
-            printf("repos.x repos.y %d %d\n", repos.x, repos.y);
-            printf("%d %d %d %d\n", pushed_left, pushed_right, pushed_up, pushed_down);
-            if (repos.y < 0 && pushed_down) {
-                m_status = CHAR_DIE;
-                zone->reset_level();
-                return;
-            }
-            if (repos.y > 0 && pushed_up) {
-                m_status = CHAR_DIE;
-                zone->reset_level();
-                return;
-            }
             if (repos.x < 0 && pushed_right) {
                 m_status = CHAR_DIE;
+                printf("crushed on right wall\n");
                 zone->reset_level();
                 return;
             }
             if (repos.x > 0 && pushed_left) {
                 m_status = CHAR_DIE;
+                printf("crushed on left wall\n");
                 zone->reset_level();
                 return;
             }
@@ -458,6 +426,27 @@ void Dot::update(Zonestate* zone)
             }
         }
     }
+}
+
+void Dot::update_y(Zonestate* zone)
+{
+    Level* level = zone->get_active_level();
+    std::vector<Tile> tileset = *level->get_tileset();
+    std::vector<Object*> objects = level->get_objects();
+    Vector repos;
+
+    bool pushed_up, pushed_down;
+    pushed_up = pushed_down = false;
+
+    int ext_yvel = 0;
+    MovingPlatform* platform;
+    if (on_moving_platform) {
+        platform = (MovingPlatform*) objects[moving_platform_idx];
+        int new_y = objects[moving_platform_idx]->get_rect().y;
+        ext_yvel = new_y - platform_y;
+    }
+    col_rect.y += ext_yvel;
+    true_y = col_rect.y;
 
     // update y velocity with gravity
     if (m_status == CHAR_JUMP) {
@@ -477,6 +466,57 @@ void Dot::update(Zonestate* zone)
     true_y += m_yvel;
     col_rect.y = (int) true_y + (m_color == 0);
 
+    bool shiftable;
+    bool airborne = true;
+    for (int i = 0; i < objects.size(); i++) {
+        if (objects[i]->get_type() != OBJECT_MOVING_PLATFORM) {
+            continue;
+        }
+        if (objects[i]->get_color() != m_color) {
+            continue;
+        }
+        if (check_collision(col_rect, objects[i]->get_rect(), &repos)) {
+            if ((m_color == 0 && repos.y < 0) ||
+                (m_color == 1 && repos.y > 0)) {
+                // land!
+                if (m_status == CHAR_JUMP) {
+                    m_status = CHAR_IDLE;
+                }
+                col_rect.y += repos.y;
+                true_y = col_rect.y;
+                m_yvel = 0;
+                shiftable = true;
+                // jump!
+                if (up) {
+                    m_status = CHAR_JUMP;
+                    jump_start = SDL_GetTicks();
+                    m_yvel = (m_color - !m_color) * JUMP_VEL + ext_yvel / 1.5;
+                    shiftable = false;
+                } else if (down) {
+                    platform_drop = true;
+                } else {
+                    airborne = false;
+                }
+            } else {
+                // ceiling
+                if ((m_color == 0 && m_yvel < 0) || (m_color == 1 && m_yvel > 0)) {
+                    // adjust y pos
+                    col_rect.y += repos.y;
+                    true_y = col_rect.y;
+                    m_yvel = ((m_color == 0) - (m_color == 1)) * .1;
+                    short_hop = 0;
+                    shiftable = false;
+                    up = false;
+                }
+            }
+            if (repos.y < 0) {
+                pushed_up = true;
+            } else if (repos.y > 0) {
+                pushed_down = true;
+            }
+        }
+    }
+
     if (entering) {
         int lvl_x = level->get_x();
         int lvl_y = level->get_y();
@@ -492,10 +532,9 @@ void Dot::update(Zonestate* zone)
     }
 
     // resolve y collisions
-    bool shiftable;
-    bool airborne = true;
     bool platform_col = false;
     SDL_Rect tile_rect;
+    int size = level->get_w()*level->get_h();
     // first pass for non-slope tiles
     for (int i = 0; i < size; i++) {
         TileType type = tileset[i].get_type();
@@ -553,10 +592,12 @@ void Dot::update(Zonestate* zone)
                 if (repos.y < 0 && pushed_down) {
                     m_status = CHAR_DIE;
                     zone->reset_level();
+                    printf("crushed by floor\n");
                     return;
                 }
                 if (repos.y > 0 && pushed_up) {
                     m_status = CHAR_DIE;
+                    printf("crushed by ceiling\n");
                     zone->reset_level();
                     return;
                 }
@@ -639,40 +680,7 @@ void Dot::update(Zonestate* zone)
         }
         if (objects[i]->get_type() == OBJECT_MOVING_PLATFORM) {
             if (check_collision(col_rect, objects[i]->get_rect(), &repos)) {
-                if ((m_color == 0 && repos.y < 0) ||
-                    (m_color == 1 && repos.y > 0)) {
-                    // land!
-                    if (m_status == CHAR_JUMP) {
-                        m_status = CHAR_IDLE;
-                    }
-                    col_rect.y += repos.y;
-                    true_y = col_rect.y;
-                    m_yvel = 0;
-                    shiftable = true;
-                    // jump!
-                    if (up) {
-                        m_status = CHAR_JUMP;
-                        jump_start = SDL_GetTicks();
-                        m_yvel = (m_color - !m_color) * JUMP_VEL + ext_yvel;
-                        m_xvel += ext_xvel;
-                        shiftable = false;
-                    } else if (down) {
-                        platform_drop = true;
-                    } else {
-                        airborne = false;
-                    }
-                } else {
-                    // ceiling
-                    if ((m_color == 0 && m_yvel < 0) || (m_color == 1 && m_yvel > 0)) {
-                        // adjust y pos
-                        col_rect.y += repos.y;
-                        true_y = col_rect.y;
-                        m_yvel = ((m_color == 0) - (m_color == 1)) * .1;
-                        short_hop = 0;
-                        shiftable = false;
-                        up = false;
-                    }
-                }
+
                 if (airborne && check_grounded(col_rect, tileset[i].get_col_rect(), m_color)) {
                     airborne = false;
                 }
@@ -682,9 +690,13 @@ void Dot::update(Zonestate* zone)
     if (on_moving_platform) {
         airborne = false;
     }
-    if (airborne && m_status != CHAR_JUMP) {
+    if (airborne && m_status != CHAR_JUMP && m_status != CHAR_INACTIVE) {
         m_status = CHAR_JUMP;
         jump_start = 0;
+        shiftable = false;
+    }
+    if (airborne) {
+        shiftable = false;
     }
 
     Spring* spring;
@@ -717,7 +729,9 @@ void Dot::update(Zonestate* zone)
         exit(EXIT_DOWN);
     }
 
-    zone->shiftable = shiftable;
+    if (m_status != CHAR_INACTIVE) {
+        zone->shiftable = shiftable;
+    }
 }
 
 void Dot::exit(ExitDir dir)
@@ -879,7 +893,8 @@ void Dot::reset(Zonestate* zone)
     col_rect = saved_col_rect;
     true_y = round(col_rect.y);
     on_moving_platform = false;
-    update(zone);
+    update_x(zone);
+    update_y(zone);
 }
 
 void Dot::spring_me(float yvel)

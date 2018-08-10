@@ -81,7 +81,7 @@ MovingPlatform::MovingPlatform(int x1, int y1, int x2, int y2, int w, int h, boo
     m_tex.create_square(color, w, h, &palette);
 }
 
-void MovingPlatform::update()
+void MovingPlatform::update_x()
 {
     m_timestep++;
     if (m_auto && (m_status == PLATFORM_PAUSE_A || m_status == PLATFORM_PAUSE_B) && (m_timestep >= m_pause_length)) {
@@ -94,10 +94,8 @@ void MovingPlatform::update()
     }
     if (m_status == PLATFORM_PAUSE_A) {
         m_rect.x = m_x1;
-        m_rect.y = m_y1;
     } else if (m_status == PLATFORM_PAUSE_B) {
         m_rect.x = m_x2;
-        m_rect.y = m_y2;
     } else {
         float t = (float) m_timestep / (float) m_move_length;
         if (m_status == PLATFORM_MOVETO_A) {
@@ -105,6 +103,21 @@ void MovingPlatform::update()
         }
         float s = 1 - t;
         m_rect.x = round(pow(s, 2.0) * (1.0 + 2.0*t) * (float) m_x1 + pow(t, 2.0) * (1.0 + 2.0*s) * (float) m_x2);
+    }
+}
+
+void MovingPlatform::update_y()
+{
+    if (m_status == PLATFORM_PAUSE_A) {
+        m_rect.y = m_y1;
+    } else if (m_status == PLATFORM_PAUSE_B) {
+        m_rect.y = m_y2;
+    } else {
+        float t = (float) m_timestep / (float) m_move_length;
+        if (m_status == PLATFORM_MOVETO_A) {
+            t = 1 - t;
+        }
+        float s = 1 - t;
         m_rect.y = round(pow(s, 2.0) * (1.0 + 2.0*t) * (float) m_y1 + pow(t, 2.0) * (1.0 + 2.0*s) * (float) m_y2);
     }
 }

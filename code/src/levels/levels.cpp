@@ -97,11 +97,17 @@ Level::~Level()
 
 }
 
-// this function returns true if the level has been exited
-void Level::update()
+void Level::update_x()
 {
     for (int i = 0; i < objects.size(); i++) {
-        objects[i]->update();
+        objects[i]->update_x();
+    }
+}
+
+void Level::update_y()
+{
+    for (int i = 0; i < objects.size(); i++) {
+        objects[i]->update_y();
     }
 }
 
@@ -205,9 +211,13 @@ void Zonestate::update()
     for (int i = 0; i < chars.size(); i++) {
         chars[i].check_for_platforms(this);
     }
-    levels[active_level]->update();
+    levels[active_level]->update_x();
     for (int i = 0; i < chars.size(); i++) {
-        chars[i].update(this);
+        chars[i].update_x(this);
+    }
+    levels[active_level]->update_y();
+    for (int i = 0; i < chars.size(); i++) {
+        chars[i].update_y(this);
     }
     camera->update(chars[active_color].get_rect(), chars[active_color].get_dir());
 }
