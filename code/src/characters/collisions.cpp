@@ -141,12 +141,12 @@ bool check_grounded(SDL_Rect a, SDL_Rect b, bool a_color)
     bottomB = b.y + b.h;
 
     // Get the amount of overlap
-    if(bottomA < topB - 1)
+    if(bottomA < topB)
     {
         return false;
     }
 
-    if(topA - 1 > bottomB)
+    if(topA > bottomB)
     {
         return false;
     }
