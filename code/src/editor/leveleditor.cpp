@@ -165,6 +165,7 @@ void Gridlines::draw(int scr_w, int scr_h, SDL_Rect cam_rect)
 Tileset::Tileset(int w, int h, std::vector<std::vector<TileType> > tiles_arg=std::vector<std::vector<TileType> >(), std::vector<EditorObject> objs_arg=std::vector<EditorObject>())
 {
     moving_platforms = 0;
+    shiftblock = false;
     m_tiletex.load_tile_sheet("tiles.png", NULL);
     clicked = 0;
     click_x = click_y = 0;
@@ -259,6 +260,8 @@ void Tileset::draw(int scr_w, int scr_h, SDL_Rect cam_rect)
                 w = TILE_WIDTH * aspect_ratio;
                 h = TILE_WIDTH * aspect_ratio;
             }
+        } else if (objs[i].type == OBJECT_SHIFTBLOCK) {
+            // TODO
         }
         SDL_Rect render_rect = {x, y, w, h};
 
@@ -287,6 +290,8 @@ void Tileset::draw(int scr_w, int scr_h, SDL_Rect cam_rect)
             int y2 = (objs[i].y2*TILE_WIDTH - cam_rect.y) * aspect_ratio;
             SDL_Rect next_rect = {x2, y2, w, h};
             SDL_RenderFillRect(game->rend, &next_rect);
+        } else if (objs[i].type == OBJECT_SHIFTBLOCK) {
+            // TODO
         }
     }
     // next we will draw all of the objects... eventually, bc we don't support textures yet
@@ -394,6 +399,22 @@ void Tileset::handle_event(SDL_Event e, int scr_w, int scr_h, SDL_Rect cam_rect,
                 moving_platforms = 0;
             }
             break;
+        case PLACING_SHIFTBLOCKS:
+            idx = objs.size() - 1;
+            if (!shiftblock) {
+                EditorObject new_obj;
+                new_obj.x = x1;
+                new_obj.y = y1;
+                new_obj.type = OBJECT_SHIFTBLOCK;
+                objs.push_back(new_obj);
+                shiftblock = true;
+            } else {
+                objs[idx].w = abs(x1 - objs[idx].x + 1);
+                objs[idx].h = abs(y1 - objs[idx].y + 1);
+                objs[idx].x = std::min(x1, objs[idx].x);
+                objs[idx].y = std::min(y1, objs[idx].y);
+                shiftblock = false;
+            }
         default:
             break;
         }
@@ -598,6 +619,9 @@ void LevelEditor::init()
                 new_obj.pause_length = obj_pause_length;
                 new_obj.move_length = obj_move_length;
                 break;
+            case OBJECT_SHIFTBLOCK:
+                // TODO
+                break;
             default:
                 break;
             }
@@ -763,6 +787,9 @@ void LevelEditor::draw_UI(int scr_w, int scr_h)
         break;
     case PLACING_MOVING_PLATFORMS:
         placing_str += "moving platforms (black/white)";
+        break;
+    case PLACING_SHIFTBLOCKS:
+        placing_str += "shiftblocks";
         break;
     case PLACING_DELETE:
         placing_str = "deleting";
@@ -961,6 +988,9 @@ void LevelEditor::write_level()
             level_file << objs[i].color << " " << objs[i].w << " " << objs[i].h << " ";
             level_file << objs[i].x << " " << objs[i].y << " " << objs[i].x2 << " " << objs[i].y2 << " ";
             level_file << objs[i].pause_length << " " << objs[i].move_length;
+            break;
+        case OBJECT_SHIFTBLOCK:
+            // TODO
             break;
         default:
             break;

@@ -23,6 +23,7 @@ public:
     bool load_object(int w, int h, std::string path, SDL_Color* palette = NULL);
     bool load_tile_sheet(std::string path, SDL_Color* palette = NULL);
     void create_square(bool color, int w, int h, SDL_Color* palette = NULL);
+    void create_texture(SDL_Texture* tex, int w, int h);
 
     void render(int x, int y, SDL_Rect* clip, SDL_Rect* camera, int dir = 0, int flip = 0, float angle = 0.0);
     void render_tile(int x, int y, SDL_Rect* active_clip, SDL_Rect* camera, int alpha = SDL_ALPHA_OPAQUE);
@@ -39,7 +40,7 @@ public:
     void render_message(SDL_Rect* message, SDL_Rect* clip);
 
 private:
-    SDL_Texture* tex;
+    SDL_Texture* m_tex;
     int width, height;
 };
 

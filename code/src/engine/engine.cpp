@@ -35,7 +35,7 @@ bool Engine::init()
         printf("could not get display info: %s\n", SDL_GetError());
     }
 
-    screen_width = 1080;
+    screen_width = 1072;
     screen_height = 720;
 
     // creates a window that we can (eventually) draw into

@@ -22,6 +22,7 @@ typedef enum PlacingType {
     PLACING_BLOCKS,
     PLACING_SPRINGS,
     PLACING_MOVING_PLATFORMS,
+    PLACING_SHIFTBLOCKS,
     PLACING_BUTTONS,
     PLACING_KEYS,
     PLACING_DOORS,
@@ -127,6 +128,7 @@ private:
     TileType clicked_type;
 
     int moving_platforms;
+    bool shiftblock;
 
     Texture m_tiletex;
 };

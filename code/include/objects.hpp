@@ -22,6 +22,7 @@ typedef enum _ObjectType {
     OBJECT_SPRING = 0,
     OBJECT_BLOCK,
     OBJECT_MOVING_PLATFORM,
+    OBJECT_SHIFTBLOCK,
     OBJECT_BUTTON,
     OBJECT_KEY,
     OBJECT_DOOR,
@@ -128,6 +129,38 @@ private:
     bool m_auto;
     int m_move_length;
     int m_pause_length;
+};
+
+/******************/
+/*   SHIFTBLOCK   */
+/******************/
+
+typedef enum _ShiftBlockStatus {
+    SHIFTBLOCK_IDLE = 0,
+    SHIFTBLOCK_BLACK,
+    SHIFTBLOCK_WHITE
+} ShiftBlockStatus;
+
+class ShiftBlock : public Object
+{
+public:
+    ShiftBlock(int x, int y, int w, int h, SDL_Color palette);
+    ~ShiftBlock() { }
+
+    void render(SDL_Rect cam_rect, bool active_color);
+
+    void trigger() { }
+    void untrigger() { }
+    void update_x(SDL_Rect black_player, SDL_Rect white_player) { }
+    void update_y() { }
+
+    ShiftBlockStatus get_status() { return m_status; }
+    void unshift() { m_status = SHIFTBLOCK_IDLE; }
+    void shift_white() { m_status = SHIFTBLOCK_WHITE; }
+    void shift_black() { m_status = SHIFTBLOCK_BLACK; }
+
+private:
+    ShiftBlockStatus m_status;
 };
 
 class Block : public Object

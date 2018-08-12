@@ -215,6 +215,185 @@ std::vector<MovingPlatformWall> MovingPlatform::get_walls(std::vector<Tile> &til
     return result;
 }
 
+/******************/
+/*   SHIFTBLOCK   */
+/******************/
+
+ShiftBlock::ShiftBlock(int x, int y, int w, int h, SDL_Color palette)
+{
+    m_rect.x = x;
+    m_rect.y = y;
+    m_rect.w = w*TILE_WIDTH;
+    m_rect.h = h*TILE_WIDTH;
+    m_status = SHIFTBLOCK_IDLE;
+    m_type = OBJECT_SHIFTBLOCK;
+
+    Uint32 format = SDL_GetWindowPixelFormat(game->win);
+    SDL_Texture* tex = SDL_CreateTexture(game->rend, format, SDL_TEXTUREACCESS_TARGET, w*TILE_WIDTH*8, h*TILE_WIDTH*4);
+    SDL_SetRenderTarget(game->rend, tex);
+
+    SDL_Surface* surface = IMG_Load("resources/textures/shiftblock-idle.png");
+    SDL_Texture* idle_tex = SDL_CreateTextureFromSurface(game->rend, surface);
+    SDL_SetTextureColorMod(idle_tex, palette.r, palette.g, palette.b);
+
+    // idle black
+    SDL_Rect clip_rect, render_rect;
+    clip_rect.y = 0;
+    clip_rect.w = clip_rect.h = TILE_WIDTH;
+    render_rect.w = render_rect.h = TILE_WIDTH;
+    for (int i = 0; i < 8; i++) {
+        clip_rect.x = i*TILE_WIDTH;
+        for (int j = 0; j < w; j++) {
+            for (int k = 0; k < h; k++) {
+                render_rect.x = i*(w*TILE_WIDTH) + j*TILE_WIDTH;
+                render_rect.y = k*TILE_WIDTH;
+                SDL_RenderCopy(game->rend, idle_tex, &clip_rect, &render_rect);
+            }
+        }
+        // TODO border
+    }
+
+    // idle white
+    for (int i = 0; i < 8; i++) {
+        clip_rect.x = i*TILE_WIDTH;
+        for (int j = 0; j < w; j++) {
+            for (int k = 0; k < h; k++) {
+                render_rect.x = i*(w*TILE_WIDTH) + j*TILE_WIDTH;
+                render_rect.y = h*TILE_WIDTH + k*TILE_WIDTH;
+                SDL_RenderCopy(game->rend, idle_tex, &clip_rect, &render_rect);
+            }
+        }
+        // TODO border
+    }
+
+    surface = IMG_Load("resources/textures/shiftblock-active.png");
+    SDL_Texture* active_tex = SDL_CreateTextureFromSurface(game->rend, surface);
+    SDL_SetTextureColorMod(active_tex, palette.r, palette.g, palette.b);
+
+    // triggered black
+    int render_base_x;
+    int render_base_y = h * TILE_WIDTH * 2;
+    for (int i = 0; i < 8; i++) {
+        render_base_x = i*w*TILE_WIDTH;
+        // top left
+        clip_rect.x = i*TILE_WIDTH*3;
+        clip_rect.y = 0;
+        render_rect.x = render_base_x;
+        render_rect.y = render_base_y;
+        SDL_RenderCopy(game->rend, active_tex, &clip_rect, &render_rect);
+        // top right
+        clip_rect.x = i*TILE_WIDTH*3 + 2*TILE_WIDTH;
+        clip_rect.y = 0;
+        render_rect.x = render_base_x + (w-1)*TILE_WIDTH;
+        render_rect.y = render_base_y;
+        SDL_RenderCopy(game->rend, active_tex, &clip_rect, &render_rect);
+        // bottom left
+        clip_rect.x = i*TILE_WIDTH*3;
+        clip_rect.y = 2*TILE_WIDTH;
+        render_rect.x = render_base_x;
+        render_rect.y = render_base_y + (h-1)*TILE_WIDTH;
+        SDL_RenderCopy(game->rend, active_tex, &clip_rect, &render_rect);
+        // bottom right
+        clip_rect.x = i*TILE_WIDTH*3 + 2*TILE_WIDTH;
+        clip_rect.y = 2*TILE_WIDTH;
+        render_rect.x = render_base_x + (w-1)*TILE_WIDTH;
+        render_rect.y = render_base_y + (h-1)*TILE_WIDTH;
+        SDL_RenderCopy(game->rend, active_tex, &clip_rect, &render_rect);
+        // sides
+        clip_rect.x = i*TILE_WIDTH*3 + TILE_WIDTH;
+        for (int j = 1; j < w - 1; j++) {
+            render_rect.x = render_base_x + j*TILE_WIDTH;
+            // top
+            clip_rect.y = 0;
+            render_rect.y = render_base_y;
+            SDL_RenderCopy(game->rend, active_tex, &clip_rect, &render_rect);
+            // bottom
+            clip_rect.y = 2*TILE_WIDTH;
+            render_rect.y = render_base_y + (h-1)*TILE_WIDTH;
+            SDL_RenderCopy(game->rend, active_tex, &clip_rect, &render_rect);
+        }
+        clip_rect.y = TILE_WIDTH;
+        for (int k = 1; k < h - 1; k++) {
+            render_rect.y = render_base_y + TILE_WIDTH;
+            // left
+            clip_rect.x = i*TILE_WIDTH*3;
+            render_rect.x = render_base_x;
+            SDL_RenderCopy(game->rend, active_tex, &clip_rect, &render_rect);
+            // right
+            clip_rect.x = i*TILE_WIDTH*3 + 2*TILE_WIDTH;
+            render_rect.x = render_base_x + (w-1)*TILE_WIDTH;
+            SDL_RenderCopy(game->rend, active_tex, &clip_rect, &render_rect);
+        }
+    }
+
+    // triggered white
+    int clip_base_y = TILE_WIDTH*3;
+    for (int i = 0; i < 8; i++) {
+        render_base_x = i*w*TILE_WIDTH;
+        // top left
+        clip_rect.x = i*TILE_WIDTH*3;
+        clip_rect.y = clip_base_y;
+        render_rect.x = render_base_x;
+        render_rect.y = render_base_y;
+        SDL_RenderCopy(game->rend, active_tex, &clip_rect, &render_rect);
+        // top right
+        clip_rect.x = i*TILE_WIDTH*3 + 2*TILE_WIDTH;
+        clip_rect.y = clip_base_y;
+        render_rect.x = render_base_x + (w-1)*TILE_WIDTH;
+        render_rect.y = render_base_y;
+        SDL_RenderCopy(game->rend, active_tex, &clip_rect, &render_rect);
+        // bottom left
+        clip_rect.x = i*TILE_WIDTH*3;
+        clip_rect.y = clip_base_y + 2*TILE_WIDTH;
+        render_rect.x = render_base_x;
+        render_rect.y = render_base_y + (h-1)*TILE_WIDTH;
+        SDL_RenderCopy(game->rend, active_tex, &clip_rect, &render_rect);
+        // bottom right
+        clip_rect.x = i*TILE_WIDTH*3 + 2*TILE_WIDTH;
+        clip_rect.y = clip_base_y + 2*TILE_WIDTH;
+        render_rect.x = render_base_x + (w-1)*TILE_WIDTH;
+        render_rect.y = render_base_y + (h-1)*TILE_WIDTH;
+        SDL_RenderCopy(game->rend, active_tex, &clip_rect, &render_rect);
+        // sides
+        clip_rect.x = i*TILE_WIDTH*3 + TILE_WIDTH;
+        for (int j = 1; j < w - 1; j++) {
+            render_rect.x = render_base_x + j*TILE_WIDTH;
+            // top
+            clip_rect.y = clip_base_y;
+            render_rect.y = render_base_y;
+            SDL_RenderCopy(game->rend, active_tex, &clip_rect, &render_rect);
+            // bottom
+            clip_rect.y = clip_base_y + 2*TILE_WIDTH;
+            render_rect.y = render_base_y + (h-1)*TILE_WIDTH;
+            SDL_RenderCopy(game->rend, active_tex, &clip_rect, &render_rect);
+        }
+        clip_rect.y = clip_base_y + TILE_WIDTH;
+        for (int k = 1; k < h - 1; k++) {
+            render_rect.y = render_base_y + TILE_WIDTH;
+            // left
+            clip_rect.x = i*TILE_WIDTH*3;
+            render_rect.x = render_base_x;
+            SDL_RenderCopy(game->rend, active_tex, &clip_rect, &render_rect);
+            // right
+            clip_rect.x = i*TILE_WIDTH*3 + 2*TILE_WIDTH;
+            render_rect.x = render_base_x + (w-1)*TILE_WIDTH;
+            SDL_RenderCopy(game->rend, active_tex, &clip_rect, &render_rect);
+        }
+    }
+
+    m_tex.create_texture(tex, w, h);
+}
+
+void ShiftBlock::render(SDL_Rect cam_rect, bool active_color)
+{
+    int animation_length = 8;
+    double animation_speed = 70.0;
+    int frame = ((int) ((float) SDL_GetTicks() / animation_speed)) % animation_length;
+    int clip_y = m_status + (m_status != SHIFTBLOCK_IDLE && active_color == 0);
+    SDL_Rect clip_rect = {frame * m_rect.w, clip_y * m_rect.h, m_rect.w, m_rect.h};
+    m_tex.render(m_rect.x, m_rect.y, &clip_rect, &cam_rect);
+}
+
 /*************/
 /*   BLOCK   */
 /*************/

@@ -64,6 +64,9 @@ void Level::load_level(int zone_num, int lvl_num, SDL_Color palette)
             new_platform = new MovingPlatform(m_x + obj_x*TILE_WIDTH, m_y + (obj_y*TILE_WIDTH), m_x + obj_x2*TILE_WIDTH, m_y + obj_y2*TILE_WIDTH, obj_w, obj_h, obj_color, true, obj_move_length, obj_pause_length, palette);
             objects.push_back(new_platform);
             break;
+        case OBJECT_SHIFTBLOCK:
+            // TODO
+            break;
         default:
             break;
         }
