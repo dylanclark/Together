@@ -164,6 +164,7 @@ bool check_grounded(SDL_Rect a, SDL_Rect b, bool a_color)
     return true;
 }
 
+// checks if b is fully inside a
 bool check_full_overlap(SDL_Rect a, SDL_Rect b)
 {
     // the sides of the rectangles
@@ -199,6 +200,7 @@ bool check_full_overlap(SDL_Rect a, SDL_Rect b)
     return true;
 }
 
+// a is the player, b is the platform
 bool check_in_platform(SDL_Rect a, SDL_Rect b)
 {
     // the sides of the rectangles

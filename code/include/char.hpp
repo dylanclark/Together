@@ -83,7 +83,7 @@ public:
 
     void exit(ExitDir dir);
     void enter();
-    void good_exit();
+    void good_exit(Zonestate* zone);
     bool in_level(Level* lvl);
 
 private:
@@ -94,6 +94,8 @@ private:
     SDL_Rect col_rect;
     float true_y;
     float m_xvel, m_yvel;
+    int ext_yvel;
+    int ext_xvel;
     CharDir dir;
 
     bool on_moving_platform;

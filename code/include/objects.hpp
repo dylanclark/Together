@@ -33,7 +33,7 @@ public:
     Object() { };
 
     virtual void render(SDL_Rect cam_rect, bool active_color) = 0;
-    virtual void update_x() = 0;
+    virtual void update_x(SDL_Rect black_player, SDL_Rect white_player) = 0;
     virtual void update_y() = 0;
     void trigger();
     void untrigger();
@@ -63,7 +63,7 @@ class Spring : public Object
 public:
     Spring(int x, int y, bool color, float y_vel, SDL_Color palette);
     void render(SDL_Rect cam_rect, bool active_color);
-    void update_x() { }
+    void update_x(SDL_Rect black_player, SDL_Rect white_player) { }
     void update_y() { }
     float get_yvel() { return m_yvel; }
     void spring();
@@ -111,7 +111,7 @@ class MovingPlatform : public Object
 public:
     MovingPlatform(int x1, int y1, int x2, int y2, int w, int h, bool color, bool automatic, int move_length, int pause_length, SDL_Color palette);
     ~MovingPlatform() { }
-    void update_x();
+    void update_x(SDL_Rect black_player, SDL_Rect white_player);
     void update_y();
     void render(SDL_Rect cam_rect, bool active_color);
     void trigger();

@@ -50,7 +50,7 @@ public:
     Level(int zone_num, int lvl_num, int x, int y, SDL_Color palette);
     ~Level();
     void load_level(int zone_num, int lvl_num, SDL_Color palette);
-    void update_x();
+    void update_x(SDL_Rect black_player, SDL_Rect white_player);
     void update_y();
     void draw_bg(SDL_Rect cam_rect, bool active_color);
     void draw_fg(SDL_Rect cam_rect, bool active_color);

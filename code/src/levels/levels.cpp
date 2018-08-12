@@ -97,10 +97,10 @@ Level::~Level()
 
 }
 
-void Level::update_x()
+void Level::update_x(SDL_Rect black_player, SDL_Rect white_player)
 {
     for (int i = 0; i < objects.size(); i++) {
-        objects[i]->update_x();
+        objects[i]->update_x(black_player, white_player);
     }
 }
 
@@ -211,7 +211,7 @@ void Zonestate::update()
     for (int i = 0; i < chars.size(); i++) {
         chars[i].check_for_platforms(this);
     }
-    levels[active_level]->update_x();
+    levels[active_level]->update_x(chars[0].get_rect(), chars[1].get_rect());
     for (int i = 0; i < chars.size(); i++) {
         chars[i].update_x(this);
     }
@@ -304,8 +304,8 @@ void Zonestate::check_exit()
     if (result == -1) {
         shift();
     } else {
-        chars[0].good_exit();
-        chars[1].good_exit();
+        chars[0].good_exit(this);
+        chars[1].good_exit(this);
         chars[0].save_state();
         chars[1].save_state();
         active_level = result;

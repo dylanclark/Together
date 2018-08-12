@@ -255,16 +255,27 @@ void Dot::check_for_platforms(Zonestate* zone)
 
 void Dot::update_x(Zonestate* zone)
 {
-    if (exited) {
-        zone->check_exit();
-        if (exited) {
-            enter();
+    Level* level = zone->get_active_level();
+    if (exiting) {
+        int lvl_x = level->get_x();
+        int lvl_y = level->get_y();
+        int lvl_w = level->get_w()*TILE_WIDTH;
+        int lvl_h = level->get_h()*TILE_WIDTH;
+        if (col_rect.x + col_rect.w < lvl_x || col_rect.x > lvl_x + lvl_w) {
+            exiting = false;
+            exited = true;
+            left = right = up = down = false;
+            m_xvel = 0;
+            zone->check_exit();
         }
-        return;
     }
 
-    if (zone->active_color != m_color) {
-        m_status = entering ? CHAR_EXITED : CHAR_INACTIVE;
+    if (exited && zone->active_color == m_color) {
+        enter();
+    }
+
+    if (zone->active_color != m_color && m_status != CHAR_EXITED) {
+        m_status = (entering || exited) ? CHAR_EXITED : CHAR_INACTIVE;
     } else {
         if (m_status == CHAR_INACTIVE) {
             m_status = CHAR_IDLE;
@@ -289,7 +300,7 @@ void Dot::update_x(Zonestate* zone)
     // if the char is moving slowly enough, stop it
     if (m_xvel < (DOT_ACC) && m_xvel > -(DOT_ACC)) {
         m_xvel = 0;
-        if (m_status != CHAR_JUMP && m_status != CHAR_INACTIVE) {
+        if (m_status != CHAR_JUMP && m_status != CHAR_INACTIVE && m_status != CHAR_EXITED) {
             m_status = CHAR_IDLE;
         }
     }
@@ -301,11 +312,10 @@ void Dot::update_x(Zonestate* zone)
         dir = DIR_RIGHT;
     }
 
-    if (m_xvel != 0 && m_status != CHAR_JUMP && m_status != CHAR_INACTIVE) {
+    if (m_xvel != 0 && m_status != CHAR_JUMP && m_status != CHAR_INACTIVE && m_status != CHAR_EXITED) {
         m_status = CHAR_RUN;
     }
 
-    Level* level = zone->get_active_level();
     std::vector<Tile> tileset = *level->get_tileset();
     std::vector<Object*> objects = level->get_objects();
     Vector repos;
@@ -384,19 +394,6 @@ void Dot::update_x(Zonestate* zone)
         }
     }
 
-    if (exiting) {
-        int lvl_x = level->get_x();
-        int lvl_y = level->get_y();
-        int lvl_w = level->get_w()*TILE_WIDTH;
-        int lvl_h = level->get_h()*TILE_WIDTH;
-        if (col_rect.x + col_rect.w < lvl_x || col_rect.x > lvl_x + lvl_w) {
-            exiting = false;
-            exited = true;
-            m_xvel = 0;
-        }
-        return;
-    }
-
     // resolve x collisions
     int size = level->get_w()*level->get_h();
     for (int i = 0; i < size; i++) {
@@ -444,6 +441,9 @@ void Dot::update_x(Zonestate* zone)
 
 void Dot::update_y(Zonestate* zone)
 {
+    if (exited) {
+        return;
+    }
     Level* level = zone->get_active_level();
     std::vector<Tile> tileset = *level->get_tileset();
     std::vector<Object*> objects = level->get_objects();
@@ -482,7 +482,15 @@ void Dot::update_y(Zonestate* zone)
         }
     }
 
-    m_yvel += (!m_color - m_color) * GRAVITY * ((short_hop > 0)*3.2 + 1);
+    if (exited) {
+        return;
+    }
+
+    m_yvel += (!m_color - m_color) * GRAVITY * ((short_hop > 0)*4.2 + 1);
+
+    if ((exited || entering || exiting) && (exit_dir == EXIT_LEFT || exit_dir == EXIT_RIGHT)) {
+        m_yvel = 0;
+    }
 
     // move that Dot (y)
     true_y += m_yvel;
@@ -582,20 +590,6 @@ void Dot::update_y(Zonestate* zone)
                     }
                 }
             }
-        }
-    }
-
-    if (entering) {
-        int lvl_x = level->get_x();
-        int lvl_y = level->get_y();
-        int lvl_w = level->get_w()*TILE_WIDTH;
-        int lvl_h = level->get_h()*TILE_WIDTH;
-        if (col_rect.x > lvl_x && col_rect.x + col_rect.w < lvl_x + lvl_w &&
-            col_rect.y > lvl_y && col_rect.y + col_rect.h < lvl_y + lvl_h) {
-            entering = false;
-            up = down = left = right = false;
-        } else {
-            return;
         }
     }
 
@@ -702,6 +696,10 @@ void Dot::update_y(Zonestate* zone)
                 }
                 // ceiling
                 if ((m_color == 0 && m_yvel < 0) || (m_color == 1 && m_yvel > 0)) {
+                    check_for_platforms(zone);
+                    if (in_moving_platform) {
+                        continue;
+                    }
                     // adjust y pos
                     col_rect.y += repos.y;
                     true_y = col_rect.y;
@@ -774,7 +772,7 @@ void Dot::update_y(Zonestate* zone)
             airborne = false;
         }
     }
-    if (airborne && m_status != CHAR_JUMP && m_status != CHAR_INACTIVE) {
+    if (airborne && m_status != CHAR_JUMP && m_status != CHAR_INACTIVE && m_status != CHAR_EXITED) {
         m_status = CHAR_JUMP;
         jump_start = 0;
         shiftable = false;
@@ -799,22 +797,40 @@ void Dot::update_y(Zonestate* zone)
         }
     }
 
-    int lvl_x = level->get_x();
-    int lvl_y = level->get_y();
-    int lvl_w = level->get_w()*TILE_WIDTH;
-    int lvl_h = level->get_h()*TILE_WIDTH;
-    if (col_rect.x < lvl_x) {
-        exit(EXIT_LEFT);
-    } else if (col_rect.x + col_rect.w > lvl_x + lvl_w) {
-        exit(EXIT_RIGHT);
-    } else if (col_rect.y + col_rect.h < lvl_y) {
-        exit(EXIT_UP);
-    } else if (col_rect.y > lvl_y + lvl_h) {
-        exit(EXIT_DOWN);
+    if (entering) {
+        int lvl_x = level->get_x();
+        int lvl_y = level->get_y();
+        int lvl_w = level->get_w()*TILE_WIDTH;
+        int lvl_h = level->get_h()*TILE_WIDTH;
+        if (col_rect.x > lvl_x && col_rect.x + col_rect.w < lvl_x + lvl_w &&
+            col_rect.y > lvl_y && col_rect.y + col_rect.h < lvl_y + lvl_h) {
+            entering = false;
+            up = down = left = right = false;
+        } else {
+            return;
+        }
     }
 
-    if (m_status != CHAR_INACTIVE) {
-        zone->shiftable = shiftable;
+    if (!exited && !exiting) {
+        int lvl_x = level->get_x();
+        int lvl_y = level->get_y();
+        int lvl_w = level->get_w()*TILE_WIDTH;
+        int lvl_h = level->get_h()*TILE_WIDTH;
+        if (col_rect.x < lvl_x) {
+            exit(EXIT_LEFT);
+        } else if (col_rect.x + col_rect.w > lvl_x + lvl_w) {
+            exit(EXIT_RIGHT);
+        } else if (col_rect.y + col_rect.h < lvl_y) {
+            exit(EXIT_UP);
+            zone->check_exit();
+        } else if (col_rect.y > lvl_y + lvl_h) {
+            exit(EXIT_DOWN);
+            zone->check_exit();
+        }
+
+        if (m_status != CHAR_INACTIVE) {
+            zone->shiftable = shiftable;
+        }
     }
 }
 
@@ -836,6 +852,7 @@ void Dot::exit(ExitDir dir)
     case EXIT_UP:
     case EXIT_DOWN:
         exited = true;
+        exiting = false;
         m_yvel = m_xvel = 0;
         left = right = false;
         break;
@@ -866,15 +883,21 @@ void Dot::enter()
     }
 }
 
-void Dot::good_exit()
+void Dot::good_exit(Zonestate* zone)
 {
     exiting = exited = entering = false;
     up = down = left = right = false;
     m_xvel = m_yvel = 0;
+    m_status = CHAR_IDLE;
     if (exit_dir == EXIT_UP && m_color == 0) {
+        m_status = CHAR_JUMP;
         m_yvel = -5;
     } else if (exit_dir == EXIT_DOWN && m_color == 1) {
+        m_status = CHAR_JUMP;
         m_yvel = 5;
+    }
+    if (zone->active_color != m_color) {
+        m_status = CHAR_INACTIVE;
     }
     return;
 }
@@ -977,8 +1000,6 @@ void Dot::reset(Zonestate* zone)
     col_rect = saved_col_rect;
     true_y = round(col_rect.y);
     on_moving_platform = false;
-    update_x(zone);
-    update_y(zone);
 }
 
 void Dot::spring_me(float yvel)

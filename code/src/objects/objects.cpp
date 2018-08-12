@@ -89,16 +89,25 @@ MovingPlatform::MovingPlatform(int x1, int y1, int x2, int y2, int w, int h, boo
     m_tex.create_square(color, w, h, &palette);
 }
 
-void MovingPlatform::update_x()
+void MovingPlatform::update_x(SDL_Rect black_player, SDL_Rect white_player)
 {
+    SDL_Rect player = (m_color == 0) ? white_player : black_player;
     m_timestep++;
     if (m_auto && (m_status == PLATFORM_PAUSE_A || m_status == PLATFORM_PAUSE_B) && (m_timestep >= m_pause_length)) {
-        m_status = (PlatformStatus) (((int) m_status + 1) % 4);
-        m_timestep = 0;
+        if (check_in_platform(player, m_rect) && !check_full_overlap(m_rect, player)) {
+            m_timestep--;
+        } else {
+            m_status = (PlatformStatus) (((int) m_status + 1) % 4);
+            m_timestep = 0;
+        }
     }
     if ((m_status == PLATFORM_MOVETO_A || m_status == PLATFORM_MOVETO_B) && (m_timestep >= m_move_length)) {
-        m_status = (PlatformStatus) (((int) m_status + 1) % 4);
-        m_timestep = 0;
+        if (check_in_platform(player, m_rect) && !check_full_overlap(m_rect, player)) {
+            m_timestep--;
+        } else {
+            m_status = (PlatformStatus) (((int) m_status + 1) % 4);
+            m_timestep = 0;
+        }
     }
     if (m_status == PLATFORM_PAUSE_A) {
         m_rect.x = m_x1;
