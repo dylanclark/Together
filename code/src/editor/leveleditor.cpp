@@ -167,6 +167,7 @@ Tileset::Tileset(int w, int h, std::vector<std::vector<TileType> > tiles_arg=std
     moving_platforms = 0;
     shiftblock = false;
     m_tiletex.load_tile_sheet("tiles.png", NULL);
+    m_shiftblocktex.load_tile_sheet("shiftblock-idle.png", NULL);
     clicked = 0;
     click_x = click_y = 0;
     width = w;
@@ -260,8 +261,6 @@ void Tileset::draw(int scr_w, int scr_h, SDL_Rect cam_rect)
                 w = TILE_WIDTH * aspect_ratio;
                 h = TILE_WIDTH * aspect_ratio;
             }
-        } else if (objs[i].type == OBJECT_SHIFTBLOCK) {
-            // TODO
         }
         SDL_Rect render_rect = {x, y, w, h};
 
@@ -291,7 +290,12 @@ void Tileset::draw(int scr_w, int scr_h, SDL_Rect cam_rect)
             SDL_Rect next_rect = {x2, y2, w, h};
             SDL_RenderFillRect(game->rend, &next_rect);
         } else if (objs[i].type == OBJECT_SHIFTBLOCK) {
-            // TODO
+            for (int j = objs[i].x; j < objs[i].x + objs[i].w; j++) {
+                for (int k = objs[i].y; k < objs[i].y + objs[i].h; k++) {
+                    SDL_Rect clip_rect = {0,0,TILE_WIDTH,TILE_WIDTH};
+                    m_shiftblocktex.render(j*TILE_WIDTH, k*TILE_WIDTH, &clip_rect, &cam_rect);
+                }
+            }
         }
     }
     // next we will draw all of the objects... eventually, bc we don't support textures yet
@@ -405,6 +409,8 @@ void Tileset::handle_event(SDL_Event e, int scr_w, int scr_h, SDL_Rect cam_rect,
                 EditorObject new_obj;
                 new_obj.x = x1;
                 new_obj.y = y1;
+                new_obj.w = 1;
+                new_obj.h = 1;
                 new_obj.type = OBJECT_SHIFTBLOCK;
                 objs.push_back(new_obj);
                 shiftblock = true;
@@ -593,7 +599,7 @@ void LevelEditor::init()
         float obj_springvel;
         EditorObject new_obj;
 
-        // TODO: load all objects!
+        // load all objects!
         for (int i = 0; i < num_objs; i++) {
             level_file >> obj_type;
             new_obj.type = (ObjectType) obj_type;
@@ -620,7 +626,11 @@ void LevelEditor::init()
                 new_obj.move_length = obj_move_length;
                 break;
             case OBJECT_SHIFTBLOCK:
-                // TODO
+                level_file >> obj_x >> obj_y >> obj_w >> obj_h;
+                new_obj.x = obj_x;
+                new_obj.y = obj_y;
+                new_obj.w = obj_w;
+                new_obj.h = obj_h;
                 break;
             default:
                 break;
@@ -990,7 +1000,7 @@ void LevelEditor::write_level()
             level_file << objs[i].pause_length << " " << objs[i].move_length;
             break;
         case OBJECT_SHIFTBLOCK:
-            // TODO
+            level_file << objs[i].x << " " << objs[i].y << " " << objs[i].w << " " << objs[i].h;
             break;
         default:
             break;

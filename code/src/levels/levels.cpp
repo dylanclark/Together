@@ -49,6 +49,7 @@ void Level::load_level(int zone_num, int lvl_num, SDL_Color palette)
     float spring_vel;
     Spring* new_spring;
     MovingPlatform* new_platform;
+    ShiftBlock* new_shiftblock;
     for (int i = 0; i < num_objs; i++) {
         level_file >> obj_type;
         switch (obj_type)
@@ -65,7 +66,14 @@ void Level::load_level(int zone_num, int lvl_num, SDL_Color palette)
             objects.push_back(new_platform);
             break;
         case OBJECT_SHIFTBLOCK:
-            // TODO
+            level_file >> obj_x >> obj_y >> obj_w >> obj_h;
+            new_shiftblock = new ShiftBlock(m_x + obj_x*TILE_WIDTH, m_y + (obj_y*TILE_WIDTH), obj_w, obj_h, palette);
+            objects.push_back(new_shiftblock);
+            for (int i = obj_x; i < obj_x + obj_w; i++) {
+                for (int j = obj_y; j < obj_y + obj_h; j++) {
+                    tileset[i + j*m_w].set_type(TILE_INVISIBLE);
+                }
+            }
             break;
         default:
             break;
@@ -123,7 +131,7 @@ void Level::draw_bg(SDL_Rect cam_rect, bool active_color)
 
     // draw objects
     for (int i = 0; i < objects.size(); i++) {
-        objects[i]->render(cam_rect, active_color);
+        objects[i]->render_bg(cam_rect, active_color);
     }
 }
 
@@ -131,6 +139,11 @@ void Level::draw_fg(SDL_Rect cam_rect, bool active_color)
 {
     for (int i = 0; i < m_w * m_h; i++) {
         tileset[i].render_fg(active_color, &cam_rect, &tile_tex);
+    }
+
+    // draw objects
+    for (int i = 0; i < objects.size(); i++) {
+        objects[i]->render_fg(cam_rect, active_color);
     }
 }
 

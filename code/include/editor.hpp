@@ -131,6 +131,7 @@ private:
     bool shiftblock;
 
     Texture m_tiletex;
+    Texture m_shiftblocktex;
 };
 
 std::string get_str(std::string prompt, std::string result = "");

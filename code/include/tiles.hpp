@@ -30,6 +30,7 @@ typedef enum _TileType {
     TILE_SLOPE_2_DOWN_B,
     TILE_SLOPE_PAD_BLACK,
     TILE_SLOPE_PAD_WHITE,
+    TILE_INVISIBLE,
 } TileType;
 
 bool tiletype_isslope(TileType type);

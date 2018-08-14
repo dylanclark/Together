@@ -339,18 +339,17 @@ void Dot::update_x(Zonestate* zone)
     // move that Dot (x)
     col_rect.x += m_xvel;
 
+    ShiftBlock* shiftblock;
+    SDL_Rect x_rect;
     for (int i = 0; i < objects.size(); i++) {
-        if (on_moving_platform) {
-            break;
-        }
-        if (objects[i]->get_type() != OBJECT_MOVING_PLATFORM) {
-            continue;
-        }
-        if (objects[i]->get_color() != m_color) {
-            continue;
-        } else {
+        switch (objects[i]->get_type())
+        {
+        case OBJECT_MOVING_PLATFORM:
+            if (on_moving_platform || objects[i]->get_color() != m_color) {
+                break;
+            }
             platform = (MovingPlatform*) objects[i];
-            SDL_Rect x_rect = objects[i]->get_rect();
+            x_rect = objects[i]->get_rect();
             if (check_collision(col_rect, x_rect, &repos)) {
                 col_rect.x += repos.x;
                 if ((repos.x > 0 && m_xvel < 0) ||
@@ -363,6 +362,22 @@ void Dot::update_x(Zonestate* zone)
                     pushed_right = true;
                 }
             }
+            break;
+        case OBJECT_SHIFTBLOCK:
+            shiftblock = (ShiftBlock*) objects[i];
+            if (shiftblock->get_status() == !m_color + 1) {
+                break;
+            }
+            if (check_collision(col_rect, objects[i]->get_rect(), &repos)) {
+                col_rect.x += repos.x;
+                if ((repos.x > 0 && m_xvel < 0) ||
+                    (repos.x < 0 && m_xvel > 0)) {
+                    m_xvel = 0;
+                }
+            }
+            break;
+        default:
+            break;
         }
     }
 
@@ -401,7 +416,7 @@ void Dot::update_x(Zonestate* zone)
             break;
         }
         TileType type = tileset[i].get_type();
-        if (type == TILE_BLACK_SOLID + !m_color ||  type == TILE_CLEAR) {
+        if (type == TILE_BLACK_SOLID + !m_color || type == TILE_CLEAR || type == TILE_INVISIBLE) {
             continue;
         }
         if (check_collision(col_rect, tileset[i].get_col_rect(), &repos)) {
@@ -498,53 +513,101 @@ void Dot::update_y(Zonestate* zone)
 
     bool shiftable;
     bool airborne = true;
+    ShiftBlock* shiftblock;
+    SDL_Rect y_rect;
     for (int i = 0; i < objects.size(); i++) {
-        if (objects[i]->get_type() != OBJECT_MOVING_PLATFORM) {
-            continue;
-        }
-        if (objects[i]->get_color() != m_color) {
-            continue;
-        }
-        SDL_Rect y_rect = objects[i]->get_rect();
-        if (check_collision(col_rect, objects[i]->get_rect(), &repos)) {
-            if ((m_color == 0 && repos.y < 0) ||
-                (m_color == 1 && repos.y > 0)) {
-                // land!
-                if (m_status == CHAR_JUMP) {
-                    m_status = CHAR_IDLE;
-                }
-                col_rect.y += repos.y;
-                true_y = col_rect.y;
-                m_yvel = 0;
-                shiftable = true;
-                // jump!
-                if (up) {
-                    m_status = CHAR_JUMP;
-                    jump_start = SDL_GetTicks();
-                    m_yvel = (m_color - !m_color) * JUMP_VEL + ext_yvel / 1.5;
-                    shiftable = false;
-                } else if (down) {
-                    platform_drop = true;
-                } else {
-                    airborne = false;
-                }
-            } else {
-                // ceiling
-                if ((m_color == 0 && m_yvel < 0) || (m_color == 1 && m_yvel > 0)) {
-                    // adjust y pos
+        switch (objects[i]->get_type())
+        {
+        case OBJECT_MOVING_PLATFORM:
+            if (objects[i]->get_color() != m_color) {
+                break;
+            }
+            y_rect = objects[i]->get_rect();
+            if (check_collision(col_rect, objects[i]->get_rect(), &repos)) {
+                if ((m_color == 0 && repos.y < 0) ||
+                    (m_color == 1 && repos.y > 0)) {
+                    // land!
+                    if (m_status == CHAR_JUMP) {
+                        m_status = CHAR_IDLE;
+                    }
                     col_rect.y += repos.y;
                     true_y = col_rect.y;
-                    m_yvel = ((m_color == 0) - (m_color == 1)) * .1;
-                    short_hop = 0;
-                    shiftable = false;
-                    up = false;
+                    m_yvel = 0;
+                    shiftable = true;
+                    // jump!
+                    if (up) {
+                        m_status = CHAR_JUMP;
+                        jump_start = SDL_GetTicks();
+                        m_yvel = (m_color - !m_color) * JUMP_VEL + ext_yvel / 1.5;
+                        shiftable = false;
+                    } else if (down) {
+                        platform_drop = true;
+                    } else {
+                        airborne = false;
+                    }
+                } else {
+                    // ceiling
+                    if ((m_color == 0 && m_yvel < 0) || (m_color == 1 && m_yvel > 0)) {
+                        // adjust y pos
+                        col_rect.y += repos.y;
+                        true_y = col_rect.y;
+                        m_yvel = ((m_color == 0) - (m_color == 1)) * .1;
+                        short_hop = 0;
+                        shiftable = false;
+                        up = false;
+                    }
+                }
+                if (repos.y < 0) {
+                    pushed_up = true;
+                } else if (repos.y > 0) {
+                    pushed_down = true;
                 }
             }
-            if (repos.y < 0) {
-                pushed_up = true;
-            } else if (repos.y > 0) {
-                pushed_down = true;
+            break;
+        case OBJECT_SHIFTBLOCK:
+            shiftblock = (ShiftBlock*) objects[i];
+            if (shiftblock->get_status() == !m_color + 1) {
+                break;
             }
+            if (check_collision(col_rect, objects[i]->get_rect(), &repos)) {
+                if ((m_color == 0 && repos.y < 0) ||
+                    (m_color == 1 && repos.y > 0)) {
+                    // land!
+                    if (m_status == CHAR_JUMP) {
+                        m_status = CHAR_IDLE;
+                    }
+                    col_rect.y += repos.y;
+                    true_y = col_rect.y;
+                    m_yvel = 0;
+                    shiftable = true;
+                    shiftblock->shift(m_color);
+                    // jump!
+                    if (up) {
+                        m_status = CHAR_JUMP;
+                        jump_start = SDL_GetTicks();
+                        m_yvel = (m_color - !m_color) * JUMP_VEL + ext_yvel / 1.5;
+                        shiftable = false;
+                    } else if (down) {
+                        platform_drop = true;
+                    } else {
+                        airborne = false;
+                    }
+                } else {
+                    // ceiling
+                    if ((m_color == 0 && m_yvel < 0) || (m_color == 1 && m_yvel > 0)) {
+                        // adjust y pos
+                        col_rect.y += repos.y;
+                        true_y = col_rect.y;
+                        m_yvel = ((m_color == 0) - (m_color == 1)) * .1;
+                        short_hop = 0;
+                        shiftable = false;
+                        up = false;
+                    }
+                }
+            }
+            break;
+        default:
+            break;
         }
     }
 
@@ -603,7 +666,7 @@ void Dot::update_y(Zonestate* zone)
             break;
         }
         TileType type = tileset[i].get_type();
-        if (type == TILE_BLACK_SOLID + !m_color || type == TILE_CLEAR) {
+        if (type == TILE_BLACK_SOLID + !m_color || type == TILE_CLEAR || type == TILE_INVISIBLE) {
             continue;
         }
         if (type == TILE_SLOPE_PAD_BLACK && m_color == 1) {

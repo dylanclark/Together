@@ -33,7 +33,8 @@ class Object
 public:
     Object() { };
 
-    virtual void render(SDL_Rect cam_rect, bool active_color) = 0;
+    virtual void render_bg(SDL_Rect cam_rect, bool active_color) = 0;
+    virtual void render_fg(SDL_Rect cam_rect, bool active_color) = 0;
     virtual void update_x(SDL_Rect black_player, SDL_Rect white_player) = 0;
     virtual void update_y() = 0;
     void trigger();
@@ -63,7 +64,8 @@ class Spring : public Object
 {
 public:
     Spring(int x, int y, bool color, float y_vel, SDL_Color palette);
-    void render(SDL_Rect cam_rect, bool active_color);
+    void render_bg(SDL_Rect cam_rect, bool active_color);
+    void render_fg(SDL_Rect cam_rect, bool active_color) { }
     void update_x(SDL_Rect black_player, SDL_Rect white_player) { }
     void update_y() { }
     float get_yvel() { return m_yvel; }
@@ -114,7 +116,8 @@ public:
     ~MovingPlatform() { }
     void update_x(SDL_Rect black_player, SDL_Rect white_player);
     void update_y();
-    void render(SDL_Rect cam_rect, bool active_color);
+    void render_bg(SDL_Rect cam_rect, bool active_color);
+    void render_fg(SDL_Rect cam_rect, bool active_color) { }
     void trigger();
     void untrigger();
 
@@ -147,17 +150,17 @@ public:
     ShiftBlock(int x, int y, int w, int h, SDL_Color palette);
     ~ShiftBlock() { }
 
-    void render(SDL_Rect cam_rect, bool active_color);
+    void render_bg(SDL_Rect cam_rect, bool active_color);
+    void render_fg(SDL_Rect cam_rect, bool active_color);
 
     void trigger() { }
     void untrigger() { }
-    void update_x(SDL_Rect black_player, SDL_Rect white_player) { }
+    void update_x(SDL_Rect black_player, SDL_Rect white_player);
     void update_y() { }
 
     ShiftBlockStatus get_status() { return m_status; }
     void unshift() { m_status = SHIFTBLOCK_IDLE; }
-    void shift_white() { m_status = SHIFTBLOCK_WHITE; }
-    void shift_black() { m_status = SHIFTBLOCK_BLACK; }
+    void shift(bool color) { m_status = (ShiftBlockStatus) (SHIFTBLOCK_BLACK + color); }
 
 private:
     ShiftBlockStatus m_status;

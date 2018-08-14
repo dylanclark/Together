@@ -34,6 +34,7 @@ bool check_point_in_rect(int x, int y, bool color, SDL_Rect rect, Vector* repos)
 bool check_grounded(SDL_Rect a, SDL_Rect b, bool a_color);
 bool check_full_overlap(SDL_Rect a, SDL_Rect b);
 bool check_in_platform(SDL_Rect a, SDL_Rect b);
+bool check_touching_vert(SDL_Rect a, SDL_Rect b);
 
 typedef enum _CharDir {
     DIR_RIGHT = 0,

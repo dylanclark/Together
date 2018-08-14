@@ -26,7 +26,7 @@ Spring::Spring(int x, int y, bool color, float y_vel, SDL_Color palette)
     m_rect.y = y + (m_color == 0)*(m_tex.get_height()-m_rect.h);
 }
 
-void Spring::render(SDL_Rect cam_rect, bool active_color)
+void Spring::render_bg(SDL_Rect cam_rect, bool active_color)
 {
     int frame;
     int animation_length = 12;
@@ -139,7 +139,7 @@ void MovingPlatform::update_y()
     }
 }
 
-void MovingPlatform::render(SDL_Rect cam_rect, bool active_color)
+void MovingPlatform::render_bg(SDL_Rect cam_rect, bool active_color)
 {
     m_tex.render(m_rect.x, m_rect.y, NULL, &cam_rect);
 }
@@ -237,7 +237,7 @@ ShiftBlock::ShiftBlock(int x, int y, int w, int h, SDL_Color palette)
     SDL_SetTextureColorMod(idle_tex, palette.r, palette.g, palette.b);
 
     // idle black
-    SDL_Rect clip_rect, render_rect;
+    SDL_Rect clip_rect, render_rect, border_rect;
     clip_rect.y = 0;
     clip_rect.w = clip_rect.h = TILE_WIDTH;
     render_rect.w = render_rect.h = TILE_WIDTH;
@@ -250,7 +250,26 @@ ShiftBlock::ShiftBlock(int x, int y, int w, int h, SDL_Color palette)
                 SDL_RenderCopy(game->rend, idle_tex, &clip_rect, &render_rect);
             }
         }
-        // TODO border
+        // borders
+        SDL_SetRenderDrawColor(game->rend, 0, 0, 0, SDL_ALPHA_OPAQUE);
+        // top
+        border_rect.w = w*TILE_WIDTH;
+        border_rect.h = 1;
+        border_rect.x = i*w*TILE_WIDTH;
+        border_rect.y = 0;
+        SDL_RenderFillRect(game->rend, &border_rect);
+        // bottom
+        border_rect.y = h*TILE_WIDTH-1;
+        SDL_RenderFillRect(game->rend, &border_rect);
+        // left
+        border_rect.w = 1;
+        border_rect.h = h*TILE_WIDTH;
+        border_rect.x = i*w*TILE_WIDTH;
+        border_rect.y = 0;
+        SDL_RenderFillRect(game->rend, &border_rect);
+        // right
+        border_rect.x = i*w*TILE_WIDTH + w*TILE_WIDTH - 1;
+        SDL_RenderFillRect(game->rend, &border_rect);
     }
 
     // idle white
@@ -263,11 +282,30 @@ ShiftBlock::ShiftBlock(int x, int y, int w, int h, SDL_Color palette)
                 SDL_RenderCopy(game->rend, idle_tex, &clip_rect, &render_rect);
             }
         }
-        // TODO border
+        // borders
+        SDL_SetRenderDrawColor(game->rend, palette.r, palette.g, palette.b, SDL_ALPHA_OPAQUE);
+        // top
+        border_rect.w = w*TILE_WIDTH;
+        border_rect.h = 1;
+        border_rect.x = i*w*TILE_WIDTH;
+        border_rect.y = h*TILE_WIDTH;
+        SDL_RenderFillRect(game->rend, &border_rect);
+        // bottom
+        border_rect.y = h*TILE_WIDTH + h*TILE_WIDTH-1;
+        SDL_RenderFillRect(game->rend, &border_rect);
+        // left
+        border_rect.w = 1;
+        border_rect.h = h*TILE_WIDTH;
+        border_rect.x = i*w*TILE_WIDTH;
+        border_rect.y = h*TILE_WIDTH;
+        SDL_RenderFillRect(game->rend, &border_rect);
+        // right
+        border_rect.x = i*w*TILE_WIDTH + w*TILE_WIDTH - 1;
+        SDL_RenderFillRect(game->rend, &border_rect);
     }
 
-    surface = IMG_Load("resources/textures/shiftblock-active.png");
-    SDL_Texture* active_tex = SDL_CreateTextureFromSurface(game->rend, surface);
+    SDL_Surface* active_surface = IMG_Load("resources/textures/shiftblock-active.png");
+    SDL_Texture* active_tex = SDL_CreateTextureFromSurface(game->rend, active_surface);
     SDL_SetTextureColorMod(active_tex, palette.r, palette.g, palette.b);
 
     // triggered black
@@ -314,7 +352,7 @@ ShiftBlock::ShiftBlock(int x, int y, int w, int h, SDL_Color palette)
         }
         clip_rect.y = TILE_WIDTH;
         for (int k = 1; k < h - 1; k++) {
-            render_rect.y = render_base_y + TILE_WIDTH;
+            render_rect.y = render_base_y + TILE_WIDTH*k;
             // left
             clip_rect.x = i*TILE_WIDTH*3;
             render_rect.x = render_base_x;
@@ -324,9 +362,20 @@ ShiftBlock::ShiftBlock(int x, int y, int w, int h, SDL_Color palette)
             render_rect.x = render_base_x + (w-1)*TILE_WIDTH;
             SDL_RenderCopy(game->rend, active_tex, &clip_rect, &render_rect);
         }
+        // middle
+        clip_rect.x = TILE_WIDTH;
+        clip_rect.y = TILE_WIDTH;
+        for (int j = 1; j < w - 1; j++) {
+            for (int k = 1; k < h - 1; k++) {
+                render_rect.x = render_base_x + j*TILE_WIDTH;
+                render_rect.y = render_base_y + k*TILE_WIDTH;
+                SDL_RenderCopy(game->rend, active_tex, &clip_rect, &render_rect);
+            }
+        }
     }
 
     // triggered white
+    render_base_y = h * TILE_WIDTH * 3;
     int clip_base_y = TILE_WIDTH*3;
     for (int i = 0; i < 8; i++) {
         render_base_x = i*w*TILE_WIDTH;
@@ -369,7 +418,7 @@ ShiftBlock::ShiftBlock(int x, int y, int w, int h, SDL_Color palette)
         }
         clip_rect.y = clip_base_y + TILE_WIDTH;
         for (int k = 1; k < h - 1; k++) {
-            render_rect.y = render_base_y + TILE_WIDTH;
+            render_rect.y = render_base_y + k*TILE_WIDTH;
             // left
             clip_rect.x = i*TILE_WIDTH*3;
             render_rect.x = render_base_x;
@@ -379,19 +428,41 @@ ShiftBlock::ShiftBlock(int x, int y, int w, int h, SDL_Color palette)
             render_rect.x = render_base_x + (w-1)*TILE_WIDTH;
             SDL_RenderCopy(game->rend, active_tex, &clip_rect, &render_rect);
         }
+        // middle
+        clip_rect.x = TILE_WIDTH;
+        clip_rect.y = TILE_WIDTH*4;
+        for (int j = 1; j < w - 1; j++) {
+            for (int k = 1; k < h - 1; k++) {
+                render_rect.x = render_base_x + j*TILE_WIDTH;
+                render_rect.y = render_base_y + k*TILE_WIDTH;
+                SDL_RenderCopy(game->rend, active_tex, &clip_rect, &render_rect);
+            }
+        }
     }
+    SDL_SetRenderTarget(game->rend, NULL);
 
     m_tex.create_texture(tex, w, h);
 }
 
-void ShiftBlock::render(SDL_Rect cam_rect, bool active_color)
+void ShiftBlock::render_bg(SDL_Rect cam_rect, bool active_color)
 {
     int animation_length = 8;
     double animation_speed = 70.0;
     int frame = ((int) ((float) SDL_GetTicks() / animation_speed)) % animation_length;
-    int clip_y = m_status + (m_status != SHIFTBLOCK_IDLE && active_color == 0);
+    int clip_y = m_status + (m_status != SHIFTBLOCK_IDLE || active_color == 1);
     SDL_Rect clip_rect = {frame * m_rect.w, clip_y * m_rect.h, m_rect.w, m_rect.h};
     m_tex.render(m_rect.x, m_rect.y, &clip_rect, &cam_rect);
+}
+
+void ShiftBlock::render_fg(SDL_Rect cam_rect, bool active_color)
+{
+}
+
+void ShiftBlock::update_x(SDL_Rect black_player, SDL_Rect white_player)
+{
+    if (!check_touching_vert(black_player, m_rect) && !check_touching_vert(white_player, m_rect)) {
+        unshift();
+    }
 }
 
 /*************/
