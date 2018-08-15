@@ -57,7 +57,7 @@ typedef enum _ExitDir {
     EXIT_DOWN
 } ExitDir;
 
-class MovingPlatformWall;
+class InvisibleWall;
 
 class Dot
 {
@@ -67,7 +67,7 @@ public:
     bool m_color;
 
     bool handle_event(SDL_Event &e, Zonestate* zone);
-    void update_x(Zonestate* zone);
+    void update_x(Zonestate* zone, SDL_Rect other_player);
     void update_y(Zonestate* zone);
     void check_for_platforms(Zonestate* zone);
     void render(SDL_Rect* camera, Level* lvl);
@@ -98,6 +98,8 @@ private:
     int ext_yvel;
     int ext_xvel;
     CharDir dir;
+    bool airborne;
+    bool shiftable;
 
     bool on_moving_platform;
     int on_moving_platform_idx;
@@ -106,7 +108,10 @@ private:
     bool in_moving_platform;
     int in_moving_platform_idx;
     int in_platform_x, in_platform_y;
-    std::vector<MovingPlatformWall> walls;
+
+    bool in_crate;
+    int in_crate_idx;
+    std::vector<InvisibleWall> walls;
 
     Controller* controller;
     bool up, down, left, right;

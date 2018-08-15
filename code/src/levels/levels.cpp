@@ -50,6 +50,7 @@ void Level::load_level(int zone_num, int lvl_num, SDL_Color palette)
     Spring* new_spring;
     MovingPlatform* new_platform;
     ShiftBlock* new_shiftblock;
+    Crate* new_crate;
     for (int i = 0; i < num_objs; i++) {
         level_file >> obj_type;
         switch (obj_type)
@@ -74,6 +75,11 @@ void Level::load_level(int zone_num, int lvl_num, SDL_Color palette)
                     tileset[i + j*m_w].set_type(TILE_INVISIBLE);
                 }
             }
+            break;
+        case OBJECT_CRATE:
+            level_file >> obj_x >> obj_y >> obj_w >> obj_h >> obj_color;
+            new_crate = new Crate(m_x + obj_x*TILE_WIDTH, m_y + obj_y*TILE_WIDTH, obj_w, obj_h, obj_color, palette);
+            objects.push_back(new_crate);
             break;
         default:
             break;
@@ -229,7 +235,7 @@ void Zonestate::update()
     }
     levels[active_level]->update_x(chars[0].get_rect(), chars[1].get_rect());
     for (int i = 0; i < chars.size(); i++) {
-        chars[i].update_x(this);
+        chars[i].update_x(this, chars[!i].get_rect());
     }
     levels[active_level]->update_y();
     for (int i = 0; i < chars.size(); i++) {

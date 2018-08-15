@@ -296,6 +296,17 @@ void Tileset::draw(int scr_w, int scr_h, SDL_Rect cam_rect)
                     m_shiftblocktex.render(j*TILE_WIDTH, k*TILE_WIDTH, &clip_rect, &cam_rect);
                 }
             }
+        } else if (objs[i].type == OBJECT_CRATE) {
+            // TODO draw corners
+            // TODO draw sides
+            // TODO draw middle
+            for (int j = objs[i].x; j < objs[i].x + objs[i].w; j++) {
+                for (int k = objs[i].y; k < objs[i].y + objs[i].h; k++) {
+                    SDL_Rect clip_rect = {0,0,TILE_WIDTH,TILE_WIDTH};
+                    m_shiftblocktex.render(j*TILE_WIDTH, k*TILE_WIDTH, &clip_rect, &cam_rect);
+                }
+            }
+            // TODO
         }
     }
     // next we will draw all of the objects... eventually, bc we don't support textures yet
@@ -308,6 +319,7 @@ void Tileset::handle_event(SDL_Event e, int scr_w, int scr_h, SDL_Rect cam_rect,
     switch (e.type)
     {
     case SDL_MOUSEBUTTONDOWN:
+        click_color = (e.button.button == SDL_BUTTON_LEFT) ? COLOR_BLACK : COLOR_WHITE;
         // get mouse position
         int mousex = e.button.x;
         int mousey = e.button.y;
@@ -359,7 +371,6 @@ void Tileset::handle_event(SDL_Event e, int scr_w, int scr_h, SDL_Rect cam_rect,
             break;
         // we're placing objects
         case PLACING_SPRINGS:
-            click_color = (e.button.button == SDL_BUTTON_LEFT) ? COLOR_BLACK : COLOR_WHITE;
             if (!click_color != tiles[y1][x1]) {
                 printf("\a");
                 return;
@@ -379,8 +390,11 @@ void Tileset::handle_event(SDL_Event e, int scr_w, int scr_h, SDL_Rect cam_rect,
             objs.push_back(new_obj);
             break;
         case PLACING_MOVING_PLATFORMS:
-            click_color = (e.button.button == SDL_BUTTON_LEFT) ? COLOR_BLACK : COLOR_WHITE;
             idx = objs.size() - 1;
+            if (!click_color != tiles[y1][x1]) {
+                printf("\a");
+                return;
+            }
             if (moving_platforms == 0) {
                 EditorObject new_obj;
                 new_obj.x = x1;
@@ -415,12 +429,36 @@ void Tileset::handle_event(SDL_Event e, int scr_w, int scr_h, SDL_Rect cam_rect,
                 objs.push_back(new_obj);
                 shiftblock = true;
             } else {
-                objs[idx].w = abs(x1 - objs[idx].x + 1);
-                objs[idx].h = abs(y1 - objs[idx].y + 1);
+                objs[idx].w = abs(x1 - objs[idx].x) + 1;
+                objs[idx].h = abs(y1 - objs[idx].y) + 1;
                 objs[idx].x = std::min(x1, objs[idx].x);
                 objs[idx].y = std::min(y1, objs[idx].y);
                 shiftblock = false;
             }
+        case PLACING_CRATES:
+            idx = objs.size() - 1;
+            if (!click_color != tiles[y1][x1]) {
+                printf("\abad color choice\n");
+                return;
+            }
+            if (!crate) {
+                EditorObject new_obj;
+                new_obj.x = x1;
+                new_obj.y = y1;
+                new_obj.w = 1;
+                new_obj.h = 1;
+                new_obj.color = (Color) click_color;
+                new_obj.type = OBJECT_CRATE;
+                objs.push_back(new_obj);
+                crate = true;
+            } else {
+                objs[idx].w = abs(x1 - objs[idx].x) + 1;
+                objs[idx].h = abs(y1 - objs[idx].y) + 1;
+                objs[idx].x = std::min(x1, objs[idx].x);
+                objs[idx].y = std::min(y1, objs[idx].y);
+                crate = false;
+            }
+            break;
         default:
             break;
         }
@@ -632,6 +670,14 @@ void LevelEditor::init()
                 new_obj.w = obj_w;
                 new_obj.h = obj_h;
                 break;
+            case OBJECT_CRATE:
+                level_file >> obj_x >> obj_y >> obj_w >> obj_h >> obj_color;
+                new_obj.x = obj_x;
+                new_obj.y = obj_y;
+                new_obj.w = obj_w;
+                new_obj.h = obj_h;
+                new_obj.color = (Color) obj_color;
+                break;
             default:
                 break;
             }
@@ -780,8 +826,8 @@ void LevelEditor::draw_UI(int scr_w, int scr_h)
     case PLACING_PLATFORMS:
         placing_str += "platforms (black/white)";
         break;
-    case PLACING_BLOCKS:
-        placing_str += "blocks";
+    case PLACING_CRATES:
+        placing_str += "crates";
         break;
     case PLACING_KEYS:
         placing_str += "keys";
@@ -1001,6 +1047,9 @@ void LevelEditor::write_level()
             break;
         case OBJECT_SHIFTBLOCK:
             level_file << objs[i].x << " " << objs[i].y << " " << objs[i].w << " " << objs[i].h;
+            break;
+        case OBJECT_CRATE:
+            level_file << objs[i].x << " " << objs[i].y << " " << objs[i].w << " " << objs[i].h << " " << objs[i].color;
             break;
         default:
             break;

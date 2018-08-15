@@ -19,7 +19,7 @@ typedef enum PlacingType {
     PLACING_SPIKES_RL,
     PLACING_SLOPE_2,
     PLACING_PLATFORMS,
-    PLACING_BLOCKS,
+    PLACING_CRATES,
     PLACING_SPRINGS,
     PLACING_MOVING_PLATFORMS,
     PLACING_SHIFTBLOCKS,
@@ -129,6 +129,7 @@ private:
 
     int moving_platforms;
     bool shiftblock;
+    bool crate;
 
     Texture m_tiletex;
     Texture m_shiftblocktex;

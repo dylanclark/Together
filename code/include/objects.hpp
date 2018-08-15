@@ -20,8 +20,8 @@
 
 typedef enum _ObjectType {
     OBJECT_SPRING = 0,
-    OBJECT_BLOCK,
     OBJECT_MOVING_PLATFORM,
+    OBJECT_CRATE,
     OBJECT_SHIFTBLOCK,
     OBJECT_BUTTON,
     OBJECT_KEY,
@@ -88,25 +88,25 @@ typedef enum _PlatformStatus {
     PLATFORM_MOVETO_A,
 } PlatformStatus;
 
-typedef enum _MovingPlatformWallSide {
-    PLATFORM_WALL_LEFT,
-    PLATFORM_WALL_RIGHT,
-    PLATFORM_WALL_TOP,
-    PLATFORM_WALL_BOTTOM,
-} MovingPlatformWallSide;
+typedef enum _InvisibleWallSide {
+    INVISIBLE_WALL_LEFT,
+    INVISIBLE_WALL_RIGHT,
+    INVISIBLE_WALL_TOP,
+    INVISIBLE_WALL_BOTTOM,
+} InvisibleWallSide;
 
-class MovingPlatformWall
+class InvisibleWall
 {
 public:
-    MovingPlatformWall(int x, int y, int w, int h, MovingPlatformWallSide m_side);
-    ~MovingPlatformWall() { }
+    InvisibleWall(int x, int y, int w, int h, InvisibleWallSide m_side);
+    ~InvisibleWall() { }
 
     SDL_Rect get_rect() { return m_rect; }
-    MovingPlatformWallSide get_side() { return m_side; }
+    InvisibleWallSide get_side() { return m_side; }
 
 private:
     SDL_Rect m_rect;
-    MovingPlatformWallSide m_side;
+    InvisibleWallSide m_side;
 };
 
 class MovingPlatform : public Object
@@ -121,7 +121,7 @@ public:
     void trigger();
     void untrigger();
 
-    std::vector<MovingPlatformWall> get_walls(std::vector<Tile> &tiles);
+    std::vector<InvisibleWall> get_walls(std::vector<Tile> &tiles);
 
 private:
     int m_x1, m_y1, m_x2, m_y2;
@@ -166,6 +166,34 @@ private:
     ShiftBlockStatus m_status;
 };
 
+/*************/
+/*   CRATE   */
+/*************/
+
+class Crate : public Object
+{
+public:
+    Crate(int x, int y, int w, int h, bool color, SDL_Color palette);
+    ~Crate() { }
+
+    void render_bg(SDL_Rect cam_rect, bool active_color);
+    void render_fg(SDL_Rect cam_rect, bool active_color) { }
+
+    void trigger() { }
+    void untrigger() { }
+    void update_x(SDL_Rect black_player, SDL_Rect white_player);
+    void update_y() { }
+
+    std::vector<InvisibleWall> get_walls(std::vector<Tile> &tiles);
+
+    void push(SDL_Rect player_pushing, SDL_Rect other_player);
+    void unpush() { pushed = false; }
+
+private:
+    bool pushed;
+};
+
+/*
 class Block : public Object
 {
 public:
@@ -178,6 +206,7 @@ private:
     TileType m_tiletype;
     std::vector<TileType> saved_tiles;
 };
+*/
 
 /*
 typedef enum _ButtonType {
