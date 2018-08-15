@@ -306,7 +306,6 @@ void Tileset::draw(int scr_w, int scr_h, SDL_Rect cam_rect)
                     m_shiftblocktex.render(j*TILE_WIDTH, k*TILE_WIDTH, &clip_rect, &cam_rect);
                 }
             }
-            // TODO
         }
     }
     // next we will draw all of the objects... eventually, bc we don't support textures yet
