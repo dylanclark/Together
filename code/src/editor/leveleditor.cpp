@@ -252,8 +252,11 @@ void Tileset::draw(int scr_w, int scr_h, SDL_Rect cam_rect)
         int y = (objs[i].y*TILE_WIDTH - cam_rect.y) * aspect_ratio;
         int w, h;
         if (objs[i].type == OBJECT_SPRING) {
-            w = (1 + (objs[i].type == OBJECT_SPRING)) * TILE_WIDTH * aspect_ratio;
+            w = 2 * TILE_WIDTH * aspect_ratio;
             h = TILE_WIDTH * aspect_ratio;
+        } else if (objs[i].type == OBJECT_XSPRING) {
+            w = 2 * TILE_WIDTH * aspect_ratio;
+            h = 4 * TILE_WIDTH * aspect_ratio;
         } else if (objs[i].type == OBJECT_MOVING_PLATFORM) {
             w = objs[i].w * TILE_WIDTH * aspect_ratio;
             h = objs[i].h * TILE_WIDTH * aspect_ratio;
@@ -275,6 +278,8 @@ void Tileset::draw(int scr_w, int scr_h, SDL_Rect cam_rect)
             SDL_SetRenderDrawColor(game->rend, 255, 0, 0, SDL_ALPHA_OPAQUE);
             SDL_RenderFillRect(game->rend, &arrow_rect);
         } else if (objs[i].type == OBJECT_XSPRING) {
+            SDL_SetRenderDrawColor(game->rend, 255, 150, 0, SDL_ALPHA_OPAQUE);
+            SDL_RenderFillRect(game->rend, &render_rect);
             // TODO render xspring
         } else if (objs[i].type == OBJECT_MOVING_PLATFORM) {
             SDL_SetRenderDrawBlendMode(game->rend, SDL_BLENDMODE_BLEND);
