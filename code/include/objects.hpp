@@ -23,6 +23,7 @@ typedef enum _ObjectType {
     OBJECT_MOVING_PLATFORM,
     OBJECT_CRATE,
     OBJECT_SHIFTBLOCK,
+    OBJECT_XSPRING,
     OBJECT_BUTTON,
     OBJECT_KEY,
     OBJECT_DOOR,
@@ -41,7 +42,7 @@ public:
     void untrigger();
 
     ObjectType get_type() { return m_type; }
-    SDL_Rect get_rect() { return m_rect; }
+    virtual SDL_Rect get_rect() { return m_rect; }
     bool get_color() { return m_color; }
 
     SDL_Rect m_rect;
@@ -191,6 +192,47 @@ public:
 
 private:
     bool pushed;
+};
+
+/********************/
+/*   CROSS SPRING   */
+/********************/
+
+typedef enum _XSpringStatus {
+    XSPRING_IDLE = 0,
+    XSPRING_WHITE_LAND,
+    XSPRING_WHITE_ON,
+    XSPRING_BLACK_LAND,
+    XSPRING_BLACK_ON,
+    XSPRING_WHITE_SPRING_BLACK,
+    XSPRING_BLACK_SPRING_WHITE,
+    XSPRING_BLACK_TO_IDLE,
+    XSPRING_WHITE_TO_IDLE,
+} XSpringStatus;
+
+class XSpring : public Object
+{
+public:
+    XSpring(int x, int y, SDL_Color palette);
+    ~XSpring() { }
+
+    void render_bg(SDL_Rect cam_rect, bool active_color);
+    void render_fg(SDL_Rect cam_rect, bool active_color) { }
+
+    void trigger() { }
+    void untrigger() { }
+    void update_x(SDL_Rect black_player, SDL_Rect white_player) { }
+    void update_y();
+
+    void white_land(Zonestate* zone, Dot* white);
+    void black_land(Zonestate* zone, Dot* black);
+
+    SDL_Rect get_land_rect();
+
+private:
+    XSpringStatus m_status;
+    int animation_start;
+    Dot* dot_on;
 };
 
 /*

@@ -51,6 +51,7 @@ void Level::load_level(int zone_num, int lvl_num, SDL_Color palette)
     MovingPlatform* new_platform;
     ShiftBlock* new_shiftblock;
     Crate* new_crate;
+    XSpring* new_xspring;
     for (int i = 0; i < num_objs; i++) {
         level_file >> obj_type;
         switch (obj_type)
@@ -80,6 +81,11 @@ void Level::load_level(int zone_num, int lvl_num, SDL_Color palette)
             level_file >> obj_x >> obj_y >> obj_w >> obj_h >> obj_color;
             new_crate = new Crate(m_x + obj_x*TILE_WIDTH, m_y + obj_y*TILE_WIDTH, obj_w, obj_h, obj_color, palette);
             objects.push_back(new_crate);
+            break;
+        case OBJECT_XSPRING:
+            level_file >> obj_x >> obj_y;
+            new_xspring = new XSpring(m_x + obj_x*TILE_WIDTH, m_y + obj_y*TILE_WIDTH, palette);
+            objects.push_back(new_xspring);
             break;
         default:
             break;
@@ -298,6 +304,8 @@ void Zonestate::shift()
 {
     if (chars.size() == 2) {
         active_color = !active_color;
+        chars[0].halt();
+        chars[1].halt();
     }
 }
 

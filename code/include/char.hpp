@@ -79,6 +79,7 @@ public:
     int get_dir() { return dir; }
     float get_yvel() { return m_yvel; }
     int get_exit_dir() { return (exited || entering) ? (int) exit_dir : -1; }
+    void halt() { left = right = up = down = false; }
 
     void spring_me(float yvel);
 

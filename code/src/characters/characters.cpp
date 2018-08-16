@@ -363,7 +363,6 @@ void Dot::update_x(Zonestate* zone, SDL_Rect other_player)
 
     Crate* crate;
     ShiftBlock* shiftblock;
-    SDL_Rect x_rect;
     for (int i = 0; i < objects.size(); i++) {
         switch (objects[i]->get_type())
         {
@@ -372,8 +371,7 @@ void Dot::update_x(Zonestate* zone, SDL_Rect other_player)
                 break;
             }
             platform = (MovingPlatform*) objects[i];
-            x_rect = objects[i]->get_rect();
-            if (check_collision(col_rect, x_rect, &repos)) {
+            if (check_collision(col_rect, objects[i]->get_rect(), &repos)) {
                 col_rect.x += repos.x;
                 if ((repos.x > 0 && m_xvel < 0) ||
                     (repos.x < 0 && m_xvel > 0)) {
@@ -416,6 +414,15 @@ void Dot::update_x(Zonestate* zone, SDL_Rect other_player)
                 crate->push(col_rect, other_player);
                 if (check_collision(col_rect, objects[i]->get_rect(), &repos)) {
                     col_rect.x += repos.x;
+                }
+            }
+            break;
+        case OBJECT_XSPRING:
+            if (check_collision(col_rect, objects[i]->get_rect(), &repos)) {
+                col_rect.x += repos.x;
+                if ((repos.x > 0 && m_xvel < 0) ||
+                    (repos.x < 0 && m_xvel > 0)) {
+                    m_xvel = 0;
                 }
             }
             break;
@@ -566,6 +573,7 @@ void Dot::update_y(Zonestate* zone)
 
     airborne = true;
     ShiftBlock* shiftblock;
+    XSpring* xspring;
     SDL_Rect y_rect;
     for (int i = 0; i < objects.size(); i++) {
         switch (objects[i]->get_type())
@@ -704,6 +712,50 @@ void Dot::update_y(Zonestate* zone)
                     pushed_up = true;
                 } else if (repos.y > 0) {
                     pushed_down = true;
+                }
+            }
+            break;
+        case OBJECT_XSPRING:
+            xspring = (XSpring*) objects[i];
+            if (check_touching_vert(col_rect, xspring->get_land_rect())) {
+                if ((m_color == 0 && m_yvel > 0) ||
+                    (m_color == 1 && m_yvel < 0)) {
+                    (m_color == 0) ? xspring->black_land(zone, this) : xspring->white_land(zone, this);
+                }
+            }
+            if (check_collision(col_rect, objects[i]->get_rect(), &repos)) {
+                if ((m_color == 0 && repos.y < 0) ||
+                    (m_color == 1 && repos.y > 0)) {
+                    // land!
+                    if (m_status == CHAR_JUMP) {
+                        m_status = CHAR_IDLE;
+                    }
+                    col_rect.y += repos.y;
+                    true_y = col_rect.y;
+                    m_yvel = 0;
+                    shiftable = true;
+                    // jump!
+                    if (up) {
+                        m_status = CHAR_JUMP;
+                        jump_start = SDL_GetTicks();
+                        m_yvel = (m_color - !m_color) * JUMP_VEL + ext_yvel / 1.5;
+                        shiftable = false;
+                    } else if (down) {
+                        platform_drop = true;
+                    } else {
+                        airborne = false;
+                    }
+                } else {
+                    // ceiling
+                    if ((m_color == 0 && m_yvel < 0) || (m_color == 1 && m_yvel > 0)) {
+                        // adjust y pos
+                        col_rect.y += repos.y;
+                        true_y = col_rect.y;
+                        m_yvel = ((m_color == 0) - (m_color == 1)) * .1;
+                        short_hop = 0;
+                        shiftable = false;
+                        up = false;
+                    }
                 }
             }
             break;

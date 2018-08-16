@@ -274,6 +274,8 @@ void Tileset::draw(int scr_w, int scr_h, SDL_Rect cam_rect)
             SDL_Rect arrow_rect = {arrow_x, arrow_y, arrow_w, arrow_h};
             SDL_SetRenderDrawColor(game->rend, 255, 0, 0, SDL_ALPHA_OPAQUE);
             SDL_RenderFillRect(game->rend, &arrow_rect);
+        } else if (objs[i].type == OBJECT_XSPRING) {
+            // TODO render xspring
         } else if (objs[i].type == OBJECT_MOVING_PLATFORM) {
             SDL_SetRenderDrawBlendMode(game->rend, SDL_BLENDMODE_BLEND);
             if (objs[i].color == 0) {
@@ -457,6 +459,17 @@ void Tileset::handle_event(SDL_Event e, int scr_w, int scr_h, SDL_Rect cam_rect,
                 objs[idx].y = std::min(y1, objs[idx].y);
                 crate = false;
             }
+            break;
+        case PLACING_XSPRINGS:
+            if (!click_color != tiles[y1][x1]) {
+                printf("\a");
+                return;
+            }
+            EditorObject new_xspring;
+            new_xspring.x = x1;
+            new_xspring.y = y1;
+            new_xspring.type = OBJECT_XSPRING;
+            objs.push_back(new_xspring);
             break;
         default:
             break;
@@ -677,6 +690,11 @@ void LevelEditor::init()
                 new_obj.h = obj_h;
                 new_obj.color = (Color) obj_color;
                 break;
+            case OBJECT_XSPRING:
+                level_file >> obj_x >> obj_y;
+                new_obj.x = obj_x;
+                new_obj.y = obj_y;
+                break;
             default:
                 break;
             }
@@ -839,6 +857,9 @@ void LevelEditor::draw_UI(int scr_w, int scr_h)
         break;
     case PLACING_SPRINGS:
         placing_str += "springs";
+        break;
+    case PLACING_XSPRINGS:
+        placing_str += "xsprings";
         break;
     case PLACING_MOVING_PLATFORMS:
         placing_str += "moving platforms (black/white)";
@@ -1049,6 +1070,9 @@ void LevelEditor::write_level()
             break;
         case OBJECT_CRATE:
             level_file << objs[i].x << " " << objs[i].y << " " << objs[i].w << " " << objs[i].h << " " << objs[i].color;
+            break;
+        case OBJECT_XSPRING:
+            level_file << objs[i].x << " " << objs[i].y;
             break;
         default:
             break;

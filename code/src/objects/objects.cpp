@@ -724,6 +724,163 @@ void Crate::push(SDL_Rect player_pushing, SDL_Rect other_player)
     }
 }
 
+/********************/
+/*   CROSS SPRING   */
+/********************/
+
+XSpring::XSpring(int x, int y, SDL_Color palette)
+{
+    m_tex.load_object(16, 32, "cross-spring.png", &palette);
+    m_rect.w = 12;
+    m_rect.h = 10;
+    m_rect.x = x + (m_tex.get_width() - m_rect.w) / 2;
+    m_rect.y = y + (m_tex.get_height() - m_rect.h) / 2;
+    m_type = OBJECT_XSPRING;
+    m_status = XSPRING_IDLE;
+    animation_start = SDL_GetTicks();
+    dot_on = NULL;
+}
+
+void XSpring::render_bg(SDL_Rect cam_rect, bool active_color)
+{
+    int animation_length;
+    int animation_speed;
+    switch (m_status)
+    {
+    case XSPRING_IDLE:
+    case XSPRING_WHITE_ON:
+    case XSPRING_BLACK_ON:
+        animation_length = 1;
+        animation_speed = 30;
+        break;
+    case XSPRING_BLACK_LAND:
+    case XSPRING_WHITE_LAND:
+    case XSPRING_BLACK_SPRING_WHITE:
+    case XSPRING_WHITE_SPRING_BLACK:
+        animation_length = 2;
+        animation_speed = 30;
+        break;
+    case XSPRING_BLACK_TO_IDLE:
+    case XSPRING_WHITE_TO_IDLE:
+        animation_length = 5;
+        animation_speed = 30;
+        break;
+    }
+    int frame = ((SDL_GetTicks() - animation_start) / animation_speed);
+    if (frame >= animation_length) {
+        switch (m_status) {
+            case XSPRING_BLACK_TO_IDLE:
+            case XSPRING_WHITE_TO_IDLE:
+                m_status = XSPRING_IDLE;
+                break;
+            case XSPRING_BLACK_LAND:
+            case XSPRING_BLACK_SPRING_WHITE:
+                m_status = XSPRING_BLACK_ON;
+                break;
+            case XSPRING_WHITE_LAND:
+            case XSPRING_WHITE_SPRING_BLACK:
+                m_status = XSPRING_WHITE_ON;
+                break;
+            default:
+                break;
+        }
+        animation_start = SDL_GetTicks();
+    }
+    frame = ((SDL_GetTicks() - animation_start) / animation_speed);
+    int tex_w = m_tex.get_width();
+    int tex_h = m_tex.get_height();
+    int render_x = m_rect.x - (tex_w-m_rect.w)/2;
+    int render_y = m_rect.y - (m_tex.get_height()-m_rect.h) / 2;
+    SDL_Rect frame_clip = {frame*tex_w, m_status*tex_h, tex_w, tex_h};
+    m_tex.render(render_x, render_y, &frame_clip, &cam_rect);
+}
+
+void XSpring::update_y()
+{
+    // check if the chars are still here
+    bool still_on = false;
+    if (dot_on) {
+        if (check_touching_vert(dot_on->get_rect(), get_land_rect())) {
+            still_on = true;
+        }
+    }
+    if (!still_on) {
+        switch (m_status)
+        {
+        case XSPRING_BLACK_ON:
+            m_status = XSPRING_BLACK_TO_IDLE;
+            break;
+        case XSPRING_WHITE_ON:
+            m_status = XSPRING_WHITE_TO_IDLE;
+            break;
+        default:
+            break;
+        }
+        dot_on = NULL;
+    }
+}
+
+void XSpring::white_land(Zonestate* zone, Dot* white)
+{
+    animation_start = SDL_GetTicks();
+    if (dot_on && dot_on != white) {
+        float velocity = std::min(white->get_yvel(), (float) -3.5);
+        dot_on->spring_me(velocity);
+        zone->shift();
+        m_status = XSPRING_WHITE_SPRING_BLACK;
+        animation_start = SDL_GetTicks();
+    } else {
+        if (m_status == XSPRING_IDLE) {
+            m_status = XSPRING_WHITE_LAND;
+            animation_start = SDL_GetTicks();
+        }
+    }
+    dot_on = white;
+}
+
+void XSpring::black_land(Zonestate* zone, Dot* black)
+{
+    animation_start = SDL_GetTicks();
+    if (dot_on && dot_on != black) {
+        float velocity = std::max(black->get_yvel(), (float) 3.5);
+        dot_on->spring_me(velocity);
+        zone->shift();
+        m_status = XSPRING_BLACK_SPRING_WHITE;
+        animation_start = SDL_GetTicks();
+    } else {
+        if (m_status == XSPRING_IDLE) {
+            m_status = XSPRING_BLACK_LAND;
+            animation_start = SDL_GetTicks();
+        }
+    }
+    dot_on = black;
+}
+
+SDL_Rect XSpring::get_land_rect()
+{
+    SDL_Rect land_rect;
+    land_rect.x = m_rect.x;
+    land_rect.w = m_rect.w;
+    land_rect.h = 20;
+    switch (m_status)
+    {
+    case XSPRING_IDLE:
+        land_rect.y = m_rect.y - (m_tex.get_height() - m_rect.h) / 2 + 6;
+        break;
+    case XSPRING_WHITE_ON:
+        land_rect.y = m_rect.y - (m_tex.get_height() - m_rect.h) / 2 + 1;
+        land_rect.h += 5;
+        break;
+    case XSPRING_BLACK_ON:
+        land_rect.y = m_rect.y - (m_tex.get_height() - m_rect.h) / 2 + 6;
+        land_rect.h += 5;
+        break;
+    default:
+        break;
+    }
+    return land_rect;
+}
+
 /*************/
 /*   BLOCK   */
 /*************/
