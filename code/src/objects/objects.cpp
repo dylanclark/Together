@@ -824,7 +824,7 @@ void XSpring::white_land(Zonestate* zone, Dot* white)
 {
     animation_start = SDL_GetTicks();
     if (dot_on && dot_on != white) {
-        float velocity = std::min(white->get_yvel(), (float) -3.5);
+        float velocity = std::min(white->get_yvel(), (float) -3.7);
         dot_on->spring_me(velocity);
         zone->shift();
         m_status = XSPRING_WHITE_SPRING_BLACK;
@@ -842,7 +842,7 @@ void XSpring::black_land(Zonestate* zone, Dot* black)
 {
     animation_start = SDL_GetTicks();
     if (dot_on && dot_on != black) {
-        float velocity = std::max(black->get_yvel(), (float) 3.5);
+        float velocity = std::max(black->get_yvel(), (float) 3.7);
         dot_on->spring_me(velocity);
         zone->shift();
         m_status = XSPRING_BLACK_SPRING_WHITE;
