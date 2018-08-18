@@ -1,8 +1,10 @@
 
 // using SDL and standard IO
 #include <stdio.h>
+#include <glad.h>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
+#include <SDL2/SDL_opengl.h>
 #include <SDL2/SDL_mixer.h>
 
 // include headers
@@ -27,9 +29,9 @@ void MenuButton::render()
     SDL_Rect inactive_clip = {0, 0, tex.get_width(), tex.get_height()};
 
     if (selected) {
-        tex.render_button(&rect, &active_clip);
+        // tex.render_button(&rect, &active_clip);
     } else {
-        tex.render_button(&rect, &inactive_clip);
+        // tex.render_button(&rect, &inactive_clip);
     }
 }
 
@@ -55,9 +57,9 @@ void MenuSlider::render()
 
     // render based on char status
     if (selected) {
-        tex.render_button(&rect, &active_clip);
+        // tex.render_button(&rect, &active_clip);
     } else {
-        tex.render_button(&rect, &inactive_clip);
+        // tex.render_button(&rect, &inactive_clip);
     }
 }
 
@@ -72,7 +74,7 @@ Title::Title(int x, int y, int w, int h)
 void Title::render()
 {
     SDL_Rect active_clip = {0, 0, tex.get_width(), tex.get_height()};
-    tex.render_button(&rect, &active_clip);
+    // tex.render_button(&rect, &active_clip);
 }
 
 FadeIn::FadeIn(int time)
@@ -87,14 +89,14 @@ FadeIn::FadeIn(int time)
     if (tex.load_object(16, 16, "white/background/white_back.png")) {
         printf("failed to load fade-in object!\n");
     }
-    tex.set_blend_mode(SDL_BLENDMODE_BLEND);
+    // tex.set_blend_mode(SDL_BLENDMODE_BLEND);
 }
 
 void FadeIn::render()
 {
     SDL_Rect clip = {0, 0, tex.get_width(), tex.get_height()};
     SDL_Rect render_rect = {rect.x + rect.w / 2, rect.y + rect.h / 2, rect.w, rect.h};
-    tex.render_button(&render_rect, &clip);
+    // tex.render_button(&render_rect, &clip);
 }
 
 void FadeIn::update()
@@ -108,7 +110,7 @@ void FadeIn::update()
             alpha = 0;
         }
     }
-    tex.set_alpha(alpha);
+    // tex.set_alpha(alpha);
 }
 
 Menu::Menu()
@@ -222,7 +224,8 @@ void Menu::update()
     }
 
     // clear the window
-    SDL_RenderClear(game->rend);
+    glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
 
     // update fade
     if (fade_in) {
@@ -249,7 +252,7 @@ void Menu::draw()
         fade_in->render();
     }
 
-    SDL_RenderPresent(game->rend);
+    SDL_GL_SwapWindow(game->window);
 }
 
 void Menu::cleanup()

@@ -1,3 +1,4 @@
+#include <SDL2/SDL_opengl.h>
 
 #include <levels.hpp>
 #include <states/menustate.hpp>
@@ -108,7 +109,7 @@ Level::Level(int zone_num, int lvl_num, int x, int y, SDL_Color palette)
     m_lvl_num = lvl_num;
     num_chars_ready = 0;
 
-    if (!tile_tex.load_tile_sheet("tiles.png", &palette)) {
+    if (!tile_tex.load_object(TILE_WIDTH, TILE_WIDTH, "tiles.png")) {
         printf("Failed to load tile sheet texture!\n");
     }
 
@@ -226,8 +227,9 @@ void Zonestate::init()
 void Zonestate::update()
 {
     // clear the window
-    SDL_SetRenderDrawColor(game->rend, palette.r, palette.g, palette.b, SDL_ALPHA_OPAQUE);
-    SDL_RenderClear(game->rend);
+    // SDL_SetRenderDrawColor(game->rend, palette.r, palette.g, palette.b, SDL_ALPHA_OPAQUE);
+    glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
 
     if (controls_frozen) {
         freeze_duration--;
@@ -263,7 +265,7 @@ void Zonestate::draw()
         levels[i]->draw_fg(*cam_rect, active_color);
     }
 
-    SDL_RenderPresent(game->rend);
+    SDL_GL_SwapWindow(game->window);
 }
 
 void Zonestate::handle_events()

@@ -11,7 +11,7 @@ TARGET = together
 VERBOSE = FALSE
 
 # create the list of directories. update this when new source files are added
-DIRS = main characters engine editor levels menus sound states textures objects
+DIRS = main characters engine editor levels menus sound states graphics objects
 SOURCEDIRS = $(foreach dir, $(DIRS), $(addprefix $(SOURCEDIR)/src/, $(dir)))
 TARGETDIRS = $(foreach dir, $(DIRS), $(addprefix $(BUILDDIR)/object-files/, $(dir)))
 
@@ -22,16 +22,16 @@ INCLUDES = $(addsuffix /include, $(SOURCEDIR))
 VPATH = $(SOURCEDIRS)
 
 # Create a list of *.c sources in DIRS
-SOURCES = $(foreach dir,$(SOURCEDIRS),$(wildcard $(dir)/*.cpp))
+SOURCES = $(foreach dir,$(SOURCEDIRS),$(wildcard $(dir)/*.c*))
 
 # Define objects for all sources
-OBJS := $(subst $(SOURCEDIR),$(BUILDDIR),$(subst /src/,/object-files/,$(SOURCES:.cpp=.o)))
+OBJS := $(subst $(SOURCEDIR),$(BUILDDIR),$(subst /src/,/object-files/,$(SOURCES:%=%.o)))
 
 # Name the compiler
 CC = g++
 
 # compiler flags
-CFLAGS = -lstdc++ -lSDL2 -lSDL2_image -lSDL2_mixer -lSDL2_ttf
+CFLAGS = -lstdc++ -lSDL2 -lSDL2_image -lSDL2_mixer -lSDL2_ttf -lGLEW -framework OpenGL
 
 # OS specific part
 ifeq ($(OS),Windows_NT)
@@ -60,9 +60,12 @@ endif
 
 # Define the function that will generate each rule
 define generateRules
-$(1)/%.o: %.cpp
+$(1)/%.cpp.o: %.cpp
 	@echo Building $$(subst $$(SOURCEDIR)/src/,,$$<)
-	$(HIDE)$(CC) -c -g -I$$(INCLUDES) -I/usr/local/include -o $$(subst /,$$(PSEP),$$@) $$(subst /,$$(PSEP),$$<) -MMD
+	$(HIDE)$(CC) -x c++ -c -g -I$$(INCLUDES) -I/usr/local/include -o $$(subst /,$$(PSEP),$$@) $$(subst /,$$(PSEP),$$<) -MMD
+$(1)/%.c.o: %.c
+	@echo Building $$(subst $$(SOURCEDIR)/src/,,$$<)
+	$(HIDE)$(CC) -x c -c -g -I$$(INCLUDES) -I/usr/local/include -o $$(subst /,$$(PSEP),$$@) $$(subst /,$$(PSEP),$$<) -MMD
 endef
 
 # indicate to make which targets are not files

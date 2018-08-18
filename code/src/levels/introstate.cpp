@@ -4,8 +4,10 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_mixer.h>
+#include <SDL2/SDL_opengl.h>
 
 // include headers
+#include <engine.hpp>
 #include <states/intro-state.hpp>
 
 void IntroState::update(Engine* game)
@@ -21,7 +23,8 @@ void IntroState::update(Engine* game)
         game->states.rbegin()[1]->update();
     }
 
-    SDL_RenderClear(game->rend);
+    glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
 }
 
 void IntroState::handle_events(Engine* game)

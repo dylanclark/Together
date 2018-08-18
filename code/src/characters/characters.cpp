@@ -45,14 +45,14 @@ Dot::Dot(int x, int y, bool color, SDL_Color* palette)
     m_color = color;
     if (m_color == 0) {
         m_status = CHAR_IDLE;
-        if (!m_tex.load_object(16, 16, "char-sheet-black.png", palette))
+        if (!m_tex.load_object(16, 16, "char-sheet-black.png"))
         {
             printf("Failed to load black dot texture!\n");
             return;
         }
     } else {
         m_status = CHAR_INACTIVE;
-        if (!m_tex.load_object(16, 16, "char-sheet-white.png", palette))
+        if (!m_tex.load_object(16, 16, "char-sheet-white.png"))
         {
             printf("Failed to load white dot texture!\n");
             return;
@@ -1204,7 +1204,7 @@ void Dot::render(SDL_Rect* camera, Level* lvl)
             dir = DIR_LEFT;
         }
     }
-    m_tex.render(render_x, render_y, &frame_clip, camera, dir, m_color, angle);
+    m_tex.render(render_x, render_y, &frame_clip, camera);
 };
 
 void Dot::save_state()

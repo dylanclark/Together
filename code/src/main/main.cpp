@@ -22,9 +22,6 @@ int main(void)
 {
     game = new Engine();
 
-    // initialize screen
-    game->init();
-
     // initialize game state to main menu
     game->change_state(new Zonestate(0));
 

@@ -11,6 +11,7 @@
 #include <fstream>
 
 #include <sound.hpp>
+#include <shader.hpp>
 
 // screen dimensions!
 #define SCREEN_WIDTH 1080
@@ -21,7 +22,7 @@ class Gamestate;
 class Engine
 {
 public:
-    bool init();
+    Engine();
     void cleanup();
 
     void change_state(Gamestate* state);
@@ -39,8 +40,11 @@ public:
     bool running() { return running_flag; }
     void quit() { running_flag = false; }
 
-    SDL_Window* win;
+    SDL_Window* window;
     SDL_Renderer* rend;
+    SDL_GLContext gl_context;
+    Shader* m_shader;
+
     SoundPlayer* sound;
     TTF_Font* font;
 

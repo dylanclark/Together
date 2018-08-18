@@ -90,7 +90,7 @@ LevelLoaderThumbnail::LevelLoaderThumbnail(int zone_num, int lvl_num, int x, int
     level_file >> w;
     level_file >> h;
 
-    Uint32 format = SDL_GetWindowPixelFormat(game->win);
+    Uint32 format = SDL_GetWindowPixelFormat(game->window);
     m_tex = SDL_CreateTexture(game->rend, format, SDL_TEXTUREACCESS_TARGET, w*TILE_WIDTH, h*TILE_WIDTH);
     SDL_SetRenderTarget(game->rend, m_tex);
     for (int i = 0; i < w*h; i++) {
@@ -184,7 +184,7 @@ ZoneList::ZoneList(int zone_num, int y)
     SDL_QueryTexture(text_tex, NULL, NULL, &text_w, &text_h);
 
     // prepare to draw into our zone header texture
-    Uint32 format = SDL_GetWindowPixelFormat(game->win);
+    Uint32 format = SDL_GetWindowPixelFormat(game->window);
     int w, h;
     w = game->screen_width - 2*SIDE_MARGIN;
     h = text_h + 2*TEXT_BORDER;
@@ -328,7 +328,7 @@ void LevelLoader::init()
     SDL_QueryTexture(text_tex, NULL, NULL, &text_w, &text_h);
 
     // prepare to draw into our zone header texture
-    Uint32 format = SDL_GetWindowPixelFormat(game->win);
+    Uint32 format = SDL_GetWindowPixelFormat(game->window);
     int w, h;
     w = text_w + 2*TEXT_BORDER;
     h = text_h + 2*TEXT_BORDER;
@@ -493,7 +493,7 @@ void LevelLoader::draw()
     for (int i = 0; i < zones.size(); i++) {
         zones[i]->draw(cam_rect);
     }
-    SDL_RenderPresent(game->rend);
+    SDL_GL_SwapWindow(game->window);
 }
 
 void LevelLoader::load_level()
@@ -615,7 +615,7 @@ LevelThumbnail::LevelThumbnail(int zone_num, int lvl_num, int x, int y, std::vec
     level_file >> m_h;
     move(x, y, levels);
 
-    Uint32 format = SDL_GetWindowPixelFormat(game->win);
+    Uint32 format = SDL_GetWindowPixelFormat(game->window);
     m_tex = SDL_CreateTexture(game->rend, format, SDL_TEXTUREACCESS_TARGET, m_w*TILE_WIDTH, m_h*TILE_WIDTH);
     SDL_SetRenderTarget(game->rend, m_tex);
     int cur_tile;
@@ -1203,7 +1203,7 @@ void ZoneEditor::draw()
     SDL_RenderFillRect(game->rend, &bg_render_rect);
     SDL_RenderCopy(game->rend, text_tex, NULL, &render_rect);
 
-    SDL_RenderPresent(game->rend);
+    SDL_GL_SwapWindow(game->window);
 }
 
 void ZoneEditor::delete_level(int lvl_num)

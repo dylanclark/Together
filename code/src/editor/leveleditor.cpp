@@ -166,8 +166,8 @@ Tileset::Tileset(int w, int h, std::vector<std::vector<TileType> > tiles_arg=std
 {
     moving_platforms = 0;
     shiftblock = false;
-    m_tiletex.load_tile_sheet("tiles.png", NULL);
-    m_shiftblocktex.load_tile_sheet("shiftblock-idle.png", NULL);
+    m_tiletex.load_object(TILE_WIDTH, TILE_WIDTH, "tiles.png");
+    m_shiftblocktex.load_object(TILE_WIDTH, TILE_WIDTH, "shiftblock-idle.png");
     clicked = 0;
     click_x = click_y = 0;
     width = w;
@@ -820,7 +820,7 @@ void LevelEditor::draw()
     grid->draw(scr_w, scr_h, cam_rect);
     draw_UI(scr_w, scr_h);
 
-    SDL_RenderPresent(game->rend);
+    SDL_GL_SwapWindow(game->window);
 }
 
 void LevelEditor::draw_UI(int scr_w, int scr_h)
@@ -958,7 +958,7 @@ std::string get_str(std::string prompt, std::string result)
         int scr_h = game->screen_height;
         SDL_Rect render_rect = {scr_w / 2 - w / 2, scr_h / 2 - h / 2, w, h};
         SDL_RenderCopy(game->rend, prompt_tex, NULL, &render_rect);
-        SDL_RenderPresent(game->rend);
+        SDL_GL_SwapWindow(game->window);
     }
 }
 
@@ -977,7 +977,7 @@ bool get_yes_no(std::string prompt)
     int scr_h = game->screen_height;
     SDL_Rect render_rect = {scr_w / 2 - w / 2, scr_h / 2 - h / 2, w, h};
     SDL_RenderCopy(game->rend, prompt_tex, NULL, &render_rect);
-    SDL_RenderPresent(game->rend);
+    SDL_GL_SwapWindow(game->window);
 
     while (1) {
         SDL_Event e;

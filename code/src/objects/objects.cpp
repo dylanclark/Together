@@ -13,9 +13,9 @@ Spring::Spring(int x, int y, bool color, float y_vel, SDL_Color palette)
     m_color = color;
     m_yvel = y_vel;
     if (m_color == 0) {
-        m_tex.load_object(16, 16, "spring-sheet-black.png", &palette);
+        m_tex.load_object(16, 16, "spring-sheet-black.png");
     } else {
-        m_tex.load_object(16, 16, "spring-sheet-white.png", &palette);
+        m_tex.load_object(16, 16, "spring-sheet-white.png");
     }
     m_status = SPRING_IDLE;
 
@@ -46,7 +46,7 @@ void Spring::render_bg(SDL_Rect cam_rect, bool active_color)
     int render_x = m_rect.x - (tex_w-m_rect.w)/2;
     int render_y = m_rect.y - (m_color == 0)*(m_tex.get_height()-m_rect.h);
     SDL_Rect frame_clip = {frame*tex_w, m_status*tex_h, tex_w, tex_h};
-    m_tex.render(render_x, render_y, &frame_clip, &cam_rect, 0, m_color);
+    m_tex.render(render_x, render_y, &frame_clip, &cam_rect);
 }
 
 void Spring::spring()
@@ -86,7 +86,7 @@ MovingPlatform::MovingPlatform(int x1, int y1, int x2, int y2, int w, int h, boo
     m_rect.w = w*TILE_WIDTH;
     m_rect.h = h*TILE_WIDTH;
 
-    m_tex.create_square(color, w, h, &palette);
+    // m_tex.create_square(color, w, h, &palette);
 }
 
 void MovingPlatform::update_x(SDL_Rect black_player, SDL_Rect white_player)
@@ -228,7 +228,7 @@ ShiftBlock::ShiftBlock(int x, int y, int w, int h, SDL_Color palette)
     m_status = SHIFTBLOCK_IDLE;
     m_type = OBJECT_SHIFTBLOCK;
 
-    Uint32 format = SDL_GetWindowPixelFormat(game->win);
+    Uint32 format = SDL_GetWindowPixelFormat(game->window);
     SDL_Texture* tex = SDL_CreateTexture(game->rend, format, SDL_TEXTUREACCESS_TARGET, w*TILE_WIDTH*8, h*TILE_WIDTH*4);
     SDL_SetRenderTarget(game->rend, tex);
 
@@ -441,7 +441,7 @@ ShiftBlock::ShiftBlock(int x, int y, int w, int h, SDL_Color palette)
     }
     SDL_SetRenderTarget(game->rend, NULL);
 
-    m_tex.create_texture(tex, w, h);
+    // m_tex.create_texture(tex, w, h);
 }
 
 void ShiftBlock::render_bg(SDL_Rect cam_rect, bool active_color)
@@ -479,7 +479,7 @@ Crate::Crate(int x, int y, int w, int h, bool color, SDL_Color palette)
     pushed = false;
 
     // create texture
-    Uint32 format = SDL_GetWindowPixelFormat(game->win);
+    Uint32 format = SDL_GetWindowPixelFormat(game->window);
     SDL_Texture* tex = SDL_CreateTexture(game->rend, format, SDL_TEXTUREACCESS_TARGET, w*TILE_WIDTH*8, h*TILE_WIDTH*2);
     SDL_SetRenderTarget(game->rend, tex);
 
@@ -626,7 +626,7 @@ Crate::Crate(int x, int y, int w, int h, bool color, SDL_Color palette)
         }
     }
     SDL_SetRenderTarget(game->rend, NULL);
-    m_tex.create_texture(tex, w, h);
+    // m_tex.create_texture(tex, w, h);
 }
 
 void Crate::render_bg(SDL_Rect cam_rect, bool active_color)
@@ -730,7 +730,7 @@ void Crate::push(SDL_Rect player_pushing, SDL_Rect other_player)
 
 XSpring::XSpring(int x, int y, SDL_Color palette)
 {
-    m_tex.load_object(16, 32, "cross-spring.png", &palette);
+    m_tex.load_object(16, 32, "cross-spring.png");
     m_rect.w = 12;
     m_rect.h = 10;
     m_rect.x = x + (m_tex.get_width() - m_rect.w) / 2;

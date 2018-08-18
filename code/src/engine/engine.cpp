@@ -1,5 +1,7 @@
 // using SDL and standard IO
 #include <stdio.h>
+#include <glad.h>
+#include <SDL2/SDL_opengl.h>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_mixer.h>
@@ -10,83 +12,59 @@
 
 // include headers
 #include <engine.hpp>
+#include <shader.hpp>
 
 Engine* game = NULL;
 
-bool Engine::init()
+Engine::Engine()
 {
-    bool success = true;
     running_flag = true;
 
-    // attempt initialization
-    if (SDL_Init(SDL_INIT_VIDEO|SDL_INIT_TIMER|SDL_INIT_AUDIO|
-                 SDL_INIT_JOYSTICK|SDL_INIT_GAMECONTROLLER) != 0) {
-        printf("error initializing SDL: %s\n", SDL_GetError());
-        success = false;
-    }
+    // init SDL
+    SDL_Init(SDL_INIT_EVERYTHING);
+
+    // init OpenGL attributes
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+
     TTF_Init();
     font = TTF_OpenFont("resources/fonts/slkscr.ttf", 24);
     printf("initialization successful!\n");
 
-    SDL_DisplayMode current;
-
-    if (SDL_GetCurrentDisplayMode(0, &current) != 0)
-    {
-        printf("could not get display info: %s\n", SDL_GetError());
-    }
-
-    screen_width = 1072;
-    screen_height = 720;
-
     // creates a window that we can (eventually) draw into
-    win = SDL_CreateWindow("together.",
-                           SDL_WINDOWPOS_CENTERED,
-                           SDL_WINDOWPOS_CENTERED,
-                           screen_width, screen_height, SDL_WINDOW_RESIZABLE);
-    if (!win)
-    {
-        printf("error creating window: %s\n", SDL_GetError());
-        SDL_Quit();
-        success = false;
+    window = SDL_CreateWindow("together.", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_OPENGL);
+    gl_context = SDL_GL_CreateContext(window);
+    if(!gladLoadGL()) {
+        printf("Something went wrong!\n");
+        exit(-1);
     }
+    printf ("glGetString (GL_VERSION) returns %s\n", glGetString (GL_VERSION));
 
-    // create a renderer, which sets up graphics hardward
-    Uint32 render_flags = SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC;
-    rend = SDL_CreateRenderer(win, -1, render_flags);
-    if (!rend)
-    {
-        printf("error creating renderer: %s\n", SDL_GetError());
-        SDL_DestroyWindow(win);
-        SDL_Quit();
-        success = false;
-    }
+    glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+
+    m_shader = new Shader("resources/shaders/shader.vs", "resources/shaders/shader.fs");
 
     // initialize audio
     if(Mix_OpenAudio(MIX_DEFAULT_FREQUENCY, MIX_DEFAULT_FORMAT, 2, 256 ) == -1)
     {
         printf("error initializing audio: %s\n", SDL_GetError());
         Mix_CloseAudio();
-        success = false;
     }
 
     SDL_ShowCursor(SDL_ENABLE);
 
     sound = new SoundPlayer;
 
-    // clear the window
-    SDL_RenderClear(rend);
+    glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
 
-    // initialize renderer color
-    SDL_SetRenderDrawColor(rend, 0xFF, 0xFF, 0xFF, 0xFF);
 
     // initialize PNG loading
     int img_flags = IMG_INIT_PNG | IMG_INIT_JPG;
     if(!(IMG_Init(img_flags) & img_flags)) {
         printf( "SDL_image could not initialize! SDL_image Error: %s\n", IMG_GetError() );
-        success = false;
     }
-
-    return success;
 }
 
 void Engine::cleanup()
@@ -97,7 +75,8 @@ void Engine::cleanup()
     save_reader.close();
     Mix_CloseAudio();
     SDL_DestroyRenderer(rend);
-    SDL_DestroyWindow(win);
+    SDL_GL_DeleteContext(gl_context);
+    SDL_DestroyWindow(window);
     SDL_Quit();
 }
 
