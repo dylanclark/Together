@@ -9,8 +9,8 @@
 
 // include headers
 #include <menu.hpp>
-#include <engine.hpp>
 #include <textures.hpp>
+#include <engine.hpp>
 
 class IntroState : public Gamestate
 {

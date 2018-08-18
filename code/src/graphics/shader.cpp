@@ -76,7 +76,6 @@ Shader::Shader(const char* vertex_path, const char* fragment_path)
 
     glDeleteShader(vertex_shader);
     glDeleteShader(fragment_shader);
-
 }
 
 void Shader::set_bool(const std::string &name, bool value)

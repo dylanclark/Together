@@ -3,6 +3,7 @@
 #include <time.h>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
+#include <glm/gtc/matrix_transform.hpp>
 
 // include header files
 #include <levels.hpp>
@@ -28,6 +29,7 @@ Camera::Camera(int scr_w, int scr_h, Level* level, SDL_Rect active_char, int cha
     // set width and height, they won't change
     display.w = scr_w / 2;
     display.h = scr_h / 2;
+    m_proj = glm::ortho(0.0f, (float) display.w, (float) display.h, 0.0f);
 
     // we want to start by tracking the chars
     SDL_Rect target = get_target(active_char, char_dir);
@@ -39,6 +41,7 @@ Camera::Camera(int scr_w, int scr_h, Level* level, SDL_Rect active_char, int cha
     // update the proper SDL_Rect
     display.x = loc_x - display.w / 2.0;
     display.y = loc_y - display.h / 2.0;
+    m_view = glm::translate(m_view, glm::vec3(-display.x, -display.y, 0.0f));
 }
 
 Camera::~Camera()
@@ -89,8 +92,11 @@ void Camera::spline_update()
     if (abs(loc_y - spline_end.y) <= 2) {
         loc_y = spline_end.y;
     }
+    int old_display_x = display.x;
+    int old_display_y = display.y;
     display.x = loc_x - display.w / 2.0;
     display.y = loc_y - display.h / 2.0;
+    m_view = glm::translate(m_view, glm::vec3(old_display_x - display.x, old_display_y - display.y, 0.0f));
     spline_timestep--;
 }
 
@@ -123,8 +129,11 @@ void Camera::update(SDL_Rect active_char, int dir)
     loc_y += ((float) target.y - loc_y) * CAM_ACC;
 
     // update the proper SDL_Rect
+    int old_display_x = display.x;
+    int old_display_y = display.y;
     display.x = loc_x - display.w / 2.0 + pow(m_trauma, 2) * get_rand_from_negone_to_one() * SHAKE;
     display.y = loc_y - display.h / 2.0 + pow(m_trauma, 2) * get_rand_from_negone_to_one() * SHAKE;
+    m_view = glm::translate(m_view, glm::vec3(old_display_x - display.x, old_display_y - display.y, 0.0f));
 }
 
 void Camera::set_level(Level* level, SDL_Rect active_char, int dir, int transition_duration)

@@ -41,8 +41,8 @@ public:
     void quit() { running_flag = false; }
 
     SDL_Window* window;
-    SDL_Renderer* rend;
     SDL_GLContext gl_context;
+    SDL_Renderer* rend;
     Shader* m_shader;
 
     SoundPlayer* sound;

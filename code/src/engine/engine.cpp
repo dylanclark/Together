@@ -19,6 +19,8 @@ Engine* game = NULL;
 Engine::Engine()
 {
     running_flag = true;
+    screen_width = SCREEN_WIDTH;
+    screen_height = SCREEN_HEIGHT;
 
     // init SDL
     SDL_Init(SDL_INIT_EVERYTHING);
@@ -27,6 +29,7 @@ Engine::Engine()
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+    SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 
     TTF_Init();
     font = TTF_OpenFont("resources/fonts/slkscr.ttf", 24);
@@ -35,14 +38,13 @@ Engine::Engine()
     // creates a window that we can (eventually) draw into
     window = SDL_CreateWindow("together.", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_OPENGL);
     gl_context = SDL_GL_CreateContext(window);
+    SDL_GL_SetSwapInterval(1);
     if(!gladLoadGL()) {
         printf("Something went wrong!\n");
         exit(-1);
     }
-    printf ("glGetString (GL_VERSION) returns %s\n", glGetString (GL_VERSION));
 
     glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
-
     m_shader = new Shader("resources/shaders/shader.vs", "resources/shaders/shader.fs");
 
     // initialize audio
@@ -52,13 +54,10 @@ Engine::Engine()
         Mix_CloseAudio();
     }
 
-    SDL_ShowCursor(SDL_ENABLE);
-
     sound = new SoundPlayer;
 
     glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
-
 
     // initialize PNG loading
     int img_flags = IMG_INIT_PNG | IMG_INIT_JPG;
@@ -74,7 +73,6 @@ void Engine::cleanup()
     save_file.close();
     save_reader.close();
     Mix_CloseAudio();
-    SDL_DestroyRenderer(rend);
     SDL_GL_DeleteContext(gl_context);
     SDL_DestroyWindow(window);
     SDL_Quit();

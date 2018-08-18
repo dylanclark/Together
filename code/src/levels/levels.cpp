@@ -1,4 +1,3 @@
-#include <SDL2/SDL_opengl.h>
 
 #include <levels.hpp>
 #include <states/menustate.hpp>
@@ -135,16 +134,23 @@ void Level::update_y()
     }
 }
 
-void Level::draw_bg(SDL_Rect cam_rect, bool active_color)
+void Level::draw_bg(Camera* cam, bool active_color)
 {
+    // check if we should even bother
+    SDL_Rect m_rect = {m_x, m_y, m_w*TILE_WIDTH, m_h*TILE_WIDTH};
+    Vector repos;
+    if (!check_collision(m_rect, cam->get_display, &repos)) {
+        return;
+    }
+
     // draw stuff to the screen!
     for (int i = 0; i < m_w * m_h; i++) {
-        tileset[i].render_bg(active_color, &cam_rect, &tile_tex);
+        tileset[i].render_bg(active_color, cam, &tile_tex);
     }
 
     // draw objects
     for (int i = 0; i < objects.size(); i++) {
-        objects[i]->render_bg(cam_rect, active_color);
+        objects[i]->render_bg(cam, active_color);
     }
 }
 
@@ -254,6 +260,9 @@ void Zonestate::update()
 
 void Zonestate::draw()
 {
+    glClearColor((float) palette.r / (float) 255, (float) palette.g / (float) 255, (float) palette.b / (float) 255, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+
     SDL_Rect* cam_rect = camera->get_display();
     for (int i = 0; i < levels.size(); i++) {
         levels[i]->draw_bg(*cam_rect, active_color);

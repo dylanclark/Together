@@ -23,11 +23,15 @@ public:
     SDL_Rect* get_display() { return &display; }
     void set_level(Level* level, SDL_Rect active_char, int dir, int transition_duration);
     void traumatize(float trauma) { m_trauma = trauma; }
+    glm::mat4 get_proj_mat() { return m_proj; }
+    glm::mat4 get_view_mat();
 
 private:
     SDL_Rect get_target(SDL_Rect active_char, int dir);
 
     SDL_Rect display;
+    glm::mat4 m_proj;
+    glm::mat4 m_view;
     int m_lvl_x, m_lvl_y;
     int m_lvl_w, m_lvl_h;
     float loc_x, loc_y;
@@ -52,8 +56,8 @@ public:
     void load_level(int zone_num, int lvl_num, SDL_Color palette);
     void update_x(SDL_Rect black_player, SDL_Rect white_player);
     void update_y();
-    void draw_bg(SDL_Rect cam_rect, bool active_color);
-    void draw_fg(SDL_Rect cam_rect, bool active_color);
+    void draw_bg(Camera* cam, bool active_color);
+    void draw_fg(Camera* cam, bool active_color);
     void cleanup();
 
     void shift();
