@@ -26,12 +26,18 @@ Texture::~Texture()
 {
 };
 
-bool Texture::load_object(int w, int h, std::string path)
+bool Texture::load_object(int w, int h, std::string path, SDL_Color* palette)
 {
     // get object dimensions
+    if (palette) {
+        m_palette.r = palette->r;
+        m_palette.g = palette->g;
+        m_palette.b = palette->b;
+    } else {
+        m_palette.r = m_palette.g = m_palette.b = 255;
+    }
     width = w;
     height = h;
-    printf("w h = %d %d\n", w, h);
 
     // generate texture object
     glGenTextures(1, &m_tex);
@@ -108,6 +114,7 @@ void Texture::render(int x, int y, SDL_Rect* clip, Camera* cam, int dir, int fli
         return;
     }
 
+    // we'll use our (only available) shader
     game->m_shader->use();
 
     // set model matrix - this tells us where our object is in the world space
@@ -130,10 +137,16 @@ void Texture::render(int x, int y, SDL_Rect* clip, Camera* cam, int dir, int fli
     tex_clip = glm::translate(tex_clip, glm::vec3(tex_x, tex_y, 0.0f));
     game->m_shader->set_float_mat4("tex_clip", tex_clip);
 
+    // set color
+    glm::vec3 obj_color = glm::vec3(m_palette.r / (float) 255, m_palette.g / (float) 255, m_palette.b / (float) 255);
+    game->m_shader->set_vec3("obj_color", obj_color);
+
+    // set texture
     game->m_shader->set_int("m_texture", 0);
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, m_tex);
-    CheckGLError();
+
+    // draw that puppy!
     glBindVertexArray(m_vao);
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 }

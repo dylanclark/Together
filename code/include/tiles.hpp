@@ -53,7 +53,7 @@ private:
 class Tileset
 {
 public:
-    Tileset(std::vector<Tile> &tiles, int x, int y, int w, int h);
+    Tileset(std::vector<Tile> &tiles, int x, int y, int w, int h, SDL_Color palette);
     void render(Camera* cam, bool active_color);
     std::vector<Tile> get_tiles() { return m_tiles; }
     void set_type(int idx, TileType type) { m_tiles[idx].set_type(type); }
@@ -63,6 +63,8 @@ private:
     int m_w, m_h;
     int tex_width, tex_height;
     std::vector<Tile> m_tiles;
+
+    SDL_Color m_palette;
 
     GLuint m_tex;
     GLuint m_vao;

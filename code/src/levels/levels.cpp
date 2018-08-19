@@ -39,7 +39,7 @@ void Level::load_level(int zone_num, int lvl_num, SDL_Color palette)
             y += TILE_WIDTH;
         }
     }
-    tileset = new Tileset(tiles, m_x, m_y, m_w, m_h);
+    tileset = new Tileset(tiles, m_x, m_y, m_w, m_h, palette);
 
     int num_objs;
     level_file >> num_objs;

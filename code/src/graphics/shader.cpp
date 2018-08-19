@@ -99,6 +99,12 @@ void Shader::set_float_mat4(const std::string &name, glm::mat4 matrix)
     glUniformMatrix4fv(matr_idx, 1, GL_FALSE, glm::value_ptr(matrix));
 }
 
+void Shader::set_vec3(const std::string &name, glm::vec3 vector)
+{
+    int vec_idx = glGetUniformLocation(m_id, name.c_str());
+    glUniform3f(vec_idx, vector.x, vector.y, vector.z);
+}
+
 void Shader::use()
 {
     glUseProgram(m_id);

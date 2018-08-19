@@ -12,6 +12,7 @@ public:
     void set_float(const std::string &name, float value);
     void set_int(const std::string &name, int value);
     void set_float_mat4(const std::string &name, glm::mat4 matrix);
+    void set_vec3(const std::string &name, glm::vec3 vector);
     void use();
 
 private:

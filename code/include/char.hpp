@@ -42,7 +42,7 @@ class InvisibleWall;
 class Dot
 {
 public:
-    Dot(int x, int y, bool color, SDL_Color* palette = NULL);
+    Dot(int x, int y, bool color, SDL_Color* palette);
 
     bool m_color;
 

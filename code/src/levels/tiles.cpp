@@ -63,7 +63,7 @@ void setup_vertices(float* result, float x, float y, float tex_x, float tex_y, f
     result[15] = tex_y + tex_h;
 }
 
-Tileset::Tileset(std::vector<Tile> &tiles, int x, int y, int w, int h)
+Tileset::Tileset(std::vector<Tile> &tiles, int x, int y, int w, int h, SDL_Color palette)
 {
     m_tiles = tiles;
     // true coords
@@ -72,7 +72,9 @@ Tileset::Tileset(std::vector<Tile> &tiles, int x, int y, int w, int h)
     // grid coords
     m_w = w;
     m_h = h;
-    printf("coords = %d %d %d %d\n", m_x, m_y, m_w, m_h);
+    m_palette.r = palette.r;
+    m_palette.g = palette.g;
+    m_palette.b = palette.b;
 
     // generate texture object
     glGenTextures(1, &m_tex);
@@ -171,11 +173,17 @@ void Tileset::render(Camera* cam, bool active_color)
     tex_clip = glm::translate(tex_clip, glm::vec3(tex_x_offset, 0.0f, 0.0f));
     game->m_shader->set_float_mat4("tex_clip", tex_clip);
 
+    // set color
+    float obj_r = (float) m_palette.r / (float) 255;
+    float obj_g = (float) m_palette.g / (float) 255;
+    float obj_b = (float) m_palette.b / (float) 255;
+    glm::vec3 obj_color = glm::vec3(obj_r, obj_g, obj_b);
+    game->m_shader->set_vec3("obj_color", obj_color);
+
     game->m_shader->set_int("m_texture", 0);
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, m_tex);
     glBindVertexArray(m_vao);
     glDrawElements(GL_TRIANGLES, 6*m_w*m_h, GL_UNSIGNED_INT, 0);
-    CheckGLError();
 }
 
