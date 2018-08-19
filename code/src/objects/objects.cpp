@@ -15,9 +15,9 @@ Spring::Spring(int x, int y, bool color, float y_vel, SDL_Color palette)
     m_color = color;
     m_yvel = y_vel;
     if (m_color == 0) {
-        m_tex.load_object(16, 16, "spring-sheet-black.png");
+        m_tex.load_object(16, 16, "spring-sheet-black.png", &palette);
     } else {
-        m_tex.load_object(16, 16, "spring-sheet-white.png");
+        m_tex.load_object(16, 16, "spring-sheet-white.png", &palette);
     }
     m_status = SPRING_IDLE;
 
@@ -732,7 +732,7 @@ void Crate::push(SDL_Rect player_pushing, SDL_Rect other_player)
 
 XSpring::XSpring(int x, int y, SDL_Color palette)
 {
-    m_tex.load_object(16, 32, "cross-spring.png");
+    m_tex.load_object(16, 32, "cross-spring.png", &palette);
     m_rect.w = 12;
     m_rect.h = 10;
     m_rect.x = x + (m_tex.get_width() - m_rect.w) / 2;
