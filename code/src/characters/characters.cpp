@@ -1204,7 +1204,7 @@ void Dot::render(Camera* cam, Level* lvl)
             dir = DIR_LEFT;
         }
     }
-    m_tex.render(render_x, render_y, &frame_clip, cam);
+    m_tex.render(render_x, render_y, &frame_clip, cam, dir, m_color);
 };
 
 void Dot::save_state()

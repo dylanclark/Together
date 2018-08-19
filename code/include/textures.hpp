@@ -17,7 +17,7 @@ public:
 
     bool load_object(int w, int h, std::string path);
 
-    void render(int x, int y, SDL_Rect* clip, Camera* cam);
+    void render(int x, int y, SDL_Rect* clip, Camera* cam, int dir = 0, int flip = 0);
 
     int get_width() { return width; }
     int get_height() { return height; }

@@ -123,7 +123,7 @@ bool Texture::load_object(int w, int h, std::string path)
     return true;
 };
 
-void Texture::render(int x, int y, SDL_Rect* clip, Camera* cam)
+void Texture::render(int x, int y, SDL_Rect* clip, Camera* cam, int dir, int flip)
 {
     // first, let's see if we should even bother
     SDL_Rect cam_rect = cam->get_display();
@@ -138,6 +138,8 @@ void Texture::render(int x, int y, SDL_Rect* clip, Camera* cam)
     // set model matrix - this tells us where our object is in the world space
     glm::mat4 model;
     model = glm::translate(model, glm::vec3(x, y, 0.0f));
+    model = glm::translate(model, glm::vec3(width*dir, height*flip, 0.0f));
+    model = glm::scale(model, glm::vec3(!dir - dir, !flip - flip, 1.0f));
     game->m_shader->set_float_mat4("model", model);
 
     // set view matrix - this tells us what part of the world we are looking at
