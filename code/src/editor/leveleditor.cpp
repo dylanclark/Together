@@ -121,15 +121,17 @@ void Border::update(int w, int h)
     rect.h = h * TILE_WIDTH;
 }
 
-void Border::draw(int scr_w, int scr_h, SDL_Rect cam_rect)
+void Border::draw(Camera* cam)
 {
-    int x = (rect.x - cam_rect.x) / ((float) cam_rect.w / (float) scr_w);
+    SDL_Rect cam_rect = cam->get_display();
+    /* int x = (rect.x - cam_rect.x) / ((float) cam_rect.w / (float) scr_w);
     int y = (rect.y - cam_rect.y) / ((float) cam_rect.h / (float) scr_h);
     int w = rect.w * ((float) scr_w / (float) cam_rect.w);
     int h = rect.h * ((float) scr_h / (float) cam_rect.h);
     SDL_Rect to_draw = {x, y, w, h};
     SDL_SetRenderDrawColor(game->rend, 255, 0, 0, SDL_ALPHA_OPAQUE);
     SDL_RenderDrawRect(game->rend, &to_draw);
+    */
 }
 
 Gridlines::Gridlines(int w, int h)
@@ -144,8 +146,11 @@ void Gridlines::update(int w, int h)
     height = h;
 }
 
-void Gridlines::draw(int scr_w, int scr_h, SDL_Rect cam_rect)
+void Gridlines::draw(Camera* cam)
 {
+    int scr_w = game->screen_width;
+    int scr_h = game->screen_height;
+    SDL_Rect cam_rect = cam->get_display();
     for (int i = 1; i < width; i++) {
         int x = (i*TILE_WIDTH - cam_rect.x) / (cam_rect.w / (float) scr_w);
         int y1 = (-cam_rect.y) / (cam_rect.h / (float) scr_h);
@@ -185,9 +190,12 @@ Tileset::Tileset(int w, int h, std::vector<std::vector<TileType> > tiles_arg=std
     objs = objs_arg;
 }
 
-void Tileset::draw(int scr_w, int scr_h, SDL_Rect cam_rect)
+void Tileset::draw(Camera* cam)
 {
     SDL_Rect clip_rect;
+    SDL_Rect cam_rect = cam->get_display();
+    int scr_w = game->screen_width;
+    int scr_h = game->screen_height;
     clip_rect.y = 0;
     clip_rect.w = TILE_WIDTH;
     clip_rect.h = TILE_WIDTH;
@@ -243,7 +251,7 @@ void Tileset::draw(int scr_w, int scr_h, SDL_Rect cam_rect)
                 SDL_SetRenderDrawColor(game->rend, 255, 255, 255, SDL_ALPHA_OPAQUE);
                 SDL_RenderFillRect(game->rend, &white_rect);
             } else {
-                m_tiletex.render(j*TILE_WIDTH, i*TILE_WIDTH, &clip_rect, &cam_rect);
+                m_tiletex.render(j*TILE_WIDTH, i*TILE_WIDTH, &clip_rect, cam);
             }
         }
     }
@@ -300,7 +308,7 @@ void Tileset::draw(int scr_w, int scr_h, SDL_Rect cam_rect)
             for (int j = objs[i].x; j < objs[i].x + objs[i].w; j++) {
                 for (int k = objs[i].y; k < objs[i].y + objs[i].h; k++) {
                     SDL_Rect clip_rect = {0,0,TILE_WIDTH,TILE_WIDTH};
-                    m_shiftblocktex.render(j*TILE_WIDTH, k*TILE_WIDTH, &clip_rect, &cam_rect);
+                    m_shiftblocktex.render(j*TILE_WIDTH, k*TILE_WIDTH, &clip_rect, cam);
                 }
             }
         } else if (objs[i].type == OBJECT_CRATE) {
@@ -310,7 +318,7 @@ void Tileset::draw(int scr_w, int scr_h, SDL_Rect cam_rect)
             for (int j = objs[i].x; j < objs[i].x + objs[i].w; j++) {
                 for (int k = objs[i].y; k < objs[i].y + objs[i].h; k++) {
                     SDL_Rect clip_rect = {0,0,TILE_WIDTH,TILE_WIDTH};
-                    m_shiftblocktex.render(j*TILE_WIDTH, k*TILE_WIDTH, &clip_rect, &cam_rect);
+                    m_shiftblocktex.render(j*TILE_WIDTH, k*TILE_WIDTH, &clip_rect, cam);
                 }
             }
         }
@@ -815,9 +823,9 @@ void LevelEditor::draw()
     int scr_h = game->screen_height;
     SDL_Rect cam_rect = camera->get_rect();
 
-    tileset->draw(scr_w, scr_h, cam_rect);
-    border->draw(scr_w, scr_h, cam_rect);
-    grid->draw(scr_w, scr_h, cam_rect);
+    tileset->draw((Camera*) camera);
+    border->draw((Camera*) camera);
+    grid->draw((Camera*) camera);
     draw_UI(scr_w, scr_h);
 
     SDL_GL_SwapWindow(game->window);

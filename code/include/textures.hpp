@@ -7,6 +7,8 @@
 #include <SDL2/SDL.h>
 #include <string>
 
+class Camera;
+
 class Texture
 {
 public:

@@ -20,11 +20,11 @@ public:
     Camera (int scr_w, int scr_h, Level* level, SDL_Rect active_char, int dir);
     ~Camera();
     void update(SDL_Rect active_char, int dir);
-    SDL_Rect* get_display() { return &display; }
+    SDL_Rect get_display() { return display; }
     void set_level(Level* level, SDL_Rect active_char, int dir, int transition_duration);
     void traumatize(float trauma) { m_trauma = trauma; }
-    glm::mat4 get_proj_mat() { return m_proj; }
-    glm::mat4 get_view_mat();
+    glm::mat4 get_proj() { return m_proj; }
+    glm::mat4 get_view() { return m_view; }
 
 private:
     SDL_Rect get_target(SDL_Rect active_char, int dir);

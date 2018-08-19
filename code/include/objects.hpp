@@ -18,6 +18,8 @@
 /*   OBJECT   */
 /**************/
 
+class Camera;
+
 typedef enum _ObjectType {
     OBJECT_SPRING = 0,
     OBJECT_MOVING_PLATFORM,
@@ -34,8 +36,8 @@ class Object
 public:
     Object() { };
 
-    virtual void render_bg(SDL_Rect cam_rect, bool active_color) = 0;
-    virtual void render_fg(SDL_Rect cam_rect, bool active_color) = 0;
+    virtual void render_bg(Camera* cam, bool active_color) = 0;
+    virtual void render_fg(Camera* cam, bool active_color) = 0;
     virtual void update_x(SDL_Rect black_player, SDL_Rect white_player) = 0;
     virtual void update_y() = 0;
     void trigger();
@@ -65,8 +67,8 @@ class Spring : public Object
 {
 public:
     Spring(int x, int y, bool color, float y_vel, SDL_Color palette);
-    void render_bg(SDL_Rect cam_rect, bool active_color);
-    void render_fg(SDL_Rect cam_rect, bool active_color) { }
+    void render_bg(Camera* cam, bool active_color);
+    void render_fg(Camera* cam, bool active_color) { }
     void update_x(SDL_Rect black_player, SDL_Rect white_player) { }
     void update_y() { }
     float get_yvel() { return m_yvel; }
@@ -117,8 +119,8 @@ public:
     ~MovingPlatform() { }
     void update_x(SDL_Rect black_player, SDL_Rect white_player);
     void update_y();
-    void render_bg(SDL_Rect cam_rect, bool active_color);
-    void render_fg(SDL_Rect cam_rect, bool active_color) { }
+    void render_bg(Camera* cam, bool active_color);
+    void render_fg(Camera* cam, bool active_color) { }
     void trigger();
     void untrigger();
 
@@ -151,8 +153,8 @@ public:
     ShiftBlock(int x, int y, int w, int h, SDL_Color palette);
     ~ShiftBlock() { }
 
-    void render_bg(SDL_Rect cam_rect, bool active_color);
-    void render_fg(SDL_Rect cam_rect, bool active_color);
+    void render_bg(Camera* cam, bool active_color);
+    void render_fg(Camera* cam, bool active_color);
 
     void trigger() { }
     void untrigger() { }
@@ -177,8 +179,8 @@ public:
     Crate(int x, int y, int w, int h, bool color, SDL_Color palette);
     ~Crate() { }
 
-    void render_bg(SDL_Rect cam_rect, bool active_color);
-    void render_fg(SDL_Rect cam_rect, bool active_color) { }
+    void render_bg(Camera* cam, bool active_color);
+    void render_fg(Camera* cam, bool active_color) { }
 
     void trigger() { }
     void untrigger() { }
@@ -216,8 +218,8 @@ public:
     XSpring(int x, int y, SDL_Color palette);
     ~XSpring() { }
 
-    void render_bg(SDL_Rect cam_rect, bool active_color);
-    void render_fg(SDL_Rect cam_rect, bool active_color) { }
+    void render_bg(Camera* cam, bool active_color);
+    void render_fg(Camera* cam, bool active_color) { }
 
     void trigger() { }
     void untrigger() { }
@@ -241,7 +243,7 @@ class Block : public Object
 public:
     Block(int x, int y, int w, int h, TileType blocktype, Level* lvl, SDL_Color palette);
     ~Block();
-    void render(SDL_Rect cam_rect, bool active_color) { }
+    void render(Camera* cam, bool active_color) { }
 
 private:
     Level* m_lvl;

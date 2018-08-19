@@ -1138,7 +1138,7 @@ bool Dot::in_level(Level* lvl)
             col_rect.y + col_rect.h > lvl_y && col_rect.y < lvl_y + lvl_h);
 }
 
-void Dot::render(SDL_Rect* camera, Level* lvl)
+void Dot::render(Camera* cam, Level* lvl)
 {
     int animation_length;
     double animation_speed;
@@ -1204,7 +1204,7 @@ void Dot::render(SDL_Rect* camera, Level* lvl)
             dir = DIR_LEFT;
         }
     }
-    m_tex.render(render_x, render_y, &frame_clip, camera);
+    m_tex.render(render_x, render_y, &frame_clip, cam);
 };
 
 void Dot::save_state()

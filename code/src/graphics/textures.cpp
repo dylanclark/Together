@@ -141,17 +141,14 @@ void Texture::render(int x, int y, SDL_Rect* clip, Camera* cam)
     game->m_shader->set_float_mat4("model", model);
 
     // set view matrix - this tells us what part of the world we are looking at
-    glm::mat4 view;
-    view = glm::translate(view, glm::vec3((float) -cam_rect.x, (float) -cam_rect.y, 0.0f));
-    game->m_shader->set_float_mat4("view", view);
+    game->m_shader->set_float_mat4("view", cam->get_view());
 
     // set projection matrix - this determines the perspective with which we look at stuff
-    glm::mat4 proj = glm::ortho(0.0f, (float) cam_rect.w, (float) cam_rect.h, 0.0f, -10.0f, 10.0f);
-    game->m_shader->set_float_mat4("proj", proj);
+    game->m_shader->set_float_mat4("proj", cam->get_proj());
 
     // set texture clip matrix - this decides which piece of the texture to use
-    float tex_x = clip->x / tex_width;
-    float tex_y = clip->y / tex_height;
+    float tex_x = (float) clip->x / (float) tex_width;
+    float tex_y = (float) clip->y / (float) tex_height;
     glm::mat4 tex_clip;
     tex_clip = glm::translate(tex_clip, glm::vec3(tex_x, tex_y, 0.0f));
     game->m_shader->set_float_mat4("tex_clip", tex_clip);

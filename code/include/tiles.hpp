@@ -41,8 +41,8 @@ class Tile
 public:
     Tile(int x, int y, TileType tile_type);
 
-    void render_bg(int active_color, SDL_Rect* camera, Texture* tile_tex);
-    void render_fg(int active_color, SDL_Rect* camera, Texture* tile_tex);
+    void render_bg(Camera* cam, int active_color, Texture* tile_tex);
+    void render_fg(Camera* cam, int active_color, Texture* tile_tex);
     TileType get_type() { return m_type; }
     void set_type(TileType type) { m_type = type; }
     SDL_Rect get_col_rect() { return col_rect; }

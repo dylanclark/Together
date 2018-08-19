@@ -2,6 +2,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
 
+#include <levels.hpp>
 #include <objects.hpp>
 
 /**************/
@@ -26,7 +27,7 @@ Spring::Spring(int x, int y, bool color, float y_vel, SDL_Color palette)
     m_rect.y = y + (m_color == 0)*(m_tex.get_height()-m_rect.h);
 }
 
-void Spring::render_bg(SDL_Rect cam_rect, bool active_color)
+void Spring::render_bg(Camera* cam, bool active_color)
 {
     int frame;
     int animation_length = 12;
@@ -46,7 +47,7 @@ void Spring::render_bg(SDL_Rect cam_rect, bool active_color)
     int render_x = m_rect.x - (tex_w-m_rect.w)/2;
     int render_y = m_rect.y - (m_color == 0)*(m_tex.get_height()-m_rect.h);
     SDL_Rect frame_clip = {frame*tex_w, m_status*tex_h, tex_w, tex_h};
-    m_tex.render(render_x, render_y, &frame_clip, &cam_rect);
+    m_tex.render(render_x, render_y, &frame_clip, cam);
 }
 
 void Spring::spring()
@@ -139,9 +140,9 @@ void MovingPlatform::update_y()
     }
 }
 
-void MovingPlatform::render_bg(SDL_Rect cam_rect, bool active_color)
+void MovingPlatform::render_bg(Camera* cam, bool active_color)
 {
-    m_tex.render(m_rect.x, m_rect.y, NULL, &cam_rect);
+    m_tex.render(m_rect.x, m_rect.y, NULL, cam);
 }
 
 void MovingPlatform::trigger()
@@ -444,17 +445,17 @@ ShiftBlock::ShiftBlock(int x, int y, int w, int h, SDL_Color palette)
     // m_tex.create_texture(tex, w, h);
 }
 
-void ShiftBlock::render_bg(SDL_Rect cam_rect, bool active_color)
+void ShiftBlock::render_bg(Camera* cam, bool active_color)
 {
     int animation_length = 8;
     double animation_speed = 70.0;
     int frame = ((int) ((float) SDL_GetTicks() / animation_speed)) % animation_length;
     int clip_y = m_status + (m_status != SHIFTBLOCK_IDLE || active_color == 1);
     SDL_Rect clip_rect = {frame * m_rect.w, clip_y * m_rect.h, m_rect.w, m_rect.h};
-    m_tex.render(m_rect.x, m_rect.y, &clip_rect, &cam_rect);
+    m_tex.render(m_rect.x, m_rect.y, &clip_rect, cam);
 }
 
-void ShiftBlock::render_fg(SDL_Rect cam_rect, bool active_color)
+void ShiftBlock::render_fg(Camera* cam, bool active_color)
 {
 }
 
@@ -629,7 +630,7 @@ Crate::Crate(int x, int y, int w, int h, bool color, SDL_Color palette)
     // m_tex.create_texture(tex, w, h);
 }
 
-void Crate::render_bg(SDL_Rect cam_rect, bool active_color)
+void Crate::render_bg(Camera* cam, bool active_color)
 {
     int animation_length;
     double animation_speed;
@@ -643,7 +644,7 @@ void Crate::render_bg(SDL_Rect cam_rect, bool active_color)
     int frame = ((int) ((float) SDL_GetTicks() / animation_speed)) % animation_length;
     int clip_y = (m_color != active_color);
     SDL_Rect clip_rect = {frame * m_rect.w, clip_y * m_rect.h, m_rect.w, m_rect.h};
-    m_tex.render(m_rect.x, m_rect.y, &clip_rect, &cam_rect);
+    m_tex.render(m_rect.x, m_rect.y, &clip_rect, cam);
 }
 
 void Crate::update_x(SDL_Rect black_player, SDL_Rect white_player)
@@ -741,7 +742,7 @@ XSpring::XSpring(int x, int y, SDL_Color palette)
     dot_on = NULL;
 }
 
-void XSpring::render_bg(SDL_Rect cam_rect, bool active_color)
+void XSpring::render_bg(Camera* cam, bool active_color)
 {
     int animation_length;
     int animation_speed;
@@ -792,7 +793,7 @@ void XSpring::render_bg(SDL_Rect cam_rect, bool active_color)
     int render_x = m_rect.x - (tex_w-m_rect.w)/2;
     int render_y = m_rect.y - (m_tex.get_height()-m_rect.h) / 2;
     SDL_Rect frame_clip = {frame*tex_w, m_status*tex_h, tex_w, tex_h};
-    m_tex.render(render_x, render_y, &frame_clip, &cam_rect);
+    m_tex.render(render_x, render_y, &frame_clip, cam);
 }
 
 void XSpring::update_y()

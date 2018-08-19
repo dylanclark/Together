@@ -70,7 +70,7 @@ public:
     void update_x(Zonestate* zone, SDL_Rect other_player);
     void update_y(Zonestate* zone);
     void check_for_platforms(Zonestate* zone);
-    void render(SDL_Rect* camera, Level* lvl);
+    void render(Camera* cam, Level* lvl);
 
     void save_state();
     void reset(Zonestate* zone);

@@ -67,7 +67,7 @@ class Border
 public:
     Border(int w, int h);
     void update(int w, int h);
-    void draw(int scr_w, int scr_h, SDL_Rect cam_rect);
+    void draw(Camera* cam);
 private:
     SDL_Rect rect;
 };
@@ -78,7 +78,7 @@ class Gridlines
 public:
     Gridlines(int w, int h);
     void update(int w, int h);
-    void draw(int scr_w, int scr_h, SDL_Rect cam_rect);
+    void draw(Camera* cam);
 private:
     int width, height;
 };
@@ -102,7 +102,7 @@ class Tileset
 {
 public:
     Tileset(int w, int h, std::vector<std::vector<TileType> > tiles_arg, std::vector<EditorObject> objs);
-    void draw(int scr_w, int scr_h, SDL_Rect cam_rect);
+    void draw(Camera* cam);
     void handle_event(SDL_Event e, int scr_w, int scr_h, SDL_Rect cam_rect, PlacingType placing);
 
     void add_row_top();
