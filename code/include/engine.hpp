@@ -57,6 +57,8 @@ public:
 
 private:
     bool running_flag;
+    Uint32 last_time;
+    int num_frames;
 };
 
 extern Engine* game;

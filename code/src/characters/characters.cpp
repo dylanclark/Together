@@ -6,6 +6,7 @@
 
 // include header file
 #include <char.hpp>
+#include <utils.hpp>
 #include <engine.hpp>
 #include <textures.hpp>
 #include <levels.hpp>
@@ -338,7 +339,7 @@ void Dot::update_x(Zonestate* zone, SDL_Rect other_player)
         m_status = CHAR_RUN;
     }
 
-    std::vector<Tile> tileset = *level->get_tileset();
+    std::vector<Tile> tileset = level->get_tileset();
     std::vector<Object*> objects = level->get_objects();
     Vector repos;
 
@@ -479,7 +480,7 @@ void Dot::update_x(Zonestate* zone, SDL_Rect other_player)
         if (type == TILE_BLACK_SOLID + !m_color || type == TILE_CLEAR || type == TILE_INVISIBLE) {
             continue;
         }
-        if (check_collision(col_rect, tileset[i].get_col_rect(), &repos)) {
+        if (check_collision(col_rect, tileset[i].get_rect(), &repos)) {
             if (tiletype_isslope(type)) {
                 continue;
             }
@@ -520,7 +521,7 @@ void Dot::update_y(Zonestate* zone)
         return;
     }
     Level* level = zone->get_active_level();
-    std::vector<Tile> tileset = *level->get_tileset();
+    std::vector<Tile> tileset = level->get_tileset();
     std::vector<Object*> objects = level->get_objects();
     Vector repos;
 
@@ -838,7 +839,7 @@ void Dot::update_y(Zonestate* zone)
         if (type == TILE_SLOPE_PAD_WHITE && m_color == 0) {
             continue;
         }
-        tile_rect = tileset[i].get_col_rect();
+        tile_rect = tileset[i].get_rect();
         int point_x = col_rect.x + col_rect.w / 2;
         int point_y = col_rect.y + (m_color == 0)*col_rect.h;
         if (check_collision(col_rect, tile_rect, &repos)) {
@@ -935,7 +936,7 @@ void Dot::update_y(Zonestate* zone)
                     up = false;
                 }
             }
-            if (airborne && check_grounded(col_rect, tileset[i].get_col_rect(), m_color)) {
+            if (airborne && check_grounded(col_rect, tileset[i].get_rect(), m_color)) {
                 airborne = false;
             }
         }
@@ -946,7 +947,7 @@ void Dot::update_y(Zonestate* zone)
     // second pass for slopes
     for (int i = 0; i < size; i++) {
         TileType type = tileset[i].get_type();
-        SDL_Rect tile_rect = tileset[i].get_col_rect();
+        SDL_Rect tile_rect = tileset[i].get_rect();
         int point_x = col_rect.x + col_rect.w / 2;
         int point_y = col_rect.y + (m_color == 0)*col_rect.h;
         if (check_collision(col_rect, tile_rect, &repos)) {

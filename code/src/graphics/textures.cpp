@@ -12,32 +12,7 @@
 #include <levels.hpp>
 #include <char.hpp>
 #include <engine.hpp>
-
-void _CheckGLError(const char* file, int line);
-
-#define CheckGLError() _CheckGLError(__FILE__, __LINE__)
-
-void _CheckGLError(const char* file, int line)
-{
-    GLenum err ( glGetError() );
-
-    while ( err != GL_NO_ERROR )
-    {
-        std::string error;
-        switch ( err )
-        {
-            case GL_INVALID_OPERATION:  error="INVALID_OPERATION";      break;
-            case GL_INVALID_ENUM:       error="INVALID_ENUM";           break;
-            case GL_INVALID_VALUE:      error="INVALID_VALUE";          break;
-            case GL_OUT_OF_MEMORY:      error="OUT_OF_MEMORY";          break;
-            case GL_INVALID_FRAMEBUFFER_OPERATION:  error="INVALID_FRAMEBUFFER_OPERATION";  break;
-        }
-        std::cout << "GL_" << error.c_str() <<" - " << file << ":" << line << std::endl;
-        err = glGetError();
-    }
-
-    return;
-}
+#include <utils.hpp>
 
 // initialize
 Texture::Texture()
@@ -58,7 +33,7 @@ bool Texture::load_object(int w, int h, std::string path)
     height = h;
     printf("w h = %d %d\n", w, h);
 
-    // and turn it into an opengl texture
+    // generate texture object
     glGenTextures(1, &m_tex);
     glBindTexture(GL_TEXTURE_2D, m_tex);
 

@@ -24,6 +24,8 @@ Engine::Engine()
 
     // init SDL
     SDL_Init(SDL_INIT_EVERYTHING);
+    last_time = SDL_GetTicks();
+    num_frames = 0;
 
     // init OpenGL attributes
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
@@ -122,6 +124,13 @@ void Engine::update()
 void Engine::draw()
 {
     states.back()->draw();
+    Uint32 cur_time = SDL_GetTicks();
+    num_frames++;
+    if (cur_time > last_time + 1000) {
+        printf("%f ms/frame\n", 1000.0f/(float)num_frames);
+        num_frames = 0;
+        last_time += 1000;
+    }
 }
 
 bool Engine::save(int level)

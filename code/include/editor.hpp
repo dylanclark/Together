@@ -98,10 +98,10 @@ public:
     SDL_Texture* tex;
 };
 
-class Tileset
+class EditorTileset
 {
 public:
-    Tileset(int w, int h, std::vector<std::vector<TileType> > tiles_arg, std::vector<EditorObject> objs);
+    EditorTileset(int w, int h, std::vector<std::vector<TileType> > tiles_arg, std::vector<EditorObject> objs);
     void draw(Camera* cam);
     void handle_event(SDL_Event e, int scr_w, int scr_h, SDL_Rect cam_rect, PlacingType placing);
 
@@ -160,7 +160,7 @@ private:
     EditorCamera* camera;
     Border* border;
     Gridlines* grid;
-    Tileset* tileset;
+    EditorTileset* tileset;
 
     PlacingType placing;
     int lvl_w, lvl_h;

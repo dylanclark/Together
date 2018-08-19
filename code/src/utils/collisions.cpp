@@ -5,7 +5,7 @@
 #include <SDL2/SDL_image.h>
 
 // include header
-#include <char.hpp>
+#include <utils.hpp>
 
 Vector::Vector()
 {

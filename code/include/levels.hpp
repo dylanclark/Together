@@ -65,7 +65,7 @@ public:
     int get_y() { return m_y; }
     int get_w() { return m_w; }
     int get_h() { return m_h; }
-    std::vector<Tile>* get_tileset() { return &tileset; }
+    std::vector<Tile> get_tileset() { return tileset->get_tiles(); }
     std::vector<Object*> get_objects() { return objects; }
 
     bool just_exited;
@@ -83,7 +83,7 @@ private:
     int num_chars_ready;
 
     // tileset
-    std::vector<Tile> tileset;
+    Tileset* tileset;
     std::vector<Object*> objects;
     Texture tile_tex;
 };

@@ -41,15 +41,31 @@ class Tile
 public:
     Tile(int x, int y, TileType tile_type);
 
-    void render_bg(Camera* cam, int active_color, Texture* tile_tex);
-    void render_fg(Camera* cam, int active_color, Texture* tile_tex);
     TileType get_type() { return m_type; }
+    SDL_Rect get_rect() { return m_rect; }
     void set_type(TileType type) { m_type = type; }
-    SDL_Rect get_col_rect() { return col_rect; }
 
 private:
-    SDL_Rect col_rect;
+    SDL_Rect m_rect;
     TileType m_type;
+};
+
+class Tileset
+{
+public:
+    Tileset(std::vector<Tile> &tiles, int x, int y, int w, int h);
+    void render(Camera* cam, bool active_color);
+    std::vector<Tile> get_tiles() { return m_tiles; }
+    void set_type(int idx, TileType type) { m_tiles[idx].set_type(type); }
+
+private:
+    int m_x, m_y;
+    int m_w, m_h;
+    int tex_width, tex_height;
+    std::vector<Tile> m_tiles;
+
+    GLuint m_tex;
+    GLuint m_vao;
 };
 
 #endif /* tiles_hpp */

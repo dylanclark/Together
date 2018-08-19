@@ -2,6 +2,7 @@
 #include <levels.hpp>
 #include <states/menustate.hpp>
 #include <char.hpp>
+#include <utils.hpp>
 
 /******************/
 /*   LOAD LEVEL   */
@@ -21,13 +22,14 @@ void Level::load_level(int zone_num, int lvl_num, SDL_Color palette)
     level_file >> m_h;
 
     int cur_tile;
+    std::vector<Tile> tiles;
     int x = 0, y = 0;
     for (int i = 0; i < m_w * m_h; i++) {
         cur_tile = -1;
 
         level_file >> cur_tile;
         Tile new_tile(m_x + x, m_y + y, (TileType) cur_tile);
-        tileset.push_back(new_tile);
+        tiles.push_back(new_tile);
 
         // iterate horizontally
         x += TILE_WIDTH;
@@ -37,6 +39,7 @@ void Level::load_level(int zone_num, int lvl_num, SDL_Color palette)
             y += TILE_WIDTH;
         }
     }
+    tileset = new Tileset(tiles, m_x, m_y, m_w, m_h);
 
     int num_objs;
     level_file >> num_objs;
@@ -73,7 +76,7 @@ void Level::load_level(int zone_num, int lvl_num, SDL_Color palette)
             objects.push_back(new_shiftblock);
             for (int i = obj_x; i < obj_x + obj_w; i++) {
                 for (int j = obj_y; j < obj_y + obj_h; j++) {
-                    tileset[i + j*m_w].set_type(TILE_INVISIBLE);
+                    tileset->set_type(i + j*m_w, TILE_INVISIBLE);
                 }
             }
             break;
@@ -144,9 +147,7 @@ void Level::draw_bg(Camera* cam, bool active_color)
     }
 
     // draw stuff to the screen!
-    for (int i = 0; i < m_w * m_h; i++) {
-        tileset[i].render_bg(cam, active_color, &tile_tex);
-    }
+    tileset->render(cam, active_color);
 
     // draw objects
     for (int i = 0; i < objects.size(); i++) {
@@ -157,7 +158,7 @@ void Level::draw_bg(Camera* cam, bool active_color)
 void Level::draw_fg(Camera* cam, bool active_color)
 {
     for (int i = 0; i < m_w * m_h; i++) {
-        tileset[i].render_fg(cam, active_color, &tile_tex);
+        // tileset[i].render_fg(cam, active_color, &tile_tex);
     }
 
     // draw objects

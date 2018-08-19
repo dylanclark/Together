@@ -167,7 +167,7 @@ void Gridlines::draw(Camera* cam)
     }
 }
 
-Tileset::Tileset(int w, int h, std::vector<std::vector<TileType> > tiles_arg=std::vector<std::vector<TileType> >(), std::vector<EditorObject> objs_arg=std::vector<EditorObject>())
+EditorTileset::EditorTileset(int w, int h, std::vector<std::vector<TileType> > tiles_arg=std::vector<std::vector<TileType> >(), std::vector<EditorObject> objs_arg=std::vector<EditorObject>())
 {
     moving_platforms = 0;
     shiftblock = false;
@@ -190,7 +190,7 @@ Tileset::Tileset(int w, int h, std::vector<std::vector<TileType> > tiles_arg=std
     objs = objs_arg;
 }
 
-void Tileset::draw(Camera* cam)
+void EditorTileset::draw(Camera* cam)
 {
     SDL_Rect clip_rect;
     SDL_Rect cam_rect = cam->get_display();
@@ -326,7 +326,7 @@ void Tileset::draw(Camera* cam)
     // next we will draw all of the objects... eventually, bc we don't support textures yet
 }
 
-void Tileset::handle_event(SDL_Event e, int scr_w, int scr_h, SDL_Rect cam_rect, PlacingType placing)
+void EditorTileset::handle_event(SDL_Event e, int scr_w, int scr_h, SDL_Rect cam_rect, PlacingType placing)
 {
     int idx;
     bool click_color;
@@ -490,7 +490,7 @@ void Tileset::handle_event(SDL_Event e, int scr_w, int scr_h, SDL_Rect cam_rect,
     }
 }
 
-void Tileset::fill_rect(TileType type, int x, int y)
+void EditorTileset::fill_rect(TileType type, int x, int y)
 {
     clicked = false;
     int x1 = std::min(click_x, x);
@@ -542,7 +542,7 @@ void Tileset::fill_rect(TileType type, int x, int y)
     }
 }
 
-void Tileset::add_row_top()
+void EditorTileset::add_row_top()
 {
     height++;
     std::vector<TileType> new_row = std::vector<TileType>();
@@ -552,13 +552,13 @@ void Tileset::add_row_top()
     tiles.insert(tiles.begin(), new_row);
 }
 
-void Tileset::remove_row_top()
+void EditorTileset::remove_row_top()
 {
     height--;
     tiles.erase(tiles.begin());
 }
 
-void Tileset::add_row_bottom()
+void EditorTileset::add_row_bottom()
 {
     height++;
     std::vector<TileType> new_row = std::vector<TileType>();
@@ -568,13 +568,13 @@ void Tileset::add_row_bottom()
     tiles.push_back(new_row);
 }
 
-void Tileset::remove_row_bottom()
+void EditorTileset::remove_row_bottom()
 {
     height--;
     tiles.pop_back();
 }
 
-void Tileset::add_col_left()
+void EditorTileset::add_col_left()
 {
     width++;
     for (int i = 0; i < height; i++) {
@@ -582,7 +582,7 @@ void Tileset::add_col_left()
     }
 }
 
-void Tileset::remove_col_left()
+void EditorTileset::remove_col_left()
 {
     width--;
     for (int i = 0; i < height; i++) {
@@ -590,7 +590,7 @@ void Tileset::remove_col_left()
     }
 }
 
-void Tileset::add_col_right()
+void EditorTileset::add_col_right()
 {
     width++;
     for (int i = 0; i < height; i++) {
@@ -598,7 +598,7 @@ void Tileset::add_col_right()
     }
 }
 
-void Tileset::remove_col_right()
+void EditorTileset::remove_col_right()
 {
     width--;
     for (int i = 0; i < height; i++) {
@@ -632,7 +632,7 @@ void LevelEditor::init()
     if (!loading) {
         lvl_w = 67;
         lvl_h = 45;
-        tileset = new Tileset(lvl_w, lvl_h);
+        tileset = new EditorTileset(lvl_w, lvl_h);
     } else {
         level_file >> lvl_w;
         level_file >> lvl_h;
@@ -713,7 +713,7 @@ void LevelEditor::init()
             }
             objs.push_back(new_obj);
         }
-        tileset = new Tileset(lvl_w, lvl_h, tiles, objs);
+        tileset = new EditorTileset(lvl_w, lvl_h, tiles, objs);
     }
     placing = PLACING_TILES_BW;
 

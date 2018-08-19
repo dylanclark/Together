@@ -4,6 +4,7 @@
 
 #include <levels.hpp>
 #include <objects.hpp>
+#include <utils.hpp>
 
 /**************/
 /*   SPRING   */
@@ -178,25 +179,25 @@ std::vector<InvisibleWall> MovingPlatform::get_walls(std::vector<Tile> &tiles)
         SDL_Rect left_rect = left_wall.get_rect();
         left_rect.y += platform_h;
         left_rect.h -= platform_h*2;
-        if (check_full_overlap(left_rect, tiles[i].get_col_rect())) {
+        if (check_full_overlap(left_rect, tiles[i].get_rect())) {
             left_flag = false;
         }
         SDL_Rect right_rect = right_wall.get_rect();
         right_rect.y += platform_h;
         right_rect.h -= platform_h*2;
-        if (check_full_overlap(right_rect, tiles[i].get_col_rect())) {
+        if (check_full_overlap(right_rect, tiles[i].get_rect())) {
             right_flag = false;
         }
         SDL_Rect top_rect = top_wall.get_rect();
         top_rect.x += platform_w;
         top_rect.w -= platform_w*2;
-        if (check_full_overlap(top_rect, tiles[i].get_col_rect())) {
+        if (check_full_overlap(top_rect, tiles[i].get_rect())) {
             top_flag = false;
         }
         SDL_Rect bottom_rect = bottom_wall.get_rect();
         bottom_rect.x += platform_w;
         bottom_rect.w -= platform_w*2;
-        if (check_full_overlap(bottom_rect, tiles[i].get_col_rect())) {
+        if (check_full_overlap(bottom_rect, tiles[i].get_rect())) {
             bottom_flag = false;
         }
     }
@@ -675,25 +676,25 @@ std::vector<InvisibleWall> Crate::get_walls(std::vector<Tile> &tiles)
         SDL_Rect left_rect = left_wall.get_rect();
         left_rect.y += platform_h;
         left_rect.h -= platform_h*2;
-        if (check_full_overlap(left_rect, tiles[i].get_col_rect())) {
+        if (check_full_overlap(left_rect, tiles[i].get_rect())) {
             left_flag = false;
         }
         SDL_Rect right_rect = right_wall.get_rect();
         right_rect.y += platform_h;
         right_rect.h -= platform_h*2;
-        if (check_full_overlap(right_rect, tiles[i].get_col_rect())) {
+        if (check_full_overlap(right_rect, tiles[i].get_rect())) {
             right_flag = false;
         }
         SDL_Rect top_rect = top_wall.get_rect();
         top_rect.x += platform_w;
         top_rect.w -= platform_w*2;
-        if (check_full_overlap(top_rect, tiles[i].get_col_rect())) {
+        if (check_full_overlap(top_rect, tiles[i].get_rect())) {
             top_flag = false;
         }
         SDL_Rect bottom_rect = bottom_wall.get_rect();
         bottom_rect.x += platform_w;
         bottom_rect.w -= platform_w*2;
-        if (check_full_overlap(bottom_rect, tiles[i].get_col_rect())) {
+        if (check_full_overlap(bottom_rect, tiles[i].get_rect())) {
             bottom_flag = false;
         }
     }
