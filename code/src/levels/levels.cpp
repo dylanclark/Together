@@ -111,10 +111,6 @@ Level::Level(int zone_num, int lvl_num, int x, int y, SDL_Color palette)
     m_lvl_num = lvl_num;
     num_chars_ready = 0;
 
-    if (!tile_tex.load_object(TILE_WIDTH, TILE_WIDTH, "tiles.png")) {
-        printf("Failed to load tile sheet texture!\n");
-    }
-
     load_level(zone_num, lvl_num, palette);
 }
 
@@ -157,10 +153,6 @@ void Level::draw_bg(Camera* cam, bool active_color)
 
 void Level::draw_fg(Camera* cam, bool active_color)
 {
-    for (int i = 0; i < m_w * m_h; i++) {
-        // tileset[i].render_fg(cam, active_color, &tile_tex);
-    }
-
     // draw objects
     for (int i = 0; i < objects.size(); i++) {
         objects[i]->render_fg(cam, active_color);
@@ -233,11 +225,6 @@ void Zonestate::init()
 
 void Zonestate::update()
 {
-    // clear the window
-    // SDL_SetRenderDrawColor(game->rend, palette.r, palette.g, palette.b, SDL_ALPHA_OPAQUE);
-    glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT);
-
     if (controls_frozen) {
         freeze_duration--;
     }
@@ -261,6 +248,8 @@ void Zonestate::update()
 
 void Zonestate::draw()
 {
+    m_postprocessor.begin();
+
     glClearColor((float) palette.r / (float) 255, (float) palette.g / (float) 255, (float) palette.b / (float) 255, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
 
@@ -274,6 +263,7 @@ void Zonestate::draw()
         levels[i]->draw_fg(camera, active_color);
     }
 
+    m_postprocessor.render();
     SDL_GL_SwapWindow(game->window);
 }
 

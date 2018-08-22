@@ -27,7 +27,7 @@ public:
     FadeIn(int time);
 
     SDL_Rect rect;
-    Texture tex;
+    OldTexture tex;
     Uint8 alpha;
     int timer;
 
@@ -41,7 +41,7 @@ public:
     MenuItemType type;
     bool selected;
     SDL_Rect rect;
-    Texture tex;
+    OldTexture tex;
 
     virtual void render() = 0;
     virtual void select() = 0;
@@ -76,7 +76,7 @@ public:
     ~Title();
 
     SDL_Rect rect;
-    Texture tex;
+    OldTexture tex;
 
     void render();
 };

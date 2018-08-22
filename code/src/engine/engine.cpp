@@ -45,9 +45,7 @@ Engine::Engine()
         printf("Something went wrong!\n");
         exit(-1);
     }
-
     glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
-    m_shader = new Shader("resources/shaders/shader.vs", "resources/shaders/shader.fs");
 
     // initialize audio
     if(Mix_OpenAudio(MIX_DEFAULT_FREQUENCY, MIX_DEFAULT_FORMAT, 2, 256 ) == -1)
@@ -66,6 +64,27 @@ Engine::Engine()
     if(!(IMG_Init(img_flags) & img_flags)) {
         printf( "SDL_image could not initialize! SDL_image Error: %s\n", IMG_GetError() );
     }
+
+    load_resources();
+}
+
+void Engine::load_resources()
+{
+    // textures
+    ResourceManager::load_texture("char-sheet-black.png", "black_player");
+    ResourceManager::load_texture("char-sheet-white.png", "white_player");
+    ResourceManager::load_texture("cross-spring.png", "cross_spring");
+    ResourceManager::load_texture("black-spring.png", "black_spring");
+    ResourceManager::load_texture("white-spring.png", "white_spring");
+
+    // shaders
+    ResourceManager::load_shader("level.vs", "level.fs", "level");
+    ResourceManager::load_shader("post-process.vs", "invertor.fs", "invertor");
+    ResourceManager::load_shader("post-process.vs", "display.fs", "display");
+    ResourceManager::load_shader("vblur.vs", "blur.fs", "vblur");
+    ResourceManager::load_shader("hblur.vs", "blur.fs", "hblur");
+    ResourceManager::load_shader("post-process.vs", "bright-filter.fs", "bright_filter");
+    ResourceManager::load_shader("post-process.vs", "combiner.fs", "combiner");
 }
 
 void Engine::cleanup()
@@ -75,7 +94,11 @@ void Engine::cleanup()
     save_file.close();
     save_reader.close();
     Mix_CloseAudio();
-    SDL_GL_DeleteContext(gl_context);
+    if (rend) {
+        SDL_DestroyRenderer(rend);
+    } else {
+        SDL_GL_DeleteContext(gl_context);
+    }
     SDL_DestroyWindow(window);
     SDL_Quit();
 }

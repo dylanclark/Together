@@ -8,14 +8,20 @@
 #include <SDL2/SDL_ttf.h>
 #include <vector>
 #include <iostream>
+#include <map>
 #include <fstream>
 
 #include <sound.hpp>
 #include <shader.hpp>
+#include <textures.hpp>
 
 // screen dimensions!
 #define SCREEN_WIDTH 1080
 #define SCREEN_HEIGHT 720
+
+/**************/
+/*   ENGINE   */
+/**************/
 
 class Gamestate;
 
@@ -56,12 +62,17 @@ public:
     std::vector<Gamestate*> states;
 
 private:
+    void load_resources();
     bool running_flag;
     Uint32 last_time;
     int num_frames;
 };
 
 extern Engine* game;
+
+/*****************/
+/*   GAMESTATE   */
+/*****************/
 
 class Gamestate
 {
@@ -82,6 +93,27 @@ public:
 
     SDL_Color palette;
 };
+
+/************************/
+/*   RESOURCE MANAGER   */
+/************************/
+
+class ResourceManager
+{
+public:
+    static std::map<std::string, Shader>  shaders;
+    static std::map<std::string, Texture> textures;
+    static Shader load_shader(const GLchar* vertex_shader_file, const GLchar* frag_shader_file, std::string name);
+    static Shader get_shader(std::string name);
+    static Texture load_texture(const GLchar* file, std::string name);
+    static Texture get_texture(std::string name);
+private:
+    ResourceManager() { };
+};
+
+/******************/
+/*   CONTROLLER   */
+/******************/
 
 class Controller
 {

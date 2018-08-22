@@ -14,18 +14,20 @@ Spring::Spring(int x, int y, bool color, float y_vel, SDL_Color palette)
 {
     m_color = color;
     m_yvel = y_vel;
+    Texture m_tex;
     if (m_color == 0) {
-        m_tex.load_object(16, 16, "spring-sheet-black.png", &palette);
+        m_tex = ResourceManager::get_texture("black_spring");
     } else {
-        m_tex.load_object(16, 16, "spring-sheet-white.png", &palette);
+        m_tex = ResourceManager::get_texture("white_spring");
     }
+    m_sprite = Sprite(m_tex, 32, 16, &palette);
     m_status = SPRING_IDLE;
 
     m_type = OBJECT_SPRING;
     m_rect.w = 8;
     m_rect.h = 4;
-    m_rect.x = x + (m_tex.get_width()-m_rect.w)/2;
-    m_rect.y = y + (m_color == 0)*(m_tex.get_height()-m_rect.h);
+    m_rect.x = x + (m_sprite.get_width()-m_rect.w)/2;
+    m_rect.y = y + (m_color == 0)*(m_sprite.get_height()-m_rect.h);
 }
 
 void Spring::render_bg(Camera* cam, bool active_color)
@@ -43,12 +45,12 @@ void Spring::render_bg(Camera* cam, bool active_color)
             frame = 0;
         }
     }
-    int tex_w = m_tex.get_width();
-    int tex_h = m_tex.get_height();
+    int tex_w = m_sprite.get_width();
+    int tex_h = m_sprite.get_height();
     int render_x = m_rect.x - (tex_w-m_rect.w)/2;
-    int render_y = m_rect.y - (m_color == 0)*(m_tex.get_height()-m_rect.h);
+    int render_y = m_rect.y - (m_color == 0)*(m_sprite.get_height()-m_rect.h);
     SDL_Rect frame_clip = {frame*tex_w, m_status*tex_h, tex_w, tex_h};
-    m_tex.render(render_x, render_y, &frame_clip, cam);
+    m_sprite.render(render_x, render_y, &frame_clip, cam);
 }
 
 void Spring::spring()
@@ -143,7 +145,7 @@ void MovingPlatform::update_y()
 
 void MovingPlatform::render_bg(Camera* cam, bool active_color)
 {
-    m_tex.render(m_rect.x, m_rect.y, NULL, cam);
+    m_sprite.render(m_rect.x, m_rect.y, NULL, cam);
 }
 
 void MovingPlatform::trigger()
@@ -443,7 +445,7 @@ ShiftBlock::ShiftBlock(int x, int y, int w, int h, SDL_Color palette)
     }
     SDL_SetRenderTarget(game->rend, NULL);
 
-    // m_tex.create_texture(tex, w, h);
+    // m_sprite.create_texture(tex, w, h);
 }
 
 void ShiftBlock::render_bg(Camera* cam, bool active_color)
@@ -453,7 +455,7 @@ void ShiftBlock::render_bg(Camera* cam, bool active_color)
     int frame = ((int) ((float) SDL_GetTicks() / animation_speed)) % animation_length;
     int clip_y = m_status + (m_status != SHIFTBLOCK_IDLE || active_color == 1);
     SDL_Rect clip_rect = {frame * m_rect.w, clip_y * m_rect.h, m_rect.w, m_rect.h};
-    m_tex.render(m_rect.x, m_rect.y, &clip_rect, cam);
+    m_sprite.render(m_rect.x, m_rect.y, &clip_rect, cam);
 }
 
 void ShiftBlock::render_fg(Camera* cam, bool active_color)
@@ -628,7 +630,7 @@ Crate::Crate(int x, int y, int w, int h, bool color, SDL_Color palette)
         }
     }
     SDL_SetRenderTarget(game->rend, NULL);
-    // m_tex.create_texture(tex, w, h);
+    // m_sprite.create_texture(tex, w, h);
 }
 
 void Crate::render_bg(Camera* cam, bool active_color)
@@ -645,7 +647,7 @@ void Crate::render_bg(Camera* cam, bool active_color)
     int frame = ((int) ((float) SDL_GetTicks() / animation_speed)) % animation_length;
     int clip_y = (m_color != active_color);
     SDL_Rect clip_rect = {frame * m_rect.w, clip_y * m_rect.h, m_rect.w, m_rect.h};
-    m_tex.render(m_rect.x, m_rect.y, &clip_rect, cam);
+    m_sprite.render(m_rect.x, m_rect.y, &clip_rect, cam);
 }
 
 void Crate::update_x(SDL_Rect black_player, SDL_Rect white_player)
@@ -732,11 +734,12 @@ void Crate::push(SDL_Rect player_pushing, SDL_Rect other_player)
 
 XSpring::XSpring(int x, int y, SDL_Color palette)
 {
-    m_tex.load_object(16, 32, "cross-spring.png", &palette);
+    Texture m_tex = ResourceManager::get_texture("cross_spring");
+    m_sprite = Sprite(m_tex, 16, 32, &palette);
     m_rect.w = 12;
     m_rect.h = 10;
-    m_rect.x = x + (m_tex.get_width() - m_rect.w) / 2;
-    m_rect.y = y + (m_tex.get_height() - m_rect.h) / 2;
+    m_rect.x = x + (m_sprite.get_width() - m_rect.w) / 2;
+    m_rect.y = y + (m_sprite.get_height() - m_rect.h) / 2;
     m_type = OBJECT_XSPRING;
     m_status = XSPRING_IDLE;
     animation_start = SDL_GetTicks();
@@ -789,12 +792,12 @@ void XSpring::render_bg(Camera* cam, bool active_color)
         animation_start = SDL_GetTicks();
     }
     frame = ((SDL_GetTicks() - animation_start) / animation_speed);
-    int tex_w = m_tex.get_width();
-    int tex_h = m_tex.get_height();
+    int tex_w = m_sprite.get_width();
+    int tex_h = m_sprite.get_height();
     int render_x = m_rect.x - (tex_w-m_rect.w)/2;
-    int render_y = m_rect.y - (m_tex.get_height()-m_rect.h) / 2;
+    int render_y = m_rect.y - (m_sprite.get_height()-m_rect.h) / 2;
     SDL_Rect frame_clip = {frame*tex_w, m_status*tex_h, tex_w, tex_h};
-    m_tex.render(render_x, render_y, &frame_clip, cam);
+    m_sprite.render(render_x, render_y, &frame_clip, cam);
 }
 
 void XSpring::update_y()
@@ -867,14 +870,14 @@ SDL_Rect XSpring::get_land_rect()
     switch (m_status)
     {
     case XSPRING_IDLE:
-        land_rect.y = m_rect.y - (m_tex.get_height() - m_rect.h) / 2 + 6;
+        land_rect.y = m_rect.y - (m_sprite.get_height() - m_rect.h) / 2 + 6;
         break;
     case XSPRING_WHITE_ON:
-        land_rect.y = m_rect.y - (m_tex.get_height() - m_rect.h) / 2 + 1;
+        land_rect.y = m_rect.y - (m_sprite.get_height() - m_rect.h) / 2 + 1;
         land_rect.h += 5;
         break;
     case XSPRING_BLACK_ON:
-        land_rect.y = m_rect.y - (m_tex.get_height() - m_rect.h) / 2 + 6;
+        land_rect.y = m_rect.y - (m_sprite.get_height() - m_rect.h) / 2 + 6;
         land_rect.h += 5;
         break;
     default:

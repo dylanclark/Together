@@ -2,12 +2,14 @@
 #define shader_hpp
 
 #include <glm/glm.hpp>
+#include <glad.h>
 #include <string>
 
 class Shader
 {
 public:
-    Shader(const char* vertex_path, const char* fragment_path);
+    Shader() { };
+    Shader(const GLchar* vertex_path, const GLchar* fragment_path);
     void set_bool(const std::string &name, bool value);
     void set_float(const std::string &name, float value);
     void set_int(const std::string &name, int value);

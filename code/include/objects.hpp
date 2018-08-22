@@ -49,7 +49,7 @@ public:
 
     SDL_Rect m_rect;
     ObjectType m_type;
-    Texture m_tex;
+    Sprite m_sprite;
     bool m_color;
 };
 

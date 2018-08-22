@@ -69,7 +69,7 @@ public:
     bool in_level(Level* lvl);
 
 private:
-    Texture m_tex;
+    Sprite m_sprite;
 
     CharStatus m_status;
 

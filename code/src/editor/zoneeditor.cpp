@@ -2,6 +2,7 @@
 #include <math.h>
 #include <sys/stat.h>
 
+#include <utils.hpp>
 #include <editor.hpp>
 
 static const int SIDE_MARGIN = 100;
@@ -835,6 +836,8 @@ void LevelThumbnail::move(int x, int y, std::vector<LevelThumbnail> &levels)
 
 void ZoneEditor::init()
 {
+    SDL_GL_DeleteContext(game->gl_context);
+    game->rend = SDL_CreateRenderer(game->window, -1, SDL_RENDERER_ACCELERATED);
     bool loading = get_yes_no("load existing zone?");
     mousedown = false;
     selected = -1;
@@ -922,7 +925,14 @@ void ZoneEditor::init()
 
 void ZoneEditor::cleanup()
 {
-
+    SDL_DestroyRenderer(game->rend);
+    game->gl_context = SDL_GL_CreateContext(game->window);
+    SDL_GL_SetSwapInterval(1);
+    if(!gladLoadGL()) {
+        printf("Something went wrong!\n");
+        exit(-1);
+    }
+    glViewport(0, 0, game->screen_width, game->screen_height);
 }
 
 void ZoneEditor::update()
@@ -1099,6 +1109,7 @@ void ZoneEditor::handle_events()
             case SDL_SCANCODE_ESCAPE:
             case SDL_SCANCODE_RETURN:
                 write_zone();
+                destroy_editor();
                 game->change_state(new Zonestate(m_zone_num));
                 break;
             default:
@@ -1283,4 +1294,23 @@ void ZoneEditor::write_zone()
     for (int i = 0; i < levels.size(); i++) {
         zone_file << levels[i].m_x - min_x << " " << levels[i].m_y - min_y << std::endl;
     }
+}
+
+void ZoneEditor::destroy_editor()
+{
+    SDL_DestroyRenderer(game->rend);
+
+    // init OpenGL attributes
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+    SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+
+    game->gl_context = SDL_GL_CreateContext(game->window);
+    SDL_GL_SetSwapInterval(1);
+    if(!gladLoadGL()) {
+        printf("Something went wrong!\n");
+        exit(-1);
+    }
+    glViewport(0, 0, game->screen_width, game->screen_height);
 }

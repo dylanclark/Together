@@ -16,7 +16,7 @@ void main()
     if (texcolor.a < 0.1)
         discard;
 
-    float ambient_strength = 1;
+    float ambient_strength = 0.7;
 
     vec3 normal = texture(m_normalmap, tex_coord).rgb;
     normal = normalize(normal * 2.0 - 1.0);
@@ -24,5 +24,5 @@ void main()
     float diffuse = max(dot(normal, light_dir), 0.0);
 
     vec3 result = (ambient_strength) * (texcolor.xyz);
-    color = vec4(result, texcolor.a);
+    color = vec4(result, 1.0);
 }

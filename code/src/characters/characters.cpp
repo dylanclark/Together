@@ -44,21 +44,15 @@ Dot::Dot(int x, int y, bool color, SDL_Color* palette)
     controller = new class Controller;
 
     m_color = color;
+    Texture m_tex;
     if (m_color == 0) {
         m_status = CHAR_IDLE;
-        if (!m_tex.load_object(16, 16, "char-sheet-black.png", palette))
-        {
-            printf("Failed to load black dot texture!\n");
-            return;
-        }
+        m_tex = ResourceManager::get_texture("black_player");
     } else {
         m_status = CHAR_INACTIVE;
-        if (!m_tex.load_object(16, 16, "char-sheet-white.png", palette))
-        {
-            printf("Failed to load white dot texture!\n");
-            return;
-        }
+        m_tex = ResourceManager::get_texture("white_player");
     }
+    m_sprite = Sprite(m_tex, 16, 16, palette);
 
     // initialize collision rectangle
     col_rect.w = 12;
@@ -1183,8 +1177,8 @@ void Dot::render(Camera* cam, Level* lvl)
 
     // relevant clips
     SDL_Rect frame_clip = {frame * 16, m_status * 16, 16, 16};
-    int render_x = col_rect.x + (col_rect.w - m_tex.get_width()) / 2;
-    int render_y = col_rect.y + (m_color == 0) * (col_rect.h - m_tex.get_height());
+    int render_x = col_rect.x + (col_rect.w - m_sprite.get_width()) / 2;
+    int render_y = col_rect.y + (m_color == 0) * (col_rect.h - m_sprite.get_height());
     float angle = 0.0;
     if (m_status == CHAR_EXITED) {
         int lvl_x = lvl->get_x();
@@ -1194,18 +1188,18 @@ void Dot::render(Camera* cam, Level* lvl)
         if (exit_dir == EXIT_LEFT) {
             render_x = lvl_x;
         } else if (exit_dir == EXIT_RIGHT) {
-            render_x = lvl_x + lvl_w - m_tex.get_width();
+            render_x = lvl_x + lvl_w - m_sprite.get_width();
         } else if (exit_dir == EXIT_UP) {
             render_y = lvl_y;
             angle = 90.0;
             dir = DIR_LEFT;
         } else if (exit_dir == EXIT_DOWN) {
-            render_y = lvl_y + lvl_h - m_tex.get_height();
+            render_y = lvl_y + lvl_h - m_sprite.get_height();
             angle = 270.0;
             dir = DIR_LEFT;
         }
     }
-    m_tex.render(render_x, render_y, &frame_clip, cam, dir, m_color);
+    m_sprite.render(render_x, render_y, &frame_clip, cam, dir, m_color);
 };
 
 void Dot::save_state()

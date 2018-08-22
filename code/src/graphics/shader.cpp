@@ -8,8 +8,13 @@
 #include <string>
 #include <shader.hpp>
 
-Shader::Shader(const char* vertex_path, const char* fragment_path)
+Shader::Shader(const char* vertex_filename, const char* frag_filename)
 {
+    char vertex_path[64] = "resources/shaders/";
+    char fragment_path[64] = "resources/shaders/";
+    int length = strlen(vertex_path);
+    strcpy(vertex_path + length, vertex_filename);
+    strcpy(fragment_path + length, frag_filename);
     std::string vertex_code;
     std::string fragment_code;
     std::ifstream vertex_file;
@@ -34,6 +39,7 @@ Shader::Shader(const char* vertex_path, const char* fragment_path)
     }
     catch(std::ifstream::failure e)
     {
+        printf("vertex_filename = %s\n", vertex_filename);
         std::cout << "failure reading from shader files" << std::endl;
     }
     const char* vertex_shader_string = vertex_code.c_str();

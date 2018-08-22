@@ -6,6 +6,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 
+#include <post-processing.hpp>
 #include <engine.hpp>
 #include <textures.hpp>
 #include <char.hpp>
@@ -115,6 +116,7 @@ public:
     bool active_color;
 
 private:
+    LevelGraphicsPipeline m_postprocessor;
     SDL_Color palette;
 
     // level number

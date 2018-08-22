@@ -67,7 +67,7 @@ class Border
 public:
     Border(int w, int h);
     void update(int w, int h);
-    void draw(Camera* cam);
+    void draw(EditorCamera* cam);
 private:
     SDL_Rect rect;
 };
@@ -78,7 +78,7 @@ class Gridlines
 public:
     Gridlines(int w, int h);
     void update(int w, int h);
-    void draw(Camera* cam);
+    void draw(EditorCamera* cam);
 private:
     int width, height;
 };
@@ -102,7 +102,7 @@ class EditorTileset
 {
 public:
     EditorTileset(int w, int h, std::vector<std::vector<TileType> > tiles_arg, std::vector<EditorObject> objs);
-    void draw(Camera* cam);
+    void draw(EditorCamera* cam);
     void handle_event(SDL_Event e, int scr_w, int scr_h, SDL_Rect cam_rect, PlacingType placing);
 
     void add_row_top();
@@ -132,8 +132,8 @@ private:
     bool shiftblock;
     bool crate;
 
-    Texture m_tiletex;
-    Texture m_shiftblocktex;
+    OldTexture m_tiletex;
+    OldTexture m_shiftblocktex;
 };
 
 std::string get_str(std::string prompt, std::string result = "");
@@ -294,6 +294,7 @@ public:
 private:
     void delete_level(int lvl_num);
     void write_zone();
+    void destroy_editor();
 
     int m_zone_num;
     int min_x, max_x;

@@ -154,33 +154,34 @@ Tileset::Tileset(std::vector<Tile> &tiles, int x, int y, int w, int h, SDL_Color
 
 void Tileset::render(Camera* cam, bool active_color)
 {
-    game->m_shader->use();
+    Shader m_shader = ResourceManager::get_shader("level");
+    m_shader.use();
 
     // set model matrix - this tells us where our object is in the world space
     glm::mat4 model;
     model = glm::translate(model, glm::vec3(m_x, m_y, 0.0f));
-    game->m_shader->set_float_mat4("model", model);
+    m_shader.set_float_mat4("model", model);
 
     // set view matrix - this tells us what part of the world we are looking at
-    game->m_shader->set_float_mat4("view", cam->get_view());
+    m_shader.set_float_mat4("view", cam->get_view());
 
     // set projection matrix - this determines the perspective with which we look at stuff
-    game->m_shader->set_float_mat4("proj", cam->get_proj());
+    m_shader.set_float_mat4("proj", cam->get_proj());
 
     // set texture clip matrix - this decides which piece of the texture to use
     float tex_x_offset = (float) ((active_color == 1) * TILE_WIDTH) / (float) tex_width;
     glm::mat4 tex_clip;
     tex_clip = glm::translate(tex_clip, glm::vec3(tex_x_offset, 0.0f, 0.0f));
-    game->m_shader->set_float_mat4("tex_clip", tex_clip);
+    m_shader.set_float_mat4("tex_clip", tex_clip);
 
     // set color
     float obj_r = (float) m_palette.r / (float) 255;
     float obj_g = (float) m_palette.g / (float) 255;
     float obj_b = (float) m_palette.b / (float) 255;
     glm::vec3 obj_color = glm::vec3(obj_r, obj_g, obj_b);
-    game->m_shader->set_vec3("obj_color", obj_color);
+    m_shader.set_vec3("obj_color", obj_color);
 
-    game->m_shader->set_int("m_texture", 0);
+    m_shader.set_int("m_texture", 0);
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, m_tex);
     glBindVertexArray(m_vao);
