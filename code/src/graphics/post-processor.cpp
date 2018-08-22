@@ -48,9 +48,7 @@ GLuint PostProcessor::render(GLuint texture)
 {
     // bind our fbo and use our shader
     m_fbo->bind();
-    CheckGLError();
     m_shader.use();
-    CheckGLError();
 
     // only for blurring
     if (m_name == "hblur" || m_name == "vblur") {

@@ -3,7 +3,7 @@
 layout (location = 0) in vec4 position;
 
 out vec2 tex_coord;
-out vec3 frag_pos;
+out vec2 frag_pos;
 
 uniform mat4 tex_clip;
 uniform mat4 model;
@@ -17,5 +17,5 @@ void main()
     gl_Position = proj * view * model * vec4(position.xy, 0.0, 1.0);
     tex_coord_vec = tex_clip * vec4(position.zw, 0.0, 1.0);
     tex_coord = vec2(tex_coord_vec.x, tex_coord_vec.y);
-    frag_pos = vec3(model * (position.xy, 0.0, 1.0));
+    frag_pos = vec2(model * vec4(position.xy, 0.0, 1.0));
 }

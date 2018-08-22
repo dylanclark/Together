@@ -1,3 +1,5 @@
+#ifndef utils_hpp
+#define utils_hpp
 
 #include <SDL2/SDL.h>
 
@@ -17,6 +19,7 @@ class Vector
 public:
     // init
     Vector();
+    Vector(int new_x, int new_y) : x(new_x), y(new_y) { }
 
     // coords
     int x;
@@ -30,3 +33,5 @@ bool check_grounded(SDL_Rect a, SDL_Rect b, bool a_color);
 bool check_full_overlap(SDL_Rect a, SDL_Rect b);
 bool check_in_platform(SDL_Rect a, SDL_Rect b);
 bool check_touching_vert(SDL_Rect a, SDL_Rect b);
+
+#endif /* utils_hpp */

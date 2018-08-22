@@ -33,6 +33,8 @@ private:
 /*   SPRITE   */
 /**************/
 
+class Light;
+
 class Sprite
 {
 public:
@@ -40,7 +42,7 @@ public:
     Sprite(Texture tex, int w, int h, SDL_Color* palette);
     ~Sprite() { }
 
-    void render(int x, int y, SDL_Rect* clip, Camera* cam, int dir = 0, int flip = 0);
+    void render(int x, int y, SDL_Rect* clip, Camera* cam, std::vector<Light> lights, int dir = 0, int flip = 0, bool is_light = false);
 
     int get_width() { return m_width; }
     int get_height() { return m_height; }

@@ -56,6 +56,7 @@ Shader::Shader(const char* vertex_filename, const char* frag_filename)
 
     if (!success) {
         glGetShaderInfoLog(vertex_shader, 512, NULL, info_log);
+        printf("for %s\n", vertex_path);
         std::cout << "vertex shader compilation failed!\n" << info_log << std::endl;
     }
 
@@ -66,6 +67,7 @@ Shader::Shader(const char* vertex_filename, const char* frag_filename)
 
     if (!success) {
         glGetShaderInfoLog(fragment_shader, 512, NULL, info_log);
+        printf("for %s\n", fragment_path);
         std::cout << "fragment shader compilation failed!\n" << info_log << std::endl;
     }
 
@@ -103,6 +105,12 @@ void Shader::set_float_mat4(const std::string &name, glm::mat4 matrix)
 {
     int matr_idx = glGetUniformLocation(m_id, name.c_str());
     glUniformMatrix4fv(matr_idx, 1, GL_FALSE, glm::value_ptr(matrix));
+}
+
+void Shader::set_vec2(const std::string &name, glm::vec2 vector)
+{
+    int vec_idx = glGetUniformLocation(m_id, name.c_str());
+    glUniform2f(vec_idx, vector.x, vector.y);
 }
 
 void Shader::set_vec3(const std::string &name, glm::vec3 vector)

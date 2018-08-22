@@ -68,6 +68,7 @@ public:
     int get_h() { return m_h; }
     std::vector<Tile> get_tileset() { return tileset->get_tiles(); }
     std::vector<Object*> get_objects() { return objects; }
+    std::vector<Light> get_lights();
 
     bool just_exited;
 

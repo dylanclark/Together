@@ -53,19 +53,12 @@ GLuint Combiner::render(GLuint texture1, GLuint texture2)
     // bind the texture and draw it
     m_shader.set_int("texture1", 0);
     m_shader.set_int("texture2", 1);
-    CheckGLError();
     glActiveTexture(GL_TEXTURE0);
-    CheckGLError();
     glBindTexture(GL_TEXTURE_2D, texture1);
-    CheckGLError();
     glActiveTexture(GL_TEXTURE1);
-    CheckGLError();
     glBindTexture(GL_TEXTURE_2D, texture2);
-    CheckGLError();
     glBindVertexArray(m_vao);
-    CheckGLError();
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-    CheckGLError();
 
     // wrap up and return
     m_fbo->unbind();

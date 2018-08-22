@@ -20,6 +20,7 @@ typedef enum PlacingType {
     PLACING_SLOPE_2,
     PLACING_PLATFORMS,
     PLACING_CRATES,
+    PLACING_SMALL_LAMPS,
     PLACING_SPRINGS,
     PLACING_XSPRINGS,
     PLACING_MOVING_PLATFORMS,
@@ -94,6 +95,7 @@ public:
     int pause_length, move_length;
     // for springs
     int spring_height;
+    int light_strength;
     Color color;
     SDL_Texture* tex;
 };

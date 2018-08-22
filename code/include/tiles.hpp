@@ -33,6 +33,8 @@ typedef enum _TileType {
     TILE_INVISIBLE,
 } TileType;
 
+class Light;
+
 bool tiletype_isslope(TileType type);
 
 // class definition
@@ -54,7 +56,7 @@ class Tileset
 {
 public:
     Tileset(std::vector<Tile> &tiles, int x, int y, int w, int h, SDL_Color palette);
-    void render(Camera* cam, bool active_color);
+    void render(Camera* cam, std::vector<Light> lights, bool active_color);
     std::vector<Tile> get_tiles() { return m_tiles; }
     void set_type(int idx, TileType type) { m_tiles[idx].set_type(type); }
 
@@ -67,6 +69,7 @@ private:
     SDL_Color m_palette;
 
     GLuint m_tex;
+    GLuint m_normalmap;
     GLuint m_vao;
 };
 

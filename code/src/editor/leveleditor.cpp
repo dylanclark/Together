@@ -266,6 +266,9 @@ void EditorTileset::draw(EditorCamera* cam)
         } else if (objs[i].type == OBJECT_XSPRING) {
             w = 2 * TILE_WIDTH * aspect_ratio;
             h = 4 * TILE_WIDTH * aspect_ratio;
+        } else if (objs[i].type == OBJECT_SMALL_LAMP) {
+            w = 2 * TILE_WIDTH * aspect_ratio;
+            h = 2 * TILE_WIDTH * aspect_ratio;
         } else if (objs[i].type == OBJECT_MOVING_PLATFORM) {
             w = objs[i].w * TILE_WIDTH * aspect_ratio;
             h = objs[i].h * TILE_WIDTH * aspect_ratio;
@@ -277,7 +280,7 @@ void EditorTileset::draw(EditorCamera* cam)
         SDL_Rect render_rect = {x, y, w, h};
 
         if (objs[i].type == OBJECT_SPRING) {
-            SDL_SetRenderDrawColor(game->rend, 255, 255, 0, SDL_ALPHA_OPAQUE);
+            SDL_SetRenderDrawColor(game->rend, 0, 255, 0, SDL_ALPHA_OPAQUE);
             SDL_RenderFillRect(game->rend, &render_rect);
             int arrow_w = TILE_WIDTH/2 * aspect_ratio;
             int arrow_h = TILE_WIDTH*objs[i].spring_height * aspect_ratio;
@@ -287,9 +290,13 @@ void EditorTileset::draw(EditorCamera* cam)
             SDL_SetRenderDrawColor(game->rend, 255, 0, 0, SDL_ALPHA_OPAQUE);
             SDL_RenderFillRect(game->rend, &arrow_rect);
         } else if (objs[i].type == OBJECT_XSPRING) {
-            SDL_SetRenderDrawColor(game->rend, 255, 150, 0, SDL_ALPHA_OPAQUE);
+            SDL_SetRenderDrawColor(game->rend, 100, 255, 0, SDL_ALPHA_OPAQUE);
             SDL_RenderFillRect(game->rend, &render_rect);
             // TODO render xspring
+        } else if (objs[i].type == OBJECT_SMALL_LAMP) {
+            SDL_SetRenderDrawColor(game->rend, 255, 255, 0, SDL_ALPHA_OPAQUE);
+            SDL_RenderFillRect(game->rend, &render_rect);
+            // TODO render circle showing the light strength
         } else if (objs[i].type == OBJECT_MOVING_PLATFORM) {
             SDL_SetRenderDrawBlendMode(game->rend, SDL_BLENDMODE_BLEND);
             if (objs[i].color == 0) {
@@ -485,6 +492,18 @@ void EditorTileset::handle_event(SDL_Event e, int scr_w, int scr_h, SDL_Rect cam
             new_xspring.type = OBJECT_XSPRING;
             objs.push_back(new_xspring);
             break;
+        case PLACING_SMALL_LAMPS:
+            if (!click_color != tiles[y1][x1]) {
+                printf("\a");
+                return;
+            }
+            EditorObject new_smalllamp;
+            new_smalllamp.x = x1;
+            new_smalllamp.y = y1;
+            new_smalllamp.color = (Color) click_color;
+            new_smalllamp.light_strength = atoi(get_str("light strength").c_str());
+            new_smalllamp.type = OBJECT_SMALL_LAMP;
+            objs.push_back(new_smalllamp);
         default:
             break;
         }
@@ -661,6 +680,7 @@ void LevelEditor::init()
         int obj_pause_length, obj_move_length;
         bool obj_color;
         float obj_springvel;
+        int obj_strength;
         EditorObject new_obj;
 
         // load all objects!
@@ -708,6 +728,13 @@ void LevelEditor::init()
                 level_file >> obj_x >> obj_y;
                 new_obj.x = obj_x;
                 new_obj.y = obj_y;
+                break;
+            case OBJECT_SMALL_LAMP:
+                level_file >> obj_x >> obj_y >> obj_color >> obj_strength;
+                new_obj.x = obj_x;
+                new_obj.y = obj_y;
+                new_obj.color = (Color) obj_color;
+                new_obj.light_strength = obj_strength;
                 break;
             default:
                 break;
@@ -874,6 +901,9 @@ void LevelEditor::draw_UI(int scr_w, int scr_h)
         break;
     case PLACING_XSPRINGS:
         placing_str += "xsprings";
+        break;
+    case PLACING_SMALL_LAMPS:
+        placing_str += "small lamps";
         break;
     case PLACING_MOVING_PLATFORMS:
         placing_str += "moving platforms (black/white)";
@@ -1087,6 +1117,9 @@ void LevelEditor::write_level()
             break;
         case OBJECT_XSPRING:
             level_file << objs[i].x << " " << objs[i].y;
+            break;
+        case OBJECT_SMALL_LAMP:
+            level_file << objs[i].x << " " << objs[i].y << " " << objs[i].color << " " << objs[i].light_strength;
             break;
         default:
             break;

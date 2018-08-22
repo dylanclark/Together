@@ -98,9 +98,32 @@ Tileset::Tileset(std::vector<Tile> &tiles, int x, int y, int w, int h, SDL_Color
     if (surface->format->BytesPerPixel == 4) {
         mode = GL_RGBA;
     }
-
     glTexImage2D(GL_TEXTURE_2D, 0, mode, tex_width, tex_height, 0, mode, GL_UNSIGNED_BYTE, surface->pixels);
     SDL_FreeSurface(surface);
+    glBindTexture(GL_TEXTURE_2D, 0);
+
+    // generate normal_map texture object
+    glGenTextures(1, &m_normalmap);
+    glBindTexture(GL_TEXTURE_2D, m_normalmap);
+
+    // we'll set some parameters for completeness
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+    // let's load the normal_map
+    SDL_Surface* normal_surface = IMG_Load("resources/textures/tiles-normal.png");
+    if (normal_surface == NULL) {
+        printf("Unable to load image %s! SDL error: %s\n",
+               "resources/textures/tiles-normal.png", SDL_GetError());
+    }
+    mode = GL_RGB;
+    if (normal_surface->format->BytesPerPixel == 4) {
+        mode = GL_RGBA;
+    }
+    glTexImage2D(GL_TEXTURE_2D, 0, mode, tex_width, tex_height, 0, mode, GL_UNSIGNED_BYTE, normal_surface->pixels);
+    SDL_FreeSurface(normal_surface);
 
     // we need 4 vertices for every quad, 4 coords per vertex, w*h quads total
     float* vertices = (float*) malloc(sizeof(float) * 4 * 4 * (w*h));
@@ -152,9 +175,9 @@ Tileset::Tileset(std::vector<Tile> &tiles, int x, int y, int w, int h, SDL_Color
     free(vertices);
 }
 
-void Tileset::render(Camera* cam, bool active_color)
+void Tileset::render(Camera* cam, std::vector<Light> lights, bool active_color)
 {
-    Shader m_shader = ResourceManager::get_shader("level");
+    Shader m_shader = ResourceManager::get_shader("level_normal");
     m_shader.use();
 
     // set model matrix - this tells us where our object is in the world space
@@ -181,9 +204,20 @@ void Tileset::render(Camera* cam, bool active_color)
     glm::vec3 obj_color = glm::vec3(obj_r, obj_g, obj_b);
     m_shader.set_vec3("obj_color", obj_color);
 
+    // set up lights
+    m_shader.set_int("num_lights", lights.size());
+    for (int i = 0; i < lights.size(); i++) {
+        std::string number = std::to_string(i);
+        m_shader.set_float("lights["+number+"].strength", lights[i].get_strength());
+        m_shader.set_vec2("lights["+number+"].position", glm::vec2(lights[i].get_x(), lights[i].get_y()));
+    }
+
     m_shader.set_int("m_texture", 0);
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, m_tex);
+    m_shader.set_int("m_normalmap", 1);
+    glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_2D, m_normalmap);
     glBindVertexArray(m_vao);
     glDrawElements(GL_TRIANGLES, 6*m_w*m_h, GL_UNSIGNED_INT, 0);
 }

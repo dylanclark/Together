@@ -1199,7 +1199,8 @@ void Dot::render(Camera* cam, Level* lvl)
             dir = DIR_LEFT;
         }
     }
-    m_sprite.render(render_x, render_y, &frame_clip, cam, dir, m_color);
+    std::vector<Light> lights = lvl->get_lights();
+    m_sprite.render(render_x, render_y, &frame_clip, cam, lights, dir, m_color);
 };
 
 void Dot::save_state()

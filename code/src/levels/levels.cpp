@@ -49,12 +49,16 @@ void Level::load_level(int zone_num, int lvl_num, SDL_Color palette)
     int obj_x2, obj_y2;
     int obj_pause_length, obj_move_length;
     bool obj_color;
+    int obj_light_strength;
     float spring_vel;
+
     Spring* new_spring;
     MovingPlatform* new_platform;
     ShiftBlock* new_shiftblock;
     Crate* new_crate;
     XSpring* new_xspring;
+    SmallLamp* new_smalllamp;
+
     for (int i = 0; i < num_objs; i++) {
         level_file >> obj_type;
         switch (obj_type)
@@ -89,6 +93,11 @@ void Level::load_level(int zone_num, int lvl_num, SDL_Color palette)
             level_file >> obj_x >> obj_y;
             new_xspring = new XSpring(m_x + obj_x*TILE_WIDTH, m_y + obj_y*TILE_WIDTH, palette);
             objects.push_back(new_xspring);
+            break;
+        case OBJECT_SMALL_LAMP:
+            level_file >> obj_x >> obj_y >> obj_color >> obj_light_strength;
+            new_smalllamp = new SmallLamp(m_x + obj_x*TILE_WIDTH, m_y + obj_y*TILE_WIDTH, obj_color, (float) obj_light_strength, palette);
+            objects.push_back(new_smalllamp);
             break;
         default:
             break;
@@ -133,6 +142,17 @@ void Level::update_y()
     }
 }
 
+std::vector<Light> Level::get_lights()
+{
+    std::vector<Light> result;
+    for (int i = 0; i < objects.size(); i++) {
+        if (objects[i]->has_light()) {
+            result.push_back(objects[i]->get_light());
+        }
+    }
+    return result;
+}
+
 void Level::draw_bg(Camera* cam, bool active_color)
 {
     // check if we should even bother
@@ -143,19 +163,21 @@ void Level::draw_bg(Camera* cam, bool active_color)
     }
 
     // draw stuff to the screen!
-    tileset->render(cam, active_color);
+    std::vector<Light> lights = get_lights();
+    tileset->render(cam, lights, active_color);
 
     // draw objects
     for (int i = 0; i < objects.size(); i++) {
-        objects[i]->render_bg(cam, active_color);
+        objects[i]->render_bg(cam, lights, active_color);
     }
 }
 
 void Level::draw_fg(Camera* cam, bool active_color)
 {
     // draw objects
+    std::vector<Light> lights = get_lights();
     for (int i = 0; i < objects.size(); i++) {
-        objects[i]->render_fg(cam, active_color);
+        objects[i]->render_fg(cam, lights, active_color);
     }
 }
 

@@ -50,7 +50,7 @@ Sprite::Sprite(Texture tex, int w, int h, SDL_Color* palette)
     glEnableVertexAttribArray(0);
 }
 
-void Sprite::render(int x, int y, SDL_Rect* clip, Camera* cam, int dir, int flip)
+void Sprite::render(int x, int y, SDL_Rect* clip, Camera* cam, std::vector<Light> lights, int dir, int flip, bool is_light)
 {
     // first, let's see if we should even bother
     SDL_Rect cam_rect = cam->get_display();
@@ -60,8 +60,12 @@ void Sprite::render(int x, int y, SDL_Rect* clip, Camera* cam, int dir, int flip
         return;
     }
 
-    // we'll use our (only available) shader
-    Shader m_shader = ResourceManager::get_shader("level");
+    Shader m_shader;
+    if (!is_light) {
+        m_shader = ResourceManager::get_shader("level");
+    } else {
+        m_shader = ResourceManager::get_shader("light");
+    }
     m_shader.use();
 
     // set model matrix - this tells us where our object is in the world space
@@ -87,6 +91,16 @@ void Sprite::render(int x, int y, SDL_Rect* clip, Camera* cam, int dir, int flip
     // set color
     glm::vec3 obj_color = glm::vec3(m_palette.r / (float) 255, m_palette.g / (float) 255, m_palette.b / (float) 255);
     m_shader.set_vec3("obj_color", obj_color);
+
+    if (!is_light) {
+        // set up lights
+        m_shader.set_int("num_lights", lights.size());
+        for (int i = 0; i < lights.size(); i++) {
+            std::string number = std::to_string(i);
+            m_shader.set_float("lights["+number+"].strength", lights[i].get_strength());
+            m_shader.set_vec2("lights["+number+"].position", glm::vec2(lights[i].get_x(), lights[i].get_y()));
+        }
+    }
 
     // set texture
     m_shader.set_int("m_texture", 0);

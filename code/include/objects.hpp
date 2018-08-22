@@ -11,8 +11,35 @@
 // include header files
 #include <textures.hpp>
 #include <char.hpp>
+#include <utils.hpp>
 #include <engine.hpp>
 #include <levels.hpp>
+
+/*************/
+/*   LIGHT   */
+/*************/
+
+static const int BASE_LIGHT_PERIOD = 4000;
+static const int LIGHT_FLUCT_AMPL = 5;
+
+class Light
+{
+public:
+    Light() { }
+    Light(int x, int y, float strength, SDL_Color color);
+
+    float get_strength();
+    int get_x() { return m_x; }
+    int get_y() { return m_y; }
+
+private:
+    // position
+    int m_x, m_y;
+    float m_strength;
+    SDL_Color m_color;
+    // pulsing period
+    int m_period;
+};
 
 /**************/
 /*   OBJECT   */
@@ -29,6 +56,7 @@ typedef enum _ObjectType {
     OBJECT_BUTTON,
     OBJECT_KEY,
     OBJECT_DOOR,
+    OBJECT_SMALL_LAMP,
 } ObjectType;
 
 class Object
@@ -36,8 +64,8 @@ class Object
 public:
     Object() { };
 
-    virtual void render_bg(Camera* cam, bool active_color) = 0;
-    virtual void render_fg(Camera* cam, bool active_color) = 0;
+    virtual void render_bg(Camera* cam, std::vector<Light> lights, bool active_color) = 0;
+    virtual void render_fg(Camera* cam, std::vector<Light> lights, bool active_color) = 0;
     virtual void update_x(SDL_Rect black_player, SDL_Rect white_player) = 0;
     virtual void update_y() = 0;
     void trigger();
@@ -46,9 +74,13 @@ public:
     ObjectType get_type() { return m_type; }
     virtual SDL_Rect get_rect() { return m_rect; }
     bool get_color() { return m_color; }
+    bool has_light() { return m_has_light; }
+    Light get_light() { return m_light; }
 
     SDL_Rect m_rect;
     ObjectType m_type;
+    bool m_has_light;
+    Light m_light;
     Sprite m_sprite;
     bool m_color;
 };
@@ -67,8 +99,8 @@ class Spring : public Object
 {
 public:
     Spring(int x, int y, bool color, float y_vel, SDL_Color palette);
-    void render_bg(Camera* cam, bool active_color);
-    void render_fg(Camera* cam, bool active_color) { }
+    void render_bg(Camera* cam, std::vector<Light> lights, bool active_color);
+    void render_fg(Camera* cam, std::vector<Light> lights, bool active_color) { }
     void update_x(SDL_Rect black_player, SDL_Rect white_player) { }
     void update_y() { }
     float get_yvel() { return m_yvel; }
@@ -119,8 +151,8 @@ public:
     ~MovingPlatform() { }
     void update_x(SDL_Rect black_player, SDL_Rect white_player);
     void update_y();
-    void render_bg(Camera* cam, bool active_color);
-    void render_fg(Camera* cam, bool active_color) { }
+    void render_bg(Camera* cam, std::vector<Light> lights, bool active_color);
+    void render_fg(Camera* cam, std::vector<Light> lights, bool active_color) { }
     void trigger();
     void untrigger();
 
@@ -153,8 +185,8 @@ public:
     ShiftBlock(int x, int y, int w, int h, SDL_Color palette);
     ~ShiftBlock() { }
 
-    void render_bg(Camera* cam, bool active_color);
-    void render_fg(Camera* cam, bool active_color);
+    void render_bg(Camera* cam, std::vector<Light> lights, bool active_color);
+    void render_fg(Camera* cam, std::vector<Light> lights, bool active_color);
 
     void trigger() { }
     void untrigger() { }
@@ -179,8 +211,8 @@ public:
     Crate(int x, int y, int w, int h, bool color, SDL_Color palette);
     ~Crate() { }
 
-    void render_bg(Camera* cam, bool active_color);
-    void render_fg(Camera* cam, bool active_color) { }
+    void render_bg(Camera* cam, std::vector<Light> lights, bool active_color);
+    void render_fg(Camera* cam, std::vector<Light> lights, bool active_color) { }
 
     void trigger() { }
     void untrigger() { }
@@ -218,8 +250,8 @@ public:
     XSpring(int x, int y, SDL_Color palette);
     ~XSpring() { }
 
-    void render_bg(Camera* cam, bool active_color);
-    void render_fg(Camera* cam, bool active_color) { }
+    void render_bg(Camera* cam, std::vector<Light> lights, bool active_color);
+    void render_fg(Camera* cam, std::vector<Light> lights, bool active_color) { }
 
     void trigger() { }
     void untrigger() { }
@@ -235,6 +267,25 @@ private:
     XSpringStatus m_status;
     int animation_start;
     Dot* dot_on;
+};
+
+/******************/
+/*   SMALL LAMP   */
+/******************/
+
+class SmallLamp : public Object
+{
+public:
+    SmallLamp(int x, int y, bool color, float strength, SDL_Color palette);
+    ~SmallLamp() { }
+
+    void render_bg(Camera* cam, std::vector<Light> lights, bool active_color);
+    void render_fg(Camera* cam, std::vector<Light> lights, bool active_color) { }
+
+    void trigger() { }
+    void untrigger() { }
+    void update_x(SDL_Rect black_player, SDL_Rect white_player) { }
+    void update_y() { }
 };
 
 /*

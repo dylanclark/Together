@@ -39,7 +39,11 @@ Engine::Engine()
 
     // creates a window that we can (eventually) draw into
     window = SDL_CreateWindow("together.", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_OPENGL);
+    SDL_Surface* icon_surface = IMG_Load("resources/textures/icon.png");
+    SDL_SetWindowIcon(window, icon_surface);
+    SDL_FreeSurface(icon_surface);
     gl_context = SDL_GL_CreateContext(window);
+    rend = NULL;
     SDL_GL_SetSwapInterval(1);
     if(!gladLoadGL()) {
         printf("Something went wrong!\n");
@@ -76,9 +80,12 @@ void Engine::load_resources()
     ResourceManager::load_texture("cross-spring.png", "cross_spring");
     ResourceManager::load_texture("black-spring.png", "black_spring");
     ResourceManager::load_texture("white-spring.png", "white_spring");
+    ResourceManager::load_texture("small-lamp.png", "small_lamp");
 
     // shaders
     ResourceManager::load_shader("level.vs", "level.fs", "level");
+    ResourceManager::load_shader("level.vs", "level-normal.fs", "level_normal");
+    ResourceManager::load_shader("level.vs", "light.fs", "light");
     ResourceManager::load_shader("post-process.vs", "invertor.fs", "invertor");
     ResourceManager::load_shader("post-process.vs", "display.fs", "display");
     ResourceManager::load_shader("vblur.vs", "blur.fs", "vblur");

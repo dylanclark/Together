@@ -14,6 +14,7 @@ Spring::Spring(int x, int y, bool color, float y_vel, SDL_Color palette)
 {
     m_color = color;
     m_yvel = y_vel;
+    m_has_light = false;
     Texture m_tex;
     if (m_color == 0) {
         m_tex = ResourceManager::get_texture("black_spring");
@@ -30,7 +31,7 @@ Spring::Spring(int x, int y, bool color, float y_vel, SDL_Color palette)
     m_rect.y = y + (m_color == 0)*(m_sprite.get_height()-m_rect.h);
 }
 
-void Spring::render_bg(Camera* cam, bool active_color)
+void Spring::render_bg(Camera* cam, std::vector<Light> lights, bool active_color)
 {
     int frame;
     int animation_length = 12;
@@ -50,7 +51,7 @@ void Spring::render_bg(Camera* cam, bool active_color)
     int render_x = m_rect.x - (tex_w-m_rect.w)/2;
     int render_y = m_rect.y - (m_color == 0)*(m_sprite.get_height()-m_rect.h);
     SDL_Rect frame_clip = {frame*tex_w, m_status*tex_h, tex_w, tex_h};
-    m_sprite.render(render_x, render_y, &frame_clip, cam);
+    m_sprite.render(render_x, render_y, &frame_clip, cam, lights);
 }
 
 void Spring::spring()
@@ -74,6 +75,7 @@ InvisibleWall::InvisibleWall(int x, int y, int w, int h, InvisibleWallSide side)
 MovingPlatform::MovingPlatform(int x1, int y1, int x2, int y2, int w, int h, bool color, bool automatic, int move_length, int pause_length, SDL_Color palette)
 {
     m_type = OBJECT_MOVING_PLATFORM;
+    m_has_light = false;
     m_status = PLATFORM_PAUSE_A;
     m_move_length = move_length;
     m_pause_length = pause_length;
@@ -143,9 +145,9 @@ void MovingPlatform::update_y()
     }
 }
 
-void MovingPlatform::render_bg(Camera* cam, bool active_color)
+void MovingPlatform::render_bg(Camera* cam, std::vector<Light> lights, bool active_color)
 {
-    m_sprite.render(m_rect.x, m_rect.y, NULL, cam);
+    m_sprite.render(m_rect.x, m_rect.y, NULL, cam, lights);
 }
 
 void MovingPlatform::trigger()
@@ -226,6 +228,7 @@ std::vector<InvisibleWall> MovingPlatform::get_walls(std::vector<Tile> &tiles)
 ShiftBlock::ShiftBlock(int x, int y, int w, int h, SDL_Color palette)
 {
     m_rect.x = x;
+    m_has_light = false;
     m_rect.y = y;
     m_rect.w = w*TILE_WIDTH;
     m_rect.h = h*TILE_WIDTH;
@@ -448,17 +451,17 @@ ShiftBlock::ShiftBlock(int x, int y, int w, int h, SDL_Color palette)
     // m_sprite.create_texture(tex, w, h);
 }
 
-void ShiftBlock::render_bg(Camera* cam, bool active_color)
+void ShiftBlock::render_bg(Camera* cam, std::vector<Light> lights, bool active_color)
 {
     int animation_length = 8;
     double animation_speed = 70.0;
     int frame = ((int) ((float) SDL_GetTicks() / animation_speed)) % animation_length;
     int clip_y = m_status + (m_status != SHIFTBLOCK_IDLE || active_color == 1);
     SDL_Rect clip_rect = {frame * m_rect.w, clip_y * m_rect.h, m_rect.w, m_rect.h};
-    m_sprite.render(m_rect.x, m_rect.y, &clip_rect, cam);
+    m_sprite.render(m_rect.x, m_rect.y, &clip_rect, cam, lights);
 }
 
-void ShiftBlock::render_fg(Camera* cam, bool active_color)
+void ShiftBlock::render_fg(Camera* cam, std::vector<Light> lights, bool active_color)
 {
 }
 
@@ -475,6 +478,7 @@ void ShiftBlock::update_x(SDL_Rect black_player, SDL_Rect white_player)
 Crate::Crate(int x, int y, int w, int h, bool color, SDL_Color palette)
 {
     m_rect.x = x;
+    m_has_light = false;
     m_rect.y = y;
     m_rect.w = w*TILE_WIDTH;
     m_rect.h = h*TILE_WIDTH;
@@ -633,7 +637,7 @@ Crate::Crate(int x, int y, int w, int h, bool color, SDL_Color palette)
     // m_sprite.create_texture(tex, w, h);
 }
 
-void Crate::render_bg(Camera* cam, bool active_color)
+void Crate::render_bg(Camera* cam, std::vector<Light> lights, bool active_color)
 {
     int animation_length;
     double animation_speed;
@@ -647,7 +651,7 @@ void Crate::render_bg(Camera* cam, bool active_color)
     int frame = ((int) ((float) SDL_GetTicks() / animation_speed)) % animation_length;
     int clip_y = (m_color != active_color);
     SDL_Rect clip_rect = {frame * m_rect.w, clip_y * m_rect.h, m_rect.w, m_rect.h};
-    m_sprite.render(m_rect.x, m_rect.y, &clip_rect, cam);
+    m_sprite.render(m_rect.x, m_rect.y, &clip_rect, cam, lights);
 }
 
 void Crate::update_x(SDL_Rect black_player, SDL_Rect white_player)
@@ -736,6 +740,7 @@ XSpring::XSpring(int x, int y, SDL_Color palette)
 {
     Texture m_tex = ResourceManager::get_texture("cross_spring");
     m_sprite = Sprite(m_tex, 16, 32, &palette);
+    m_has_light = false;
     m_rect.w = 12;
     m_rect.h = 10;
     m_rect.x = x + (m_sprite.get_width() - m_rect.w) / 2;
@@ -746,7 +751,7 @@ XSpring::XSpring(int x, int y, SDL_Color palette)
     dot_on = NULL;
 }
 
-void XSpring::render_bg(Camera* cam, bool active_color)
+void XSpring::render_bg(Camera* cam, std::vector<Light> lights, bool active_color)
 {
     int animation_length;
     int animation_speed;
@@ -797,7 +802,7 @@ void XSpring::render_bg(Camera* cam, bool active_color)
     int render_x = m_rect.x - (tex_w-m_rect.w)/2;
     int render_y = m_rect.y - (m_sprite.get_height()-m_rect.h) / 2;
     SDL_Rect frame_clip = {frame*tex_w, m_status*tex_h, tex_w, tex_h};
-    m_sprite.render(render_x, render_y, &frame_clip, cam);
+    m_sprite.render(render_x, render_y, &frame_clip, cam, lights);
 }
 
 void XSpring::update_y()
@@ -884,6 +889,31 @@ SDL_Rect XSpring::get_land_rect()
         break;
     }
     return land_rect;
+}
+
+SmallLamp::SmallLamp(int x, int y, bool color, float strength, SDL_Color palette)
+{
+    m_color = color;
+    m_rect.w = 16;
+    m_rect.h = 16;
+    m_rect.x = x - TILE_WIDTH/2;
+    m_rect.y = y - TILE_WIDTH/2;
+    m_has_light = true;
+    m_light = Light(m_rect.x + m_rect.w / 2, m_rect.y + m_rect.h / 2, strength, palette);
+
+    Texture m_tex = ResourceManager::get_texture("small_lamp");
+    m_sprite = Sprite(m_tex, 16, 16, &palette);
+    m_type = OBJECT_SMALL_LAMP;
+}
+
+void SmallLamp::render_bg(Camera* cam, std::vector<Light> lights, bool active_color)
+{
+    SDL_Rect clip_rect;
+    clip_rect.x = (m_color == 1)*m_rect.w;
+    clip_rect.y = 0;
+    clip_rect.w = m_rect.w;
+    clip_rect.h = m_rect.h;
+    m_sprite.render(m_rect.x, m_rect.y, &clip_rect, cam, lights, 0, m_color, true);
 }
 
 /*************/
