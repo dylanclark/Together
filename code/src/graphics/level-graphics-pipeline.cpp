@@ -39,6 +39,7 @@ LevelGraphicsPipeline::LevelGraphicsPipeline()
     glEnableVertexAttribArray(0);
 
     m_processors["invertor"] = PostProcessor("invertor");
+    m_processors["ripple"] = PostProcessor("ripple");
     m_processors["bright_filter"] = PostProcessor("bright_filter", game->screen_width/2, game->screen_height/2);
     m_processors["vblur"] = PostProcessor("vblur", game->screen_width/2, game->screen_height/2);
     m_processors["hblur"] = PostProcessor("hblur", game->screen_width/2, game->screen_height/2);
@@ -50,10 +51,11 @@ void LevelGraphicsPipeline::begin()
     m_fbo->bind();
 }
 
-void LevelGraphicsPipeline::render()
+void LevelGraphicsPipeline::render(int time_ms, int ripple_x, int ripple_y)
 {
     m_fbo->unbind();
     GLuint output1 = m_fbo->get_texture();
+    output1 = m_processors["ripple"].render_ripple(output1, time_ms, ripple_x, ripple_y);
     GLuint output2 = m_processors["bright_filter"].render(output1);
     output2 = m_processors["hblur"].render(output2);
     output2 = m_processors["vblur"].render(output2);

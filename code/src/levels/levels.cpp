@@ -193,6 +193,8 @@ void Level::cleanup()
 void Zonestate::init()
 {
     controls_frozen = false;
+    ripple_x = ripple_y = 0;
+    ripple_start = -1000;
 
     // first, read the zone-file
     char zone_num_cstr[2];
@@ -285,7 +287,7 @@ void Zonestate::draw()
         levels[i]->draw_fg(camera, active_color);
     }
 
-    m_postprocessor.render();
+    m_postprocessor.render(SDL_GetTicks() - ripple_start, ripple_x, ripple_y);
     SDL_GL_SwapWindow(game->window);
 }
 
@@ -329,6 +331,12 @@ void Zonestate::shift()
         active_color = !active_color;
         chars[0].halt();
         chars[1].halt();
+        ripple_start = SDL_GetTicks();
+        SDL_Rect char_who_shifted = chars[active_color].get_rect();
+        SDL_Rect cam_rect = camera->get_display();
+        float aspect_ratio = ((float) game->screen_width / (float) cam_rect.w);
+        ripple_x = (char_who_shifted.x + char_who_shifted.w/2 - cam_rect.x) * aspect_ratio;
+        ripple_y = (char_who_shifted.y + char_who_shifted.h/2 - cam_rect.y) * aspect_ratio;
     }
 }
 

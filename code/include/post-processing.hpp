@@ -35,6 +35,7 @@ public:
     ~PostProcessor() { }
 
     GLuint render(GLuint texture);
+    GLuint render_ripple(GLuint texture, int time_ms, int ripple_x, int ripple_y);
 
 private:
     int m_w, m_h;
@@ -72,7 +73,7 @@ public:
     ~LevelGraphicsPipeline() { }
 
     void begin();
-    void render();
+    void render(int time_ms, int ripple_x, int ripple_y);
 
 private:
     std::map<std::string, PostProcessor> m_processors;

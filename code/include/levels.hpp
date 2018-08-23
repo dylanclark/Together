@@ -124,6 +124,11 @@ private:
     int m_zone_num;
     int active_level;
 
+    // shift effects
+    int ripple_start;
+    int ripple_x;
+    int ripple_y;
+
     // for level transitions
     int freeze_duration;
     bool controls_frozen;

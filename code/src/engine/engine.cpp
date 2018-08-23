@@ -94,6 +94,7 @@ void Engine::load_resources()
     ResourceManager::load_shader("hblur.vs", "blur.fs", "hblur");
     ResourceManager::load_shader("post-process.vs", "bright-filter.fs", "bright_filter");
     ResourceManager::load_shader("post-process.vs", "combiner.fs", "combiner");
+    ResourceManager::load_shader("post-process.vs", "ripple.fs", "ripple");
 }
 
 void Engine::cleanup()
