@@ -35,12 +35,12 @@ vec3 calculate_light(light cur_light)
     float strength = floor(cur_light.strength / ring_size) * ring_size;
     float attenuation = max((cur_light.strength - dist) / (cur_light.strength*5), 0.0);
     attenuation = floor(attenuation*ring_size) / ring_size;
+    float norm_attenuation = max((cur_light.strength - dist/2) / (cur_light.strength*5), 0.0);
 
     float dot_prod = dot(normal, light_dir);
-    dot_prod = floor(dot_prod*ring_size) / ring_size;
     float diff = max(dot_prod, 0.0);
 
-    vec3 diffuse = diff * attenuation*2 * obj_color * vec3(texture(m_texture, tex_coord));
+    vec3 diffuse = diff * norm_attenuation * obj_color * vec3(texture(m_texture, tex_coord));
     diffuse += attenuation * obj_color * vec3(texture(m_texture, tex_coord));
     return diffuse;
 }
@@ -51,7 +51,7 @@ void main()
     if (texcolor.a < 0.1)
         discard;
 
-    float ambient_strength = 0.1;
+    float ambient_strength = 0.05;
     vec3 result = (ambient_strength) * (texcolor.xyz);
     for (int i = 0; i < num_lights; i++) {
         result += calculate_light(lights[i]);
