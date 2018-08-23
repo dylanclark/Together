@@ -77,7 +77,9 @@ void Engine::load_resources()
     // textures
     ResourceManager::load_texture("char-sheet-black.png", "black_player");
     ResourceManager::load_texture("char-sheet-white.png", "white_player");
+    ResourceManager::load_texture("char-normal.png", "player_normal");
     ResourceManager::load_texture("cross-spring.png", "cross_spring");
+    ResourceManager::load_texture("xspring-normal.png", "xspring_normal");
     ResourceManager::load_texture("black-spring.png", "black_spring");
     ResourceManager::load_texture("white-spring.png", "white_spring");
     ResourceManager::load_texture("small-lamp.png", "small_lamp");

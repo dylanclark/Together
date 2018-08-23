@@ -218,6 +218,8 @@ void Tileset::render(Camera* cam, std::vector<Light> lights, bool active_color)
     m_shader.set_int("m_normalmap", 1);
     glActiveTexture(GL_TEXTURE1);
     glBindTexture(GL_TEXTURE_2D, m_normalmap);
+    m_shader.set_int("flipped", 0);
+    m_shader.set_int("dir", 0);
     glBindVertexArray(m_vao);
     glDrawElements(GL_TRIANGLES, 6*m_w*m_h, GL_UNSIGNED_INT, 0);
 }

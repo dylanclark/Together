@@ -14,6 +14,9 @@ struct light {
 uniform light lights[MAX_LIGHTS];
 uniform int num_lights;
 
+uniform int dir;
+uniform int flipped;
+
 uniform sampler2D m_texture;
 uniform sampler2D m_normalmap;
 uniform vec3 obj_color;
@@ -26,7 +29,7 @@ vec3 calculate_light(light cur_light)
     float dist = length(vec3(frag_pos, 0.0) - vec3(cur_light.position, 0.0));
     vec3 normal = texture(m_normalmap, tex_coord).rgb;
     normal = normalize(normal * 2.0 - 1.0);
-    normal = vec3(normal.b, -normal.g, normal.r);
+    normal = vec3(float(dir == 0) * normal.b - float(dir == 1) * normal.b, float(flipped == 1) * normal.g - float(flipped == 0) * normal.g, normal.r);
     vec3 light_dir = normalize(vec3(cur_light.position, 0.0) - vec3(frag_pos, 0.0));
 
     float strength = floor(cur_light.strength / ring_size) * ring_size;

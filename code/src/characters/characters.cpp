@@ -52,7 +52,8 @@ Dot::Dot(int x, int y, bool color, SDL_Color* palette)
         m_status = CHAR_INACTIVE;
         m_tex = ResourceManager::get_texture("white_player");
     }
-    m_sprite = Sprite(m_tex, 16, 16, palette);
+    Texture m_normalmap = ResourceManager::get_texture("player_normal");
+    m_sprite = Sprite(m_tex, m_normalmap, 16, 16, palette);
 
     // initialize collision rectangle
     col_rect.w = 12;

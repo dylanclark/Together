@@ -21,7 +21,8 @@ Spring::Spring(int x, int y, bool color, float y_vel, SDL_Color palette)
     } else {
         m_tex = ResourceManager::get_texture("white_spring");
     }
-    m_sprite = Sprite(m_tex, 32, 16, &palette);
+    Texture m_normalmap = ResourceManager::get_texture("spring_normal");
+    m_sprite = Sprite(m_tex, m_normalmap, 32, 16, &palette);
     m_status = SPRING_IDLE;
 
     m_type = OBJECT_SPRING;
@@ -739,7 +740,8 @@ void Crate::push(SDL_Rect player_pushing, SDL_Rect other_player)
 XSpring::XSpring(int x, int y, SDL_Color palette)
 {
     Texture m_tex = ResourceManager::get_texture("cross_spring");
-    m_sprite = Sprite(m_tex, 16, 32, &palette);
+    Texture m_normalmap = ResourceManager::get_texture("xspring_normal");
+    m_sprite = Sprite(m_tex, m_normalmap, 16, 32, &palette);
     m_has_light = false;
     m_rect.w = 12;
     m_rect.h = 10;
@@ -902,7 +904,8 @@ SmallLamp::SmallLamp(int x, int y, bool color, float strength, SDL_Color palette
     m_light = Light(m_rect.x + m_rect.w / 2, m_rect.y + m_rect.h / 2, strength, palette);
 
     Texture m_tex = ResourceManager::get_texture("small_lamp");
-    m_sprite = Sprite(m_tex, 16, 16, &palette);
+    Texture m_normalmap = ResourceManager::get_texture("small_lamp_normal");
+    m_sprite = Sprite(m_tex, m_normalmap, 16, 16, &palette);
     m_type = OBJECT_SMALL_LAMP;
 }
 

@@ -39,7 +39,7 @@ class Sprite
 {
 public:
     Sprite() { }
-    Sprite(Texture tex, int w, int h, SDL_Color* palette);
+    Sprite(Texture tex, Texture normal_tex, int w, int h, SDL_Color* palette);
     ~Sprite() { }
 
     void render(int x, int y, SDL_Rect* clip, Camera* cam, std::vector<Light> lights, int dir = 0, int flip = 0, bool is_light = false);
@@ -52,6 +52,7 @@ private:
     int m_width, m_height;
 
     Texture m_tex;
+    Texture m_normalmap;
     GLuint m_vao;
 };
 

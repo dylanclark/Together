@@ -4,9 +4,10 @@
 #include <utils.hpp>
 #include <textures.hpp>
 
-Sprite::Sprite(Texture tex, int w, int h, SDL_Color* palette)
+Sprite::Sprite(Texture tex, Texture normal_tex, int w, int h, SDL_Color* palette)
 {
     m_tex = tex;
+    m_normalmap = normal_tex;
     m_width = w;
     m_height = h;
     if (palette) {
@@ -62,7 +63,7 @@ void Sprite::render(int x, int y, SDL_Rect* clip, Camera* cam, std::vector<Light
 
     Shader m_shader;
     if (!is_light) {
-        m_shader = ResourceManager::get_shader("level");
+        m_shader = ResourceManager::get_shader("level_normal");
     } else {
         m_shader = ResourceManager::get_shader("light");
     }
@@ -106,6 +107,11 @@ void Sprite::render(int x, int y, SDL_Rect* clip, Camera* cam, std::vector<Light
     m_shader.set_int("m_texture", 0);
     glActiveTexture(GL_TEXTURE0);
     m_tex.bind();
+    m_shader.set_int("m_normalmap", 1);
+    m_shader.set_int("flipped", flip);
+    m_shader.set_int("dir", dir);
+    glActiveTexture(GL_TEXTURE1);
+    m_normalmap.bind();
 
     // draw that puppy!
     glBindVertexArray(m_vao);
