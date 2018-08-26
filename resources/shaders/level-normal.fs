@@ -24,7 +24,7 @@ uniform vec3 obj_color;
 // eventually this will accept a normal argument
 vec3 calculate_light(light cur_light)
 {
-    int ring_size = 20;
+    int ring_size = 10;
 
     float dist = length(vec3(frag_pos, 0.0) - vec3(cur_light.position, 0.0));
     vec3 normal = texture(m_normalmap, tex_coord).rgb;
@@ -33,15 +33,25 @@ vec3 calculate_light(light cur_light)
     vec3 light_dir = normalize(vec3(cur_light.position, 0.0) - vec3(frag_pos, 0.0));
 
     float strength = floor(cur_light.strength / ring_size) * ring_size;
-    float attenuation = max((cur_light.strength - dist) / (cur_light.strength*5), 0.0);
-    attenuation = floor(attenuation*ring_size) / ring_size;
-    float norm_attenuation = max((cur_light.strength - dist/2) / (cur_light.strength*5), 0.0);
+    float attenuation = max((cur_light.strength - dist) / (cur_light.strength*2), 0.0);
+    bool ring = false;
+    if (attenuation*ring_size > 4) {
+        attenuation = ceil(attenuation*ring_size) / ring_size;
+        ring = true;
+    }
+
+    float norm_attenuation = max((cur_light.strength - dist/2) / (cur_light.strength*3), 0.0);
 
     float dot_prod = dot(normal, light_dir);
     float diff = max(dot_prod, 0.0);
 
-    vec3 diffuse = diff * norm_attenuation * obj_color * vec3(texture(m_texture, tex_coord));
-    diffuse += attenuation * obj_color * vec3(texture(m_texture, tex_coord));
+    vec3 texcolor = vec3(texture(m_texture, tex_coord));
+    vec3 diffuse = diff * norm_attenuation * obj_color * texcolor;
+    if (ring && texcolor.x + texcolor.y + texcolor.z < 0.5) {
+        diffuse += attenuation * obj_color * (vec3(texture(m_texture, tex_coord)) + vec3(0.08, 0.08, 0.08));
+    } else {
+        diffuse += attenuation * obj_color * vec3(texture(m_texture, tex_coord));
+    }
     return diffuse;
 }
 

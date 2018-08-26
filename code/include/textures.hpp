@@ -18,6 +18,7 @@ class Texture
 public:
     Texture();
     Texture(std::string filename);
+    Texture(GLuint tex, int width, int height) : m_id(tex), m_width(width), m_height(height) { }
     ~Texture();
 
     void bind();
@@ -43,6 +44,7 @@ public:
     ~Sprite() { }
 
     void render(int x, int y, SDL_Rect* clip, Camera* cam, std::vector<Light> lights, int dir = 0, int flip = 0, bool is_light = false);
+    void render(int x, int y, int scr_w, int scr_h, SDL_Rect* clip);
 
     int get_width() { return m_width; }
     int get_height() { return m_height; }

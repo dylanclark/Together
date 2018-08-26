@@ -83,10 +83,16 @@ void Engine::load_resources()
     ResourceManager::load_texture("black-spring.png", "black_spring");
     ResourceManager::load_texture("white-spring.png", "white_spring");
     ResourceManager::load_texture("small-lamp.png", "small_lamp");
+    ResourceManager::load_texture("shiftblock-idle.png", "shiftblock_idle");
+    ResourceManager::load_texture("shiftblock-active.png", "shiftblock_active");
+    ResourceManager::load_texture("simple-normal.png", "normal");
+    ResourceManager::load_texture("crate.png", "crate");
+    ResourceManager::load_texture("crate-normal.png", "crate_normal");
 
     // shaders
     ResourceManager::load_shader("level.vs", "level.fs", "level");
     ResourceManager::load_shader("level.vs", "level-normal.fs", "level_normal");
+    ResourceManager::load_shader("to-texture.vs", "to-texture.fs", "to_texture");
     ResourceManager::load_shader("level.vs", "light.fs", "light");
     ResourceManager::load_shader("post-process.vs", "invertor.fs", "invertor");
     ResourceManager::load_shader("post-process.vs", "display.fs", "display");

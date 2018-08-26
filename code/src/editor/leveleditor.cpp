@@ -457,6 +457,7 @@ void EditorTileset::handle_event(SDL_Event e, int scr_w, int scr_h, SDL_Rect cam
                 objs[idx].y = std::min(y1, objs[idx].y);
                 shiftblock = false;
             }
+            break;
         case PLACING_CRATES:
             idx = objs.size() - 1;
             if (!click_color != tiles[y1][x1]) {
@@ -504,6 +505,7 @@ void EditorTileset::handle_event(SDL_Event e, int scr_w, int scr_h, SDL_Rect cam
             new_smalllamp.light_strength = atoi(get_str("light strength").c_str());
             new_smalllamp.type = OBJECT_SMALL_LAMP;
             objs.push_back(new_smalllamp);
+            break;
         default:
             break;
         }

@@ -30,7 +30,7 @@ Texture ResourceManager::load_texture(const GLchar* file, std::string name)
 Texture ResourceManager::get_texture(std::string name)
 {
     if (textures.count(name) == 0) {
-        printf("couldn't find that texture\n");
+        printf("couldn't find that texture: %s\n", name.c_str());
     }
     return textures[name];
 }

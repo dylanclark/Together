@@ -236,13 +236,15 @@ ShiftBlock::ShiftBlock(int x, int y, int w, int h, SDL_Color palette)
     m_status = SHIFTBLOCK_IDLE;
     m_type = OBJECT_SHIFTBLOCK;
 
-    Uint32 format = SDL_GetWindowPixelFormat(game->window);
-    SDL_Texture* tex = SDL_CreateTexture(game->rend, format, SDL_TEXTUREACCESS_TARGET, w*TILE_WIDTH*8, h*TILE_WIDTH*4);
-    SDL_SetRenderTarget(game->rend, tex);
+    int scr_w = w*TILE_WIDTH*8;
+    int scr_h = h*TILE_WIDTH*4;
+    Texture idle_tex = ResourceManager::get_texture("shiftblock_idle");
+    Sprite idle_sprite(idle_tex, idle_tex, TILE_WIDTH, TILE_WIDTH, &palette);
+    Texture active_tex = ResourceManager::get_texture("shiftblock_active");
+    Sprite active_sprite(active_tex, active_tex, TILE_WIDTH, TILE_WIDTH, &palette);
 
-    SDL_Surface* surface = IMG_Load("resources/textures/shiftblock-idle.png");
-    SDL_Texture* idle_tex = SDL_CreateTextureFromSurface(game->rend, surface);
-    SDL_SetTextureColorMod(idle_tex, palette.r, palette.g, palette.b);
+    FBO m_fbo(scr_w, scr_h);
+    m_fbo.bind();
 
     // idle black
     SDL_Rect clip_rect, render_rect, border_rect;
@@ -255,9 +257,11 @@ ShiftBlock::ShiftBlock(int x, int y, int w, int h, SDL_Color palette)
             for (int k = 0; k < h; k++) {
                 render_rect.x = i*(w*TILE_WIDTH) + j*TILE_WIDTH;
                 render_rect.y = k*TILE_WIDTH;
-                SDL_RenderCopy(game->rend, idle_tex, &clip_rect, &render_rect);
+                idle_sprite.render(render_rect.x, render_rect.y, scr_w, scr_h, &clip_rect);
             }
         }
+        // TODO
+        /*
         // borders
         SDL_SetRenderDrawColor(game->rend, 0, 0, 0, SDL_ALPHA_OPAQUE);
         // top
@@ -278,6 +282,7 @@ ShiftBlock::ShiftBlock(int x, int y, int w, int h, SDL_Color palette)
         // right
         border_rect.x = i*w*TILE_WIDTH + w*TILE_WIDTH - 1;
         SDL_RenderFillRect(game->rend, &border_rect);
+        */
     }
 
     // idle white
@@ -287,9 +292,11 @@ ShiftBlock::ShiftBlock(int x, int y, int w, int h, SDL_Color palette)
             for (int k = 0; k < h; k++) {
                 render_rect.x = i*(w*TILE_WIDTH) + j*TILE_WIDTH;
                 render_rect.y = h*TILE_WIDTH + k*TILE_WIDTH;
-                SDL_RenderCopy(game->rend, idle_tex, &clip_rect, &render_rect);
+                idle_sprite.render(render_rect.x, render_rect.y, scr_w, scr_h, &clip_rect);
             }
         }
+        // TODO
+        /*
         // borders
         SDL_SetRenderDrawColor(game->rend, palette.r, palette.g, palette.b, SDL_ALPHA_OPAQUE);
         // top
@@ -297,24 +304,21 @@ ShiftBlock::ShiftBlock(int x, int y, int w, int h, SDL_Color palette)
         border_rect.h = 1;
         border_rect.x = i*w*TILE_WIDTH;
         border_rect.y = h*TILE_WIDTH;
-        SDL_RenderFillRect(game->rend, &border_rect);
+        // SDL_RenderFillRect(game->rend, &border_rect);
         // bottom
         border_rect.y = h*TILE_WIDTH + h*TILE_WIDTH-1;
-        SDL_RenderFillRect(game->rend, &border_rect);
+        // SDL_RenderFillRect(game->rend, &border_rect);
         // left
         border_rect.w = 1;
         border_rect.h = h*TILE_WIDTH;
         border_rect.x = i*w*TILE_WIDTH;
         border_rect.y = h*TILE_WIDTH;
-        SDL_RenderFillRect(game->rend, &border_rect);
+        // SDL_RenderFillRect(game->rend, &border_rect);
         // right
         border_rect.x = i*w*TILE_WIDTH + w*TILE_WIDTH - 1;
-        SDL_RenderFillRect(game->rend, &border_rect);
+        // SDL_RenderFillRect(game->rend, &border_rect);
+        */
     }
-
-    SDL_Surface* active_surface = IMG_Load("resources/textures/shiftblock-active.png");
-    SDL_Texture* active_tex = SDL_CreateTextureFromSurface(game->rend, active_surface);
-    SDL_SetTextureColorMod(active_tex, palette.r, palette.g, palette.b);
 
     // triggered black
     int render_base_x;
@@ -326,25 +330,25 @@ ShiftBlock::ShiftBlock(int x, int y, int w, int h, SDL_Color palette)
         clip_rect.y = 0;
         render_rect.x = render_base_x;
         render_rect.y = render_base_y;
-        SDL_RenderCopy(game->rend, active_tex, &clip_rect, &render_rect);
+        active_sprite.render(render_rect.x, render_rect.y, scr_w, scr_h, &clip_rect);
         // top right
         clip_rect.x = i*TILE_WIDTH*3 + 2*TILE_WIDTH;
         clip_rect.y = 0;
         render_rect.x = render_base_x + (w-1)*TILE_WIDTH;
         render_rect.y = render_base_y;
-        SDL_RenderCopy(game->rend, active_tex, &clip_rect, &render_rect);
+        active_sprite.render(render_rect.x, render_rect.y, scr_w, scr_h, &clip_rect);
         // bottom left
         clip_rect.x = i*TILE_WIDTH*3;
         clip_rect.y = 2*TILE_WIDTH;
         render_rect.x = render_base_x;
         render_rect.y = render_base_y + (h-1)*TILE_WIDTH;
-        SDL_RenderCopy(game->rend, active_tex, &clip_rect, &render_rect);
+        active_sprite.render(render_rect.x, render_rect.y, scr_w, scr_h, &clip_rect);
         // bottom right
         clip_rect.x = i*TILE_WIDTH*3 + 2*TILE_WIDTH;
         clip_rect.y = 2*TILE_WIDTH;
         render_rect.x = render_base_x + (w-1)*TILE_WIDTH;
         render_rect.y = render_base_y + (h-1)*TILE_WIDTH;
-        SDL_RenderCopy(game->rend, active_tex, &clip_rect, &render_rect);
+        active_sprite.render(render_rect.x, render_rect.y, scr_w, scr_h, &clip_rect);
         // sides
         clip_rect.x = i*TILE_WIDTH*3 + TILE_WIDTH;
         for (int j = 1; j < w - 1; j++) {
@@ -352,11 +356,11 @@ ShiftBlock::ShiftBlock(int x, int y, int w, int h, SDL_Color palette)
             // top
             clip_rect.y = 0;
             render_rect.y = render_base_y;
-            SDL_RenderCopy(game->rend, active_tex, &clip_rect, &render_rect);
+            active_sprite.render(render_rect.x, render_rect.y, scr_w, scr_h, &clip_rect);
             // bottom
             clip_rect.y = 2*TILE_WIDTH;
             render_rect.y = render_base_y + (h-1)*TILE_WIDTH;
-            SDL_RenderCopy(game->rend, active_tex, &clip_rect, &render_rect);
+            active_sprite.render(render_rect.x, render_rect.y, scr_w, scr_h, &clip_rect);
         }
         clip_rect.y = TILE_WIDTH;
         for (int k = 1; k < h - 1; k++) {
@@ -364,11 +368,11 @@ ShiftBlock::ShiftBlock(int x, int y, int w, int h, SDL_Color palette)
             // left
             clip_rect.x = i*TILE_WIDTH*3;
             render_rect.x = render_base_x;
-            SDL_RenderCopy(game->rend, active_tex, &clip_rect, &render_rect);
+            active_sprite.render(render_rect.x, render_rect.y, scr_w, scr_h, &clip_rect);
             // right
             clip_rect.x = i*TILE_WIDTH*3 + 2*TILE_WIDTH;
             render_rect.x = render_base_x + (w-1)*TILE_WIDTH;
-            SDL_RenderCopy(game->rend, active_tex, &clip_rect, &render_rect);
+            active_sprite.render(render_rect.x, render_rect.y, scr_w, scr_h, &clip_rect);
         }
         // middle
         clip_rect.x = TILE_WIDTH;
@@ -377,7 +381,7 @@ ShiftBlock::ShiftBlock(int x, int y, int w, int h, SDL_Color palette)
             for (int k = 1; k < h - 1; k++) {
                 render_rect.x = render_base_x + j*TILE_WIDTH;
                 render_rect.y = render_base_y + k*TILE_WIDTH;
-                SDL_RenderCopy(game->rend, active_tex, &clip_rect, &render_rect);
+                active_sprite.render(render_rect.x, render_rect.y, scr_w, scr_h, &clip_rect);
             }
         }
     }
@@ -392,25 +396,25 @@ ShiftBlock::ShiftBlock(int x, int y, int w, int h, SDL_Color palette)
         clip_rect.y = clip_base_y;
         render_rect.x = render_base_x;
         render_rect.y = render_base_y;
-        SDL_RenderCopy(game->rend, active_tex, &clip_rect, &render_rect);
+        active_sprite.render(render_rect.x, render_rect.y, scr_w, scr_h, &clip_rect);
         // top right
         clip_rect.x = i*TILE_WIDTH*3 + 2*TILE_WIDTH;
         clip_rect.y = clip_base_y;
         render_rect.x = render_base_x + (w-1)*TILE_WIDTH;
         render_rect.y = render_base_y;
-        SDL_RenderCopy(game->rend, active_tex, &clip_rect, &render_rect);
+        active_sprite.render(render_rect.x, render_rect.y, scr_w, scr_h, &clip_rect);
         // bottom left
         clip_rect.x = i*TILE_WIDTH*3;
         clip_rect.y = clip_base_y + 2*TILE_WIDTH;
         render_rect.x = render_base_x;
         render_rect.y = render_base_y + (h-1)*TILE_WIDTH;
-        SDL_RenderCopy(game->rend, active_tex, &clip_rect, &render_rect);
+        active_sprite.render(render_rect.x, render_rect.y, scr_w, scr_h, &clip_rect);
         // bottom right
         clip_rect.x = i*TILE_WIDTH*3 + 2*TILE_WIDTH;
         clip_rect.y = clip_base_y + 2*TILE_WIDTH;
         render_rect.x = render_base_x + (w-1)*TILE_WIDTH;
         render_rect.y = render_base_y + (h-1)*TILE_WIDTH;
-        SDL_RenderCopy(game->rend, active_tex, &clip_rect, &render_rect);
+        active_sprite.render(render_rect.x, render_rect.y, scr_w, scr_h, &clip_rect);
         // sides
         clip_rect.x = i*TILE_WIDTH*3 + TILE_WIDTH;
         for (int j = 1; j < w - 1; j++) {
@@ -418,11 +422,11 @@ ShiftBlock::ShiftBlock(int x, int y, int w, int h, SDL_Color palette)
             // top
             clip_rect.y = clip_base_y;
             render_rect.y = render_base_y;
-            SDL_RenderCopy(game->rend, active_tex, &clip_rect, &render_rect);
+            active_sprite.render(render_rect.x, render_rect.y, scr_w, scr_h, &clip_rect);
             // bottom
             clip_rect.y = clip_base_y + 2*TILE_WIDTH;
             render_rect.y = render_base_y + (h-1)*TILE_WIDTH;
-            SDL_RenderCopy(game->rend, active_tex, &clip_rect, &render_rect);
+            active_sprite.render(render_rect.x, render_rect.y, scr_w, scr_h, &clip_rect);
         }
         clip_rect.y = clip_base_y + TILE_WIDTH;
         for (int k = 1; k < h - 1; k++) {
@@ -430,11 +434,11 @@ ShiftBlock::ShiftBlock(int x, int y, int w, int h, SDL_Color palette)
             // left
             clip_rect.x = i*TILE_WIDTH*3;
             render_rect.x = render_base_x;
-            SDL_RenderCopy(game->rend, active_tex, &clip_rect, &render_rect);
+            active_sprite.render(render_rect.x, render_rect.y, scr_w, scr_h, &clip_rect);
             // right
             clip_rect.x = i*TILE_WIDTH*3 + 2*TILE_WIDTH;
             render_rect.x = render_base_x + (w-1)*TILE_WIDTH;
-            SDL_RenderCopy(game->rend, active_tex, &clip_rect, &render_rect);
+            active_sprite.render(render_rect.x, render_rect.y, scr_w, scr_h, &clip_rect);
         }
         // middle
         clip_rect.x = TILE_WIDTH;
@@ -443,13 +447,16 @@ ShiftBlock::ShiftBlock(int x, int y, int w, int h, SDL_Color palette)
             for (int k = 1; k < h - 1; k++) {
                 render_rect.x = render_base_x + j*TILE_WIDTH;
                 render_rect.y = render_base_y + k*TILE_WIDTH;
-                SDL_RenderCopy(game->rend, active_tex, &clip_rect, &render_rect);
+                active_sprite.render(render_rect.x, render_rect.y, scr_w, scr_h, &clip_rect);
             }
         }
     }
-    SDL_SetRenderTarget(game->rend, NULL);
+    m_fbo.unbind();
+    GLuint m_tex_id = m_fbo.get_texture();
+    Texture m_tex(m_tex_id, w*TILE_WIDTH*8, h*TILE_WIDTH*4);
 
-    // m_sprite.create_texture(tex, w, h);
+    m_sprite = Sprite(m_tex, m_tex, w*TILE_WIDTH, h*TILE_WIDTH, &palette);
+    printf("w h = %d %d\n", w, h);
 }
 
 void ShiftBlock::render_bg(Camera* cam, std::vector<Light> lights, bool active_color)
@@ -487,18 +494,15 @@ Crate::Crate(int x, int y, int w, int h, bool color, SDL_Color palette)
     m_type = OBJECT_CRATE;
     pushed = false;
 
-    // create texture
-    Uint32 format = SDL_GetWindowPixelFormat(game->window);
-    SDL_Texture* tex = SDL_CreateTexture(game->rend, format, SDL_TEXTUREACCESS_TARGET, w*TILE_WIDTH*8, h*TILE_WIDTH*2);
-    SDL_SetRenderTarget(game->rend, tex);
-
-    SDL_Surface* active_surface = IMG_Load("resources/textures/crate.png");
-    SDL_Texture* active_tex = SDL_CreateTextureFromSurface(game->rend, active_surface);
-    SDL_FreeSurface(active_surface);
-    SDL_SetTextureColorMod(active_tex, palette.r, palette.g, palette.b);
+    Texture active_tex = ResourceManager::get_texture("crate");
+    Sprite active_sprite(active_tex, active_tex, TILE_WIDTH, TILE_WIDTH, &palette);
+    FBO crate_fbo(w*TILE_WIDTH*8, h*TILE_WIDTH*2);
+    crate_fbo.bind();
 
     // active (1 frame)
     SDL_Rect clip_rect, render_rect, border_rect;
+    int scr_w = w*TILE_WIDTH*8;
+    int scr_h = h*TILE_WIDTH*2;
     clip_rect.y = 0;
     clip_rect.w = clip_rect.h = TILE_WIDTH;
     render_rect.w = render_rect.h = TILE_WIDTH;
@@ -509,21 +513,21 @@ Crate::Crate(int x, int y, int w, int h, bool color, SDL_Color palette)
     clip_rect.y = 0;
     render_rect.x = 0;
     render_rect.y = 0;
-    SDL_RenderCopy(game->rend, active_tex, &clip_rect, &render_rect);
+    active_sprite.render(render_rect.x, render_rect.y, scr_w, scr_h, &clip_rect);
     // top right
     clip_rect.x = clip_base_x + 2*TILE_WIDTH;
     render_rect.x = (w-1)*TILE_WIDTH;
-    SDL_RenderCopy(game->rend, active_tex, &clip_rect, &render_rect);
+    active_sprite.render(render_rect.x, render_rect.y, scr_w, scr_h, &clip_rect);
     // bottom left
     clip_rect.x = clip_base_x;
     clip_rect.y = 2*TILE_WIDTH;
     render_rect.x = 0;
     render_rect.y = (h-1)*TILE_WIDTH;
-    SDL_RenderCopy(game->rend, active_tex, &clip_rect, &render_rect);
+    active_sprite.render(render_rect.x, render_rect.y, scr_w, scr_h, &clip_rect);
     // bottom right
     clip_rect.x = clip_base_x + 2*TILE_WIDTH;
     render_rect.x = (w-1)*TILE_WIDTH;
-    SDL_RenderCopy(game->rend, active_tex, &clip_rect, &render_rect);
+    active_sprite.render(render_rect.x, render_rect.y, scr_w, scr_h, &clip_rect);
     // sides
     for (int j = 1; j < w - 1; j++) {
         // top
@@ -531,13 +535,13 @@ Crate::Crate(int x, int y, int w, int h, bool color, SDL_Color palette)
         clip_rect.y = 0;
         render_rect.x = j*TILE_WIDTH;
         render_rect.y = 0;
-        SDL_RenderCopy(game->rend, active_tex, &clip_rect, &render_rect);
+        active_sprite.render(render_rect.x, render_rect.y, scr_w, scr_h, &clip_rect);
         // bottom
         clip_rect.x = clip_base_x + TILE_WIDTH;
         clip_rect.y = 2*TILE_WIDTH;
         render_rect.x = j*TILE_WIDTH;
         render_rect.y = (h-1)*TILE_WIDTH;
-        SDL_RenderCopy(game->rend, active_tex, &clip_rect, &render_rect);
+        active_sprite.render(render_rect.x, render_rect.y, scr_w, scr_h, &clip_rect);
     }
     for (int i = 1; i < h - 1; i++) {
         // left
@@ -545,13 +549,13 @@ Crate::Crate(int x, int y, int w, int h, bool color, SDL_Color palette)
         clip_rect.y = TILE_WIDTH;
         render_rect.x = 0;
         render_rect.y = i*TILE_WIDTH;
-        SDL_RenderCopy(game->rend, active_tex, &clip_rect, &render_rect);
+        active_sprite.render(render_rect.x, render_rect.y, scr_w, scr_h, &clip_rect);
         // right
         clip_rect.x = clip_base_x + 2*TILE_WIDTH;
         clip_rect.y = TILE_WIDTH;
         render_rect.x = (w-1)*TILE_WIDTH;
         render_rect.y = i*TILE_WIDTH;
-        SDL_RenderCopy(game->rend, active_tex, &clip_rect, &render_rect);
+        active_sprite.render(render_rect.x, render_rect.y, scr_w, scr_h, &clip_rect);
     }
     // middle
     clip_rect.x = clip_base_x + TILE_WIDTH;
@@ -560,13 +564,12 @@ Crate::Crate(int x, int y, int w, int h, bool color, SDL_Color palette)
         for (int j = 1; j < h - 1; j++) {
             render_rect.x = i*TILE_WIDTH;
             render_rect.y = j*TILE_WIDTH;
-            SDL_RenderCopy(game->rend, active_tex, &clip_rect, &render_rect);
+            active_sprite.render(render_rect.x, render_rect.y, scr_w, scr_h, &clip_rect);
         }
     }
 
-    SDL_Surface* inactive_surface = IMG_Load("resources/textures/shiftblock-active.png");
-    SDL_Texture* inactive_tex = SDL_CreateTextureFromSurface(game->rend, inactive_surface);
-    SDL_SetTextureColorMod(inactive_tex, palette.r, palette.g, palette.b);
+    Texture inactive_tex = ResourceManager::get_texture("shiftblock_active");
+    Sprite inactive_sprite(inactive_tex, inactive_tex, TILE_WIDTH, TILE_WIDTH, &palette);
 
     // inactive (8 frames)
     int render_base_x;
@@ -579,25 +582,25 @@ Crate::Crate(int x, int y, int w, int h, bool color, SDL_Color palette)
         clip_rect.y = clip_base_y;
         render_rect.x = render_base_x;
         render_rect.y = render_base_y;
-        SDL_RenderCopy(game->rend, inactive_tex, &clip_rect, &render_rect);
+        inactive_sprite.render(render_rect.x, render_rect.y, scr_w, scr_h, &clip_rect);
         // top right
         clip_rect.x = i*TILE_WIDTH*3 + 2*TILE_WIDTH;
         clip_rect.y = clip_base_y;
         render_rect.x = render_base_x + (w-1)*TILE_WIDTH;
         render_rect.y = render_base_y;
-        SDL_RenderCopy(game->rend, inactive_tex, &clip_rect, &render_rect);
+        inactive_sprite.render(render_rect.x, render_rect.y, scr_w, scr_h, &clip_rect);
         // bottom left
         clip_rect.x = i*TILE_WIDTH*3;
         clip_rect.y = clip_base_y + 2*TILE_WIDTH;
         render_rect.x = render_base_x;
         render_rect.y = render_base_y + (h-1)*TILE_WIDTH;
-        SDL_RenderCopy(game->rend, inactive_tex, &clip_rect, &render_rect);
+        inactive_sprite.render(render_rect.x, render_rect.y, scr_w, scr_h, &clip_rect);
         // bottom right
         clip_rect.x = i*TILE_WIDTH*3 + 2*TILE_WIDTH;
         clip_rect.y = clip_base_y + 2*TILE_WIDTH;
         render_rect.x = render_base_x + (w-1)*TILE_WIDTH;
         render_rect.y = render_base_y + (h-1)*TILE_WIDTH;
-        SDL_RenderCopy(game->rend, inactive_tex, &clip_rect, &render_rect);
+        inactive_sprite.render(render_rect.x, render_rect.y, scr_w, scr_h, &clip_rect);
         // sides
         clip_rect.x = i*TILE_WIDTH*3 + TILE_WIDTH;
         for (int j = 1; j < w - 1; j++) {
@@ -605,11 +608,11 @@ Crate::Crate(int x, int y, int w, int h, bool color, SDL_Color palette)
             // top
             clip_rect.y = clip_base_y;
             render_rect.y = render_base_y;
-            SDL_RenderCopy(game->rend, inactive_tex, &clip_rect, &render_rect);
+            inactive_sprite.render(render_rect.x, render_rect.y, scr_w, scr_h, &clip_rect);
             // bottom
             clip_rect.y = clip_base_y + 2*TILE_WIDTH;
             render_rect.y = render_base_y + (h-1)*TILE_WIDTH;
-            SDL_RenderCopy(game->rend, inactive_tex, &clip_rect, &render_rect);
+            inactive_sprite.render(render_rect.x, render_rect.y, scr_w, scr_h, &clip_rect);
         }
         clip_rect.y = clip_base_y + TILE_WIDTH;
         for (int k = 1; k < h - 1; k++) {
@@ -617,11 +620,11 @@ Crate::Crate(int x, int y, int w, int h, bool color, SDL_Color palette)
             // left
             clip_rect.x = i*TILE_WIDTH*3;
             render_rect.x = render_base_x;
-            SDL_RenderCopy(game->rend, inactive_tex, &clip_rect, &render_rect);
+            inactive_sprite.render(render_rect.x, render_rect.y, scr_w, scr_h, &clip_rect);
             // right
             clip_rect.x = i*TILE_WIDTH*3 + 2*TILE_WIDTH;
             render_rect.x = render_base_x + (w-1)*TILE_WIDTH;
-            SDL_RenderCopy(game->rend, inactive_tex, &clip_rect, &render_rect);
+            inactive_sprite.render(render_rect.x, render_rect.y, scr_w, scr_h, &clip_rect);
         }
         // middle
         clip_rect.x = clip_base_x + TILE_WIDTH;
@@ -630,12 +633,99 @@ Crate::Crate(int x, int y, int w, int h, bool color, SDL_Color palette)
             for (int k = 1; k < h - 1; k++) {
                 render_rect.x = render_base_x + j*TILE_WIDTH;
                 render_rect.y = render_base_y + k*TILE_WIDTH;
-                SDL_RenderCopy(game->rend, inactive_tex, &clip_rect, &render_rect);
+                inactive_sprite.render(render_rect.x, render_rect.y, scr_w, scr_h, &clip_rect);
             }
         }
     }
-    SDL_SetRenderTarget(game->rend, NULL);
-    // m_sprite.create_texture(tex, w, h);
+    crate_fbo.unbind();
+    GLuint m_tex_id = crate_fbo.get_texture();
+    Texture m_tex(m_tex_id, w*TILE_WIDTH*8, h*TILE_WIDTH*2);
+
+    FBO normal_fbo(scr_w, scr_h);
+
+    Texture active_normal = ResourceManager::get_texture("crate_normal");
+    Sprite act_norm_sprite(active_normal, active_normal, TILE_WIDTH, TILE_WIDTH, &palette);
+    normal_fbo.bind();
+
+    // active (1 frame)
+    clip_rect.y = 0;
+    clip_base_x = (m_color == 0) ? 0 : TILE_WIDTH*3;
+    // corners
+    // top left
+    clip_rect.x = clip_base_x;
+    clip_rect.y = 0;
+    render_rect.x = 0;
+    render_rect.y = 0;
+    act_norm_sprite.render(render_rect.x, render_rect.y, scr_w, scr_h, &clip_rect);
+    // top right
+    clip_rect.x = clip_base_x + 2*TILE_WIDTH;
+    render_rect.x = (w-1)*TILE_WIDTH;
+    act_norm_sprite.render(render_rect.x, render_rect.y, scr_w, scr_h, &clip_rect);
+    // bottom left
+    clip_rect.x = clip_base_x;
+    clip_rect.y = 2*TILE_WIDTH;
+    render_rect.x = 0;
+    render_rect.y = (h-1)*TILE_WIDTH;
+    act_norm_sprite.render(render_rect.x, render_rect.y, scr_w, scr_h, &clip_rect);
+    // bottom right
+    clip_rect.x = clip_base_x + 2*TILE_WIDTH;
+    render_rect.x = (w-1)*TILE_WIDTH;
+    act_norm_sprite.render(render_rect.x, render_rect.y, scr_w, scr_h, &clip_rect);
+    // sides
+    for (int j = 1; j < w - 1; j++) {
+        // top
+        clip_rect.x = clip_base_x + TILE_WIDTH;
+        clip_rect.y = 0;
+        render_rect.x = j*TILE_WIDTH;
+        render_rect.y = 0;
+        act_norm_sprite.render(render_rect.x, render_rect.y, scr_w, scr_h, &clip_rect);
+        // bottom
+        clip_rect.x = clip_base_x + TILE_WIDTH;
+        clip_rect.y = 2*TILE_WIDTH;
+        render_rect.x = j*TILE_WIDTH;
+        render_rect.y = (h-1)*TILE_WIDTH;
+        act_norm_sprite.render(render_rect.x, render_rect.y, scr_w, scr_h, &clip_rect);
+    }
+    for (int i = 1; i < h - 1; i++) {
+        // left
+        clip_rect.x = clip_base_x;
+        clip_rect.y = TILE_WIDTH;
+        render_rect.x = 0;
+        render_rect.y = i*TILE_WIDTH;
+        act_norm_sprite.render(render_rect.x, render_rect.y, scr_w, scr_h, &clip_rect);
+        // right
+        clip_rect.x = clip_base_x + 2*TILE_WIDTH;
+        clip_rect.y = TILE_WIDTH;
+        render_rect.x = (w-1)*TILE_WIDTH;
+        render_rect.y = i*TILE_WIDTH;
+        act_norm_sprite.render(render_rect.x, render_rect.y, scr_w, scr_h, &clip_rect);
+    }
+    // middle
+    clip_rect.x = clip_base_x + TILE_WIDTH;
+    clip_rect.y = TILE_WIDTH;
+    for (int i = 1; i < w - 1; i++) {
+        for (int j = 1; j < h - 1; j++) {
+            render_rect.x = i*TILE_WIDTH;
+            render_rect.y = j*TILE_WIDTH;
+            act_norm_sprite.render(render_rect.x, render_rect.y, scr_w, scr_h, &clip_rect);
+        }
+    }
+
+    Texture inactive_normal = ResourceManager::get_texture("normal");
+    Sprite inact_norm_sprite(inactive_normal, inactive_normal, TILE_WIDTH, TILE_WIDTH, &palette);
+
+    clip_rect.x = clip_rect.y = 0;
+    for (int i = 0; i < w*8; i++) {
+        for (int j = 0; j < h; j++) {
+            inact_norm_sprite.render(i*TILE_WIDTH, (h+j)*TILE_WIDTH, scr_w, scr_h, &clip_rect);
+        }
+    }
+
+    normal_fbo.unbind();
+    GLuint norm_tex_id = normal_fbo.get_texture();
+    Texture norm_tex(norm_tex_id, w*TILE_WIDTH*8, h*TILE_WIDTH*2);
+
+    m_sprite = Sprite(m_tex, norm_tex, w*TILE_WIDTH, h*TILE_WIDTH, &palette);
 }
 
 void Crate::render_bg(Camera* cam, std::vector<Light> lights, bool active_color)

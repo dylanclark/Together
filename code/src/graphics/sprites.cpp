@@ -117,3 +117,34 @@ void Sprite::render(int x, int y, SDL_Rect* clip, Camera* cam, std::vector<Light
     glBindVertexArray(m_vao);
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 }
+
+void Sprite::render(int x, int y, int scr_w, int scr_h, SDL_Rect* clip)
+{
+    Shader m_shader = ResourceManager::get_shader("to_texture");
+    m_shader.use();
+
+    // set model matrix - this tells us where our object is in the world space
+    glm::mat4 model;
+    model = glm::translate(model, glm::vec3(x, y, 0.0f));
+    m_shader.set_float_mat4("model", model);
+
+    // set projection matrix - this determines the perspective with which we look at stuff
+    glm::mat4 proj = glm::ortho(0.0f, (float) scr_w, 0.0f, (float) scr_h);
+    m_shader.set_float_mat4("proj", proj);
+
+    // set texture clip matrix - this decides which piece of the texture to use
+    float tex_x = (float) clip->x / (float) m_tex.get_width();
+    float tex_y = (float) clip->y / (float) m_tex.get_height();
+    glm::mat4 tex_clip;
+    tex_clip = glm::translate(tex_clip, glm::vec3(tex_x, tex_y, 0.0f));
+    m_shader.set_float_mat4("tex_clip", tex_clip);
+
+    // set texture
+    m_shader.set_int("m_texture", 0);
+    glActiveTexture(GL_TEXTURE0);
+    m_tex.bind();
+
+    // draw that puppy!
+    glBindVertexArray(m_vao);
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+}

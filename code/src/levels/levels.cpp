@@ -204,12 +204,35 @@ void Zonestate::init()
     std::ifstream zone_file(path.c_str());
 
     // what's the rgb?
-    int r, g, b;
-    zone_file >> r >> g >> b;
+    int red, green, blue;
+    zone_file >> red >> green >> blue;
     srand(time(NULL));
-    palette.r = (int) ((float) rand() / (float) RAND_MAX * 255);
-    palette.g = (int) ((float) rand() / (float) RAND_MAX * 255);
-    palette.b = (int) ((float) rand() / (float) RAND_MAX * 255);
+    int a, b, c;
+    a = (int) ((float) rand() / (float) RAND_MAX * 200) + 55;
+    if (a > 50) {
+        b = (int) ((float) rand() / (float) RAND_MAX * 255);
+    } else {
+        b = (int) ((float) rand() / (float) RAND_MAX * 150) + 105;
+    }
+    if (a + b > 100) {
+        c = (int) ((float) rand() / (float) RAND_MAX * 255);
+    } else {
+        c = (int) ((float) rand() / (float) RAND_MAX * 150) + 105;
+    }
+    int start = rand() % 3;
+    if (start == 0) {
+        palette.r = a;
+        palette.g = b;
+        palette.b = c;
+    } else if (start == 1) {
+        palette.b = a;
+        palette.r = b;
+        palette.g = c;
+    } else {
+        palette.g = a;
+        palette.b = b;
+        palette.r = c;
+    }
 
     // how many lvls?
     int num_levels;
