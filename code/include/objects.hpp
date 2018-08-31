@@ -19,24 +19,26 @@
 /*   LIGHT   */
 /*************/
 
-static const int BASE_LIGHT_PERIOD = 4000;
-static const int LIGHT_FLUCT_AMPL = 5;
-
 class Light
 {
 public:
     Light() { }
-    Light(int x, int y, float strength, SDL_Color color);
+    Light(int x, int y, float range, SDL_Color palette);
 
+    float get_range();
     float get_strength();
     int get_x() { return m_x; }
     int get_y() { return m_y; }
+    void turn_on();
+    void turn_off();
 
 private:
     // position
+    bool on;
     int m_x, m_y;
-    float m_strength;
-    SDL_Color m_color;
+    int m_start_time;
+    float m_range;
+    SDL_Color m_palette;
     // pulsing period
     int m_period;
 };
@@ -71,11 +73,16 @@ public:
     void trigger();
     void untrigger();
 
+    // getters
     ObjectType get_type() { return m_type; }
     virtual SDL_Rect get_rect() { return m_rect; }
     bool get_color() { return m_color; }
+
+    // light methods
     bool has_light() { return m_has_light; }
     Light get_light() { return m_light; }
+    void turn_on_light() { m_light.turn_on(); }
+    void turn_off_light() { m_light.turn_off(); }
 
     SDL_Rect m_rect;
     ObjectType m_type;

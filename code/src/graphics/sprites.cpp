@@ -98,6 +98,7 @@ void Sprite::render(int x, int y, SDL_Rect* clip, Camera* cam, std::vector<Light
         m_shader.set_int("num_lights", lights.size());
         for (int i = 0; i < lights.size(); i++) {
             std::string number = std::to_string(i);
+            m_shader.set_float("lights["+number+"].range", lights[i].get_range());
             m_shader.set_float("lights["+number+"].strength", lights[i].get_strength());
             m_shader.set_vec2("lights["+number+"].position", glm::vec2(lights[i].get_x(), lights[i].get_y()));
         }

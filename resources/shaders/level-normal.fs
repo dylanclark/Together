@@ -7,6 +7,7 @@ in vec2 frag_pos;
 
 struct light {
     vec2 position;
+    float range;
     float strength;
 };
 
@@ -32,15 +33,15 @@ vec3 calculate_light(light cur_light)
     normal = vec3(float(dir == 0) * normal.b - float(dir == 1) * normal.b, float(flipped == 1) * normal.g - float(flipped == 0) * normal.g, normal.r);
     vec3 light_dir = normalize(vec3(cur_light.position, 0.0) - vec3(frag_pos, 0.0));
 
-    float strength = floor(cur_light.strength / ring_size) * ring_size;
-    float attenuation = max((cur_light.strength - dist) / (cur_light.strength*2), 0.0);
+    float range = floor(cur_light.range / ring_size) * ring_size;
+    float attenuation = max((cur_light.range - dist) / (cur_light.range*2), 0.0);
     bool ring = false;
     if (attenuation*ring_size > 4) {
         attenuation = ceil(attenuation*ring_size) / ring_size;
         ring = true;
     }
 
-    float norm_attenuation = max((cur_light.strength - dist/2) / (cur_light.strength*3), 0.0);
+    float norm_attenuation = max((cur_light.range - dist/2) / (cur_light.range*3), 0.0);
 
     float dot_prod = dot(normal, light_dir);
     float diff = max(dot_prod, 0.0);
@@ -48,11 +49,11 @@ vec3 calculate_light(light cur_light)
     vec3 texcolor = vec3(texture(m_texture, tex_coord));
     vec3 diffuse = diff * norm_attenuation * obj_color * texcolor;
     if (ring && texcolor.x + texcolor.y + texcolor.z < 0.5) {
-        diffuse += attenuation * obj_color * (vec3(texture(m_texture, tex_coord)) + vec3(0.08, 0.08, 0.08));
+        diffuse += attenuation * obj_color * (vec3(texture(m_texture, tex_coord)) + vec3(0.18, 0.18, 0.18));
     } else {
         diffuse += attenuation * obj_color * vec3(texture(m_texture, tex_coord));
     }
-    return diffuse;
+    return diffuse * cur_light.strength;
 }
 
 void main()
@@ -61,7 +62,7 @@ void main()
     if (texcolor.a < 0.1)
         discard;
 
-    float ambient_strength = 0.05;
+    float ambient_strength = 0.15;
     vec3 result = (ambient_strength) * (texcolor.xyz);
     for (int i = 0; i < num_lights; i++) {
         result += calculate_light(lights[i]);

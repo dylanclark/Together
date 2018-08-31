@@ -142,6 +142,19 @@ void Level::update_y()
     }
 }
 
+void Level::switch_lights(bool active_color)
+{
+    for (int i = 0; i < objects.size(); i++) {
+        if (objects[i]->has_light()) {
+            if (objects[i]->get_color() == active_color) {
+                objects[i]->turn_on_light();
+            } else {
+                objects[i]->turn_off_light();
+            }
+        }
+    }
+}
+
 std::vector<Light> Level::get_lights()
 {
     std::vector<Light> result;
@@ -208,31 +221,9 @@ void Zonestate::init()
     zone_file >> red >> green >> blue;
     srand(time(NULL));
     int a, b, c;
-    a = (int) ((float) rand() / (float) RAND_MAX * 200) + 55;
-    if (a > 50) {
-        b = (int) ((float) rand() / (float) RAND_MAX * 255);
-    } else {
-        b = (int) ((float) rand() / (float) RAND_MAX * 150) + 105;
-    }
-    if (a + b > 100) {
-        c = (int) ((float) rand() / (float) RAND_MAX * 255);
-    } else {
-        c = (int) ((float) rand() / (float) RAND_MAX * 150) + 105;
-    }
-    int start = rand() % 3;
-    if (start == 0) {
-        palette.r = a;
-        palette.g = b;
-        palette.b = c;
-    } else if (start == 1) {
-        palette.b = a;
-        palette.r = b;
-        palette.g = c;
-    } else {
-        palette.g = a;
-        palette.b = b;
-        palette.r = c;
-    }
+    palette.r = 50;
+    palette.g = 200;
+    palette.b = 255;
 
     // how many lvls?
     int num_levels;
@@ -264,6 +255,7 @@ void Zonestate::init()
     chars.push_back(b_char);
     chars.push_back(w_char);
     active_color = false;
+    levels[active_level]->switch_lights(active_color);
 
     // init camera
     camera = new Camera(game->screen_width, game->screen_height, levels[active_level],
@@ -351,15 +343,23 @@ void Zonestate::pause()
 void Zonestate::shift()
 {
     if (chars.size() == 2) {
+        // shift active color
         active_color = !active_color;
+
+        // freeze controls for both chars so nothing sticky happens
         chars[0].halt();
         chars[1].halt();
+
+        // ripple effect
         ripple_start = SDL_GetTicks();
         SDL_Rect char_who_shifted = chars[active_color].get_rect();
         SDL_Rect cam_rect = camera->get_display();
         float aspect_ratio = ((float) game->screen_width / (float) cam_rect.w);
         ripple_x = (char_who_shifted.x + char_who_shifted.w/2 - cam_rect.x) * aspect_ratio;
         ripple_y = (char_who_shifted.y + char_who_shifted.h/2 - cam_rect.y) * aspect_ratio;
+
+        // switch lights
+        levels[active_level]->switch_lights(active_color);
     }
 }
 

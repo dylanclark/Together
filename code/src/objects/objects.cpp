@@ -456,7 +456,6 @@ ShiftBlock::ShiftBlock(int x, int y, int w, int h, SDL_Color palette)
     Texture m_tex(m_tex_id, w*TILE_WIDTH*8, h*TILE_WIDTH*4);
 
     m_sprite = Sprite(m_tex, m_tex, w*TILE_WIDTH, h*TILE_WIDTH, &palette);
-    printf("w h = %d %d\n", w, h);
 }
 
 void ShiftBlock::render_bg(Camera* cam, std::vector<Light> lights, bool active_color)
@@ -827,6 +826,8 @@ void Crate::push(SDL_Rect player_pushing, SDL_Rect other_player)
 /*   CROSS SPRING   */
 /********************/
 
+static const float XSPRING_MIN_HEIGHT = 4.2;
+
 XSpring::XSpring(int x, int y, SDL_Color palette)
 {
     Texture m_tex = ResourceManager::get_texture("cross_spring");
@@ -926,7 +927,7 @@ void XSpring::white_land(Zonestate* zone, Dot* white)
 {
     animation_start = SDL_GetTicks();
     if (dot_on && dot_on != white) {
-        float velocity = std::min(white->get_yvel(), (float) -3.7);
+        float velocity = std::min(white->get_yvel(), -XSPRING_MIN_HEIGHT);
         dot_on->spring_me(velocity);
         zone->shift();
         m_status = XSPRING_WHITE_SPRING_BLACK;
@@ -944,7 +945,7 @@ void XSpring::black_land(Zonestate* zone, Dot* black)
 {
     animation_start = SDL_GetTicks();
     if (dot_on && dot_on != black) {
-        float velocity = std::max(black->get_yvel(), (float) 3.7);
+        float velocity = std::max(black->get_yvel(), XSPRING_MIN_HEIGHT);
         dot_on->spring_me(velocity);
         zone->shift();
         m_status = XSPRING_BLACK_SPRING_WHITE;
