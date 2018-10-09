@@ -233,6 +233,7 @@ public:
 
 private:
     bool pushed;
+    float true_x;
 };
 
 /********************/

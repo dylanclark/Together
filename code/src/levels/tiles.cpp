@@ -7,6 +7,7 @@
 
 // include header file
 #include <levels.hpp>
+#include <loader.hpp>
 #include <textures.hpp>
 #include <tiles.hpp>
 #include <utils.hpp>
@@ -151,25 +152,8 @@ Tileset::Tileset(std::vector<Tile> &tiles, int x, int y, int w, int h, SDL_Color
     for (int i = 0; i < w*h*16; i++) {
     }
 
-    GLuint vertex_buffer_obj;
-    GLuint element_buffer_obj;
+    m_vao = Loader::load_to_vao(vertices, 16*m_w*m_h, indices, 6*m_w*m_h);
 
-    // first, we create the 2d object in model space
-    glGenVertexArrays(1, &m_vao);
-    glGenBuffers(1, &vertex_buffer_obj);
-    glGenBuffers(1, &element_buffer_obj);
-    // make sure the array obj is bound so it knows what's up with the buffer objs
-    glBindVertexArray(m_vao);
-
-    // set up the buffer objs
-    glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer_obj);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(float)*16*m_w*m_h, vertices, GL_STATIC_DRAW);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, element_buffer_obj);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int)*6*m_w*m_h, indices, GL_STATIC_DRAW);
-
-    // set vertex attributes
-    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, (void*)0);
-    glEnableVertexAttribArray(0);
 
     free(indices);
     free(vertices);

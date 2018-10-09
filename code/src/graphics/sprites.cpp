@@ -3,6 +3,7 @@
 #include <levels.hpp>
 #include <utils.hpp>
 #include <textures.hpp>
+#include <loader.hpp>
 
 Sprite::Sprite(Texture tex, Texture normal_tex, int w, int h, SDL_Color* palette)
 {
@@ -30,25 +31,7 @@ Sprite::Sprite(Texture tex, Texture normal_tex, int w, int h, SDL_Color* palette
         0, 2, 3
     };
 
-    GLuint vertex_buffer_obj;
-    GLuint element_buffer_obj;
-
-    // first, we create the 2d object in model space
-    glGenVertexArrays(1, &m_vao);
-    glGenBuffers(1, &vertex_buffer_obj);
-    glGenBuffers(1, &element_buffer_obj);
-    // make sure the array obj is bound so it knows what's up with the buffer objs
-    glBindVertexArray(m_vao);
-
-    // set up the buffer objs
-    glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer_obj);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, element_buffer_obj);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
-
-    // set vertex attributes
-    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, (void*)0);
-    glEnableVertexAttribArray(0);
+    m_vao = Loader::load_to_vao(vertices, 16, indices, 6);
 }
 
 void Sprite::render(int x, int y, SDL_Rect* clip, Camera* cam, std::vector<Light> lights, int dir, int flip, bool is_light)

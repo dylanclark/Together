@@ -359,6 +359,7 @@ void Dot::update_x(Zonestate* zone, SDL_Rect other_player)
 
     Crate* crate;
     ShiftBlock* shiftblock;
+    bool pushed_flag;
     for (int i = 0; i < objects.size(); i++) {
         switch (objects[i]->get_type())
         {
@@ -397,19 +398,19 @@ void Dot::update_x(Zonestate* zone, SDL_Rect other_player)
             if (objects[i]->get_color() != m_color) {
                 break;
             }
-            if ((left && right) || (!left && !right)) {
-                if (check_collision(col_rect, objects[i]->get_rect(), &repos)) {
-                    col_rect.x += repos.x;
-                    if ((repos.x > 0 && m_xvel < 0) ||
-                        (repos.x < 0 && m_xvel > 0)) {
-                        m_xvel = 0;
-                    }
+            crate = (Crate*) objects[i];
+            pushed_flag = false;
+            if (check_collision(col_rect, objects[i]->get_rect(), &repos)) {
+                if (!airborne && ((repos.x > 0 && left && !right) ||
+                    (repos.x < 0 && right && !left))) {
+                    crate->push(col_rect, other_player);
+                    pushed_flag = true;
                 }
-            } else {
-                crate = (Crate*) objects[i];
-                crate->push(col_rect, other_player);
-                if (check_collision(col_rect, objects[i]->get_rect(), &repos)) {
-                    col_rect.x += repos.x;
+            }
+            if (check_collision(col_rect, objects[i]->get_rect(), &repos)) {
+                col_rect.x += repos.x;
+                if (!pushed_flag) {
+                    m_xvel = 0;
                 }
             }
             break;

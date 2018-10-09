@@ -1,5 +1,6 @@
 #include <post-processing.hpp>
 #include <utils.hpp>
+#include <loader.hpp>
 
 PostProcessor::PostProcessor(std::string shader_name, int width, int height)
 {
@@ -8,39 +9,7 @@ PostProcessor::PostProcessor(std::string shader_name, int width, int height)
     m_h = height;
     m_name = shader_name;
 
-    // set up vao
-    float vertices[] = {
-        -1.0, 1.0,
-        1.0, 1.0,
-        1.0, -1.0,
-        -1.0, -1.0
-    };
-
-    unsigned int indices[] = {
-        0, 1, 2,
-        0, 2, 3
-    };
-
-    GLuint vertex_buffer_obj;
-    GLuint element_buffer_obj;
-
-    // first, we create the 2d object in model space
-    glGenVertexArrays(1, &m_vao);
-    glGenBuffers(1, &vertex_buffer_obj);
-    glGenBuffers(1, &element_buffer_obj);
-    // make sure the array obj is bound so it knows what's up with the buffer objs
-    glBindVertexArray(m_vao);
-
-    // set up the buffer objs
-    glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer_obj);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, element_buffer_obj);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
-
-    // set vertex attributes
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, (void*)0);
-    glEnableVertexAttribArray(0);
-
+    m_vao = Loader::load_to_postprocess_vao();
     m_fbo = new FBO(width, height);
 }
 
@@ -54,6 +23,8 @@ GLuint PostProcessor::render(GLuint texture)
     if (m_name == "hblur" || m_name == "vblur") {
         m_shader.set_float("target_width", m_w);
         m_shader.set_float("target_height", m_h);
+    } else if (m_name == "heat") {
+        m_shader.set_float("time", (float) SDL_GetTicks() / 1000.0);
     }
 
     // bind the texture and draw it

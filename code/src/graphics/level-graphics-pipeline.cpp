@@ -1,48 +1,23 @@
 #include <post-processing.hpp>
+#include <loader.hpp>
 #include <utils.hpp>
 
 LevelGraphicsPipeline::LevelGraphicsPipeline()
 {
     m_fbo = new FBO(game->screen_width, game->screen_height);
 
-    // set up vao
-    float vertices[] = {
-        -1.0, 1.0,
-        1.0, 1.0,
-        1.0, -1.0,
-        -1.0, -1.0
-    };
-
-    unsigned int indices[] = {
-        0, 1, 2,
-        0, 2, 3
-    };
-
-    GLuint vertex_buffer_obj;
-    GLuint element_buffer_obj;
-
-    // first, we create the 2d object in model space
-    glGenVertexArrays(1, &m_vao);
-    glGenBuffers(1, &vertex_buffer_obj);
-    glGenBuffers(1, &element_buffer_obj);
-    // make sure the array obj is bound so it knows what's up with the buffer objs
-    glBindVertexArray(m_vao);
-
-    // set up the buffer objs
-    glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer_obj);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, element_buffer_obj);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
-
-    // set vertex attributes
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, (void*)0);
-    glEnableVertexAttribArray(0);
+    m_vao = Loader::load_to_postprocess_vao();
 
     m_processors["invertor"] = PostProcessor("invertor");
     m_processors["ripple"] = PostProcessor("ripple");
-    m_processors["bright_filter"] = PostProcessor("bright_filter", game->screen_width/2, game->screen_height/2);
-    m_processors["vblur"] = PostProcessor("vblur", game->screen_width/2, game->screen_height/2);
-    m_processors["hblur"] = PostProcessor("hblur", game->screen_width/2, game->screen_height/2);
+    m_processors["bright_filter"] = PostProcessor("bright_filter",
+                                                  game->screen_width/2,
+                                                  game->screen_height/2);
+    m_processors["vblur"] = PostProcessor("vblur", game->screen_width/2,
+                                         game->screen_height/2);
+    m_processors["hblur"] = PostProcessor("hblur", game->screen_width/2,
+                                         game->screen_height/2);
+    m_processors["heat"] = PostProcessor("heat");
     m_combiner = Combiner("combiner");
 }
 
@@ -56,6 +31,7 @@ void LevelGraphicsPipeline::render(int time_ms, int ripple_x, int ripple_y)
     m_fbo->unbind();
     GLuint output1 = m_fbo->get_texture();
     output1 = m_processors["ripple"].render_ripple(output1, time_ms, ripple_x, ripple_y);
+    output1 = m_processors["heat"].render(output1);
     GLuint output2 = m_processors["bright_filter"].render(output1);
     output2 = m_processors["hblur"].render(output2);
     output2 = m_processors["vblur"].render(output2);

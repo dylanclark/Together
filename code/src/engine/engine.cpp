@@ -91,16 +91,22 @@ void Engine::load_resources()
 
     // shaders
     ResourceManager::load_shader("level.vs", "level.fs", "level");
-    ResourceManager::load_shader("level.vs", "level-normal.fs", "level_normal");
-    ResourceManager::load_shader("to-texture.vs", "to-texture.fs", "to_texture");
+    ResourceManager::load_shader("level.vs", "level-normal.fs",
+                                 "level_normal");
+    ResourceManager::load_shader("to-texture.vs", "to-texture.fs",
+                                 "to_texture");
     ResourceManager::load_shader("level.vs", "light.fs", "light");
-    ResourceManager::load_shader("post-process.vs", "invertor.fs", "invertor");
+    ResourceManager::load_shader("post-process.vs", "invertor.fs",
+                                 "invertor");
     ResourceManager::load_shader("post-process.vs", "display.fs", "display");
     ResourceManager::load_shader("vblur.vs", "blur.fs", "vblur");
     ResourceManager::load_shader("hblur.vs", "blur.fs", "hblur");
-    ResourceManager::load_shader("post-process.vs", "bright-filter.fs", "bright_filter");
-    ResourceManager::load_shader("post-process.vs", "combiner.fs", "combiner");
+    ResourceManager::load_shader("post-process.vs", "bright-filter.fs",
+                                 "bright_filter");
+    ResourceManager::load_shader("post-process.vs", "combiner.fs",
+                                 "combiner");
     ResourceManager::load_shader("post-process.vs", "ripple.fs", "ripple");
+    ResourceManager::load_shader("post-process.vs", "heat.fs", "heat");
 }
 
 void Engine::cleanup()
