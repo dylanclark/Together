@@ -6,7 +6,7 @@
 class Loader
 {
 public:
-    static GLuint load_to_vao(float* vertices, int num_vertices,
+    static GLuint load_to_vao(float* vertices,       int num_vertices, int vertex_width,
                               unsigned int* indices, int num_indices);
     static GLuint load_to_postprocess_vao();
 };

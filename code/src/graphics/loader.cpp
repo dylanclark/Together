@@ -2,7 +2,7 @@
 #include <loader.hpp>
 
 GLuint
-Loader::load_to_vao(float* vertices,        int num_vertices,
+Loader::load_to_vao(float* vertices,        int num_vertices, int vertex_width,
                     unsigned int* indices,  int num_indices)
 {
     GLuint vao;
@@ -26,7 +26,7 @@ Loader::load_to_vao(float* vertices,        int num_vertices,
                  indices, GL_STATIC_DRAW);
 
     // set vertex attributes
-    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, (void*)0);
+    glVertexAttribPointer(0, vertex_width, GL_FLOAT, GL_FALSE, 0, (void*)0);
     glEnableVertexAttribArray(0);
 
     return vao;

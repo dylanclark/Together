@@ -31,7 +31,7 @@ Sprite::Sprite(Texture tex, Texture normal_tex, int w, int h, SDL_Color* palette
         0, 2, 3
     };
 
-    m_vao = Loader::load_to_vao(vertices, 16, indices, 6);
+    m_vao = Loader::load_to_vao(vertices, 16, 4, indices, 6);
 }
 
 void Sprite::render(int x, int y, SDL_Rect* clip, Camera* cam, std::vector<Light> lights, int dir, int flip, bool is_light)

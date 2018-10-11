@@ -152,9 +152,7 @@ Tileset::Tileset(std::vector<Tile> &tiles, int x, int y, int w, int h, SDL_Color
     for (int i = 0; i < w*h*16; i++) {
     }
 
-    m_vao = Loader::load_to_vao(vertices, 16*m_w*m_h, indices, 6*m_w*m_h);
-
-
+    m_vao = Loader::load_to_vao(vertices, 16*m_w*m_h, 4, indices, 6*m_w*m_h);
     free(indices);
     free(vertices);
 }
